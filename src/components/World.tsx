@@ -346,7 +346,7 @@ export function World({
         >
           <PawPrint size={22} fill="currentColor" />
         </button>
-        <button className="map-button" onClick={onMap}>
+        <button className="map-button" aria-label="Map" onClick={onMap}>
           <Map size={19} fill="currentColor" strokeWidth={1.5} />
           <span>Map</span>
         </button>

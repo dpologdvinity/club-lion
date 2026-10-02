@@ -16,7 +16,7 @@
   --background: #faf8f2;
   --surface: #fffdf9;
   --text: #294b3c;
-  --muted: #728074;
+  --muted: #626f61;
   --accent: #ee964c;
   --accent-dark: #a9551b;
   --accent-soft: #ffebc8;
@@ -1046,7 +1046,7 @@ svg {
 }
 .adventure-footer {
   font-size: 9px;
-  color: #8a907e;
+  color: var(--muted);
   text-align: center;
   padding: 13px 0;
   display: flex;
@@ -1099,7 +1099,7 @@ svg {
   align-items: center;
   gap: 5px;
   font-size: 10px;
-  color: #788574;
+  color: var(--muted);
   font-weight: 550;
   background: none;
   padding: 6px 0;
@@ -1192,7 +1192,7 @@ svg {
   gap: 8px;
   align-items: center;
   flex-shrink: 0;
-  color: #7c8873;
+  color: var(--muted);
   font-size: 10px;
 }
 .site-footer > div svg {

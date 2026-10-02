@@ -5,11 +5,8 @@ import {
   ChevronDown,
   ChevronRight,
   CircleHelp,
-  Gamepad2,
   Heart,
-  Map,
   PawPrint,
-  Shirt,
   Sun,
 } from "lucide-react";
 import {
@@ -238,6 +235,12 @@ export default function App() {
           <div>
             <Sun size={23} />
             <span>Made for a little adventure.</span>
+            <button
+              className="text-button footer-help"
+              onClick={() => setPanel("help")}
+            >
+              How to play <CircleHelp size={12} />
+            </button>
           </div>
           <span className="footer-line">
             <span className="footer-heart">
@@ -270,7 +273,7 @@ export default function App() {
               onSave={(name: string, color: LionColor, accessory: string) => {
                 setPlayer((p) => ({ ...p, name, color, accessory }));
                 closePanel();
-                notify("Looking good! Your new look is saved.");
+                notify("Looking good! Your lion has a new look.");
               }}
             />
           )}

@@ -15,14 +15,19 @@ export function Dialog({
   wide?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const returnFocus = useRef<HTMLElement | null>(null);
   useEffect(() => {
     const el = ref.current;
+    if (!returnFocus.current && document.activeElement instanceof HTMLElement) {
+      returnFocus.current = document.activeElement;
+    }
     el?.showModal();
     const oldOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       el?.close();
       document.body.style.overflow = oldOverflow;
+      returnFocus.current?.focus({ preventScroll: true });
     };
   }, []);
   return (

@@ -139,8 +139,10 @@ export function Sidebar({
           })}
         </div>
         <div className="adventure-footer">
-          <span className="tiny-sparkle">✧</span> Every little adventure earns
-          50 coins.
+          <span className="tiny-sparkle" aria-hidden="true">
+            ✧
+          </span>{" "}
+          Every little adventure earns 50 coins.
         </div>
       </section>
     </aside>

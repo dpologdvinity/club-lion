@@ -6,8 +6,9 @@ colors:
   primary: "#294b3c"
   background: "#faf8f2"
   surface: "#fffdf9"
-  muted: "#728074"
+  muted: "#626f61"
   accent: "#ee964c"
+  on-accent: "#59361b"
   accent-soft: "#ffebc8"
   border: "#e9e5da"
   success: "#579371"
@@ -29,11 +30,16 @@ spacing:
   section-gap: "1.5rem"
 components:
   button:
-    borderRadius: "0.625rem"
+    rounded: "0.625rem"
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.on-accent}"
   dialog:
-    borderRadius: "1.375rem"
+    rounded: "1.375rem"
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.primary}"
   world:
-    borderRadius: "1rem"
+    rounded: "1rem"
+    backgroundColor: "{colors.surface}"
 ---
 
 # Club Lion
