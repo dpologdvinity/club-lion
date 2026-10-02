@@ -1,0 +1,356 @@
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Coffee,
+  Gamepad2,
+  Home,
+  Map,
+  MapPin,
+  PawPrint,
+  Send,
+  Shirt,
+  Smile,
+  Sparkles,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
+import { NEIGHBORS, PLACES, type PlaceId, type Player } from "../game";
+import { Lion } from "./Lion";
+
+type WorldProps = {
+  player: Player;
+  place: PlaceId;
+  navigate: (id: PlaceId) => void;
+  onMap: () => void;
+  onShop: () => void;
+  onGame: () => void;
+  onGreet: (id: string) => void;
+  notify: (message: string) => void;
+};
+
+export function World({
+  player,
+  place,
+  navigate,
+  onMap,
+  onShop,
+  onGame,
+  onGreet,
+  notify,
+}: WorldProps) {
+  const [position, setPosition] = useState({ x: 43, y: 78 });
+  const [message, setMessage] = useState("");
+  const [bubble, setBubble] = useState<{ id: string; text: string } | null>(
+    null,
+  );
+  const [emotesOpen, setEmotesOpen] = useState(false);
+  const [sound, setSound] = useState(false);
+  const audio = useRef<AudioContext | null>(null);
+  const currentPlace = PLACES.find((p) => p.id === place)!;
+
+  useEffect(() => {
+    setPosition({ x: 43, y: 78 });
+    setBubble(null);
+  }, [place]);
+  useEffect(() => {
+    if (!bubble) return;
+    const timer = window.setTimeout(() => setBubble(null), 6500);
+    return () => window.clearTimeout(timer);
+  }, [bubble]);
+  useEffect(
+    () => () => {
+      void audio.current?.close();
+    },
+    [],
+  );
+
+  const chime = () => {
+    if (!sound) return;
+    try {
+      const context = audio.current ?? new AudioContext();
+      audio.current = context;
+      void context.resume();
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(650, context.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(
+        900,
+        context.currentTime + 0.12,
+      );
+      gain.gain.setValueAtTime(0.055, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.2);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start();
+      oscillator.stop(context.currentTime + 0.2);
+    } catch {
+      setSound(false);
+    }
+  };
+
+  const walk = (x: number, y: number) => {
+    setPosition({
+      x: Math.max(12, Math.min(88, x)),
+      y: Math.max(57, Math.min(89, y)),
+    });
+    chime();
+  };
+  const keyboardWalk = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const directions: Record<string, [number, number]> = {
+      ArrowLeft: [-3, 0],
+      ArrowRight: [3, 0],
+      ArrowUp: [0, -3],
+      ArrowDown: [0, 3],
+      a: [-3, 0],
+      d: [3, 0],
+      w: [0, -3],
+      s: [0, 3],
+    };
+    const delta = directions[event.key];
+    if (delta) {
+      event.preventDefault();
+      walk(position.x + delta[0], position.y + delta[1]);
+    }
+  };
+  const say = (text: string) => {
+    const trimmed = text.trim().slice(0, 100);
+    if (!trimmed) return;
+    setBubble({ id: "you", text: trimmed });
+    setMessage("");
+    setEmotesOpen(false);
+    chime();
+  };
+  const greet = (id: string) => {
+    const neighbor = NEIGHBORS.find((n) => n.id === id)!;
+    onGreet(id);
+    setBubble({ id, text: neighbor.greeting });
+    chime();
+  };
+  const visibleNeighbors =
+    place === "den"
+      ? []
+      : place === "square"
+        ? NEIGHBORS
+        : NEIGHBORS.filter((n) =>
+            place === "cafe"
+              ? n.id === "milo"
+              : place === "arcade"
+                ? n.id === "pip"
+                : n.id === "cleo",
+          );
+
+  return (
+    <section className="world-panel" aria-label="Lion world">
+      <div className="world-heading">
+        <div className="world-location">
+          {place === "square" ? (
+            <span className="location-icon">
+              <MapPin size={17} fill="currentColor" strokeWidth={1.5} />
+            </span>
+          ) : (
+            <button
+              className="icon-button"
+              aria-label="Return to Savanna Square"
+              onClick={() => navigate("square")}
+            >
+              <ArrowLeft size={18} />
+            </button>
+          )}
+          <h2>{currentPlace.name}</h2>
+          <span className="world-local">
+            <span /> Your neighborhood
+          </span>
+        </div>
+        <div className="world-settings">
+          <button
+            className={`icon-button ${sound ? "is-active" : ""}`}
+            title={sound ? "Turn sound off" : "Turn sound on"}
+            aria-label={sound ? "Turn sound off" : "Turn sound on"}
+            aria-pressed={sound}
+            onClick={() => setSound((s) => !s)}
+          >
+            {sound ? <Volume2 size={18} /> : <VolumeX size={18} />}
+          </button>
+          <button
+            className="icon-button"
+            aria-label="World tips"
+            title="World tips"
+            onClick={() =>
+              notify(
+                "Click the ground to walk, or use arrow keys. Click a lion to say hello!",
+              )
+            }
+          >
+            <Sparkles size={18} />
+          </button>
+        </div>
+      </div>
+      <div className={`world-stage scene ${currentPlace.imageClass}`}>
+        <button
+          className="world-ground"
+          aria-label="Walk around the village. Use arrow keys or click the ground."
+          onKeyDown={keyboardWalk}
+          onClick={(e) => {
+            const box = e.currentTarget.getBoundingClientRect();
+            walk(
+              ((e.clientX - box.left) / box.width) * 100,
+              ((e.clientY - box.top) / box.height) * 100,
+            );
+          }}
+        />
+        {place === "square" && (
+          <>
+            <button
+              className="building-label cafe-label"
+              onClick={() => navigate("cafe")}
+            >
+              <Coffee size={13} /> Canopy café <ArrowUpRight size={12} />
+            </button>
+            <button className="building-label shop-label" onClick={onShop}>
+              <Shirt size={13} /> Paw & style <ArrowUpRight size={12} />
+            </button>
+          </>
+        )}
+        {place === "arcade" && (
+          <button className="room-action" onClick={onGame}>
+            <Gamepad2 size={19} /> Play Memory Safari <ArrowUpRight size={17} />
+          </button>
+        )}
+        {place === "den" && (
+          <button className="room-action" onClick={onShop}>
+            <Home size={18} /> Find something cozy <ArrowUpRight size={17} />
+          </button>
+        )}
+        {place === "cafe" && (
+          <button
+            className="room-action"
+            onClick={() => {
+              setBubble({ id: "you", text: "One mango smoothie, please! 🥭" });
+              notify("One imaginary mango smoothie, on the house!");
+            }}
+          >
+            <Coffee size={18} /> Order a mango smoothie
+          </button>
+        )}
+        {player.decor.includes("plant") && place === "den" && (
+          <span
+            className="den-decoration plant-decor"
+            aria-label="Your happy houseplant"
+          >
+            🪴
+          </span>
+        )}
+        {player.decor.includes("cushion") && place === "den" && (
+          <span
+            className="den-decoration cushion-decor"
+            aria-label="Your sunny cushion"
+          >
+            🛋️
+          </span>
+        )}
+        {visibleNeighbors.map((n) => (
+          <button
+            key={n.id}
+            className={`world-character neighbor ${bubble?.id === n.id ? "talking" : ""}`}
+            style={{ left: `${n.x}%`, top: `${n.y}%` }}
+            onClick={() => greet(n.id)}
+            aria-label={`Say hello to ${n.name}`}
+          >
+            {bubble?.id === n.id && (
+              <span className="speech-bubble">{bubble.text}</span>
+            )}
+            <Lion color={n.color} accessory={n.accessory} />
+            <span className="character-name">
+              {n.name}
+              <span className="greet-indicator"> ♡</span>
+            </span>
+          </button>
+        ))}
+        <div
+          className="world-character your-character"
+          style={{ left: `${position.x}%`, top: `${position.y}%` }}
+        >
+          {bubble?.id === "you" && (
+            <span className="speech-bubble">{bubble.text}</span>
+          )}
+          <Lion color={player.color} accessory={player.accessory} />
+          <span className="character-name your-name">
+            {player.name}
+            <span className="you-tag"> you</span>
+          </span>
+        </div>
+        <span className="walk-hint">
+          <span>✧</span> Click anywhere to wander <span>✧</span>
+        </span>
+        <div className="scene-vignette" />
+      </div>
+      <div className="chat-toolbar">
+        <div className="emote-anchor">
+          <button
+            className="icon-button emote-toggle"
+            aria-label="Choose an emote"
+            aria-expanded={emotesOpen}
+            onClick={() => setEmotesOpen((o) => !o)}
+          >
+            <Smile size={23} />
+          </button>
+          {emotesOpen && (
+            <div className="emote-popover" aria-label="Emotes">
+              {["👋", "❤️", "☀️", "🌼", "🎉", "🦁"].map((emoji) => (
+                <button
+                  key={emoji}
+                  aria-label={`Send ${emoji} emote`}
+                  onClick={() => say(emoji)}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <form
+          className="chat-form"
+          noValidate
+          onSubmit={(e) => {
+            e.preventDefault();
+            say(message);
+          }}
+        >
+          <label className="sr-only" htmlFor="chat-message">
+            Say something in your local neighborhood
+          </label>
+          <input
+            id="chat-message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            maxLength={100}
+            placeholder="Say hello to the pride…"
+            autoComplete="off"
+          />
+          <button
+            className="send-button"
+            type="submit"
+            aria-label="Send message"
+            disabled={!message.trim()}
+          >
+            <Send size={20} />
+          </button>
+        </form>
+        <button
+          className="icon-button paw-button"
+          aria-label="Wave to the pride"
+          title="Wave to the pride"
+          onClick={() => say("Hey, pride! 👋")}
+        >
+          <PawPrint size={22} fill="currentColor" />
+        </button>
+        <button className="map-button" onClick={onMap}>
+          <Map size={19} fill="currentColor" strokeWidth={1.5} />
+          <span>Map</span>
+        </button>
+      </div>
+    </section>
+  );
+}
