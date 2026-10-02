@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/styles.css"
+        ],
+        "createdAt": "2026-10-02T05:56:00.847Z",
+        "reason": "Codex decided: the flagged inset box-shadow in .accessory-hat i shades the right edge of the code-drawn explorer hat; it is character artwork, not a card accent"
+      }
+    ]
+  }
+}

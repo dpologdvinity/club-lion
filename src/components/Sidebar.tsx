@@ -125,7 +125,7 @@ export function Sidebar({
                     <div className="adventure-progress">
                       <span className="progress-track">
                         <span
-                          style={{ width: `${(progress / total) * 100}%` }}
+                          style={{ transform: `scaleX(${progress / total})` }}
                         />
                       </span>
                       <span>
