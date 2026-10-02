@@ -1,0 +1,30 @@
+{
+  "name": "club-lion",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test --test-isolation=none src/game.test.ts",
+    "format:check": "prettier --check src index.html vite.config.ts DESIGN.md UX-CONTRACT.md README.md",
+    "format": "prettier --write src index.html vite.config.ts DESIGN.md UX-CONTRACT.md README.md"
+  },
+  "dependencies": {
+    "lucide-react": "0.445.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "overrides": { "node-releases": "2.0.54", "electron-to-chromium": "1.5.420", "browserslist": "4.28.8", "baseline-browser-mapping": "2.11.20" },
+  "devDependencies": {
+    "@types/node": "https://registry.npmjs.org/@types/node/-/node-26.6.2.tgz",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "4.7.0",
+    "prettier": "3.9.9",
+    "typescript": "~5.9.3",
+    "vite": "5.4.21"
+  }
+}
