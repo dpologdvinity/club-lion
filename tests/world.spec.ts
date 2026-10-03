@@ -150,6 +150,29 @@ test("Memory Safari can be completed and awards exactly 60 coins", async ({
   await expect(page.locator(".wallet")).toHaveText("✦360");
 });
 
+test("Mango Run can be started, steered, and closed", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Memory Safari" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Mango Run" })).toBeVisible();
+  await page.getByRole("button", { name: "Play Mango Run" }).click();
+  await expect(page.getByText("Three lives.")).toBeVisible();
+  await page.getByRole("button", { name: "Let’s run" }).click();
+
+  const field = page.getByRole("group", { name: /Mango Run trail/ });
+  await expect(field).toBeFocused();
+  const lion = page.locator(".mr-lion");
+  const before = await lion.getAttribute("style");
+  await page.keyboard.down("ArrowDown");
+  await expect(lion).not.toHaveAttribute("style", before!);
+  await page.keyboard.up("ArrowDown");
+
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
 test("the main world and dialogs have no WCAG AA accessibility violations", async ({
   page,
 }) => {
