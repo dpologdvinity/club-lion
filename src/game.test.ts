@@ -12,8 +12,10 @@ import {
   completeBeeStop,
   completePawSteps,
   completeFruitCatch,
+  migratePlayerSave,
   SHOP_ITEMS,
 } from "./game.ts";
+import { DEFAULT_AVATAR_LOOK, DEFAULT_PET_STATE } from "./types/world.ts";
 
 test("a corrupt save safely starts a fresh adventure", () => {
   assert.deepEqual(restorePlayer("broken json"), newPlayer());
@@ -262,4 +264,71 @@ test("arcade saves preserve both game records and migrate each older format", ()
   assert.equal(fromBee.beeStopBest, 700);
   assert.equal(fromBee.fruitCatchBest, 0);
   assert.equal(fromBee.gamesPlayed, 2);
+});
+
+test("migratePlayerSave cleanly upgrades v1 save to v2 without losing coins or items", () => {
+  const v1 = {
+    ...newPlayer(),
+    name: "Roary",
+    coins: 999,
+    owned: ["scarf", "hat", "plant"],
+    accessory: "hat",
+    decor: ["plant"],
+    visited: ["square", "den"],
+    met: ["milo"],
+    gamesPlayed: 12,
+    beeStopBest: 700,
+    pawStepsBest: 20,
+    fruitCatchBest: 80,
+    claimed: ["home"],
+  };
+  const v2 = migratePlayerSave(v1);
+  assert.equal(v2.version, 2);
+  assert.equal(v2.coins, 999);
+  assert.deepEqual(v2.owned, ["scarf", "hat", "plant"]);
+  assert.equal(v2.accessory, "hat");
+  assert.deepEqual(v2.decor, ["plant"]);
+  assert.deepEqual(v2.visited, ["square", "den"]);
+  assert.deepEqual(v2.met, ["milo"]);
+  assert.equal(v2.gamesPlayed, 12);
+  assert.equal(v2.beeStopBest, 700);
+  assert.equal(v2.pawStepsBest, 20);
+  assert.equal(v2.fruitCatchBest, 80);
+  assert.deepEqual(v2.claimed, ["home"]);
+  assert.deepEqual(v2.look, DEFAULT_AVATAR_LOOK);
+  assert.deepEqual(v2.pet, DEFAULT_PET_STATE);
+  assert.equal(typeof v2.starRank, "number");
+  assert.ok(v2.starRank >= 1);
+  assert.equal(typeof v2.moodQuote, "string");
+  assert.ok(v2.moodQuote.length > 0);
+});
+
+test("migratePlayerSave keeps an existing look and pet instead of overwriting them", () => {
+  const customLook = { ...DEFAULT_AVATAR_LOOK, hairColor: "#000000" };
+  const customPet = { ...DEFAULT_PET_STATE, name: "Biscuit" };
+  const v1 = { ...newPlayer(), look: customLook, pet: customPet };
+  const v2 = migratePlayerSave(v1);
+  assert.deepEqual(v2.look, customLook);
+  assert.deepEqual(v2.pet, customPet);
+});
+
+test("migratePlayerSave computes a higher starRank for more games played and coins earned", () => {
+  const low = migratePlayerSave({ ...newPlayer(), gamesPlayed: 0, coins: 0 });
+  const high = migratePlayerSave({
+    ...newPlayer(),
+    gamesPlayed: 50,
+    coins: 5000,
+  });
+  assert.ok(high.starRank > low.starRank);
+});
+
+test("migratePlayerSave falls back cleanly to a default v2 player for corrupt saves", () => {
+  const fallback = migratePlayerSave(newPlayer());
+  assert.deepEqual(migratePlayerSave("not an object"), fallback);
+  assert.deepEqual(migratePlayerSave(null), fallback);
+  assert.deepEqual(
+    migratePlayerSave({ coins: -900, owned: ["admin"] }),
+    fallback,
+  );
+  assert.equal(fallback.version, 2);
 });

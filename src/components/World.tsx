@@ -15,11 +15,11 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import { NEIGHBORS, PLACES, type PlaceId, type Player } from "../game";
+import { NEIGHBORS, PLACES, type PlaceId, type PlayerV2 } from "../game";
 import { Lion } from "./Lion";
 
 type WorldProps = {
-  player: Player;
+  player: PlayerV2;
   place: PlaceId;
   navigate: (id: PlaceId) => void;
   onMap: () => void;

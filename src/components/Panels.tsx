@@ -14,7 +14,7 @@ import {
   SHOP_ITEMS,
   type LionColor,
   type PlaceId,
-  type Player,
+  type PlayerV2,
 } from "../game";
 import { Coin, Lion } from "./Lion";
 
@@ -62,7 +62,7 @@ export function Wardrobe({
   player,
   onSave,
 }: {
-  player: Player;
+  player: PlayerV2;
   onSave: (name: string, color: LionColor, accessory: string) => void;
 }) {
   const [name, setName] = useState(player.name);
@@ -192,7 +192,7 @@ export function Shop({
   onBuy,
   onEquip,
 }: {
-  player: Player;
+  player: PlayerV2;
   onBuy: (id: string) => void;
   onEquip: (id: string) => void;
 }) {
