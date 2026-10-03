@@ -13,6 +13,7 @@ import {
   buyItem,
   claimReward,
   completeGame,
+  completeMangoRun,
   meetLion,
   PLACES,
   SHOP_ITEMS,
@@ -26,8 +27,16 @@ import { Coin, Lion } from "./components/Lion";
 import { Dialog } from "./components/Dialog";
 import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
-import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
+import {
+  GamesPicker,
+  Help,
+  Shop,
+  Wardrobe,
+  WorldMap,
+  type GameId,
+} from "./components/Panels";
 import { MemorySafari } from "./components/MemorySafari";
+import { MangoRun } from "./components/MangoRun";
 
 type Panel = "map" | "style" | "shop" | "games" | "help" | null;
 
@@ -35,6 +44,7 @@ export default function App() {
   const { player, setPlayer, saveError } = usePlayer();
   const [place, setPlace] = useState<PlaceId>("square");
   const [panel, setPanel] = useState<Panel>(null);
+  const [activeGame, setActiveGame] = useState<GameId | null>(null);
   const [toast, setToast] = useState("");
   useEffect(() => {
     if (!toast) return;
@@ -42,6 +52,14 @@ export default function App() {
     return () => window.clearTimeout(id);
   }, [toast]);
   const notify = (message: string) => setToast(message);
+  const openGames = () => {
+    setActiveGame(null);
+    setPanel("games");
+  };
+  const closePanel = () => {
+    setActiveGame(null);
+    setPanel(null);
+  };
   const navigate = (destination: PlaceId) => {
     setPlace(destination);
     setPlayer((p) => visitPlace(p, destination));
@@ -54,10 +72,9 @@ export default function App() {
     } else if (id === "game") {
       setPlace("arcade");
       setPlayer((p) => visitPlace(p, "arcade"));
-      setPanel("games");
+      openGames();
     } else navigate("den");
   };
-  const closePanel = () => setPanel(null);
   const titles = {
     map: ["A whole little world", "Where will your paws take you next?"],
     style: [
@@ -106,7 +123,7 @@ export default function App() {
             </button>
             <button
               className={panel === "games" ? "selected" : ""}
-              onClick={() => setPanel("games")}
+              onClick={openGames}
             >
               Games
             </button>
@@ -177,7 +194,7 @@ export default function App() {
             navigate={navigate}
             onMap={() => setPanel("map")}
             onShop={() => setPanel("shop")}
-            onGame={() => setPanel("games")}
+            onGame={openGames}
             onGreet={(id) => setPlayer((p) => meetLion(p, id))}
             notify={notify}
           />
@@ -293,10 +310,22 @@ export default function App() {
               }}
             />
           )}
-          {panel === "games" && (
+          {panel === "games" && !activeGame && (
+            <GamesPicker onSelect={setActiveGame} />
+          )}
+          {panel === "games" && activeGame === "memory" && (
             <MemorySafari
               onFinish={(pairs) => {
                 setPlayer((p) => completeGame(p, pairs));
+              }}
+              onClose={closePanel}
+            />
+          )}
+          {panel === "games" && activeGame === "mango" && (
+            <MangoRun
+              best={player.mangoRunBest ?? 0}
+              onFinish={(score) => {
+                setPlayer((p) => completeMangoRun(p, score));
               }}
               onClose={closePanel}
             />

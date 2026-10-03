@@ -1762,6 +1762,60 @@ svg {
   margin-top: 22px;
   line-height: 1.5;
 }
+.games-picker {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.game-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.game-card-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 130px;
+  background: #f0eddd;
+  border: 1px solid #ebe6d7;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.game-card-art-icons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 34px;
+}
+.game-card-art.art-mango {
+  background: #f6ead1;
+}
+.game-card-art.art-mango .game-card-art-icons {
+  font-size: 42px;
+}
+.game-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+.game-card > p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.game-card .game-features {
+  justify-content: flex-start;
+  margin: 14px 0 16px;
+  gap: 16px;
+}
+.game-card .button {
+  margin-top: auto;
+  font-size: 13px;
+  padding: 12px 20px;
+}
 .game-intro {
   text-align: center;
   padding: 4px 0 17px;
@@ -2701,6 +2755,29 @@ svg {
   }
   .game-illustration {
     height: 120px;
+  }
+  .games-picker {
+    gap: 15px 12px;
+  }
+  .game-card-art {
+    height: 105px;
+  }
+  .game-card-art-icons {
+    gap: 8px;
+    font-size: 27px;
+  }
+  .game-card-art.art-mango .game-card-art-icons {
+    font-size: 33px;
+  }
+  .game-card h3 {
+    font-size: 16px;
+  }
+  .game-card > p {
+    font-size: 10px;
+  }
+  .game-card .game-features {
+    gap: 11px;
+    font-size: 10px;
   }
   .game-intro h3 {
     font-size: 25px;
