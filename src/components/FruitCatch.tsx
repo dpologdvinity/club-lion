@@ -58,6 +58,7 @@ export function FruitCatch({
   const totalsRef = useRef({ caught: 0, hits: 0 });
   const livesRef = useRef(3);
   const doneRef = useRef(false);
+  const bestAtStart = useRef(best);
   const finishRef = useRef(onFinish);
   finishRef.current = onFinish;
 
@@ -125,7 +126,8 @@ export function FruitCatch({
       fruitsRef.current = next;
       setFruits(next);
       if (livesRef.current <= 0) {
-        window.setTimeout(() => finish(now - spawnRef.current), 0);
+        finish(elapsed);
+        return;
       }
       frameRef.current = window.requestAnimationFrame(tick);
     };
@@ -159,6 +161,7 @@ export function FruitCatch({
   }, [playing]);
 
   const start = () => {
+    bestAtStart.current = best;
     totalsRef.current = { caught: 0, hits: 0 };
     livesRef.current = 3;
     doneRef.current = false;
@@ -199,7 +202,7 @@ export function FruitCatch({
         <div className="fruit-instructions">
           <span>← → or A / D to move</span>
           <span>🍏 ripe = +10 points</span>
-          <span>🍌 rotten = lose a heart</span>
+          <span>🤢 rotten = lose a heart</span>
         </div>
         {best > 0 && (
           <p className="fruit-best">
@@ -229,7 +232,7 @@ export function FruitCatch({
           <span>points</span>
         </div>
         <p className="fruit-best">
-          {result.score > best
+          {result.score > bestAtStart.current
             ? "A new personal best! 🏆"
             : `Personal best: ${Math.max(best, result.score)}`}
         </p>
