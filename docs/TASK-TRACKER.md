@@ -46,7 +46,7 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.m
 | **Task 5** | Le Shop Catalog Secrets & Stella's Salon | `feat/phase-1-catalog-salon` | **claude-sonnet-5 (claude code)** | `5b18953` | ✅ 39/39 tests, build clean |
 | **Task 6** | Quick-Chat Action Wheel & Mango Ballistics | `feat/phase-1-actions-ballistics` | **gpt-6.1-sol (codex)** | `90eb40b` | ✅ 41/41 tests, strict types clean |
 | **Task 7** | Fantage ID Card & V1-to-V2 Save Migration | `feat/phase-1-player-id-card` | **claude-sonnet-5 (claude code)** | `7f90c00` | ✅ 40/40 tests, build clean |
-| **Task 8** | Phase 1 Integration, Full Assembly & E2E Verification | `feat/phase-1-avatar-pet-downtown` | **gemini-3.8-flash (antigravity)** | *Next* | ⏳ Ready to merge & integrate |
+| **Task 8** | Phase 1 Integration, Full Assembly & E2E Verification | `feat/phase-1-avatar-pet-downtown` | **gemini-3.8-flash (antigravity)** | `af62b72` | ✅ 76/76 unit tests, 70/70 E2E tests, build clean |
 
 ---
 
