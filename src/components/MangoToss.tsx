@@ -115,6 +115,7 @@ export function MangoToss({
   return (
     <canvas
       ref={canvasRef}
+      className="mango-toss"
       aria-hidden="true"
       style={{
         position: "absolute",

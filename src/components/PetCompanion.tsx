@@ -1,14 +1,14 @@
 import type { JSX } from "react";
-import type { PetState } from "../utils/petFollower";
+import type { PetState } from "../types/world.ts";
 
-const COLOR_FUR: Record<PetState["color"], string> = {
+const COLOR_FUR: Record<string, string> = {
   gold: "#E8A93C",
   sand: "#DDC29A",
   copper: "#C4713B",
   rose: "#E6A3A3",
 };
 
-const COLOR_MANE: Record<PetState["color"], string> = {
+const COLOR_MANE: Record<string, string> = {
   gold: "#B8762A",
   sand: "#B89968",
   copper: "#8F4D26",
@@ -24,8 +24,8 @@ export function PetCompanion({
   isTrotting: boolean;
   heading?: "left" | "right";
 }): JSX.Element {
-  const fur = COLOR_FUR[pet.color];
-  const mane = COLOR_MANE[pet.color];
+  const fur = COLOR_FUR[pet.color] ?? COLOR_FUR.gold;
+  const mane = COLOR_MANE[pet.color] ?? COLOR_MANE.gold;
   const flip = heading === "left";
 
   return (
@@ -35,7 +35,7 @@ export function PetCompanion({
       height="40"
       role="img"
       aria-label={`${pet.name} the pet lion`}
-      className={`pet-companion pet-companion-${pet.color}${isTrotting ? " is-trotting" : " is-resting"}`}
+      className={`pet-companion pet-companion-${pet.color} lion lion-${pet.color}${isTrotting ? " is-trotting" : " is-resting"}`}
       style={{ transform: flip ? "scaleX(-1)" : undefined }}
     >
       {/* tail */}
@@ -75,10 +75,49 @@ export function PetCompanion({
         <path
           d="M 10 36 Q 18 40 26 36 L 26 40 Q 18 44 10 40 Z"
           fill="#D1495B"
+          className="lion-accessory accessory-scarf"
         />
       )}
       {pet.accessory === "bandana" && (
-        <path d="M 9 26 L 27 26 L 18 33 Z" fill="#3C6E71" />
+        <path
+          d="M 9 26 L 27 26 L 18 33 Z"
+          fill="#3C6E71"
+          className="lion-accessory accessory-bandana"
+        />
+      )}
+      {pet.accessory === "hat" && (
+        <g className="lion-accessory accessory-hat">
+          <ellipse cx="18" cy="18" rx="10" ry="3" fill="#8F4D26" />
+          <path d="M 12 18 C 12 11, 24 11, 24 18 Z" fill="#DDC29A" />
+        </g>
+      )}
+      {pet.accessory === "glasses" && (
+        <g className="lion-accessory accessory-glasses">
+          <circle
+            cx="14"
+            cy="29"
+            r="3.5"
+            fill="none"
+            stroke="#222"
+            strokeWidth="1.2"
+          />
+          <circle
+            cx="20"
+            cy="29"
+            r="3.5"
+            fill="none"
+            stroke="#222"
+            strokeWidth="1.2"
+          />
+          <line
+            x1="17.5"
+            y1="29"
+            x2="16.5"
+            y2="29"
+            stroke="#222"
+            strokeWidth="1.2"
+          />
+        </g>
       )}
       {pet.accessory === "bell_collar" && (
         <>
@@ -95,7 +134,10 @@ export function PetCompanion({
         </>
       )}
       {pet.accessory === "flower" && (
-        <g transform="translate(26 20)">
+        <g
+          transform="translate(26 20)"
+          className="lion-accessory accessory-flower"
+        >
           <circle cx="0" cy="-3" r="2" fill="#F6BD60" />
           <circle cx="2.8" cy="-1" r="2" fill="#F28482" />
           <circle cx="1.8" cy="2" r="2" fill="#F28482" />

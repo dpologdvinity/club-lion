@@ -462,7 +462,9 @@ export function unlockSecretCatalogItem<T extends PlayerBase>(
   secretId: string,
 ): T {
   const item = CATALOG_ITEMS.find(
-    (item) => item.isSecret && item.id === secretId,
+    (item) =>
+      item.isSecret &&
+      (item.id === secretId || item.secretTriggerId === secretId),
   );
   if (!item || player.owned.includes(item.id)) return player;
   return { ...player, owned: [...player.owned, item.id] } as T;

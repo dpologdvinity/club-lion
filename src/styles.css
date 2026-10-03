@@ -2975,16 +2975,25 @@ svg {
   .main-nav {
     order: 3;
     width: 100%;
-    justify-content: space-between;
-    gap: 8px;
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 6px;
     padding: 7px 0 11px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .main-nav::-webkit-scrollbar {
+    display: none;
   }
   .main-nav button {
-    flex: 1;
+    flex: 0 0 auto;
     min-height: 36px;
     font-size: 12px;
-    padding: 8px 10px;
+    padding: 8px 11px;
     border-radius: 11px;
+    white-space: nowrap;
   }
   .page-container {
     padding: 0 14px;
@@ -3558,6 +3567,302 @@ svg {
     opacity: 1;
     transform: scale(1.15);
   }
+}
+
+/* -------------------------------------------------------------
+ * Phase 1 Styles: Pet Companion, Player Card, Catalog, Salon
+ * ------------------------------------------------------------- */
+.avatar-with-companion {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  position: relative;
+}
+
+.pet-companion {
+  overflow: visible;
+  transition: transform 0.15s ease-out;
+}
+
+.pet-companion.is-trotting {
+  animation: pet-trot-bounce 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes pet-trot-bounce {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-4px);
+  }
+}
+
+.player-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.player-card-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-card-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.player-card-pet {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.player-card-pet-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.player-card-hearts {
+  display: flex;
+  gap: 4px;
+  color: #ff6b81;
+}
+
+.player-card-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(241, 196, 15, 0.12);
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.player-card-level {
+  font-weight: 700;
+  color: #d35400;
+}
+
+.player-card-stars {
+  display: flex;
+  gap: 4px;
+  color: #f39c12;
+}
+
+.player-card-mood {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.player-card-mood input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.player-card-ribbons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ribbon-medal {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.ribbon-medal.earned {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.ribbon-medal.locked {
+  background: #f5f5f5;
+  color: #9e9e9e;
+  border: 1px dashed #bdbdbd;
+}
+
+/* Catalog Modal */
+.catalog {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.catalog-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.catalog-tabs button {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border, #ddd);
+  background: white;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.catalog-tabs button.selected {
+  background: #27ae60;
+  color: white;
+  border-color: #27ae60;
+}
+
+.catalog-page {
+  position: relative;
+}
+
+.catalog-secret-hotspots {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.catalog-hotspot {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.35;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+  padding: 4px;
+}
+
+.catalog-hotspot:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+.catalog-item {
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: white;
+}
+
+.catalog-item h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.catalog-item-slot {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.owned-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #27ae60;
+  font-weight: 600;
+}
+
+/* Salon Modal */
+.salon {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.salon fieldset {
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.salon legend {
+  font-weight: 600;
+  padding: 0 6px;
+}
+
+.salon-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.salon-options button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border, #ddd);
+  background: white;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.salon-options button.selected {
+  background: #8e44ad;
+  color: white;
+  border-color: #8e44ad;
+}
+
+.color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.color-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.color-option span {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  border: 2px solid transparent;
+}
+
+.color-option.selected span {
+  border-color: #2c3e50;
+  box-shadow: 0 0 0 2px #fff;
 }
 
 @media (prefers-reduced-motion: reduce) {

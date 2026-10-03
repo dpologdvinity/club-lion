@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Check, Coffee, Leaf, Star } from "lucide-react";
 import { Dialog } from "./Dialog";
 import { Coin } from "./Lion";
-import { CATALOG_ITEMS, type EquipSlot, type Player } from "../game";
+import { CATALOG_ITEMS, type EquipSlot, type PlayerBase } from "../game";
 
 const SLOT_TABS: { id: EquipSlot; label: string }[] = [
   { id: "top_outer", label: "Tops" },
@@ -39,7 +39,7 @@ export function CatalogModal({
   onEquip,
   onUnlockSecret,
 }: {
-  player: Player;
+  player: PlayerBase;
   onClose: () => void;
   onBuy: (id: string) => void;
   onEquip: (id: string, slot: EquipSlot) => void;

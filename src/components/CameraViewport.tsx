@@ -64,10 +64,7 @@ export function CameraViewport({
         aria-label={`Walk around ${manifest.name}. Click or tap to move.`}
         onClick={(e) => {
           const box = e.currentTarget.getBoundingClientRect();
-          onWalk(
-            e.clientX - box.left + cameraOffset,
-            e.clientY - box.top,
-          );
+          onWalk(e.clientX - box.left + cameraOffset, e.clientY - box.top);
         }}
         style={{
           width: manifest.stageWidth,

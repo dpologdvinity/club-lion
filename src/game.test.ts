@@ -274,6 +274,13 @@ test("unlocking a secret catalog item adds it to owned items", () => {
   assert.equal(unlocked.coins, player.coins);
 });
 
+test("unlocking a secret catalog item via its trigger id adds it to owned items", () => {
+  const player = newPlayer();
+  const unlocked = unlockSecretCatalogItem(player, "coffee_steam");
+  assert.ok(unlocked.owned.includes("barista_apron"));
+  assert.equal(unlocked.coins, player.coins);
+});
+
 test("unlocking the same secret item twice does not duplicate it", () => {
   const player = newPlayer();
   const once = unlockSecretCatalogItem(player, "retro_neon_visor");
