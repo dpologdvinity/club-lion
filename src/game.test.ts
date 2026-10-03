@@ -8,6 +8,7 @@ import {
   meetLion,
   claimReward,
   completeGame,
+  completeFruitCatch,
   SHOP_ITEMS,
 } from "./game.ts";
 
@@ -61,4 +62,19 @@ test("save round trips preserve valid progress and reject invalid character choi
     restorePlayer(JSON.stringify({ ...player, color: "invisible" })).color,
     "gold",
   );
+});
+
+test("Fruit Catch awards caught fruit, tracks a best score, and restores older saves", () => {
+  const first = completeFruitCatch(newPlayer(), 8, 2, 80);
+  assert.equal(first.coins, 266);
+  assert.equal(first.gamesPlayed, 1);
+  assert.equal(first.fruitCatchBest, 80);
+  assert.deepEqual(completeFruitCatch(first, 2, 0, 20), {
+    ...first,
+    coins: 270,
+    gamesPlayed: 2,
+  });
+  assert.deepEqual(completeFruitCatch(first, 4, 0, 99), first);
+  const { fruitCatchBest: _, ...olderSave } = newPlayer();
+  assert.equal(restorePlayer(JSON.stringify(olderSave)).fruitCatchBest, 0);
 });
