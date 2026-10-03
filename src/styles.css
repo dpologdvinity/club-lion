@@ -3476,8 +3476,10 @@ svg {
   animation: avatar-walk-bob 0.45s ease-in-out infinite alternate;
 }
 
-.chibi-avatar.action-wave .avatar-right-arm {
-  transform-origin: 32px 72px;
+.chibi-avatar.action-wave .avatar-right-arm,
+.chibi-avatar.action-wave .avatar-right-sleeve,
+.chibi-avatar.action-wave .avatar-handheld {
+  transform-origin: 48px 73px;
   animation: avatar-arm-wave 0.75s ease-in-out infinite alternate;
 }
 

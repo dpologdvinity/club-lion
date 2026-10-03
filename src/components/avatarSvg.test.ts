@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { generateAvatarSvgString, SKIN_TONE_COLORS } from "./avatarSvg.ts";
+import {
+  generateAvatarSvgString,
+  SKIN_TONE_COLORS,
+  ANCHORS,
+} from "./avatarSvg.ts";
 import { DEFAULT_AVATAR_LOOK, type AvatarLook } from "../types/world.ts";
 
 test("generateAvatarSvgString outputs stacked SVG layers in correct order", () => {
@@ -140,6 +144,17 @@ test("uses standard 120x160 canvas coordinates and fixed anchor points", () => {
   assert.ok(svg.includes('viewBox="0 0 120 160"'));
   assert.ok(svg.includes('width="120"'));
   assert.ok(svg.includes('height="160"'));
+
+  assert.equal(ANCHORS.HeadCenter.x, 60);
+  assert.equal(ANCHORS.HeadCenter.y, 38);
+  assert.equal(ANCHORS.Neck.x, 60);
+  assert.equal(ANCHORS.Neck.y, 68);
+  assert.equal(ANCHORS.Waist.x, 60);
+  assert.equal(ANCHORS.Waist.y, 98);
+  assert.equal(ANCHORS.HandRight.x, 32);
+  assert.equal(ANCHORS.HandRight.y, 92);
+  assert.equal(ANCHORS.Feet.x, 60);
+  assert.equal(ANCHORS.Feet.y, 142);
 });
 
 test("applies action classes and poses for idle, walk, wave, dance, sit, and jam", () => {
@@ -150,4 +165,10 @@ test("applies action classes and poses for idle, walk, wave, dance, sit, and jam
       `Should include action-${action} class`,
     );
   }
+});
+
+test("wave action dynamically raises sleeve and arm together", () => {
+  const svg = generateAvatarSvgString(DEFAULT_AVATAR_LOOK, "wave");
+  assert.ok(svg.includes("avatar-right-sleeve"));
+  assert.ok(svg.includes("arm-wave"));
 });

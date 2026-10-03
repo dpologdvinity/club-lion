@@ -109,7 +109,7 @@ function renderLayer0ShadowAndBoard(look: AvatarLook, action: string): string {
  * Layer 1: Hair Back
  * ------------------------------------------------------------- */
 function renderLayer1HairBack(look: AvatarLook): string {
-  const hairColor = look.hairColor || "#4a3728";
+  const hairColor = escapeXml(look.hairColor || "#4a3728");
   const hairId = look.hairId || "classic_shag";
 
   if (hairId === "long_waves") {
@@ -321,10 +321,15 @@ function renderLayer4Footwear(look: AvatarLook): string {
 /* -------------------------------------------------------------
  * Layer 5: Outfit (Waist at 60, 98, Neck at 60, 68)
  * ------------------------------------------------------------- */
-function renderLayer5Outfit(look: AvatarLook): string {
+function renderLayer5Outfit(look: AvatarLook, action: string = "idle"): string {
   const outfitId = look.outfitId || "denim_jacket";
+  const isWaving = action === "wave";
 
   if (outfitId === "striped_tee") {
+    const rightSleeve = isWaving
+      ? `<path class="avatar-right-sleeve" d="M48 72 Q38 63 35 55" stroke="#ffffff" stroke-width="7" stroke-linecap="round" fill="none" />`
+      : `<path class="avatar-right-sleeve" d="M46 70 L40 78 L44 82 L48 74 Z" fill="#ffffff" />`;
+
     return (
       `<g class="avatar-outfit outfit-striped-tee">` +
       // Pants
@@ -336,7 +341,7 @@ function renderLayer5Outfit(look: AvatarLook): string {
       `<rect x="47" y="88" width="26" height="3" fill="#2980b9" />` +
       `<rect x="47" y="95" width="26" height="3" fill="#2980b9" />` +
       // Sleeves
-      `<path d="M46 70 L40 78 L44 82 L48 74 Z" fill="#ffffff" />` +
+      rightSleeve +
       `<path d="M74 70 L80 78 L76 82 L72 74 Z" fill="#ffffff" />` +
       `</g>`
     );
@@ -375,6 +380,10 @@ function renderLayer5Outfit(look: AvatarLook): string {
   }
 
   // Default: denim_jacket
+  const rightJacketSleeve = isWaving
+    ? `<path class="avatar-right-sleeve" d="M48 72 Q38 63 35 55" stroke="#2980b9" stroke-width="8" stroke-linecap="round" fill="none" />`
+    : `<path class="avatar-right-sleeve" d="M46 70 L38 84 L43 86 L49 75 Z" fill="#2980b9" />`;
+
   return (
     `<g class="avatar-outfit outfit-denim-jacket">` +
     // Pants (under jacket)
@@ -391,7 +400,7 @@ function renderLayer5Outfit(look: AvatarLook): string {
     // Denim collar lapels
     `<path d="M50 68 L56 75 L60 69 L64 75 L70 68 Z" fill="#1f618d" />` +
     // Sleeves
-    `<path d="M46 70 L38 84 L43 86 L49 75 Z" fill="#2980b9" />` +
+    rightJacketSleeve +
     `<path d="M74 70 L82 84 L77 86 L71 75 Z" fill="#2980b9" />` +
     `</g>`
   );
@@ -401,7 +410,7 @@ function renderLayer5Outfit(look: AvatarLook): string {
  * Layer 6: Hair Front (Anchor_HeadCenter at 60, 38)
  * ------------------------------------------------------------- */
 function renderLayer6HairFront(look: AvatarLook): string {
-  const hairColor = look.hairColor || "#4a3728";
+  const hairColor = escapeXml(look.hairColor || "#4a3728");
   const hairId = look.hairId || "classic_shag";
 
   // Stylized anime highlight sheen / streaks
@@ -593,7 +602,10 @@ export function generateAvatarLayersString(
   const layer2 = renderLayer2BodyBase(look, action);
   const layer3 = renderLayer3AnimeFace(look);
   const layer4 = renderLayer4Footwear(look);
-  const layer5 = renderLayer5Outfit(look);
+  const layer5 = renderLayer5Outfit(
+    look,
+    typeof action === "string" ? action : "idle",
+  );
   const layer6 = renderLayer6HairFront(look);
   const layer7 = renderLayer7HeadwearAndEyewear(look);
   const layer8 = renderLayer8Handheld(look, action);
