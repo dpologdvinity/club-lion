@@ -1901,6 +1901,83 @@ svg {
   justify-content: center;
   gap: 9px;
 }
+.mango-run {
+  max-width: 480px;
+  margin: 0 auto;
+}
+.mr-hud {
+  background: var(--green-soft);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 9px 13px;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.mr-lives {
+  gap: 3px;
+}
+.mr-heart {
+  color: var(--danger);
+}
+.mr-heart[fill="none"] {
+  color: #c2c7b6;
+}
+.mr-playfield {
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  container-type: inline-size;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background:
+    repeating-linear-gradient(90deg, #ffffff59 0 26px, #8a6a3212 26px 52px),
+    linear-gradient(180deg, #f8e9c8, #efd9a8);
+  box-shadow: inset 0 0 0 5px #fbf1da;
+}
+.mr-playfield:focus-visible {
+  outline: 3px solid #467b61;
+  outline-offset: 4px;
+}
+.mr-lion,
+.mr-mango,
+.mr-obstacle {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+}
+.mr-lion {
+  z-index: 3;
+}
+.mr-lion .lion {
+  filter: drop-shadow(0 2px 3px #14251740);
+}
+.mr-mango {
+  z-index: 2;
+  font-size: 5.2cqw;
+}
+.mr-obstacle {
+  z-index: 1;
+  font-size: 6cqw;
+}
+.mr-invuln {
+  animation: mr-invuln-flash 500ms ease-in-out;
+}
+.mr-reduced .mr-invuln {
+  animation: none;
+}
+@keyframes mr-invuln-flash {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
 .help-welcome {
   display: flex;
   align-items: center;
@@ -2639,6 +2716,11 @@ svg {
   }
   .game-win-actions {
     flex-direction: column;
+  }
+  .mr-hud {
+    padding: 8px 11px;
+    gap: 7px;
+    font-size: 11px;
   }
   .game-features {
     gap: 12px;
