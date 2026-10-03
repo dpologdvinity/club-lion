@@ -1,4 +1,9 @@
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
+import {
+  coinsForScore,
+  DJ_BEAT_COUNT,
+  DJ_MAX_SCORE,
+} from "./utils/rhythmEngine.ts";
 import type { AvatarLook, PetState } from "./types/world.ts";
 import {
   DEFAULT_AVATAR_LOOK,
@@ -28,6 +33,7 @@ export type PlayerBase = {
   claimed: AdventureId[];
   decor: string[];
   mangoRunBest?: number;
+  djBeatDropBest?: number;
 };
 
 export type Player = PlayerBase & {
@@ -273,6 +279,13 @@ export function restorePlayer(raw: string | null): Player {
         : Number.isSafeInteger(p.mangoRunBest) && p.mangoRunBest >= 0
           ? { mangoRunBest: p.mangoRunBest as number }
           : {}),
+      ...(p.djBeatDropBest === undefined
+        ? {}
+        : Number.isSafeInteger(p.djBeatDropBest) &&
+            p.djBeatDropBest >= 0 &&
+            p.djBeatDropBest <= DJ_MAX_SCORE
+          ? { djBeatDropBest: p.djBeatDropBest as number }
+          : {}),
     };
   } catch {
     return newPlayer();
@@ -492,5 +505,29 @@ export function completeFruitCatch<T extends PlayerBase>(
     coins: player.coins + caught * 2,
     gamesPlayed: newGamesPlayed,
     fruitCatchBest: newBest,
+  } as T;
+}
+
+export function completeDJBeatDrop<T extends PlayerBase>(
+  player: T,
+  score: number,
+  combo: number,
+): T {
+  if (
+    !Number.isSafeInteger(score) ||
+    score < 0 ||
+    score > DJ_MAX_SCORE ||
+    !Number.isSafeInteger(combo) ||
+    combo < 0 ||
+    combo > DJ_BEAT_COUNT ||
+    !Number.isSafeInteger(player.coins + coinsForScore(score)) ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
+  return {
+    ...player,
+    coins: player.coins + coinsForScore(score),
+    gamesPlayed: player.gamesPlayed + 1,
+    djBeatDropBest: Math.max(player.djBeatDropBest ?? 0, score),
   } as T;
 }
