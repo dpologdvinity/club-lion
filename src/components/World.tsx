@@ -15,11 +15,23 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import { NEIGHBORS, PLACES, type PlaceId, type Player } from "../game";
+import { NEIGHBORS, PLACES, type PlaceId, type PlayerV2 } from "../game";
 import { Lion } from "./Lion";
+import { Avatar } from "./Avatar";
+import { PetCompanion } from "./PetCompanion";
+import { ActionWheel, type ActionId, type EmoteId } from "./ActionWheel";
+import { MangoToss } from "./MangoToss";
+
+const EMOTE_SYMBOLS: Record<EmoteId, string> = {
+  heart: "❤️",
+  star: "⭐",
+  laugh: "😂",
+  shock: "😲",
+  sleep: "💤",
+};
 
 type WorldProps = {
-  player: Player;
+  player: PlayerV2;
   place: PlaceId;
   navigate: (id: PlaceId) => void;
   onMap: () => void;
@@ -27,6 +39,9 @@ type WorldProps = {
   onGame: () => void;
   onGreet: (id: string) => void;
   notify: (message: string) => void;
+  onOpenCard?: () => void;
+  onOpenCatalog?: () => void;
+  onOpenSalon?: () => void;
 };
 
 export function World({
@@ -38,8 +53,21 @@ export function World({
   onGame,
   onGreet,
   notify,
+  onOpenCard,
+  onOpenCatalog,
+  onOpenSalon,
 }: WorldProps) {
   const [position, setPosition] = useState({ x: 43, y: 78 });
+  const [avatarAction, setAvatarAction] = useState<string>("idle");
+  const [avatarHeading, setAvatarHeading] = useState<"left" | "right">("right");
+  const [isTrotting, setIsTrotting] = useState(false);
+  const [actionWheelOpen, setActionWheelOpen] = useState(false);
+  const [mangoToss, setMangoToss] = useState<{
+    origin: { x: number; y: number };
+    target: { x: number; y: number };
+  } | null>(null);
+  const [tossPending, setTossPending] = useState(false);
+  const walkTimer = useRef<number | null>(null);
   const [message, setMessage] = useState("");
   const [bubble, setBubble] = useState<{ id: string; text: string } | null>(
     null,
@@ -52,6 +80,8 @@ export function World({
   useEffect(() => {
     setPosition({ x: 43, y: 78 });
     setBubble(null);
+    setAvatarAction("idle");
+    setIsTrotting(false);
   }, [place]);
   useEffect(() => {
     if (!bubble) return;
@@ -91,10 +121,17 @@ export function World({
   };
 
   const walk = (x: number, y: number) => {
-    setPosition({
-      x: Math.max(12, Math.min(88, x)),
-      y: Math.max(57, Math.min(89, y)),
-    });
+    const targetX = Math.max(12, Math.min(88, x));
+    const targetY = Math.max(57, Math.min(89, y));
+    setAvatarHeading(targetX < position.x ? "left" : "right");
+    setPosition({ x: targetX, y: targetY });
+    setIsTrotting(true);
+    setAvatarAction("walk");
+    if (walkTimer.current) window.clearTimeout(walkTimer.current);
+    walkTimer.current = window.setTimeout(() => {
+      setIsTrotting(false);
+      setAvatarAction("idle");
+    }, 450);
     chime();
   };
   const keyboardWalk = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -188,12 +225,35 @@ export function World({
         </div>
       </div>
       <div className={`world-stage scene ${currentPlace.imageClass}`}>
+        {mangoToss && (
+          <MangoToss
+            origin={mangoToss.origin}
+            target={mangoToss.target}
+            onImpact={() => {
+              chime();
+              setMangoToss(null);
+              notify("Splash! 🥭 Mango landed!");
+            }}
+          />
+        )}
         <button
           className="world-ground"
           aria-label="Walk around the village. Use arrow keys or click the ground."
           onKeyDown={keyboardWalk}
           onClick={(e) => {
             const box = e.currentTarget.getBoundingClientRect();
+            if (tossPending) {
+              const clickX = e.clientX - box.left;
+              const clickY = e.clientY - box.top;
+              const startX = (position.x / 100) * box.width;
+              const startY = (position.y / 100) * box.height - 40;
+              setMangoToss({
+                origin: { x: startX, y: startY },
+                target: { x: clickX, y: clickY },
+              });
+              setTossPending(false);
+              return;
+            }
             walk(
               ((e.clientX - box.left) / box.width) * 100,
               ((e.clientY - box.top) / box.height) * 100,
@@ -270,12 +330,45 @@ export function World({
         ))}
         <div
           className="world-character your-character"
-          style={{ left: `${position.x}%`, top: `${position.y}%` }}
+          style={{
+            left: `${position.x}%`,
+            top: `${position.y}%`,
+            cursor: onOpenCard ? "pointer" : undefined,
+          }}
+          onClick={(e) => {
+            if (onOpenCard) {
+              e.stopPropagation();
+              onOpenCard();
+            }
+          }}
+          role={onOpenCard ? "button" : undefined}
+          tabIndex={onOpenCard ? 0 : undefined}
+          aria-label={onOpenCard ? `${player.name}'s player card` : undefined}
+          onKeyDown={(e) => {
+            if (onOpenCard && (e.key === "Enter" || e.key === " ")) {
+              e.stopPropagation();
+              onOpenCard();
+            }
+          }}
         >
           {bubble?.id === "you" && (
             <span className="speech-bubble">{bubble.text}</span>
           )}
-          <Lion color={player.color} accessory={player.accessory} />
+          <div className="avatar-with-companion">
+            <Avatar look={player.look} action={avatarAction} size={84} />
+            <PetCompanion
+              pet={{
+                ...player.pet,
+                color: (player.pet?.color || player.color) as any,
+                accessory:
+                  player.accessory !== "none"
+                    ? player.accessory
+                    : player.pet?.accessory,
+              }}
+              isTrotting={isTrotting}
+              heading={avatarHeading}
+            />
+          </div>
           <span className="character-name your-name">
             {player.name}
             <span className="you-tag"> you</span>
@@ -287,6 +380,15 @@ export function World({
         <div className="scene-vignette" />
       </div>
       <div className="chat-toolbar">
+        <button
+          type="button"
+          className="icon-button action-wheel-toggle"
+          aria-label="Action wheel"
+          title="Quick chat, emotes & mango toss"
+          onClick={() => setActionWheelOpen(true)}
+        >
+          <Sparkles size={20} />
+        </button>
         <div className="emote-anchor">
           <button
             className="icon-button emote-toggle"
@@ -351,6 +453,32 @@ export function World({
           <span>Map</span>
         </button>
       </div>
+      <ActionWheel
+        isOpen={actionWheelOpen}
+        onClose={() => setActionWheelOpen(false)}
+        onEmote={(id) => {
+          const symbol = EMOTE_SYMBOLS[id] || "✨";
+          say(symbol);
+        }}
+        onAction={(id) => {
+          if (id === "toss") {
+            setTossPending(true);
+            notify("Click anywhere on the ground to toss a mango! 🥭");
+          } else {
+            setAvatarAction(id);
+            if (id === "wave") {
+              say("👋");
+            } else if (id === "dance") {
+              notify("Dancing the savanna groove! 💃");
+            } else if (id === "jam") {
+              notify("Jamming to the downtown beat! 🎵");
+            } else if (id === "sit") {
+              notify("Taking a seat to relax.");
+            }
+          }
+        }}
+        onPhrase={(text) => say(text)}
+      />
     </section>
   );
 }

@@ -8,7 +8,7 @@ import {
   PawPrint,
   Shirt,
 } from "lucide-react";
-import { isAdventureComplete, type AdventureId, type Player } from "../game";
+import { isAdventureComplete, type AdventureId, type PlayerV2 } from "../game";
 import { Coin, Lion } from "./Lion";
 
 const ADVENTURES = [
@@ -41,7 +41,7 @@ export function Sidebar({
   onAdventure,
   onClaim,
 }: {
-  player: Player;
+  player: PlayerV2;
   onStyle: () => void;
   onAdventure: (id: AdventureId) => void;
   onClaim: (id: AdventureId) => void;

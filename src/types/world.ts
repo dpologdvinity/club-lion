@@ -1,0 +1,312 @@
+export type EquipSlot =
+  | "hair_back"
+  | "hair_front"
+  | "headwear"
+  | "eyewear"
+  | "top_inner"
+  | "top_outer"
+  | "bottom"
+  | "shoes"
+  | "handheld"
+  | "board";
+
+export const EQUIP_SLOTS: readonly EquipSlot[] = [
+  "hair_back",
+  "hair_front",
+  "headwear",
+  "eyewear",
+  "top_inner",
+  "top_outer",
+  "bottom",
+  "shoes",
+  "handheld",
+  "board",
+] as const;
+
+export function isValidEquipSlot(slot: unknown): slot is EquipSlot {
+  return typeof slot === "string" && EQUIP_SLOTS.includes(slot as EquipSlot);
+}
+
+export type SkinTone = "fair" | "tan" | "warm" | "espresso" | "bronze" | "deep";
+
+export const SKIN_TONES: readonly SkinTone[] = [
+  "fair",
+  "tan",
+  "warm",
+  "espresso",
+  "bronze",
+  "deep",
+] as const;
+
+export type EyeStyle = "sparkle" | "wink" | "sleepy" | "smirk";
+
+export const EYE_STYLES: readonly EyeStyle[] = [
+  "sparkle",
+  "wink",
+  "sleepy",
+  "smirk",
+] as const;
+
+export type AvatarLook = {
+  skinTone: SkinTone | string;
+  eyeStyle: EyeStyle | string;
+  hairId: string;
+  hairColor: string;
+  outfitId: string;
+  shoesId: string;
+  headwearId?: string;
+  eyewearId?: string;
+  boardId?: string;
+  handheldId?: string;
+};
+
+export const DEFAULT_AVATAR_LOOK: AvatarLook = {
+  skinTone: "warm",
+  eyeStyle: "sparkle",
+  hairId: "classic_shag",
+  hairColor: "#4a3728",
+  outfitId: "denim_jacket",
+  shoesId: "canvas_sneakers",
+};
+
+export function validateAvatarLook(look: unknown): look is AvatarLook {
+  if (!look || typeof look !== "object") return false;
+
+  const candidate = look as Record<string, unknown>;
+
+  const hasValidString = (key: string): boolean =>
+    typeof candidate[key] === "string" &&
+    (candidate[key] as string).trim().length > 0;
+
+  const hasOptionalString = (key: string): boolean =>
+    candidate[key] === undefined ||
+    (typeof candidate[key] === "string" &&
+      (candidate[key] as string).trim().length > 0);
+
+  return (
+    hasValidString("skinTone") &&
+    hasValidString("eyeStyle") &&
+    hasValidString("hairId") &&
+    hasValidString("hairColor") &&
+    hasValidString("outfitId") &&
+    hasValidString("shoesId") &&
+    hasOptionalString("headwearId") &&
+    hasOptionalString("eyewearId") &&
+    hasOptionalString("boardId") &&
+    hasOptionalString("handheldId")
+  );
+}
+
+export type PetMood =
+  "idle" | "trotting" | "happy" | "sleep" | "sitting" | string;
+
+export type PetState = {
+  id: string;
+  name: string;
+  species: "lion";
+  color: string;
+  accessory?: string;
+  position: { x: number; y: number };
+  mood: PetMood;
+};
+
+export const DEFAULT_PET_STATE: PetState = {
+  id: "pet_leo",
+  name: "Leo",
+  species: "lion",
+  color: "gold",
+  position: { x: 100, y: 100 },
+  mood: "idle",
+};
+
+export type EntityAction =
+  "idle" | "walk" | "wave" | "dance" | "sit" | "jam" | string;
+
+export type SpeechBubble =
+  | string
+  | {
+      text: string;
+      type?: "chat" | "emote";
+      createdAt?: number;
+    };
+
+export type WorldEntity = {
+  id: string;
+  name: string;
+  look: AvatarLook;
+  pet?: PetState;
+  position: { x: number; y: number };
+  action: EntityAction;
+  bubble?: SpeechBubble;
+  badgeTitle?: string;
+  isLocalPlayer?: boolean;
+};
+
+export type CatalogItem = {
+  id: string;
+  name: string;
+  price: number;
+  slot: EquipSlot;
+  description?: string;
+  isSecret?: boolean;
+  secretTriggerId?: string;
+};
+
+export const CATALOG_ITEMS: readonly CatalogItem[] = [
+  // Standard catalog items
+  {
+    id: "classic_shag",
+    name: "Classic Shag",
+    price: 100,
+    slot: "hair_front",
+    description: "Effortless messy layers.",
+  },
+  {
+    id: "long_waves",
+    name: "Long Waves",
+    price: 140,
+    slot: "hair_back",
+    description: "Flowing savanna breeze waves.",
+  },
+  {
+    id: "spiky_blaze",
+    name: "Spiky Blaze",
+    price: 120,
+    slot: "hair_front",
+    description: "Sharp anime-styled spikes.",
+  },
+  {
+    id: "explorer_fedora",
+    name: "Explorer Fedora",
+    price: 90,
+    slot: "headwear",
+    description: "Ready for an expedition.",
+  },
+  {
+    id: "sunshine_shades",
+    name: "Sunshine Shades",
+    price: 110,
+    slot: "eyewear",
+    description: "Block the rays with effortless cool.",
+  },
+  {
+    id: "striped_tee",
+    name: "Striped Tee",
+    price: 80,
+    slot: "top_inner",
+    description: "A comfortable nautical stripe.",
+  },
+  {
+    id: "denim_jacket",
+    name: "Denim Jacket",
+    price: 160,
+    slot: "top_outer",
+    description: "Classic blue jean wash with bronze buttons.",
+  },
+  {
+    id: "cargo_pants",
+    name: "Cargo Pants",
+    price: 130,
+    slot: "bottom",
+    description: "Pockets for every savanna discovery.",
+  },
+  {
+    id: "canvas_sneakers",
+    name: "Canvas Sneakers",
+    price: 95,
+    slot: "shoes",
+    description: "Low-profile lightweight everyday kicks.",
+  },
+  {
+    id: "hover_leaf",
+    name: "Hover-Leaf Board",
+    price: 300,
+    slot: "board",
+    description: "Glides just above the pavement with green sparkles.",
+  },
+  {
+    id: "mango_smoothie_cup",
+    name: "Mango Smoothie",
+    price: 50,
+    slot: "handheld",
+    description: "Chilled tropical goodness in a cup.",
+  },
+  // Secret catalog items
+  {
+    id: "barista_apron",
+    name: "Barista Apron",
+    price: 0,
+    slot: "top_outer",
+    description: "Official Canopy Café barista gear.",
+    isSecret: true,
+    secretTriggerId: "coffee_steam",
+  },
+  {
+    id: "retro_neon_visor",
+    name: "Retro Neon Visor",
+    price: 0,
+    slot: "headwear",
+    description: "Glows with 90s arcade nostalgia.",
+    isSecret: true,
+    secretTriggerId: "price_tag_star",
+  },
+  {
+    id: "golden_mane_wreath",
+    name: "Golden Mane Wreath",
+    price: 0,
+    slot: "headwear",
+    description: "Woven baobab leaves with golden sheen.",
+    isSecret: true,
+    secretTriggerId: "hidden_leaf",
+  },
+  {
+    id: "eyepatch_cutlass",
+    name: "Eyepatch & Cutlass",
+    price: 0,
+    slot: "handheld",
+    description: "Arr! A legendary swashbuckler's treasure.",
+    isSecret: true,
+    secretTriggerId: "beach_pirate_skull",
+  },
+] as const;
+
+export type RoomPortal = {
+  targetRoomId: string;
+  targetSpawn: { x: number; y: number };
+  triggerBounds: { x1: number; y1: number; x2: number; y2: number };
+  label: string;
+};
+
+export type RoomInteractive = {
+  id: string;
+  type:
+    | "ride"
+    | "instrument"
+    | "game_launch"
+    | "secret_clickable"
+    | "shop"
+    | string;
+  position: { x: number; y: number };
+  actionData: Record<string, unknown>;
+};
+
+export type DepthLayer = {
+  id: string;
+  y: number;
+  asset: string;
+};
+
+export type RoomManifest = {
+  id: string;
+  name: string;
+  district: string;
+  stageWidth: number;
+  stageHeight: number;
+  backgroundAsset: string;
+  walkablePolygon: [number, number][];
+  depthLayers: DepthLayer[];
+  portals: RoomPortal[];
+  interactives: RoomInteractive[];
+  ambientAudioPreset: string;
+  scriptedNpcs: WorldEntity[];
+};

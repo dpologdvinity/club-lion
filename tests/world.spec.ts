@@ -537,3 +537,105 @@ test("unavailable browser storage preserves a playable world with an honest warn
   await page.getByRole("button", { name: "My den", exact: true }).click();
   await expect(page.locator(".world-location h2")).toHaveText("Your cozy den");
 });
+
+test("Phase 1 ID Card modal opens, displays stats, and edits mood quote with persistence", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "ID Card", exact: true }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Player ID Card" }),
+  ).toBeVisible();
+  await expect(page.locator(".player-card-name")).toHaveText("Sunny");
+  await expect(page.locator(".player-card-hearts")).toBeVisible();
+  await expect(page.locator(".player-card-rank")).toBeVisible();
+
+  await page.locator("#mood-quote").fill("Riding the savanna roller coaster!");
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+
+  await page.reload();
+  await page.getByRole("button", { name: "ID Card", exact: true }).click();
+  await expect(page.locator("#mood-quote")).toHaveValue(
+    "Riding the savanna roller coaster!",
+  );
+  await page.keyboard.press("Escape");
+});
+
+test("Phase 1 Le Shop catalog allows tab navigation, unlocks secrets, and equips items", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Le Shop", exact: true }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Le Shop Catalog" }),
+  ).toBeVisible();
+
+  // Switch tabs
+  await page.getByRole("button", { name: "Bottoms", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Cargo Pants" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Tops", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Denim Jacket" }),
+  ).toBeVisible();
+
+  // Secret hotspot
+  const steamHotspot = page.getByRole("button", {
+    name: "A wisp of coffee steam",
+  });
+  await steamHotspot.click();
+  await expect(
+    page.getByRole("heading", { name: "Barista Apron" }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+});
+
+test("Phase 1 Stella's salon allows styling hair, colors, and streak highlights", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Salon", exact: true }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Stella's Salon" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Beach Wave Bangs" }).click();
+  await page.getByRole("button", { name: "Rose Pink" }).click();
+  await page.getByRole("button", { name: "Neon Blue" }).click();
+  await page.getByRole("button", { name: "Confirm new look" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("Phase 1 Action Wheel triggers quick chat, emotes, and mango tossing", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Action wheel" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Quick chat & emotes" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Meet me at the café!" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.locator(".your-character .speech-bubble")).toHaveText(
+    "Meet me at the café!",
+  );
+
+  // Trigger mango toss
+  await page.getByRole("button", { name: "Action wheel" }).click();
+  await page.getByRole("button", { name: "Toss mango" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+
+  // Click ground to toss
+  const ground = page.getByRole("button", {
+    name: "Walk around the village.",
+  });
+  await ground.click({ position: { x: 200, y: 150 } });
+  await expect(page.locator(".toast")).toContainText(
+    "Splash! 🥭 Mango landed!",
+  );
+});

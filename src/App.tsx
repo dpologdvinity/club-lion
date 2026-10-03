@@ -18,10 +18,12 @@ import {
   completePawSteps,
   completeFruitCatch,
   meetLion,
+  unlockSecretCatalogItem,
   PLACES,
   SHOP_ITEMS,
   visitPlace,
   type AdventureId,
+  type EquipSlot,
   type LionColor,
   type PlaceId,
 } from "./game";
@@ -32,8 +34,20 @@ import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
 import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
 import { GamesPanel } from "./components/GamesPanel";
+import { PlayerCard } from "./components/PlayerCard";
+import { CatalogModal } from "./components/CatalogModal";
+import { SalonModal } from "./components/SalonModal";
 
-type Panel = "map" | "style" | "shop" | "games" | "help" | null;
+type Panel =
+  | "map"
+  | "style"
+  | "shop"
+  | "games"
+  | "help"
+  | "card"
+  | "catalog"
+  | "salon"
+  | null;
 
 export default function App() {
   const { player, setPlayer, saveError } = usePlayer();
@@ -68,7 +82,7 @@ export default function App() {
     } else navigate("den");
   };
 
-  const titles = {
+  const titles: Record<string, [string, string]> = {
     map: ["A whole little world", "Where will your paws take you next?"],
     style: [
       "A lion, all your own",
@@ -106,13 +120,31 @@ export default function App() {
           <nav className="main-nav" aria-label="Main navigation">
             <button
               className={
-                place !== "den" && panel !== "games" && panel !== "shop"
+                place !== "den" &&
+                panel !== "games" &&
+                panel !== "shop" &&
+                !panel
                   ? "selected"
                   : ""
               }
-              onClick={() => navigate("square")}
+              onClick={() => {
+                navigate("square");
+                closePanel();
+              }}
             >
               World
+            </button>
+            <button
+              className={panel === "catalog" ? "selected" : ""}
+              onClick={() => setPanel("catalog")}
+            >
+              Le Shop
+            </button>
+            <button
+              className={panel === "salon" ? "selected" : ""}
+              onClick={() => setPanel("salon")}
+            >
+              Salon
             </button>
             <button
               className={panel === "games" ? "selected" : ""}
@@ -131,6 +163,12 @@ export default function App() {
               onClick={() => setPanel("shop")}
             >
               Shop
+            </button>
+            <button
+              className={panel === "card" ? "selected" : ""}
+              onClick={() => setPanel("card")}
+            >
+              ID Card
             </button>
           </nav>
           <div className="header-actions">
@@ -190,6 +228,9 @@ export default function App() {
             onGame={openGames}
             onGreet={(id) => setPlayer((p) => meetLion(p, id))}
             notify={notify}
+            onOpenCard={() => setPanel("card")}
+            onOpenCatalog={() => setPanel("catalog")}
+            onOpenSalon={() => setPanel("salon")}
           />
           <Sidebar
             player={player}
@@ -269,74 +310,158 @@ export default function App() {
         </span>
         <span>{toast}</span>
       </div>
-      {panel && (
-        <Dialog
-          title={titles[panel][0]}
-          subtitle={titles[panel][1]}
+      {panel === "card" && (
+        <PlayerCard
+          player={player}
           onClose={closePanel}
-          wide={panel === "shop" || panel === "map" || panel === "style"}
-        >
-          {panel === "map" && <WorldMap place={place} onNavigate={navigate} />}
-          {panel === "style" && (
-            <Wardrobe
-              player={player}
-              onSave={(name: string, color: LionColor, accessory: string) => {
-                setPlayer((p) => ({ ...p, name, color, accessory }));
-                closePanel();
-                notify("Looking good! Your lion has a new look.");
-              }}
-            />
-          )}
-          {panel === "shop" && (
-            <Shop
-              player={player}
-              onBuy={(id) => {
-                setPlayer((p) => buyItem(p, id));
-                const item = SHOP_ITEMS.find((i) => i.id === id)!;
-                notify(
-                  `${item.name} is yours! ${item.kind === "decor" ? "It’s waiting in your den." : "You’re wearing it already."}`,
-                );
-              }}
-              onEquip={(id) => {
-                setPlayer((p) => ({ ...p, accessory: id }));
-                notify("The perfect finishing touch!");
-              }}
-            />
-          )}
-          {panel === "games" && (
-            <GamesPanel
-              player={player}
-              onCompleteGame={(pairs) =>
-                setPlayer((p) => completeGame(p, pairs))
-              }
-              onCompleteBeeStop={(score) =>
-                setPlayer((p) => completeBeeStop(p, score))
-              }
-              onCompleteFruitCatch={(result) =>
-                setPlayer((p) =>
-                  completeFruitCatch(
-                    p,
-                    result.caught,
-                    result.hits,
-                    result.score,
-                  ),
-                )
-              }
-              onSafariFinish={(pairs) =>
-                setPlayer((p) => completeGame(p, pairs))
-              }
-              onPawStepsFinish={(rounds) =>
-                setPlayer((p) => completePawSteps(p, rounds))
-              }
-              onFruitFinish={(caught, hits, score) =>
-                setPlayer((p) => completeFruitCatch(p, caught, hits, score))
-              }
-              onClose={closePanel}
-            />
-          )}
-          {panel === "help" && <Help />}
-        </Dialog>
+          onSaveMoodQuote={(moodQuote) => {
+            setPlayer((p) => ({ ...p, moodQuote }));
+            notify("Status updated!");
+          }}
+        />
       )}
+      {panel === "catalog" && (
+        <CatalogModal
+          player={player}
+          onClose={closePanel}
+          onBuy={(id) => {
+            setPlayer((p) => buyItem(p, id));
+            notify("Purchased! Added to your collection.");
+          }}
+          onEquip={(id, slot: EquipSlot) => {
+            setPlayer((p) => ({
+              ...p,
+              look: {
+                ...p.look,
+                ...(slot === "top_outer"
+                  ? { outfitId: id }
+                  : slot === "shoes"
+                    ? { shoesId: id }
+                    : slot === "board"
+                      ? { boardId: id }
+                      : slot === "handheld"
+                        ? { handheldId: id }
+                        : slot === "headwear"
+                          ? { headwearId: id }
+                          : { outfitId: id }),
+              },
+            }));
+            notify("Equipped!");
+          }}
+          onUnlockSecret={(secretId) => {
+            setPlayer((p) => unlockSecretCatalogItem(p, secretId));
+            notify("✨ Secret uncovered! Item added to inventory.");
+          }}
+        />
+      )}
+      {panel === "salon" && (
+        <SalonModal
+          look={player.look}
+          onClose={closePanel}
+          onSave={(hairId, hairColor) => {
+            setPlayer((p) => ({
+              ...p,
+              look: {
+                ...p.look,
+                hairId,
+                hairColor,
+              },
+            }));
+            closePanel();
+            notify("Looking fabulous! Fresh hairstyle saved.");
+          }}
+        />
+      )}
+      {panel &&
+        panel !== "card" &&
+        panel !== "catalog" &&
+        panel !== "salon" && (
+          <Dialog
+            title={titles[panel][0]}
+            subtitle={titles[panel][1]}
+            onClose={closePanel}
+            wide={panel === "shop" || panel === "map" || panel === "style"}
+          >
+            {panel === "map" && (
+              <WorldMap place={place} onNavigate={navigate} />
+            )}
+            {panel === "style" && (
+              <Wardrobe
+                player={player}
+                onSave={(name: string, color: LionColor, accessory: string) => {
+                  setPlayer((p) => ({
+                    ...p,
+                    name,
+                    color,
+                    accessory,
+                    pet: {
+                      ...p.pet,
+                      color,
+                      accessory,
+                    },
+                  }));
+                  closePanel();
+                  notify("Looking good! Your lion has a new look.");
+                }}
+              />
+            )}
+            {panel === "shop" && (
+              <Shop
+                player={player}
+                onBuy={(id) => {
+                  setPlayer((p) => buyItem(p, id));
+                  const item = SHOP_ITEMS.find((i) => i.id === id)!;
+                  notify(
+                    `${item.name} is yours! ${item.kind === "decor" ? "It’s waiting in your den." : "You’re wearing it already."}`,
+                  );
+                }}
+                onEquip={(id) => {
+                  setPlayer((p) => ({
+                    ...p,
+                    accessory: id,
+                    pet: {
+                      ...p.pet,
+                      accessory: id,
+                    },
+                  }));
+                  notify("The perfect finishing touch!");
+                }}
+              />
+            )}
+            {panel === "games" && (
+              <GamesPanel
+                player={player}
+                onCompleteGame={(pairs) =>
+                  setPlayer((p) => completeGame(p, pairs))
+                }
+                onCompleteBeeStop={(score) =>
+                  setPlayer((p) => completeBeeStop(p, score))
+                }
+                onCompleteFruitCatch={(result) =>
+                  setPlayer((p) =>
+                    completeFruitCatch(
+                      p,
+                      result.caught,
+                      result.hits,
+                      result.score,
+                    ),
+                  )
+                }
+                onSafariFinish={(pairs) =>
+                  setPlayer((p) => completeGame(p, pairs))
+                }
+                onPawStepsFinish={(rounds) =>
+                  setPlayer((p) => completePawSteps(p, rounds))
+                }
+                onFruitFinish={(caught, hits, score) =>
+                  setPlayer((p) => completeFruitCatch(p, caught, hits, score))
+                }
+                onClose={closePanel}
+              />
+            )}
+            {panel === "help" && <Help />}
+          </Dialog>
+        )}
     </>
   );
 }
