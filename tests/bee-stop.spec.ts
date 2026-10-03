@@ -81,3 +81,62 @@ test("pointer and click events from one activation score the round once", async 
   await expect(page.locator(".bee-announce")).toContainText("Round 2 of 10");
   await expect(page.locator(".game-stats")).toContainText("100 points");
 });
+
+test("a held pointer cannot stop the following round when released", async ({
+  page,
+}) => {
+  const track = page.locator(".bee-track");
+  const box = (await track.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(800);
+  await expect(page.locator(".bee-announce")).toHaveText(
+    "Round 1 of 10. Stop the bee on the flower.",
+  );
+  await page.mouse.up();
+  // Pointer activation is handled on release, so holding through the first
+  // round never scores early. Releasing scores round 2 once.
+  await expect(page.locator(".bee-announce")).toHaveText(
+    "So close Round 2 of 10. 0 points.",
+  );
+  await page.waitForTimeout(900);
+  await expect(page.locator(".bee-announce")).toHaveText(
+    "Round 3 of 10. Stop the bee on the flower.",
+  );
+});
+
+test("missed rounds keep every petal visible and pay the advertised minimum", async ({
+  page,
+}, testInfo) => {
+  await page.getByRole("button", { name: "All games" }).click();
+  await page.getByRole("button", { name: "Play Bee Stop" }).click();
+  await expect(page.locator(".game-features")).toContainText(
+    "Earn 15–120 coins",
+  );
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  for (let round = 1; round <= 10; round++) {
+    await page
+      .getByRole("button", { name: "Stop the bee" })
+      .evaluate((track) => track.click());
+    if (round < 10)
+      await expect(page.locator(".bee-announce")).toHaveText(
+        `Round ${round + 1} of 10. Stop the bee on the flower.`,
+      );
+  }
+  await expect(page.locator(".game-win")).toContainText(
+    "0 points across 10 rounds.",
+  );
+  await expect(page.locator(".wallet")).toHaveText("✦265");
+  const petals = page.locator(".bee-bloom ellipse");
+  await expect(petals).toHaveCount(10);
+  expect(
+    await petals.evaluateAll((els) =>
+      els.every(
+        (petal) =>
+          petal.getAttribute("fill") !== "none" ||
+          petal.getAttribute("stroke") !== "none",
+      ),
+    ),
+  ).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath("bee-missed-rounds.png") });
+});

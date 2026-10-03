@@ -21,6 +21,7 @@ Open the Vite URL, normally http://localhost:5173.
 - Name and customize your lion; spend earned coins on accessories and den decorations.
 - Match six pairs in Memory Safari to earn 60 coins.
 - Stop the bee on the blossom in Bee Stop: 10 rounds, no way to lose, up to 120 coins and a saved best score.
+- Catch ripe fruit in Fruit Catch: a 30-second round with 2 coins per catch and a saved best score.
 - Claim completed adventure rewards for 50 coins each.
 
 This version is single-player: neighbors are scripted, and messages stay on your screen. Progress saves in this browser. It does not include a multiplayer server or accounts.
@@ -36,10 +37,10 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The browser suite checks desktop and mobile interactions, persistence, reward and purchase invariants, both completed games, validation, keyboard behavior, storage failures, and automated accessibility scans. Test artifacts are written to `/tmp/club-lion-test-results`.
+The browser suite checks desktop and mobile interactions, persistence, reward and purchase invariants, all three arcade games, validation, keyboard behavior, storage failures, and automated accessibility scans. Test artifacts are written to `/tmp/club-lion-test-results`.
 
 ## Architecture
 
-React and TypeScript with Vite. `src/game.ts` owns progression and save validation. `src/beeStop.ts` owns Bee Stop scoring as pure functions with no React or DOM dependency, which keeps every scoring band and coin band testable without a browser. Components own the world, lion presentation, sidebar, shared dialog, wardrobe/shop/map, and the two mini-games. `src/usePlayer.ts` owns persistence. [DESIGN.md](DESIGN.md) and [UX-CONTRACT.md](UX-CONTRACT.md) document the visual and interaction decisions.
+React and TypeScript with Vite. `src/game.ts` owns progression and save validation. `src/beeStop.ts` owns Bee Stop scoring as pure functions with no React or DOM dependency, which keeps every scoring band and coin band testable without a browser. Components own the world, lion presentation, sidebar, shared dialog, wardrobe/shop/map, and the three mini-games. `src/usePlayer.ts` owns persistence. [DESIGN.md](DESIGN.md) and [UX-CONTRACT.md](UX-CONTRACT.md) document the visual and interaction decisions.
 
 Original artwork was generated with the built-in image generation tool: a sunny savanna village without characters, a transparent chibi lion sprite, and a four-scene atlas containing a watering hole, café, arcade, and cozy den. Optimized production assets live in `public/assets`; the atlas was split into standalone backgrounds to preserve scene proportions. Nunito and Lilita One are self-hosted in `public/fonts` with their SIL Open Font Licenses.

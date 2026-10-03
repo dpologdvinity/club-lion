@@ -1,76 +1,101 @@
-import { useState } from "react";
-import { ArrowRight, Gamepad2, Sparkles } from "lucide-react";
+import { useState, type ComponentProps } from "react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import { MemorySafari } from "./MemorySafari";
 import { BeeStop } from "./BeeStop";
+import { FruitCatch } from "./FruitCatch";
 import type { Player } from "../game.ts";
 
-type GameId = "memory" | "bee";
+type GameId = "memory" | "bee" | "fruit";
 
 export function GamesPanel({
   player,
   onCompleteGame,
   onCompleteBeeStop,
+  onCompleteFruitCatch,
   onClose,
 }: {
   player: Player;
   onCompleteGame: (pairs: number) => void;
   onCompleteBeeStop: (score: number) => void;
+  onCompleteFruitCatch: ComponentProps<typeof FruitCatch>["onFinish"];
   onClose: () => void;
 }) {
   const [picked, setPicked] = useState<GameId | null>(null);
-  if (picked === "memory")
-    return <MemorySafari onFinish={onCompleteGame} onClose={onClose} />;
-  if (picked === "bee")
+  if (picked)
     return (
-      <BeeStop
-        best={player.beeStopBest}
-        onFinish={onCompleteBeeStop}
-        onClose={onClose}
-      />
+      <>
+        <button className="game-back" onClick={() => setPicked(null)}>
+          <ArrowLeft size={14} /> All games
+        </button>
+        {picked === "memory" && (
+          <MemorySafari onFinish={onCompleteGame} onClose={onClose} />
+        )}
+        {picked === "bee" && (
+          <BeeStop
+            best={player.beeStopBest}
+            onFinish={onCompleteBeeStop}
+            onClose={onClose}
+          />
+        )}
+        {picked === "fruit" && (
+          <FruitCatch
+            best={player.fruitCatchBest}
+            onFinish={onCompleteFruitCatch}
+            onClose={onClose}
+          />
+        )}
+      </>
     );
   return (
-    <div className="games-panel">
+    <div className="arcade-picker">
       <button
-        className="game-card"
+        className="arcade-game"
         onClick={() => setPicked("memory")}
         aria-label="Play Memory Safari"
       >
-        <span className="game-card-art" aria-hidden="true">
-          🃏
+        <span className="arcade-art memory-art" aria-hidden="true">
+          🦁 🌴 🌼
         </span>
-        <span className="game-card-body">
+        <span className="arcade-copy">
           <strong>Memory Safari</strong>
-          <span className="game-card-note">
-            Six pairs, no timer. Easy does it.
-          </span>
+          <small>Find the matching pairs. No timer, no rush.</small>
+          <span className="arcade-reward">Earn up to 60 coins</span>
         </span>
-        <span className="destination-arrow">
-          <ArrowRight size={19} />
-        </span>
+        <ChevronRight size={20} />
       </button>
       <button
-        className="game-card"
+        className="arcade-game"
+        onClick={() => setPicked("fruit")}
+        aria-label="Play Fruit Catch!"
+      >
+        <span className="arcade-art fruit-art" aria-hidden="true">
+          🍎 🧺 🍊
+        </span>
+        <span className="arcade-copy">
+          <strong>Fruit Catch!</strong>
+          <small>Catch the good stuff. Dodge the icky stuff.</small>
+          <span className="arcade-reward">2 coins for every fruit caught</span>
+        </span>
+        <ChevronRight size={20} />
+      </button>
+      <button
+        className="arcade-game"
         onClick={() => setPicked("bee")}
         aria-label="Play Bee Stop"
       >
-        <span className="game-card-art" aria-hidden="true">
-          🐝
+        <span className="arcade-art bee-illustration" aria-hidden="true">
+          🌼 🐝 🍯
         </span>
-        <span className="game-card-body">
+        <span className="arcade-copy">
           <strong>Bee Stop</strong>
-          <span className="game-card-note">Ten rounds of perfect timing.</span>
+          <small>Ten rounds of perfect timing.</small>
+          <span className="arcade-reward">Earn 15–120 coins</span>
           {player.beeStopBest > 0 && (
             <span className="game-card-best">Best {player.beeStopBest}</span>
           )}
         </span>
-        <span className="destination-arrow">
-          <ArrowRight size={19} />
-        </span>
+        <ChevronRight size={20} />
       </button>
-      <p className="game-panel-note">
-        <Gamepad2 size={13} /> Coins earned here buy treats in the shop.{" "}
-        <Sparkles size={13} /> Both games can be replayed as often as you like.
-      </p>
     </div>
   );
 }

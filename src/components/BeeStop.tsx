@@ -177,7 +177,7 @@ export function BeeStop({
               <Sparkles size={15} /> Easy at first, trickier by round ten.
             </span>
             <span>
-              <Coin amount={coinsFor(600)} /> up to 120
+              <Sparkles size={15} /> Earn 15–120 coins
             </span>
           </div>
           <button className="button button-primary" onClick={restart}>
@@ -233,7 +233,6 @@ export function BeeStop({
         type="button"
         ref={trackRef}
         className="bee-track"
-        onPointerDown={stop}
         onClick={stop}
         onKeyDown={(event) => {
           if (event.key !== " " && event.key !== "Enter") return;
@@ -303,7 +302,7 @@ function Bloom({ bands }: { bands: BeeBand[] }) {
             ry="17"
             transform={`rotate(${index * 36} 50 50)`}
             fill={band ? PETAL_FILL[band] : "none"}
-            stroke={band ? "none" : "#ded7c4"}
+            stroke={band && band !== "miss" ? "none" : "#ded7c4"}
             strokeWidth="1.5"
           />
         );

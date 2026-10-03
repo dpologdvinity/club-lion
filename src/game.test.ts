@@ -9,6 +9,7 @@ import {
   claimReward,
   completeGame,
   completeBeeStop,
+  completeFruitCatch,
   SHOP_ITEMS,
 } from "./game.ts";
 
@@ -101,4 +102,37 @@ test("a save from before Bee Stop existed keeps its progress and reports no best
     restorePlayer(JSON.stringify({ ...legacy, beeStopBest: -7 })).beeStopBest,
     0,
   );
+});
+
+test("Fruit Catch awards caught fruit, tracks a best score, and restores older saves", () => {
+  const first = completeFruitCatch(newPlayer(), 8, 2, 80);
+  assert.equal(first.coins, 266);
+  assert.equal(first.gamesPlayed, 1);
+  assert.equal(first.fruitCatchBest, 80);
+  assert.deepEqual(completeFruitCatch(first, 2, 0, 20), {
+    ...first,
+    coins: 270,
+    gamesPlayed: 2,
+  });
+  assert.deepEqual(completeFruitCatch(first, 4, 0, 99), first);
+  const { fruitCatchBest: _, ...olderSave } = newPlayer();
+  assert.equal(restorePlayer(JSON.stringify(olderSave)).fruitCatchBest, 0);
+});
+
+test("arcade saves preserve both game records and migrate each older format", () => {
+  const played = completeBeeStop(
+    completeFruitCatch(newPlayer(), 8, 2, 80),
+    700,
+  );
+  assert.deepEqual(restorePlayer(JSON.stringify(played)), played);
+  const { beeStopBest: _bee, ...fruitSave } = played;
+  const fromFruit = restorePlayer(JSON.stringify(fruitSave));
+  assert.equal(fromFruit.fruitCatchBest, 80);
+  assert.equal(fromFruit.beeStopBest, 0);
+  assert.equal(fromFruit.coins, played.coins);
+  const { fruitCatchBest: _fruit, ...beeSave } = played;
+  const fromBee = restorePlayer(JSON.stringify(beeSave));
+  assert.equal(fromBee.beeStopBest, 700);
+  assert.equal(fromBee.fruitCatchBest, 0);
+  assert.equal(fromBee.gamesPlayed, 2);
 });

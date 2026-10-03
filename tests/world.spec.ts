@@ -103,7 +103,7 @@ test("wardrobe validation, purchases, and persistent customizations work", async
   await expect(page.locator(".your-character .accessory-hat")).toBeVisible();
 });
 
-test("the arcade offers both games", async ({ page }) => {
+test("the arcade offers all three games", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Games", exact: true }).click();
   await expect(
@@ -111,6 +111,9 @@ test("the arcade offers both games", async ({ page }) => {
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Play Bee Stop" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Play Fruit Catch!" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Play Bee Stop" }).click();
   await expect(page.getByRole("heading", { name: "Bee Stop" })).toBeVisible();
@@ -303,6 +306,42 @@ test("the arcade and Bee Stop have no WCAG AA accessibility violations", async (
   await expect(
     page.getByRole("button", { name: "Games", exact: true }),
   ).toBeFocused();
+});
+
+test("Fruit Catch drops fruit fast enough to catch and keeps the round busy", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await page.locator(".arcade-game").filter({ hasText: "Fruit Catch" }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  await expect(page.locator(".fruit-field")).toBeVisible();
+  for (let i = 0; i < 6; i++)
+    await page.getByRole("button", { name: "Move basket left" }).click();
+  const lowestFruit = async () =>
+    page
+      .locator(".falling-fruit")
+      .evaluateAll((els) =>
+        els.reduce(
+          (lowest, el) =>
+            Math.max(lowest, parseFloat((el as HTMLElement).style.top)),
+          -20,
+        ),
+      );
+  let lowest = -20;
+  for (let sample = 0; sample < 80 && lowest < 75; sample++) {
+    lowest = Math.max(lowest, await lowestFruit());
+    if (lowest < 75) await page.waitForTimeout(100);
+  }
+  expect(lowest).toBeGreaterThanOrEqual(75);
+  await page.waitForTimeout(4000);
+  expect(await page.locator(".falling-fruit").count()).toBeGreaterThanOrEqual(
+    3,
+  );
+  await expect(page.locator(".fruit-game-stats span").last()).toHaveAttribute(
+    "aria-label",
+    /^\d lives?$/,
+  );
 });
 
 test("the main world and dialogs have no WCAG AA accessibility violations", async ({

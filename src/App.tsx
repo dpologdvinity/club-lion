@@ -14,6 +14,7 @@ import {
   claimReward,
   completeBeeStop,
   completeGame,
+  completeFruitCatch,
   meetLion,
   PLACES,
   SHOP_ITEMS,
@@ -58,7 +59,9 @@ export default function App() {
       setPanel("games");
     } else navigate("den");
   };
-  const closePanel = () => setPanel(null);
+  const closePanel = () => {
+    setPanel(null);
+  };
   const titles = {
     map: ["A whole little world", "Where will your paws take you next?"],
     style: [
@@ -302,6 +305,16 @@ export default function App() {
               }
               onCompleteBeeStop={(score) =>
                 setPlayer((p) => completeBeeStop(p, score))
+              }
+              onCompleteFruitCatch={(result) =>
+                setPlayer((p) =>
+                  completeFruitCatch(
+                    p,
+                    result.caught,
+                    result.hits,
+                    result.score,
+                  ),
+                )
               }
               onClose={closePanel}
             />
