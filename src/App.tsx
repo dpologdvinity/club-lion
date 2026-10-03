@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  ArrowLeft,
   ArrowUpRight,
   Check,
   ChevronDown,
@@ -13,6 +12,7 @@ import {
 import {
   buyItem,
   claimReward,
+  completeBeeStop,
   completeGame,
   completeMangoRun,
   completeFruitCatch,
@@ -29,17 +29,8 @@ import { Coin, Lion } from "./components/Lion";
 import { Dialog } from "./components/Dialog";
 import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
-import {
-  GamesPicker,
-  Help,
-  Shop,
-  Wardrobe,
-  WorldMap,
-  type GameId,
-} from "./components/Panels";
-import { MemorySafari } from "./components/MemorySafari";
-import { FruitCatch } from "./components/FruitCatch";
-import { MangoRun } from "./components/MangoRun";
+import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
+import { GamesPanel } from "./components/GamesPanel";
 
 type Panel = "map" | "style" | "shop" | "games" | "help" | null;
 
@@ -47,7 +38,6 @@ export default function App() {
   const { player, setPlayer, saveError } = usePlayer();
   const [place, setPlace] = useState<PlaceId>("square");
   const [panel, setPanel] = useState<Panel>(null);
-  const [activeGame, setActiveGame] = useState<GameId | null>(null);
   const [toast, setToast] = useState("");
   useEffect(() => {
     if (!toast) return;
@@ -56,11 +46,9 @@ export default function App() {
   }, [toast]);
   const notify = (message: string) => setToast(message);
   const openGames = () => {
-    setActiveGame(null);
     setPanel("games");
   };
   const closePanel = () => {
-    setActiveGame(null);
     setPanel(null);
   };
   const navigate = (destination: PlaceId) => {
@@ -313,18 +301,16 @@ export default function App() {
               }}
             />
           )}
-          {panel === "games" && !activeGame && (
-            <GamesPicker onSelect={setActiveGame} />
-          )}
-          {panel === "games" && activeGame && (
-            <button className="game-back" onClick={() => setActiveGame(null)}>
-              <ArrowLeft size={14} /> All games
-            </button>
-          )}
-          {panel === "games" && activeGame === "fruit" && (
-            <FruitCatch
-              best={player.fruitCatchBest}
-              onFinish={(result) =>
+          {panel === "games" && (
+            <GamesPanel
+              player={player}
+              onCompleteGame={(pairs) =>
+                setPlayer((p) => completeGame(p, pairs))
+              }
+              onCompleteBeeStop={(score) =>
+                setPlayer((p) => completeBeeStop(p, score))
+              }
+              onCompleteFruitCatch={(result) =>
                 setPlayer((p) =>
                   completeFruitCatch(
                     p,
@@ -334,23 +320,6 @@ export default function App() {
                   ),
                 )
               }
-              onClose={closePanel}
-            />
-          )}
-          {panel === "games" && activeGame === "memory" && (
-            <MemorySafari
-              onFinish={(pairs) => {
-                setPlayer((p) => completeGame(p, pairs));
-              }}
-              onClose={closePanel}
-            />
-          )}
-          {panel === "games" && activeGame === "mango" && (
-            <MangoRun
-              best={player.mangoRunBest ?? 0}
-              onFinish={(score) => {
-                setPlayer((p) => completeMangoRun(p, score));
-              }}
               onClose={closePanel}
             />
           )}

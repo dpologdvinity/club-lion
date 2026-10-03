@@ -1,3 +1,5 @@
+import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
+
 export const SAVE_KEY = "club-lion-player-v1";
 export type LionColor = "gold" | "sand" | "copper" | "rose";
 export type PlaceId = "square" | "water" | "cafe" | "arcade" | "den";
@@ -12,6 +14,7 @@ export type Player = {
   met: string[];
   visited: PlaceId[];
   gamesPlayed: number;
+  beeStopBest: number;
   claimed: AdventureId[];
   decor: string[];
   mangoRunBest?: number;
@@ -142,10 +145,20 @@ export function newPlayer(): Player {
     met: [],
     visited: ["square"],
     gamesPlayed: 0,
+    beeStopBest: 0,
     claimed: [],
     decor: [],
     fruitCatchBest: 0,
   };
+}
+
+/**
+ * Best Bee Stop score. Saves written before the field existed restore as 0
+ * instead of failing validation, which would throw away the whole adventure.
+ */
+function restoreBeeStopBest(value: unknown): number {
+  if (!Number.isSafeInteger(value) || (value as number) < 0) return 0;
+  return Math.min(value as number, BEE_STOP_MAX_SCORE);
 }
 
 export function restorePlayer(raw: string | null): Player {
@@ -201,6 +214,7 @@ export function restorePlayer(raw: string | null): Player {
         ),
       ],
       gamesPlayed: p.gamesPlayed,
+      beeStopBest: restoreBeeStopBest(p.beeStopBest),
       fruitCatchBest:
         Number.isSafeInteger(p.fruitCatchBest) && p.fruitCatchBest >= 0
           ? p.fruitCatchBest
@@ -290,6 +304,17 @@ export function completeMangoRun(player: Player, score: number): Player {
     coins: player.coins + score,
     gamesPlayed: player.gamesPlayed + 1,
     mangoRunBest: Math.max(player.mangoRunBest ?? 0, score),
+  };
+}
+
+export function completeBeeStop(player: Player, score: number): Player {
+  if (!Number.isSafeInteger(score) || score < 0 || score > BEE_STOP_MAX_SCORE)
+    return player;
+  return {
+    ...player,
+    coins: player.coins + coinsFor(score),
+    gamesPlayed: player.gamesPlayed + 1,
+    beeStopBest: Math.max(player.beeStopBest, score),
   };
 }
 

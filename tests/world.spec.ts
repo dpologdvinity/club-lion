@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
+import { coinsFor, FLOWER_SPOTS } from "../src/beeStop";
 
 test("the world loads, supports movement and chat, and has no horizontal overflow", async ({
   page,
@@ -101,6 +102,83 @@ test("wardrobe validation, purchases, and persistent customizations work", async
   await expect(page.locator(".profile-details h3")).toHaveText("Roary");
   await expect(page.locator(".wallet")).toHaveText("✦0");
   await expect(page.locator(".your-character .accessory-hat")).toBeVisible();
+});
+
+test("the arcade offers all three games", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Play Memory Safari" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Play Bee Stop" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Play Fruit Catch!" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Play Bee Stop" }).click();
+  await expect(page.getByRole("heading", { name: "Bee Stop" })).toBeVisible();
+  await expect(page.getByText("Best", { exact: false })).toHaveCount(0);
+});
+
+test("the arcade and Bee Stop fit the viewport without horizontal overflow", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  const fits = async () =>
+    page.evaluate(() => {
+      const dialog = document.querySelector<HTMLElement>("dialog");
+      return (
+        !!dialog &&
+        dialog.scrollWidth <= dialog.clientWidth + 1 &&
+        dialog.getBoundingClientRect().right <= window.innerWidth + 1
+      );
+    });
+  expect(await fits()).toBe(true);
+  await page.getByRole("button", { name: "Play Bee Stop" }).click();
+  expect(await fits()).toBe(true);
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  expect(await fits()).toBe(true);
+  await expect(page.locator(".bee-track")).toBeVisible();
+});
+
+test.describe("with reduced motion", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  test("Bee Stop is still completable and pays out", async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.goto("/");
+    await page.getByRole("button", { name: "Games", exact: true }).click();
+    await page.getByRole("button", { name: "Play Bee Stop" }).click();
+    await page.getByRole("button", { name: "Let’s play" }).click();
+    for (const [index, flower] of FLOWER_SPOTS.entries()) {
+      await page.waitForFunction(
+        (spot) => {
+          const bar = document.querySelector<HTMLElement>(".bee-track");
+          const pos = bar?.dataset.beePos;
+          return pos !== undefined && Math.abs(Number(pos) - spot) < 0.05;
+        },
+        flower,
+        { timeout: 20_000 },
+      );
+      await page.keyboard.press("Space");
+      const next = index + 1;
+      if (next < FLOWER_SPOTS.length)
+        await expect(page.locator(".bee-announce")).toContainText(
+          `Round ${next + 1} of 10`,
+        );
+    }
+    const summary = page.locator(".game-win p");
+    await expect(summary).toContainText("points across 10 rounds");
+    const score = Number(
+      /(\d+) points/.exec((await summary.innerText()) ?? "")![1],
+    );
+    expect(score % 10).toBe(0);
+    await expect(page.locator(".wallet")).toHaveText(
+      `✦${250 + coinsFor(score)}`,
+    );
+  });
 });
 
 test("Memory Safari can be completed and awards exactly 60 coins", async ({
@@ -324,6 +402,86 @@ for (const reducedMotion of ["no-preference", "reduce"] as const) {
     await expect(page.locator(".wallet")).toHaveText(`✦${saved.coins}`);
   });
 }
+
+test("Bee Stop runs ten rounds, pays its score band, and remembers the best", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await page.getByRole("button", { name: "Play Bee Stop" }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  const track = page.locator(".bee-track");
+  await expect(track).toBeFocused();
+  for (const [index, flower] of FLOWER_SPOTS.entries()) {
+    // The bee only reports a position once per painted frame, and a slow
+    // browser paints roughly 0.05 * speed apart. Wait wider than that gap so
+    // a frame can never step clean over the flower.
+    await page.waitForFunction(
+      (spot) => {
+        const bar = document.querySelector<HTMLElement>(".bee-track");
+        const pos = bar?.dataset.beePos;
+        return pos !== undefined && Math.abs(Number(pos) - spot) < 0.05;
+      },
+      flower,
+      { timeout: 20_000 },
+    );
+    await page.keyboard.press("Space");
+    const next = index + 1;
+    if (next < FLOWER_SPOTS.length)
+      await expect(page.locator(".bee-announce")).toContainText(
+        `Round ${next + 1} of 10`,
+      );
+  }
+  const summary = page.locator(".game-win p");
+  await expect(summary).toContainText("points across 10 rounds");
+  const score = Number(
+    /(\d+) points/.exec((await summary.innerText()) ?? "")![1],
+  );
+  expect(score % 10).toBe(0);
+  expect(score).toBeGreaterThan(0);
+  await expect(page.locator(".wallet")).toHaveText(`✦${250 + coinsFor(score)}`);
+  await expect(page.locator(".bee-bloom")).toBeVisible();
+  await page.getByRole("button", { name: "Back to the pride" }).click();
+  await page.reload();
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Play Bee Stop" }),
+  ).toContainText(`Best ${score}`);
+  await page.getByRole("button", { name: "Play Bee Stop" }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".bee-announce")).toContainText("Round 2 of 10");
+  await expect(page.locator(".wallet")).toHaveText(`✦${250 + coinsFor(score)}`);
+  expect(errors).toEqual([]);
+});
+
+test("the arcade and Bee Stop have no WCAG AA accessibility violations", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  const menuResults = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+    .analyze();
+  expect(menuResults.violations).toEqual([]);
+  await page.getByRole("button", { name: "Play Bee Stop" }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  await page.waitForFunction(
+    () => document.querySelector<HTMLElement>(".bee-track")?.dataset.beePos,
+  );
+  const playResults = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+    .analyze();
+  expect(playResults.violations).toEqual([]);
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: "Games", exact: true }),
+  ).toBeFocused();
+});
 
 test("Fruit Catch drops fruit fast enough to catch and keeps the round busy", async ({
   page,
