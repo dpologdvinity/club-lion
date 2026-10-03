@@ -15,6 +15,7 @@ import {
   completeBeeStop,
   completeGame,
   completeMangoRun,
+  completePawSteps,
   completeFruitCatch,
   meetLion,
   PLACES,
@@ -66,6 +67,7 @@ export default function App() {
       openGames();
     } else navigate("den");
   };
+
   const titles = {
     map: ["A whole little world", "Where will your paws take you next?"],
     style: [
@@ -319,6 +321,15 @@ export default function App() {
                     result.score,
                   ),
                 )
+              }
+              onSafariFinish={(pairs) =>
+                setPlayer((p) => completeGame(p, pairs))
+              }
+              onPawStepsFinish={(rounds) =>
+                setPlayer((p) => completePawSteps(p, rounds))
+              }
+              onFruitFinish={(caught, hits, score) =>
+                setPlayer((p) => completeFruitCatch(p, caught, hits, score))
               }
               onClose={closePanel}
             />

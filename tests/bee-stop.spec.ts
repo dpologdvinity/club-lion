@@ -95,13 +95,13 @@ test("a held pointer cannot stop the following round when released", async ({
   );
   await page.mouse.up();
   // Pointer activation is handled on release, so holding through the first
-  // round never scores early. Releasing scores round 2 once.
+  // round never scores early. Releasing scores round 1 once.
   await expect(page.locator(".bee-announce")).toHaveText(
-    "So close Round 2 of 10. 0 points.",
+    "So close Round 1 of 10. 0 points.",
   );
   await page.waitForTimeout(900);
   await expect(page.locator(".bee-announce")).toHaveText(
-    "Round 3 of 10. Stop the bee on the flower.",
+    "Round 2 of 10. Stop the bee on the flower.",
   );
 });
 

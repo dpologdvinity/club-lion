@@ -15,11 +15,15 @@ export type Player = {
   visited: PlaceId[];
   gamesPlayed: number;
   beeStopBest: number;
+  pawStepsBest: number;
+  fruitCatchBest: number;
   claimed: AdventureId[];
   decor: string[];
   mangoRunBest?: number;
-  fruitCatchBest: number;
 };
+
+export const PAW_STEPS_MAX_ROUNDS = 999;
+export const PAW_STEPS_COINS_PER_ROUND = 10;
 
 export const SHOP_ITEMS = [
   {
@@ -146,9 +150,10 @@ export function newPlayer(): Player {
     visited: ["square"],
     gamesPlayed: 0,
     beeStopBest: 0,
+    pawStepsBest: 0,
+    fruitCatchBest: 0,
     claimed: [],
     decor: [],
-    fruitCatchBest: 0,
   };
 }
 
@@ -159,6 +164,15 @@ export function newPlayer(): Player {
 function restoreBeeStopBest(value: unknown): number {
   if (!Number.isSafeInteger(value) || (value as number) < 0) return 0;
   return Math.min(value as number, BEE_STOP_MAX_SCORE);
+}
+
+function restoredRounds(value: unknown): number | null {
+  if (value === undefined) return 0;
+  return Number.isSafeInteger(value) &&
+    (value as number) >= 0 &&
+    (value as number) <= PAW_STEPS_MAX_ROUNDS
+    ? (value as number)
+    : null;
 }
 
 export function restorePlayer(raw: string | null): Player {
@@ -180,6 +194,8 @@ export function restorePlayer(raw: string | null): Player {
       p.gamesPlayed < 0
     )
       return newPlayer();
+    const pawStepsBest = restoredRounds(p.pawStepsBest);
+    if (pawStepsBest === null) return newPlayer();
     const owned = [
       ...new Set<string>(
         p.owned.filter((id: unknown) =>
@@ -215,6 +231,7 @@ export function restorePlayer(raw: string | null): Player {
       ],
       gamesPlayed: p.gamesPlayed,
       beeStopBest: restoreBeeStopBest(p.beeStopBest),
+      pawStepsBest,
       fruitCatchBest:
         Number.isSafeInteger(p.fruitCatchBest) && p.fruitCatchBest >= 0
           ? p.fruitCatchBest
@@ -315,6 +332,21 @@ export function completeBeeStop(player: Player, score: number): Player {
     coins: player.coins + coinsFor(score),
     gamesPlayed: player.gamesPlayed + 1,
     beeStopBest: Math.max(player.beeStopBest, score),
+  };
+}
+
+export function completePawSteps(player: Player, rounds: number): Player {
+  if (
+    !Number.isSafeInteger(rounds) ||
+    rounds < 0 ||
+    rounds > PAW_STEPS_MAX_ROUNDS
+  )
+    return player;
+  return {
+    ...player,
+    coins: player.coins + rounds * PAW_STEPS_COINS_PER_ROUND,
+    gamesPlayed: player.gamesPlayed + 1,
+    pawStepsBest: Math.max(player.pawStepsBest, rounds),
   };
 }
 

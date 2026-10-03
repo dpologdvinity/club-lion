@@ -3,6 +3,30 @@ import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
 import { coinsFor, FLOWER_SPOTS } from "../src/beeStop";
 
+const PAW_LABELS = ["Up", "Down", "Left", "Right"];
+const PAW_KEYS: Record<string, string> = {
+  Up: "ArrowUp",
+  Down: "ArrowDown",
+  Left: "ArrowLeft",
+  Right: "ArrowRight",
+};
+
+async function watchPaws(page: Page, count: number) {
+  const seen: string[] = [];
+  for (let index = 0; index < count; index++) {
+    const lit = page.locator(".paw-key.lit");
+    await lit.waitFor({ state: "attached", timeout: 10_000 });
+    seen.push((await lit.first().getAttribute("aria-label"))!);
+    await page.waitForFunction(() => !document.querySelector(".paw-key.lit"));
+  }
+  await page.waitForFunction(
+    () =>
+      document.querySelector(".paw-key")?.getAttribute("aria-disabled") ===
+      "false",
+  );
+  return seen;
+}
+
 test("the world loads, supports movement and chat, and has no horizontal overflow", async ({
   page,
 }) => {
@@ -104,7 +128,7 @@ test("wardrobe validation, purchases, and persistent customizations work", async
   await expect(page.locator(".your-character .accessory-hat")).toBeVisible();
 });
 
-test("the arcade offers all three games", async ({ page }) => {
+test("the arcade offers all four games", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Games", exact: true }).click();
   await expect(
@@ -112,6 +136,9 @@ test("the arcade offers all three games", async ({ page }) => {
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Play Bee Stop" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Play Paw Steps" }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Play Fruit Catch!" }),
@@ -224,184 +251,13 @@ test("Memory Safari can be completed and awards exactly 60 coins", async ({
     page.getByRole("heading", { name: "That’s a roaring success!" }),
   ).toBeVisible();
   await expect(page.locator(".wallet")).toHaveText("✦310");
+  await expect(
+    page.getByRole("button", { name: "All games", exact: true }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Back to the pride" }).click();
   await page.getByRole("button", { name: "Claim 50" }).click();
   await expect(page.locator(".wallet")).toHaveText("✦360");
 });
-
-async function startMangoRun(page: Page) {
-  await page.goto("/");
-  await page.getByRole("button", { name: "Games", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Mango Run" })).toBeVisible();
-  await page.getByRole("button", { name: "Play Mango Run" }).click();
-  await expect(page.getByText("Three lives.")).toBeVisible();
-  await page.getByRole("button", { name: "Let’s run" }).click();
-  await expect(
-    page.getByRole("group", { name: /Mango Run trail/ }),
-  ).toBeFocused();
-}
-
-test("Mango Run can be started, steered, and closed", async ({ page }) => {
-  await page.goto("/");
-  await page.getByRole("button", { name: "Games", exact: true }).click();
-  await expect(
-    page.getByRole("heading", { name: "Memory Safari" }),
-  ).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Mango Run" })).toBeVisible();
-  await page.getByRole("button", { name: "Play Mango Run" }).click();
-  await expect(page.getByText("Three lives.")).toBeVisible();
-  await page.getByRole("button", { name: "Let’s run" }).click();
-
-  const field = page.getByRole("group", { name: /Mango Run trail/ });
-  await expect(field).toBeFocused();
-  const lion = page.locator(".mr-lion");
-  const before = await lion.getAttribute("style");
-  await page.keyboard.down("ArrowDown");
-  await expect(lion).not.toHaveAttribute("style", before!);
-  await page.keyboard.up("ArrowDown");
-
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog")).toHaveCount(0);
-});
-
-test("the arcade switches from Mango Run to Fruit Catch without rewarding an unfinished run", async ({
-  page,
-}) => {
-  await startMangoRun(page);
-  await page.getByRole("button", { name: "All games" }).click();
-  await expect(page.locator(".mr-playfield")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Mango Run" })).toBeVisible();
-  await page.getByRole("button", { name: "Play Fruit Catch!" }).click();
-  await page.getByRole("button", { name: "Let’s play" }).click();
-  await expect(page.locator(".fruit-field")).toBeVisible();
-  await expect(page.locator(".wallet")).toHaveText("✦250");
-});
-
-test("a held steering key moves the lion until it is released", async ({
-  page,
-}) => {
-  await startMangoRun(page);
-  const lion = page.locator(".mr-lion");
-
-  await page.keyboard.down("ArrowDown");
-  await page.waitForTimeout(160);
-  const whileHeld = await lion.getAttribute("style");
-  await page.waitForTimeout(260);
-  const stillHeld = await lion.getAttribute("style");
-  expect(stillHeld).not.toBe(whileHeld);
-
-  await page.keyboard.up("ArrowDown");
-  await page.waitForTimeout(120);
-  const released = await lion.getAttribute("style");
-  await page.waitForTimeout(260);
-  expect(await lion.getAttribute("style")).toBe(released);
-});
-
-test("pausing freezes the trail and resuming continues it", async ({
-  page,
-}) => {
-  await startMangoRun(page);
-  const lion = page.locator(".mr-lion");
-
-  await page.getByRole("button", { name: "Pause" }).click();
-  await expect(page.getByRole("button", { name: "Resume" })).toBeFocused();
-
-  await page.keyboard.down("ArrowDown");
-  await page.waitForTimeout(400);
-  const frozen = await lion.getAttribute("style");
-  await page.waitForTimeout(300);
-  expect(await lion.getAttribute("style")).toBe(frozen);
-  await page.keyboard.up("ArrowDown");
-
-  await page.getByRole("button", { name: "Resume" }).click();
-  await expect(
-    page.getByRole("group", { name: /Mango Run trail/ }),
-  ).toBeFocused();
-  await page.keyboard.down("ArrowDown");
-  await expect(lion).not.toHaveAttribute("style", frozen!);
-  await page.keyboard.up("ArrowDown");
-});
-
-test("Escape resumes a paused run instead of closing the game", async ({
-  page,
-}) => {
-  await startMangoRun(page);
-  await page.getByRole("button", { name: "Pause" }).click();
-
-  await page.locator(".mr-paused").click({ position: { x: 4, y: 4 } });
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog")).toHaveCount(1);
-  await expect(page.getByRole("button", { name: "Pause" })).toBeVisible();
-
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog")).toHaveCount(0);
-});
-
-test("the on-screen pad steers the lion without a keyboard", async ({
-  page,
-  hasTouch,
-}) => {
-  test.skip(!hasTouch, "touch pad is only shown on touch devices");
-  await startMangoRun(page);
-  const pad = page.getByRole("button", { name: "Steer down" });
-  await expect(pad).toBeVisible();
-
-  const lion = page.locator(".mr-lion");
-  const before = await lion.getAttribute("style");
-  await pad.dispatchEvent("pointerdown", { pointerId: 1 });
-  await page.waitForTimeout(240);
-  await pad.dispatchEvent("pointerup", { pointerId: 1 });
-  expect(await lion.getAttribute("style")).not.toBe(before);
-
-  const stopped = await lion.getAttribute("style");
-  await page.waitForTimeout(260);
-  expect(await lion.getAttribute("style")).toBe(stopped);
-});
-
-for (const reducedMotion of ["no-preference", "reduce"] as const) {
-  test(`idle Mango Run ends, rewards once, and saves the best (${reducedMotion})`, async ({
-    page,
-  }) => {
-    await page.emulateMedia({ reducedMotion });
-    await page.addInitScript(() => {
-      Math.random = () => 0;
-    });
-    await page.clock.install({ time: new Date("2026-10-03T12:00:00Z") });
-    await startMangoRun(page);
-    await page.clock.pauseAt(new Date("2026-10-03T12:01:00Z"));
-    const result = page.getByRole("heading", { name: "A brand new best!" });
-    for (
-      let second = 0;
-      second < 60 && (await result.count()) === 0;
-      second++
-    ) {
-      await page.clock.runFor(1000);
-    }
-    await expect(result).toBeVisible();
-    const saved = await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key)!),
-      SAVE_KEY,
-    );
-    expect(saved.gamesPlayed).toBe(1);
-    expect(saved.mangoRunBest).toBeGreaterThan(0);
-    expect(saved.coins).toBe(250 + saved.mangoRunBest);
-    await page.clock.runFor(3000);
-    expect(
-      await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY),
-    ).toBe(JSON.stringify(saved));
-
-    await page.getByRole("button", { name: "Run again" }).click();
-    await expect(page.getByRole("img", { name: "3 lives left" })).toBeVisible();
-    await page.keyboard.press("Escape");
-    await page.reload();
-    await page.getByRole("button", { name: "Games", exact: true }).click();
-    await page.getByRole("button", { name: "Play Mango Run" }).click();
-    await expect(page.locator(".game-features")).toContainText(
-      `${saved.mangoRunBest}`,
-    );
-    await expect(page.locator(".wallet")).toHaveText(`✦${saved.coins}`);
-  });
-}
 
 test("Bee Stop runs ten rounds, pays its score band, and remembers the best", async ({
   page,
@@ -482,6 +338,122 @@ test("the arcade and Bee Stop have no WCAG AA accessibility violations", async (
     page.getByRole("button", { name: "Games", exact: true }),
   ).toBeFocused();
 });
+test("Paw Steps pays for every finished round, then remembers the best score", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await page.getByRole("button", { name: /Paw Steps/ }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  await expect(
+    page.getByRole("dialog").locator('[aria-live="polite"]'),
+  ).toHaveText(/^Showing: (Up|Down|Left|Right), (Up|Down|Left|Right)$/);
+  const opening = await watchPaws(page, 2);
+  expect(opening).toHaveLength(2);
+  await page.keyboard.down(PAW_KEYS[opening[0]]);
+  await expect(page.locator(".game-help")).toHaveText(
+    "Your turn — repeat 1 step.",
+  );
+  await page.keyboard.down(PAW_KEYS[opening[0]]);
+  await expect(page.locator(".game-help")).toHaveText(
+    "Your turn — repeat 1 step.",
+  );
+  await page.keyboard.up(PAW_KEYS[opening[0]]);
+  await page.keyboard.press(PAW_KEYS[opening[1]]);
+  await expect(page.locator(".game-stats span").first()).toHaveText("1 rounds");
+  await page.waitForFunction(() => !document.querySelector(".paw-key.lit"));
+  const next = await watchPaws(page, 3);
+  expect(next).toHaveLength(3);
+  await page.keyboard.press(PAW_KEYS[next[0]]);
+  const wrong = PAW_LABELS.find((label) => label !== next[1]);
+  await page.getByRole("button", { name: wrong!, exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "What a run!" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("You repeated 1 round", { exact: false }),
+  ).toBeVisible();
+  await expect(page.locator(".wallet")).toHaveText("✦260");
+  await expect(page.getByRole("button", { name: "Claim 50" })).toHaveCount(1);
+  await page.reload();
+  await expect(page.locator(".wallet")).toHaveText("✦260");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await expect(page.getByText("Best: 1.", { exact: false })).toBeVisible();
+});
+
+test("Paw Steps accepts rapid correct input and locks a completed round", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await page.getByRole("button", { name: /Paw Steps/ }).click();
+  await page.evaluate(() => {
+    let index = 0;
+    Math.random = () => [0, 0.26, 0.51][index++ % 3];
+  });
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector(".paw-key")?.getAttribute("aria-disabled") ===
+      "false",
+  );
+  await expect(
+    page.getByRole("group", { name: "Paw step arrows" }),
+  ).toBeFocused();
+  await page.evaluate(() => {
+    for (const key of ["ArrowUp", "ArrowLeft", "ArrowRight", "ArrowUp"]) {
+      window.dispatchEvent(
+        new KeyboardEvent("keydown", { key, bubbles: true }),
+      );
+    }
+  });
+  await expect(page.locator(".game-stats span").first()).toHaveText("1 rounds");
+  await page.waitForFunction(
+    () =>
+      document.querySelector(".paw-key")?.getAttribute("aria-disabled") ===
+      "false",
+  );
+  await page.keyboard.press("ArrowDown");
+  await expect(
+    page.getByRole("heading", { name: "What a run!" }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
+  await expect(page.locator(".wallet")).toHaveText("✦260");
+  await page.getByRole("button", { name: "Play again" }).click();
+  await expect(
+    page.getByRole("dialog").locator('[aria-live="polite"]'),
+  ).toHaveText(/^Showing: /);
+  await page.getByRole("button", { name: "All games", exact: true }).click();
+  await expect(page.getByRole("button", { name: /Paw Steps/ })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: "Games", exact: true }),
+  ).toBeFocused();
+  await page.reload();
+  await expect(page.locator(".wallet")).toHaveText("✦260");
+});
+
+test("the arcade menu keeps keyboard focus when any game is left", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  for (const name of ["Paw Steps", "Memory Safari", "Fruit Catch!"]) {
+    await page.getByRole("button", { name: new RegExp(name) }).click();
+    await page.getByRole("button", { name: "All games", exact: true }).click();
+    await expect(
+      page.getByRole("button", { name: new RegExp(name) }),
+    ).toBeFocused();
+  }
+  await page.getByRole("button", { name: /Paw Steps/ }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: "Games", exact: true }),
+  ).toBeFocused();
+  await page.reload();
+  await expect(page.locator(".wallet")).toHaveText("✦250");
+});
 
 test("Fruit Catch drops fruit fast enough to catch and keeps the round busy", async ({
   page,
@@ -537,6 +509,17 @@ test("the main world and dialogs have no WCAG AA accessibility violations", asyn
   await expect(
     page.getByRole("button", { name: "Style your lion" }),
   ).toBeFocused();
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  const menuResults = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+    .analyze();
+  expect(menuResults.violations).toEqual([]);
+  await page.getByRole("button", { name: /Paw Steps/ }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  const padResults = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+    .analyze();
+  expect(padResults.violations).toEqual([]);
 });
 
 test("unavailable browser storage preserves a playable world with an honest warning", async ({

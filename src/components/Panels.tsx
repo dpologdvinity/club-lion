@@ -1,9 +1,8 @@
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import {
   ArrowRight,
   Check,
   Coffee,
-  Heart,
   Home,
   MapPin,
   PawPrint,
@@ -274,96 +273,6 @@ export function Shop({
         <Sparkles size={14} /> Earn more coins at the arcade or by finishing
         your adventures.
       </p>
-    </div>
-  );
-}
-
-export type GameId = "memory" | "mango" | "fruit";
-
-const GAMES: {
-  id: GameId;
-  name: string;
-  description: string;
-  art: ReactNode;
-  features: ReactNode[];
-}[] = [
-  {
-    id: "memory",
-    name: "Memory Safari",
-    description:
-      "Flip the cards and find all 6 matching pairs. No timer, no rush.",
-    art: (
-      <span className="game-card-art-icons">
-        <span>🌴</span>
-        <span>🦁</span>
-        <span>🌼</span>
-      </span>
-    ),
-    features: [
-      <>
-        <Sparkles size={15} /> No timer. No rush.
-      </>,
-      <>
-        <Coin amount={60} /> per game
-      </>,
-    ],
-  },
-  {
-    id: "mango",
-    name: "Mango Run",
-    description:
-      "Steer your lion through the savanna, dodge obstacles, and scoop up mangoes for as long as you last.",
-    art: <span className="game-card-art-icons">🥭🦁🌿</span>,
-    features: [
-      <>
-        <Heart size={15} /> 3 lives, endless run
-      </>,
-      <>
-        <Coin amount={1} /> per point
-      </>,
-    ],
-  },
-  {
-    id: "fruit",
-    name: "Fruit Catch!",
-    description: "Catch the good stuff. Dodge the icky stuff.",
-    art: <span className="game-card-art-icons">🍎 🧺 🍊</span>,
-    features: [
-      <>
-        <Heart size={15} /> 3 lives, 30 seconds
-      </>,
-      <>
-        <Coin amount={2} /> per fruit caught
-      </>,
-    ],
-  },
-];
-
-export function GamesPicker({
-  onSelect,
-}: {
-  onSelect: (game: GameId) => void;
-}) {
-  return (
-    <div className="games-picker">
-      {GAMES.map((game) => (
-        <article className="game-card" key={game.id}>
-          <div className={`game-card-art art-${game.id}`}>{game.art}</div>
-          <h3>{game.name}</h3>
-          <p>{game.description}</p>
-          <div className="game-features">
-            {game.features.map((feature, index) => (
-              <span key={index}>{feature}</span>
-            ))}
-          </div>
-          <button
-            className="button button-primary"
-            onClick={() => onSelect(game.id)}
-          >
-            Play {game.name} <ArrowRight size={17} />
-          </button>
-        </article>
-      ))}
     </div>
   );
 }

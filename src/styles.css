@@ -72,7 +72,8 @@ button:not(:disabled):active {
 }
 button:focus-visible,
 a:focus-visible,
-input:focus-visible {
+input:focus-visible,
+.paw-pad:focus-visible {
   outline: 3px solid #467b61;
   outline-offset: 4px;
 }
@@ -2566,6 +2567,77 @@ svg {
     font-size: 33px;
   }
 }
+.arcade-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.arcade-back:hover {
+  color: var(--text);
+}
+.paw-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 9px;
+  width: 100%;
+  max-width: 268px;
+  margin: 0 auto;
+}
+.paw-key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  background: #50795a;
+  color: #dbe4bd;
+  border: 1px solid #76966a;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 4px #76966a;
+}
+.paw-key:hover {
+  background: #608762;
+}
+.paw-key.lit {
+  background: #fff0d2;
+  border-color: #e2c69d;
+  color: #8a5a1c;
+  box-shadow: inset 0 0 0 4px #f9e6c6;
+}
+.paw-key.missed {
+  border-color: #d8a193;
+  box-shadow: inset 0 0 0 4px #e8c4ba;
+}
+.paw-key[aria-disabled="true"] {
+  cursor: default;
+}
+.paw-key-up {
+  grid-area: 1 / 2;
+}
+.paw-key-left {
+  grid-area: 2 / 1;
+}
+.paw-key-right {
+  grid-area: 2 / 3;
+}
+.paw-key-down {
+  grid-area: 3 / 2;
+}
+.paw-center {
+  grid-area: 2 / 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  opacity: 0.55;
+}
 .help-welcome {
   display: flex;
   align-items: center;
@@ -3324,6 +3396,10 @@ svg {
   }
   .memory-card.revealed > span {
     font-size: 27px;
+  }
+  .paw-pad {
+    max-width: 232px;
+    gap: 7px;
   }
   .game-win-actions {
     flex-direction: column;

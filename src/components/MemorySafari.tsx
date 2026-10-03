@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  ArrowLeft,
   ArrowRight,
   Check,
   Gamepad2,
@@ -21,9 +22,11 @@ function shuffledCards() {
 
 export function MemorySafari({
   onFinish,
+  onBack,
   onClose,
 }: {
   onFinish: (pairs: number) => void;
+  onBack: () => void;
   onClose: () => void;
 }) {
   const [cards, setCards] = useState(shuffledCards);
@@ -83,6 +86,9 @@ export function MemorySafari({
 
   return (
     <div className="memory-game">
+      <button className="arcade-back" onClick={onBack}>
+        <ArrowLeft size={15} /> All games
+      </button>
       {!playing && !won ? (
         <div className="game-intro">
           <div className="game-illustration">
