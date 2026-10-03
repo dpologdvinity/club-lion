@@ -144,12 +144,36 @@ A tropical, sun-soaked waterpark packed with water rides, relaxing floats, and s
 
 ---
 
-## 6. The Complete Mini-Games Roster
+## 6. The Nightlife & Entertainment Scene (Clubs, Lounges & Bars)
+
+Tailored directly for young adults and older teens, the island features a vibrant after-dark social scene with iconic music, dancing, and hangout venues:
+
+### 6.1 Club Pulse (The Main Dance Club)
+* **The Dance Floor:** An interactive multi-color LED tile floor that lights up and pulses beneath avatars' feet as they walk and dance.
+* **DJ Booth & Mini-Game (`DJ Beat Drop`):** Hop behind the turntable mixer! Mix 4 audio stems (Kicks, Bass, Synths, Vocal Chops), time record scratches with arrow keys, and build up the crowd's "Hype Meter" to trigger laser cannons and confetti drops!
+* **VIP Mezzanine Lounge:** Elevated second-floor lounge with velvet ropes, glowing neon lion-crest wall art, curved leather booths, and panoramic views of the dance floor below.
+
+### 6.2 The Velvet Sunset (Rooftop Lounge & Mocktail Bar)
+* **Atmosphere:** An open-air terrace perched atop Uptown with panoramic skyline views of the illuminated city and moonlit bay.
+* **The Bar Counter:** Interactive drink menu where avatars can order handcrafted beverages (e.g., *Midnight Mango Spritz*, *Lavender Smoke Cold Brew*, *Electric Dragonfruit Fizz*). Avatars hold their glass with fruit garnishes and can sit at high-top barstools.
+* **Social Hangouts:** Regulation pool/billiards table, outdoor gas fire pits, and plush lounge seating with lo-fi house beats.
+
+### 6.3 The Hidden Den (Underground Speakeasy & Jazz Cellar)
+* **Secret Entrance:** Hidden behind an antique telephone booth in the Canopy Café alleyway (enter a secret 4-digit code to swing the door open).
+* **Atmosphere:** Exposed brick, warm amber candelabras, velvet armchairs, and smooth generative jazz piano playing in the background.
+
+### 6.4 The Moonlit Cove (Beachfront Firepit Club)
+* **Atmosphere:** An outdoor tiki beach club right on the sand with bamboo bars, glowing string lights draped between palm trees, a roaring central bonfire, acoustic guitar circles, and ocean waves crashing in the background.
+
+---
+
+## 7. The Complete Mini-Games Roster
 
 Games are categorized by style and distributed directly into their themed environments:
 
 | Room & District | Game Title | Category | Mechanics |
 | :--- | :--- | :--- | :--- |
+| **Club Pulse** | **DJ Beat Drop** | ⚡ Challenging | Turntable rhythm game: mix synth stems, scratch vinyl, and time drops to max out the club hype meter. |
 | **Canopy Café** | **Smoothie Kitchen** | 🧘 Relaxing | Pizzatron-style conveyor line: blend fruits, ice, and syrups to customer orders with tactile ASMR sound effects. |
 | **Watering Hole Pier** | **Waterhole Angler** | 🧘 Relaxing | Calming dock fishing: cast line, watch ripple shadows, reel in exotic fish, dodge old boots, catch Golden Catfish. |
 | **Observatory Hill** | **Star Catcher** | 🧘 Relaxing | Connect night sky star nodes to form savanna animal constellations with soothing harp chimes. |
@@ -164,9 +188,9 @@ Games are categorized by style and distributed directly into their themed enviro
 
 ---
 
-## 7. Economy, Secrets, Audio & Progression
+## 8. Economy, Secrets, Audio & Progression
 
-### 7.1 Le Shop Secret Catalog Clickables
+### 8.1 Le Shop Secret Catalog Clickables
 * Multi-page flip catalog with realistic sound effects.
 * Hidden clickable hot spots tucked into catalog artwork:
   * Page 2: Coffee cup steam unlocks the *Barista Apron*.
@@ -174,14 +198,14 @@ Games are categorized by style and distributed directly into their themed enviro
   * Page 6: Hidden leaf unlocks the *Golden Mane Wreath*.
   * Page 8: Pirate skull on beach page unlocks the *Eyepatch & Cutlass*.
 
-### 7.2 The Procedural Web Audio Jukebox (`Jukebox.tsx`)
+### 8.2 The Procedural Web Audio Jukebox (`Jukebox.tsx`)
 Zero external MP3 weight. Procedural Web Audio synthesizers generate 4 complete authentic music tracks:
 1. *Savanna Nightclub:* Four-on-the-floor kick, synth bassline, and catchy arpeggios.
 2. *Canopy Lo-Fi Lounge:* Warm electric piano chords with gentle vinyl crackle and acoustic brush percussion.
 3. *Waterhole Twilight:* Soothing pan flute melodies, ambient water ripples, and evening crickets.
 4. *Carnival Calliope:* Nostalgic mechanical carousel organ waltz.
 
-### 7.3 Fantage-Style ID Card (`PlayerCard.tsx`)
+### 8.3 Fantage-Style ID Card (`PlayerCard.tsx`)
 * Clickable on self or any neighbor/player in a room:
   * Animated avatar preview wearing current outfit and riding board.
   * Companion pet lion preview with pet name and happiness hearts.
@@ -189,7 +213,7 @@ Zero external MP3 weight. Procedural Web Audio synthesizers generate 4 complete 
   * **Editable Status Quote:** Custom tagline visible to other players.
   * **4 Ribbon Medal Slots:** Showcase rarest earned achievements.
 
-### 7.4 The Savanna Stamp Book
+### 8.4 The Savanna Stamp Book
 * 25+ collectible stamps categorized across:
   * *World Secrets:* (e.g. Find 5 catalog secrets, trigger night mode, uncover pirate chest).
   * *Park & Water Thrills:* (e.g. Ride all 7 theme park rides, get drenched by the 1000-gallon dump bucket).
@@ -198,9 +222,9 @@ Zero external MP3 weight. Procedural Web Audio synthesizers generate 4 complete 
 
 ---
 
-## 8. Multiplayer-Ready Architecture & Data Model
+## 9. Multiplayer-Ready Architecture & Data Model
 
-### 8.1 Network-Serializable Entity Schemas (`src/types/world.ts`)
+### 9.1 Network-Serializable Entity Schemas (`src/types/world.ts`)
 ```typescript
 export type AvatarLook = {
   skinTone: "fair" | "tan" | "warm" | "deep" | "bronze";
@@ -242,7 +266,7 @@ export type RoomState = {
 };
 ```
 
-### 8.2 Local-to-Multiplayer Abstraction Layer
+### 9.2 Local-to-Multiplayer Abstraction Layer
 ```
                ┌───────────────────────────────┐
                │    React UI & World Canvas    │
@@ -264,16 +288,16 @@ export type RoomState = {
 
 ---
 
-## 9. Phased Implementation Roadmap
+## 10. Phased Implementation Roadmap
 
 * **Phase 1: The Chibi Avatar, Companion Pet Lion, & Downtown Core**
   * Avatar rendering engine (SVG layers: skin, eyes, hair, clothes, shoes).
   * Companion pet lion follower physics and synchronized emote reactions.
   * Downtown Plaza (Le Shop with secret catalog clickables, Stella Salon, Canopy Café).
   * Fantage ID Card & Action Emotes (tossing mangos, dances).
-* **Phase 2: Savanna Wonder Park (Theme Park) & First Games Slice**
-  * Wonder Park map & interactive rides (Roller Coaster, Ferris Wheel, Bumper Cars).
-  * Spectator kinetic rides (Log Flume splashdown, Wave Swinger, Pirate Galleon).
+* **Phase 2: Savanna Wonder Park (Theme Park) & Nightlife Core**
+  * Wonder Park map & interactive rides (Roller Coaster, Ferris Wheel, Bumper Cars, Flume).
+  * **Club Pulse & Rooftop Lounge:** Interactive light-up dance floor & DJ Beat Drop mini-game.
   * 🧘 Smoothie Kitchen (Canopy Café) & ⚡ River Rapids Surf (Canyon).
   * Equipable boards with sparkle footprint trails.
 * **Phase 3: Splash Oasis (Waterpark) & Runway Showdown**
