@@ -86,6 +86,15 @@ test("mango runs are repeatable and each one pays out again", () => {
   assert.equal(twice.mangoRunBest, 7);
 });
 
+test("a mango run scoring zero still counts a play and pays nothing", () => {
+  const player = newPlayer();
+  const run = completeMangoRun(player, 0);
+  assert.equal(run.coins, player.coins);
+  assert.equal(run.gamesPlayed, player.gamesPlayed + 1);
+  assert.equal(run.mangoRunBest, 0);
+  assert.equal(completeMangoRun(run, 0).mangoRunBest, 0);
+});
+
 test("mango runs ignore negative and non-integer scores", () => {
   const player = newPlayer();
   assert.deepEqual(completeMangoRun(player, -5), player);
