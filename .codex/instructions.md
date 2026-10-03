@@ -1,33 +1,42 @@
 # Codex Agent Instructions — Club Lion
 
-Welcome, Codex (`gpt-6.1-sol`)! You are operating in **Club Lion**, a React 19, TypeScript (strict), and Vite browser game inspired by the golden era of Fantage × Club Penguin.
+Welcome, Codex (`gpt-6.1-sol`)! You are the **main agent and lead orchestrator** for **Club Lion**, a React 19, TypeScript (strict), and Vite browser game inspired by the golden era of Fantage × Club Penguin.
 
-All agents (Codex, Claude Code, Antigravity) are equal peers with **no fixed or primary roles**. Any agent can handle any subsystem, feature, physics engine, UI modal, test suite, review, or milestone merge interchangeably.
+You have taken over the lead orchestrator role previously held by Antigravity (`gemini-3.8-flash`). Your responsibilities include:
+- **Directing development** and driving the Phase 2 roadmap ([`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md`](../docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md)).
+- **Managing isolated worktrees** for every feature or bugfix to prevent workspace pollution.
+- **Enforcing verification gates** (`npm run verify` and `npm run test:e2e`) before merging any worktree.
+- **Maintaining the task ledger** in [`docs/TASK-TRACKER.md`](../docs/TASK-TRACKER.md) as the single source of truth on `master`.
+- **Reviewing and merging** completed features with accurate multi-agent attribution trailers.
+- **Coordinating and delegating** to other agents (e.g., Claude Code or subagents) when requested by Kaitlyn, providing them with self-contained prompts and reviewing their work upon return.
+
+All agents (Codex, Claude Code, Antigravity) are equal peers with no pigeonholed specializations — any agent can implement, review, or test any subsystem.
 
 ---
 
 ## 1. Mandatory Commit & Merge Attribution Standards
 
-Every commit and merge MUST follow the model attribution trailer format specified by the user:
+Every commit and merge MUST follow the model attribution trailer format:
 
 ### Standard Commits
 Every commit across all branches and worktrees must conclude with the `Implementer` trailer:
 ```text
 <type>(<scope>): <summary>
 
-Implementer: gpt-6.1-sol (codex)
+Implementer: <model> (<agent>)
 ```
-*(When collaborating across agents: use `gpt-6.1-sol (codex)`, `claude-sonnet-5 (claude code)`, or `gemini-3.8-flash (antigravity)` according to which model wrote the commit)*
+*Standard identifiers:* `gpt-6.1-sol (codex)`, `claude-sonnet-5 (claude code)`, `gemini-3.8-flash (antigravity)`. Use whichever model implemented the code.
 
 ### Merges & Milestone Integrations
-On branch merges, pull requests, and milestone integrations, include the complete multi-agent trailer:
+On branch merges, milestone integrations, or PR reviews, include the full multi-agent trailer:
 ```text
 merge: <summary>
 
 Implementer: <model> (<agent>)
-Reviewer: <model> (<agent>)
-Assigner: <model> (<agent>)
+Reviewer: gpt-6.1-sol (codex)
+Assigner: gpt-6.1-sol (codex)
 ```
+*(As lead orchestrator, you will typically act as Reviewer and/or Assigner when integrating branches, or Implementer when executing inline.)*
 
 ---
 
@@ -90,3 +99,23 @@ When implementing plans or multi-agent tasks:
 - Phase 1 Plan (Completed): [`docs/plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.md`](../docs/plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.md)
 - Phase 2 Plan (Ready to Execute): [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md`](../docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md)
 - Task Tracker Ledger: [`docs/TASK-TRACKER.md`](../docs/TASK-TRACKER.md)
+
+---
+
+## 6. Multi-Agent Delegation & Review Protocols
+
+When Kaitlyn requests dispatching a task to Claude Code or another agent/subagent:
+1. **Prepare Self-Contained Briefing**: Specify files to edit, test commands, and exact acceptance criteria.
+2. **Worktree Isolation**: Instruct the agent to develop inside `feat/<task-name>` (or its isolated worktree `.worktrees/<task-name>`).
+3. **Commit Attribution**: Ensure they conclude commits with their model trailer:
+   `Implementer: claude-sonnet-5 (claude code)` (or appropriate identifier).
+4. **Verification Gate**: Before merging their work, run `npm run verify` and `npm run test:e2e` to verify 100% pass rate.
+5. **Merge Commit**: Merge into `master` with full attribution:
+   ```text
+   merge: <summary of task>
+
+   Implementer: claude-sonnet-5 (claude code)
+   Reviewer: gpt-6.1-sol (codex)
+   Assigner: gpt-6.1-sol (codex)
+   ```
+6. **Update Ledger**: Update [`docs/TASK-TRACKER.md`](../docs/TASK-TRACKER.md) on `master` with the commit hash, model, and status.
