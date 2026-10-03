@@ -1993,6 +1993,90 @@ svg {
   outline: 3px solid #467b61;
   outline-offset: 4px;
 }
+.mr-stage {
+  position: relative;
+}
+.mr-pause {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-left: auto;
+  border-radius: 9px;
+  background: #ffffffb3;
+  color: var(--text);
+}
+.mr-pause:hover {
+  background: #ffffffe6;
+}
+.mr-paused {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  padding: 18px;
+  text-align: center;
+  border-radius: var(--radius);
+  background: #f8ecd2e6;
+  backdrop-filter: blur(3px);
+}
+.mr-paused h3 {
+  font-size: 23px;
+}
+.mr-paused p {
+  font-size: 13px;
+  color: var(--muted);
+}
+.mr-paused .game-win-actions {
+  margin-top: 12px;
+}
+.mr-dpad {
+  display: none;
+  grid-template-areas:
+    ". up ."
+    "left . right"
+    ". down .";
+  gap: 7px;
+  justify-content: center;
+  margin-top: 14px;
+}
+.mr-dpad-key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 52px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--green-soft);
+  color: var(--text);
+  touch-action: none;
+  user-select: none;
+  cursor: pointer;
+}
+.mr-dpad-key:active {
+  background: #cfe3cf;
+}
+.mr-dpad-up {
+  grid-area: up;
+}
+.mr-dpad-down {
+  grid-area: down;
+}
+.mr-dpad-left {
+  grid-area: left;
+}
+.mr-dpad-right {
+  grid-area: right;
+}
+@media (pointer: coarse) {
+  .mr-dpad {
+    display: grid;
+  }
+}
 .mr-lion,
 .mr-mango,
 .mr-obstacle {

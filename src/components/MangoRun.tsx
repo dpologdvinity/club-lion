@@ -1,8 +1,19 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
+import {
+  ArrowDown,
+  ArrowLeft,
   ArrowRight,
+  ArrowUp,
   Gamepad2,
   Heart,
+  Pause,
+  Play,
   RotateCcw,
   Sparkles,
   Trophy,
@@ -16,7 +27,7 @@ import {
   spawnX,
 } from "./mangoPattern";
 
-type Mode = "intro" | "playing" | "gameover";
+type Mode = "intro" | "playing" | "paused" | "gameover";
 type Point = { x: number; y: number };
 type Obstacle = Point & { id: number };
 type Mango = Point & { id: number };
@@ -39,7 +50,6 @@ const MANGO_POINTS = 10;
 const START_LIVES = 3;
 const INVULN_MS = 500;
 const SLOW_MOTION = 0.6;
-const TAP_MS = 120;
 const LION_START: Point = { x: 56, y: (FIELD_H - LION_SIZE) / 2 };
 const EMPTY_FRAME: Frame = {
   obstacles: [],
@@ -48,7 +58,9 @@ const EMPTY_FRAME: Frame = {
   score: 0,
 };
 
-const STEER: Record<string, string> = {
+const DIRECTIONS = ["up", "down", "left", "right"] as const;
+
+const STEER: Record<string, (typeof DIRECTIONS)[number]> = {
   arrowup: "up",
   arrowdown: "down",
   arrowleft: "left",
@@ -58,6 +70,24 @@ const STEER: Record<string, string> = {
   s: "down",
   d: "right",
 };
+
+const PAD_ICONS = {
+  up: ArrowUp,
+  down: ArrowDown,
+  left: ArrowLeft,
+  right: ArrowRight,
+} as const;
+
+function holding(
+  keys: Set<string>,
+  pads: Map<number, string>,
+  padKeys: Set<string>,
+  direction: string,
+) {
+  if (keys.has(direction) || padKeys.has(direction)) return true;
+  for (const held of pads.values()) if (held === direction) return true;
+  return false;
+}
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(
@@ -110,10 +140,13 @@ export function MangoRun({
 
   const field = useRef<HTMLDivElement>(null);
   const again = useRef<HTMLButtonElement>(null);
+  const resumeButton = useRef<HTMLButtonElement>(null);
   const lion = useRef<Point>(LION_START);
   const obstacles = useRef<Obstacle[]>([]);
   const mangoes = useRef<Mango[]>([]);
-  const keys = useRef(new Map<string, number>());
+  const keys = useRef(new Set<string>());
+  const pads = useRef(new Map<number, string>());
+  const padKeys = useRef(new Set<string>());
   const distance = useRef(0);
   const collected = useRef(0);
   const livesNow = useRef(START_LIVES);
@@ -125,27 +158,71 @@ export function MangoRun({
 
   finish.current = onFinish;
 
-  const releaseKeys = () => keys.current.clear();
+  const releaseSteering = () => {
+    keys.current.clear();
+    pads.current.clear();
+    padKeys.current.clear();
+  };
 
   useEffect(() => {
     if (mode === "playing") field.current?.focus({ preventScroll: true });
+    if (mode === "paused") resumeButton.current?.focus({ preventScroll: true });
     if (mode === "gameover") again.current?.focus({ preventScroll: true });
   }, [mode]);
 
   useEffect(() => {
-    window.addEventListener("blur", releaseKeys);
-    return () => {
-      window.removeEventListener("blur", releaseKeys);
-      window.clearTimeout(flash.current);
+    const suspend = () => {
+      releaseSteering();
+      if (mode === "playing") setMode("paused");
     };
-  }, []);
+    const hide = () => {
+      if (document.hidden) suspend();
+    };
+    const releasePointer = (event: globalThis.PointerEvent) => {
+      pads.current.delete(event.pointerId);
+    };
+    window.addEventListener("blur", suspend);
+    document.addEventListener("visibilitychange", hide);
+    window.addEventListener("pointerup", releasePointer);
+    window.addEventListener("pointercancel", releasePointer);
+    return () => {
+      window.removeEventListener("blur", suspend);
+      document.removeEventListener("visibilitychange", hide);
+      window.removeEventListener("pointerup", releasePointer);
+      window.removeEventListener("pointercancel", releasePointer);
+    };
+  }, [mode]);
+
+  useEffect(() => () => window.clearTimeout(flash.current), []);
+
+  const pause = () => {
+    releaseSteering();
+    setMode("paused");
+  };
+
+  const resume = () => {
+    releaseSteering();
+    setMode("playing");
+  };
+
+  useEffect(() => {
+    if (mode !== "paused") return;
+    const onEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      resume();
+    };
+    document.addEventListener("keydown", onEscape, true);
+    return () => document.removeEventListener("keydown", onEscape, true);
+  }, [mode]);
 
   const start = () => {
     window.clearTimeout(flash.current);
     lion.current = LION_START;
     obstacles.current = [];
     mangoes.current = [];
-    keys.current.clear();
+    releaseSteering();
     distance.current = 0;
     collected.current = 0;
     livesNow.current = START_LIVES;
@@ -173,16 +250,15 @@ export function MangoRun({
       const ramp = Math.min(distance.current / 2600, 0.9);
       const scroll = SCROLL_SPEED * (1 + ramp) * motion;
 
-      for (const [direction, until] of keys.current) {
-        if (until <= now) keys.current.delete(direction);
-      }
-
       let { x, y } = lion.current;
       const step = LION_SPEED * motion * dt;
-      if (keys.current.has("left")) x -= step;
-      if (keys.current.has("right")) x += step;
-      if (keys.current.has("up")) y -= step;
-      if (keys.current.has("down")) y += step;
+      if (holding(keys.current, pads.current, padKeys.current, "left"))
+        x -= step;
+      if (holding(keys.current, pads.current, padKeys.current, "right"))
+        x += step;
+      if (holding(keys.current, pads.current, padKeys.current, "up")) y -= step;
+      if (holding(keys.current, pads.current, padKeys.current, "down"))
+        y += step;
       x = Math.min(Math.max(x, 0), FIELD_W - LION_SIZE);
       y = Math.min(Math.max(y, 0), FIELD_H - LION_SIZE);
       lion.current = { x, y };
@@ -271,7 +347,7 @@ export function MangoRun({
         collected.current * MANGO_POINTS;
 
       if (livesNow.current <= 0) {
-        keys.current.clear();
+        releaseSteering();
         setFinalScore(score);
         finish.current(score);
         setMode("gameover");
@@ -289,12 +365,36 @@ export function MangoRun({
     return () => window.cancelAnimationFrame(handle);
   }, [mode, reduced]);
 
-  const steer = (event: KeyboardEvent<HTMLDivElement>) => {
+  const steer = (held: boolean) => (event: KeyboardEvent<HTMLDivElement>) => {
     const direction = STEER[event.key.toLowerCase()];
     if (!direction) return;
     event.preventDefault();
-    keys.current.set(direction, performance.now() + TAP_MS);
+    if (held) keys.current.add(direction);
+    else keys.current.delete(direction);
   };
+
+  const pressPad = (event: PointerEvent<HTMLButtonElement>) => {
+    const direction = event.currentTarget.dataset.direction;
+    if (!direction) return;
+    event.preventDefault();
+    pads.current.set(event.pointerId, direction);
+  };
+
+  const resumeOnEscape = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Escape") return;
+    event.preventDefault();
+    event.stopPropagation();
+    resume();
+  };
+
+  const pressPadKey =
+    (direction: string, down: boolean) =>
+    (event: KeyboardEvent<HTMLButtonElement>) => {
+      if (event.key !== " " && event.key !== "Enter") return;
+      event.preventDefault();
+      if (down) padKeys.current.add(direction);
+      else padKeys.current.delete(direction);
+    };
 
   return (
     <div className={`mango-run ${reduced ? "mr-reduced" : ""}`}>
@@ -323,12 +423,13 @@ export function MangoRun({
             Let’s run <ArrowRight size={18} />
           </button>
           <p className="game-help">
-            Arrow keys or W A S D to steer. Each mango is 10 coins.
+            Arrow keys, W A S D, or the on-screen pad to steer. Each mango is 10
+            coins.
           </p>
         </div>
       )}
 
-      {mode === "playing" && (
+      {(mode === "playing" || mode === "paused") && (
         <>
           <div className="mr-hud game-stats">
             <span className="mr-lives" aria-hidden="true">
@@ -350,47 +451,94 @@ export function MangoRun({
             <span>
               <Coin amount={best} />
             </span>
+            {mode === "playing" && (
+              <button className="mr-pause" onClick={pause} aria-label="Pause">
+                <Pause size={17} />
+              </button>
+            )}
           </div>
-          <div
-            className="mr-playfield"
-            ref={field}
-            style={{ width: "100%", aspectRatio: `${FIELD_W} / ${FIELD_H}` }}
-            tabIndex={0}
-            role="group"
-            aria-label="Mango Run trail. Steer with the arrow keys or W A S D."
-            onKeyDown={steer}
-            onBlur={releaseKeys}
-          >
-            {frame.mangoes.map((mango) => (
-              <span
-                key={mango.id}
-                className="mr-mango"
-                style={spriteStyle(mango.x, mango.y, MANGO_SIZE)}
-                aria-hidden="true"
-              >
-                🥭
-              </span>
-            ))}
-            {frame.obstacles.map((rock) => (
-              <span
-                key={rock.id}
-                className="mr-obstacle"
-                style={spriteStyle(rock.x, rock.y, OBSTACLE_SIZE)}
-                aria-hidden="true"
-              >
-                🪨
-              </span>
-            ))}
-            <span
-              className={`mr-lion ${invulnerable ? "mr-invuln" : ""}`}
-              style={spriteStyle(frame.lion.x, frame.lion.y, LION_SIZE)}
-              aria-hidden="true"
+          <div className="mr-stage">
+            <div
+              className="mr-playfield"
+              ref={field}
+              style={{ width: "100%", aspectRatio: `${FIELD_W} / ${FIELD_H}` }}
+              tabIndex={0}
+              role="group"
+              aria-label="Mango Run trail. Steer with the arrow keys, W A S D, or the on-screen pad."
+              onKeyDown={steer(true)}
+              onKeyUp={steer(false)}
+              onBlur={releaseSteering}
             >
-              <Lion />
-            </span>
+              {frame.mangoes.map((mango) => (
+                <span
+                  key={mango.id}
+                  className="mr-mango"
+                  style={spriteStyle(mango.x, mango.y, MANGO_SIZE)}
+                  aria-hidden="true"
+                >
+                  🥭
+                </span>
+              ))}
+              {frame.obstacles.map((rock) => (
+                <span
+                  key={rock.id}
+                  className="mr-obstacle"
+                  style={spriteStyle(rock.x, rock.y, OBSTACLE_SIZE)}
+                  aria-hidden="true"
+                >
+                  🪨
+                </span>
+              ))}
+              <span
+                className={`mr-lion ${invulnerable ? "mr-invuln" : ""}`}
+                style={spriteStyle(frame.lion.x, frame.lion.y, LION_SIZE)}
+                aria-hidden="true"
+              >
+                <Lion />
+              </span>
+            </div>
+            {mode === "paused" && (
+              <div className="mr-paused" onKeyDown={resumeOnEscape}>
+                <h3>Taking a breather</h3>
+                <p>The trail waits for you.</p>
+                <div className="game-win-actions">
+                  <button
+                    className="button button-primary"
+                    ref={resumeButton}
+                    onClick={resume}
+                  >
+                    <Play size={16} /> Resume
+                  </button>
+                  <button className="button button-secondary" onClick={start}>
+                    <RotateCcw size={16} /> Restart
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
+          {mode === "playing" && (
+            <div className="mr-dpad" role="group" aria-label="Steering pad">
+              {DIRECTIONS.map((direction) => {
+                const Icon = PAD_ICONS[direction];
+                return (
+                  <button
+                    key={direction}
+                    className={`mr-dpad-key mr-dpad-${direction}`}
+                    data-direction={direction}
+                    aria-label={`Steer ${direction}`}
+                    onPointerDown={pressPad}
+                    onKeyDown={pressPadKey(direction, true)}
+                    onKeyUp={pressPadKey(direction, false)}
+                  >
+                    <Icon size={22} />
+                  </button>
+                );
+              })}
+            </div>
+          )}
           <p className="game-help">
-            Arrow keys or W A S D to steer. Mangoes are 10 coins each.
+            Arrow keys, W A S D, or the on-screen pad to steer. Mangoes are 10
+            coins each.
           </p>
         </>
       )}

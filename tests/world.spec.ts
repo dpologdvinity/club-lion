@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 test("the world loads, supports movement and chat, and has no horizontal overflow", async ({
@@ -150,6 +150,18 @@ test("Memory Safari can be completed and awards exactly 60 coins", async ({
   await expect(page.locator(".wallet")).toHaveText("✦360");
 });
 
+async function startMangoRun(page: Page) {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Mango Run" })).toBeVisible();
+  await page.getByRole("button", { name: "Play Mango Run" }).click();
+  await expect(page.getByText("Three lives.")).toBeVisible();
+  await page.getByRole("button", { name: "Let’s run" }).click();
+  await expect(
+    page.getByRole("group", { name: /Mango Run trail/ }),
+  ).toBeFocused();
+}
+
 test("Mango Run can be started, steered, and closed", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Games", exact: true }).click();
@@ -171,6 +183,87 @@ test("Mango Run can be started, steered, and closed", async ({ page }) => {
 
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("a held steering key moves the lion until it is released", async ({
+  page,
+}) => {
+  await startMangoRun(page);
+  const lion = page.locator(".mr-lion");
+
+  await page.keyboard.down("ArrowDown");
+  await page.waitForTimeout(160);
+  const whileHeld = await lion.getAttribute("style");
+  await page.waitForTimeout(260);
+  const stillHeld = await lion.getAttribute("style");
+  expect(stillHeld).not.toBe(whileHeld);
+
+  await page.keyboard.up("ArrowDown");
+  await page.waitForTimeout(120);
+  const released = await lion.getAttribute("style");
+  await page.waitForTimeout(260);
+  expect(await lion.getAttribute("style")).toBe(released);
+});
+
+test("pausing freezes the trail and resuming continues it", async ({
+  page,
+}) => {
+  await startMangoRun(page);
+  const lion = page.locator(".mr-lion");
+
+  await page.getByRole("button", { name: "Pause" }).click();
+  await expect(page.getByRole("button", { name: "Resume" })).toBeFocused();
+
+  await page.keyboard.down("ArrowDown");
+  await page.waitForTimeout(400);
+  const frozen = await lion.getAttribute("style");
+  await page.waitForTimeout(300);
+  expect(await lion.getAttribute("style")).toBe(frozen);
+  await page.keyboard.up("ArrowDown");
+
+  await page.getByRole("button", { name: "Resume" }).click();
+  await expect(
+    page.getByRole("group", { name: /Mango Run trail/ }),
+  ).toBeFocused();
+  await page.keyboard.down("ArrowDown");
+  await expect(lion).not.toHaveAttribute("style", frozen!);
+  await page.keyboard.up("ArrowDown");
+});
+
+test("Escape resumes a paused run instead of closing the game", async ({
+  page,
+}) => {
+  await startMangoRun(page);
+  await page.getByRole("button", { name: "Pause" }).click();
+
+  await page.locator(".mr-paused").click({ position: { x: 4, y: 4 } });
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Pause" })).toBeVisible();
+
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("the on-screen pad steers the lion without a keyboard", async ({
+  page,
+  hasTouch,
+}) => {
+  test.skip(!hasTouch, "touch pad is only shown on touch devices");
+  await startMangoRun(page);
+  const pad = page.getByRole("button", { name: "Steer down" });
+  await expect(pad).toBeVisible();
+
+  const lion = page.locator(".mr-lion");
+  const before = await lion.getAttribute("style");
+  await pad.dispatchEvent("pointerdown", { pointerId: 1 });
+  await page.waitForTimeout(240);
+  await pad.dispatchEvent("pointerup", { pointerId: 1 });
+  expect(await lion.getAttribute("style")).not.toBe(before);
+
+  const stopped = await lion.getAttribute("style");
+  await page.waitForTimeout(260);
+  expect(await lion.getAttribute("style")).toBe(stopped);
 });
 
 test("the main world and dialogs have no WCAG AA accessibility violations", async ({
