@@ -63,7 +63,7 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightli
 | Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Task 1** | Hoverboard Glide & Footprint Sparkle Trail Engine | `feat/phase-2-task-1-trails` | **claude-sonnet-5 (claude code)** | `bc772e0` → `3c52baa` | ✅ Completed, reviewed & verified; 87/87 unit tests, 74/74 E2E; types, format & build clean |
-| **Task 2** | Wonder Park Declarative Room Manifests & Kinetic Track Engine | `feat/phase-2-task-2-coaster` | *Open to any agent* | - | ⏳ Planned |
+| **Task 2** | Wonder Park Declarative Room Manifests & Kinetic Track Engine | `feat/phase-2-task-2-coaster`<br/>(`.worktrees/phase-2-task-2-coaster`) | **claude-sonnet-5 (claude code)** | - | 🚀 In Progress (Dispatched) |
 | **Task 3** | Club Pulse Interactive Dance Floor & DJ Booth Stage | `feat/phase-2-task-3-dance` | *Open to any agent* | - | ⏳ Planned |
 | **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-task-4-dj-beat` | **claude-sonnet-5 (claude code)** | `dc18077` → `d5d0f78` | ✅ Completed, reviewed & verified; 107/107 unit tests, 82/82 E2E; types, format & build clean |
 | **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-task-5-smoothie` | **claude-sonnet-5 (claude code)** | `d627ec3` → `1487713` | ✅ Completed, reviewed & verified; 117/117 unit tests, 88/88 E2E; types, format & build clean |
