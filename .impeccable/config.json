@@ -11,6 +11,12 @@
         ],
         "createdAt": "2026-10-02T05:56:00.847Z",
         "reason": "Codex decided: the flagged inset box-shadow in .accessory-hat i shades the right edge of the code-drawn explorer hat; it is character artwork, not a card accent"
+      },
+      {
+        "rule": "bounce-easing",
+        "value": "pet-trot-bounce",
+        "createdAt": "2026-10-03T10:45:01.256Z",
+        "reason": "Codex reviewer: intentional literal pet trotting motion from Phase 1 commit af62b728; uses standard ease-in-out and a 4px vertical gait, not elastic UI easing."
       }
     ]
   }
