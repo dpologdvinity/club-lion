@@ -1,31 +1,24 @@
 export const LANES = 4;
 export const FIELD_H = 340;
 export const LANE_HEIGHT = FIELD_H / LANES;
+export const LION_SIZE = 36;
+export const OBSTACLE_SIZE = 30;
 export const LION_SPEED = 200;
-export const WARNING_S = 1;
+export const WARNING_S = 1.5;
+const REACTION_S = 0.2;
 
 export function laneTop(lane: number, size: number) {
   return lane * LANE_HEIGHT + (LANE_HEIGHT - size) / 2;
 }
 
-export function laneOf(y: number) {
-  return Math.min(LANES - 1, Math.max(0, Math.floor(y / LANE_HEIGHT)));
-}
-
-const REACHABLE_LANE_SECONDS = LANE_HEIGHT / LION_SPEED;
-
-export const MAX_LANE_SHIFT = Math.max(
-  1,
-  Math.floor(WARNING_S / REACHABLE_LANE_SECONDS),
-);
-
 export type PatternRow = { x: number; blocked: number[] };
 export type Pattern = { gapLane: number; rows: PatternRow[] };
 
-function pickGap(lionLane: number, rng: () => number) {
+function pickGap(lionY: number, lionSpeed: number, rng: () => number) {
   const options: number[] = [];
   for (let lane = 0; lane < LANES; lane++) {
-    if (Math.abs(lane - lionLane) <= MAX_LANE_SHIFT) options.push(lane);
+    const travel = Math.abs(laneTop(lane, LION_SIZE) - lionY);
+    if (travel <= lionSpeed * (WARNING_S - REACTION_S)) options.push(lane);
   }
   return options[Math.floor(rng() * options.length)];
 }
@@ -58,10 +51,11 @@ const STAGGER = 70;
 
 export function buildPattern(
   ramp: number,
-  lionLane: number,
+  lionY: number,
+  lionSpeed: number,
   rng: () => number,
 ): Pattern {
-  const gapLane = pickGap(lionLane, rng);
+  const gapLane = pickGap(lionY, lionSpeed, rng);
   const width = blockedWidth(ramp);
   const rows: PatternRow[] = [];
   const count = rowCount(ramp);
@@ -74,17 +68,38 @@ export function buildPattern(
   return { gapLane, rows };
 }
 
-export function buildTrail(rows: PatternRow[]): { x: number; lane: number }[] {
+export function buildTrail(
+  pattern: Pattern,
+  safe: boolean,
+  rng: () => number,
+): { x: number; lane: number }[] {
   const lead = LANE_HEIGHT;
   const trail: { x: number; lane: number }[] = [];
-  for (const row of rows) {
-    for (const lane of row.blocked) {
-      trail.push({ x: row.x - lead, lane });
-    }
+  for (const row of pattern.rows) {
+    const lane = safe
+      ? pattern.gapLane
+      : row.blocked[Math.floor(rng() * row.blocked.length)];
+    trail.push({ x: row.x - lead, lane });
   }
   return trail;
 }
 
 export function spawnX(lionX: number, scroll: number) {
-  return lionX + scroll * WARNING_S;
+  return lionX + LION_SIZE + scroll * WARNING_S;
+}
+
+// Once the previous wall clears the whole lion, allow a full-field crossing
+// plus a warning interval before the next wall can touch it.
+export function patternSpacing(
+  rows: PatternRow[],
+  scroll: number,
+  lionSpeed: number,
+) {
+  const lastRow = Math.max(...rows.map((row) => row.x));
+  return (
+    lastRow +
+    OBSTACLE_SIZE +
+    LION_SIZE +
+    scroll * (WARNING_S + (FIELD_H - LION_SIZE) / lionSpeed)
+  );
 }

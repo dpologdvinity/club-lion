@@ -6,7 +6,12 @@ import {
   spawnX,
   LANES,
   LANE_HEIGHT,
-  MAX_LANE_SHIFT,
+  LION_SIZE,
+  LION_SPEED,
+  OBSTACLE_SIZE,
+  FIELD_H,
+  laneTop,
+  patternSpacing,
   WARNING_S,
 } from "./mangoPattern.ts";
 
@@ -21,11 +26,27 @@ function seeded(seed: number) {
 const RAMPS = [0, 0.3, 0.6, 0.9];
 
 function samplePairs() {
-  const pairs: { ramp: number; lionLane: number; rng: () => number }[] = [];
+  const pairs: {
+    ramp: number;
+    lionY: number;
+    speed: number;
+    rng: () => number;
+  }[] = [];
   for (const ramp of RAMPS) {
-    for (let lionLane = 0; lionLane < LANES; lionLane++) {
-      for (let seed = 1; seed <= 40; seed++) {
-        pairs.push({ ramp, lionLane, rng: seeded(seed) });
+    for (const speed of [LION_SPEED, LION_SPEED * 0.6]) {
+      for (let lionLane = 0; lionLane < LANES; lionLane++) {
+        for (let seed = 1; seed <= 40; seed++) {
+          const jitter = seeded(seed)() * (LANE_HEIGHT - 1);
+          pairs.push({
+            ramp,
+            lionY: Math.min(
+              lionLane * LANE_HEIGHT + jitter,
+              FIELD_H - LION_SIZE,
+            ),
+            speed,
+            rng: seeded(seed),
+          });
+        }
       }
     }
   }
@@ -33,9 +54,9 @@ function samplePairs() {
 }
 
 test("rocks may block the lane the lion already stands in", () => {
-  const blockedOwnLane = samplePairs().filter(({ ramp, lionLane, rng }) =>
-    buildPattern(ramp, lionLane, rng).rows.some((row) =>
-      row.blocked.includes(lionLane),
+  const blockedOwnLane = samplePairs().filter(({ ramp, lionY, speed, rng }) =>
+    buildPattern(ramp, lionY, speed, rng).rows.some((row) =>
+      row.blocked.includes(Math.floor(lionY / LANE_HEIGHT)),
     ),
   );
   assert.ok(
@@ -44,9 +65,59 @@ test("rocks may block the lane the lion already stands in", () => {
   );
 });
 
+test("every vertical position can be threatened and every gap fits the lion", () => {
+  for (let y = 0; y <= FIELD_H - LION_SIZE; y++) {
+    const hit = [0, 1, 2, 3].some((lane) => {
+      const rockY = laneTop(lane, LANE_HEIGHT);
+      return y < rockY + LANE_HEIGHT && rockY < y + LION_SIZE;
+    });
+    assert.ok(hit, `permanent safe corridor at y=${y}`);
+    for (const speed of [LION_SPEED, LION_SPEED * 0.6]) {
+      const threatened = [0, 0.25, 0.5, 0.75, 0.999].some((roll) =>
+        buildPattern(0.9, y, speed, () => roll).rows.some((row) =>
+          row.blocked.some((lane) => {
+            const rockY = laneTop(lane, LANE_HEIGHT);
+            return y < rockY + LANE_HEIGHT && rockY < y + LION_SIZE;
+          }),
+        ),
+      );
+      assert.ok(threatened, `no possible threat at y=${y}, speed=${speed}`);
+      const pattern = buildPattern(0.9, y, speed, seeded(y + 1));
+      const gapY = laneTop(pattern.gapLane, LION_SIZE);
+      assert.ok(Math.abs(gapY - y) / speed < WARNING_S);
+      for (const row of pattern.rows) {
+        for (const lane of row.blocked) {
+          const rockY = laneTop(lane, LANE_HEIGHT);
+          assert.ok(
+            gapY + LION_SIZE <= rockY || gapY >= rockY + LANE_HEIGHT,
+            "rock overlaps the escape position",
+          );
+        }
+      }
+    }
+  }
+});
+
+test("successive patterns leave time to cross the field after the last wall clears", () => {
+  for (const motion of [1, 0.6]) {
+    const speed = LION_SPEED * motion;
+    const scroll = 95 * 1.9 * motion;
+    const rows = buildPattern(0.9, 152, speed, seeded(3)).rows;
+    const spacing = patternSpacing(rows, scroll, speed);
+    const clearTravel =
+      spacing -
+      Math.max(...rows.map((row) => row.x)) -
+      OBSTACLE_SIZE -
+      LION_SIZE;
+    assert.ok(
+      clearTravel / scroll >= (FIELD_H - LION_SIZE) / speed + WARNING_S - 1e-9,
+    );
+  }
+});
+
 test("every row leaves the gap lane open", () => {
-  for (const { ramp, lionLane, rng } of samplePairs()) {
-    const pattern = buildPattern(ramp, lionLane, rng);
+  for (const { ramp, lionY, speed, rng } of samplePairs()) {
+    const pattern = buildPattern(ramp, lionY, speed, rng);
     for (const row of pattern.rows) {
       assert.ok(
         !row.blocked.includes(pattern.gapLane),
@@ -56,41 +127,45 @@ test("every row leaves the gap lane open", () => {
   }
 });
 
-test("the gap lane is close enough to reach inside the warning time", () => {
-  const laneSeconds = LANE_HEIGHT / 200;
-  for (const { ramp, lionLane, rng } of samplePairs()) {
-    const pattern = buildPattern(ramp, lionLane, rng);
-    const shift = Math.abs(pattern.gapLane - lionLane);
+test("the gap's safe position is reachable inside the warning time", () => {
+  for (const { ramp, lionY, speed, rng } of samplePairs()) {
+    const pattern = buildPattern(ramp, lionY, speed, rng);
+    const shift = Math.abs(laneTop(pattern.gapLane, LION_SIZE) - lionY);
     assert.ok(
-      shift <= MAX_LANE_SHIFT,
-      `gap lane ${pattern.gapLane} too far from lion lane ${lionLane}`,
-    );
-    assert.ok(
-      shift * laneSeconds < WARNING_S,
-      `lane shift ${shift} cannot be made in ${WARNING_S}s`,
+      shift / speed <= WARNING_S,
+      `gap lane ${pattern.gapLane} cannot be reached from y=${lionY} at ${speed}px/s`,
     );
   }
 });
 
-test("spawning early by the warning time holds at every scroll speed", () => {
-  const lionX = 56;
-  for (const scroll of [95, 95 * 1.9]) {
-    const lead = spawnX(lionX, scroll) - lionX;
-    assert.ok(Math.abs(lead / scroll - WARNING_S) < 1e-9);
-  }
-});
-
-test("mango trails sit in blocked lanes and never in the gap", () => {
-  for (const { ramp, lionLane, rng } of samplePairs()) {
-    const pattern = buildPattern(ramp, lionLane, rng);
-    const trail = buildTrail(pattern.rows);
-    assert.ok(trail.length > 0, "pattern produced no tempting trail");
-    for (const mango of trail) {
-      assert.notEqual(mango.lane, pattern.gapLane);
-      const leading = pattern.rows.some(
-        (row) => row.blocked.includes(mango.lane) && mango.x < row.x,
+test("the first collision begins no earlier than the warning time", () => {
+  for (const lionX of [0, 56, 300, 444]) {
+    for (const scroll of [95, 95 * 1.9, 95 * 0.6, 95 * 1.9 * 0.6]) {
+      const firstCollision = spawnX(lionX, scroll) - (lionX + LION_SIZE);
+      assert.ok(
+        Math.abs(firstCollision / scroll - WARNING_S) < 1e-9,
+        `collision warning is too short at x=${lionX}, speed=${scroll}`,
       );
-      assert.ok(leading, "mango did not lead any rock in its lane");
+    }
+  }
+});
+
+test("alternating mango trails offer safe and risky routes", () => {
+  for (const { ramp, lionY, speed, rng } of samplePairs()) {
+    const pattern = buildPattern(ramp, lionY, speed, rng);
+    const safeTrail = buildTrail(pattern, true, seeded(7));
+    const riskyTrail = buildTrail(pattern, false, seeded(7));
+    assert.ok(safeTrail.length > 0, "safe pattern produced no mangoes");
+    assert.ok(riskyTrail.length > 0, "risky pattern produced no mangoes");
+    assert.ok(safeTrail.every((mango) => mango.lane === pattern.gapLane));
+    assert.ok(riskyTrail.every((mango) => mango.lane !== pattern.gapLane));
+    for (const mango of riskyTrail) {
+      assert.ok(
+        pattern.rows.some(
+          (row) => row.blocked.includes(mango.lane) && mango.x < row.x,
+        ),
+        "risky mango does not lead a rock in its lane",
+      );
     }
   }
 });

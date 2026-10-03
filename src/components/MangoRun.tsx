@@ -22,8 +22,14 @@ import { Coin, Lion } from "./Lion";
 import {
   buildPattern,
   buildTrail,
-  laneOf,
   laneTop,
+  FIELD_H,
+  LANE_HEIGHT,
+  LION_SIZE,
+  LION_SPEED,
+  OBSTACLE_SIZE,
+  WARNING_S,
+  patternSpacing,
   spawnX,
 } from "./mangoPattern";
 
@@ -39,11 +45,7 @@ type Frame = {
 };
 
 const FIELD_W = 480;
-const FIELD_H = 340;
-const LION_SIZE = 36;
 const MANGO_SIZE = 26;
-const OBSTACLE_SIZE = 30;
-const LION_SPEED = 200;
 const SCROLL_SPEED = 95;
 const DISTANCE_POINTS = 0.1;
 const MANGO_POINTS = 10;
@@ -102,21 +104,27 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
-function overlaps(a: Point, aSize: number, b: Point, bSize: number) {
+function overlaps(
+  a: Point,
+  aSize: number,
+  b: Point,
+  bWidth: number,
+  bHeight = bWidth,
+) {
   return (
-    a.x < b.x + bSize &&
+    a.x < b.x + bWidth &&
     b.x < a.x + aSize &&
-    a.y < b.y + bSize &&
+    a.y < b.y + bHeight &&
     b.y < a.y + aSize
   );
 }
 
-function spriteStyle(x: number, y: number, size: number) {
+function spriteStyle(x: number, y: number, size: number, height = size) {
   return {
     left: `${(x / FIELD_W) * 100}%`,
     top: `${(y / FIELD_H) * 100}%`,
     width: `${(size / FIELD_W) * 100}%`,
-    height: `${(size / FIELD_H) * 100}%`,
+    height: `${(height / FIELD_H) * 100}%`,
   };
 }
 
@@ -134,6 +142,7 @@ export function MangoRun({
   const [lives, setLives] = useState(START_LIVES);
   const [mangoesCount, setMangoesCount] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
+  const [runBest, setRunBest] = useState(best);
   const [invulnerable, setInvulnerable] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const [frame, setFrame] = useState<Frame>(EMPTY_FRAME);
@@ -148,9 +157,11 @@ export function MangoRun({
   const pads = useRef(new Map<number, string>());
   const padKeys = useRef(new Set<string>());
   const distance = useRef(0);
+  const elapsed = useRef(0);
   const collected = useRef(0);
   const livesNow = useRef(START_LIVES);
-  const spawnIn = useRef(0);
+  const nextSpawnDistance = useRef(0);
+  const safeTrail = useRef(true);
   const invulnUntil = useRef(0);
   const nextId = useRef(1);
   const flash = useRef<number | undefined>(undefined);
@@ -224,13 +235,16 @@ export function MangoRun({
     mangoes.current = [];
     releaseSteering();
     distance.current = 0;
+    elapsed.current = 0;
     collected.current = 0;
     livesNow.current = START_LIVES;
-    spawnIn.current = 0.7;
+    nextSpawnDistance.current = SCROLL_SPEED * 0.7;
+    safeTrail.current = true;
     invulnUntil.current = 0;
     setLives(START_LIVES);
     setMangoesCount(0);
     setFinalScore(0);
+    setRunBest(best);
     setInvulnerable(false);
     setAnnouncement("");
     setFrame(EMPTY_FRAME);
@@ -243,9 +257,9 @@ export function MangoRun({
     let last = performance.now();
 
     const tick = (now: number) => {
-      handle = window.requestAnimationFrame(tick);
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
+      elapsed.current += dt * 1000;
       const motion = reduced ? SLOW_MOTION : 1;
       const ramp = Math.min(distance.current / 2600, 0.9);
       const scroll = SCROLL_SPEED * (1 + ramp) * motion;
@@ -259,29 +273,41 @@ export function MangoRun({
       if (holding(keys.current, pads.current, padKeys.current, "up")) y -= step;
       if (holding(keys.current, pads.current, padKeys.current, "down"))
         y += step;
-      x = Math.min(Math.max(x, 0), FIELD_W - LION_SIZE);
+      // Keep the lion in the left half so incoming walls are visible with
+      // at least a full warning interval, even at the maximum scroll speed.
+      x = Math.min(
+        Math.max(x, 0),
+        FIELD_W - LION_SIZE - SCROLL_SPEED * 1.9 * WARNING_S,
+      );
       y = Math.min(Math.max(y, 0), FIELD_H - LION_SIZE);
       lion.current = { x, y };
       distance.current += scroll * dt;
 
-      spawnIn.current -= dt;
-      if (spawnIn.current <= 0) {
-        spawnIn.current = Math.max(0.5, 1.6 - ramp * 0.7);
-        const pattern = buildPattern(ramp, laneOf(y), Math.random);
-        const base = Math.max(FIELD_W + 6, spawnX(x, scroll));
-        for (const mango of buildTrail(pattern.rows)) {
+      if (distance.current >= nextSpawnDistance.current) {
+        const lionSpeed = LION_SPEED * motion;
+        const maxScroll = SCROLL_SPEED * 1.9 * motion;
+        const pattern = buildPattern(ramp, y, lionSpeed, Math.random);
+        nextSpawnDistance.current =
+          distance.current + patternSpacing(pattern.rows, maxScroll, lionSpeed);
+        const base = Math.max(FIELD_W + 6, spawnX(x, maxScroll));
+        for (const mango of buildTrail(
+          pattern,
+          safeTrail.current,
+          Math.random,
+        )) {
           mangoes.current.push({
             id: nextId.current++,
             x: base + mango.x,
             y: laneTop(mango.lane, MANGO_SIZE),
           });
         }
+        safeTrail.current = !safeTrail.current;
         for (const row of pattern.rows) {
           for (const lane of row.blocked) {
             obstacles.current.push({
               id: nextId.current++,
               x: base + row.x,
-              y: laneTop(lane, OBSTACLE_SIZE),
+              y: laneTop(lane, LANE_HEIGHT),
             });
           }
         }
@@ -294,8 +320,8 @@ export function MangoRun({
         if (moved.x + OBSTACLE_SIZE <= 0) continue;
         if (
           !hitRock &&
-          now >= invulnUntil.current &&
-          overlaps(lion.current, LION_SIZE, moved, OBSTACLE_SIZE)
+          elapsed.current >= invulnUntil.current &&
+          overlaps(lion.current, LION_SIZE, moved, OBSTACLE_SIZE, LANE_HEIGHT)
         ) {
           hitRock = true;
           continue;
@@ -324,7 +350,7 @@ export function MangoRun({
       if (hitRock) {
         livesNow.current -= 1;
         setLives(livesNow.current);
-        invulnUntil.current = now + INVULN_MS;
+        invulnUntil.current = elapsed.current + INVULN_MS;
         window.clearTimeout(flash.current);
         if (reduced) {
           setInvulnerable(false);
@@ -359,6 +385,7 @@ export function MangoRun({
         lion: lion.current,
         score,
       });
+      handle = window.requestAnimationFrame(tick);
     };
 
     handle = window.requestAnimationFrame(tick);
@@ -432,7 +459,11 @@ export function MangoRun({
       {(mode === "playing" || mode === "paused") && (
         <>
           <div className="mr-hud game-stats">
-            <span className="mr-lives" aria-hidden="true">
+            <span
+              className="mr-lives"
+              role="img"
+              aria-label={`${lives} lives left`}
+            >
               {Array.from({ length: START_LIVES }, (_, index) => (
                 <Heart
                   key={index}
@@ -447,8 +478,10 @@ export function MangoRun({
             </span>
             <span>
               <span aria-hidden="true">🥭</span> {mangoesCount}
+              <span className="sr-only">mangoes collected</span>
             </span>
             <span>
+              <span className="sr-only">Personal best: </span>
               <Coin amount={best} />
             </span>
             {mode === "playing" && (
@@ -483,10 +516,17 @@ export function MangoRun({
                 <span
                   key={rock.id}
                   className="mr-obstacle"
-                  style={spriteStyle(rock.x, rock.y, OBSTACLE_SIZE)}
+                  style={spriteStyle(
+                    rock.x,
+                    rock.y,
+                    OBSTACLE_SIZE,
+                    LANE_HEIGHT,
+                  )}
                   aria-hidden="true"
                 >
-                  🪨
+                  <span>🪨</span>
+                  <span>🪨</span>
+                  <span>🪨</span>
                 </span>
               ))}
               <span
@@ -529,6 +569,7 @@ export function MangoRun({
                     onPointerDown={pressPad}
                     onKeyDown={pressPadKey(direction, true)}
                     onKeyUp={pressPadKey(direction, false)}
+                    onBlur={() => padKeys.current.delete(direction)}
                   >
                     <Icon size={22} />
                   </button>
@@ -548,9 +589,10 @@ export function MangoRun({
           <div className="trophy-icon">
             <Trophy size={53} />
           </div>
-          <h3>{finalScore > best ? "A brand new best!" : "Nice run!"}</h3>
+          <h3>{finalScore > runBest ? "A brand new best!" : "Nice run!"}</h3>
           <p>
-            {finalScore} points and {mangoesCount} mangoes.
+            {finalScore} points and {mangoesCount}{" "}
+            {mangoesCount === 1 ? "mango" : "mangoes"}.
             <br />
             Every point turns into coins for your adventure.
           </p>

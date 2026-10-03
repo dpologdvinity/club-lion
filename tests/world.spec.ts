@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { SAVE_KEY } from "../src/game";
 
 test("the world loads, supports movement and chat, and has no horizontal overflow", async ({
   page,
@@ -265,6 +266,51 @@ test("the on-screen pad steers the lion without a keyboard", async ({
   await page.waitForTimeout(260);
   expect(await lion.getAttribute("style")).toBe(stopped);
 });
+
+for (const reducedMotion of ["no-preference", "reduce"] as const) {
+  test(`idle Mango Run ends, rewards once, and saves the best (${reducedMotion})`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion });
+    await page.addInitScript(() => {
+      Math.random = () => 0;
+    });
+    await page.clock.install({ time: new Date("2026-10-03T12:00:00Z") });
+    await startMangoRun(page);
+    await page.clock.pauseAt(new Date("2026-10-03T12:01:00Z"));
+    const result = page.getByRole("heading", { name: "A brand new best!" });
+    for (
+      let second = 0;
+      second < 60 && (await result.count()) === 0;
+      second++
+    ) {
+      await page.clock.runFor(1000);
+    }
+    await expect(result).toBeVisible();
+    const saved = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key)!),
+      SAVE_KEY,
+    );
+    expect(saved.gamesPlayed).toBe(1);
+    expect(saved.mangoRunBest).toBeGreaterThan(0);
+    expect(saved.coins).toBe(250 + saved.mangoRunBest);
+    await page.clock.runFor(3000);
+    expect(
+      await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY),
+    ).toBe(JSON.stringify(saved));
+
+    await page.getByRole("button", { name: "Run again" }).click();
+    await expect(page.getByRole("img", { name: "3 lives left" })).toBeVisible();
+    await page.keyboard.press("Escape");
+    await page.reload();
+    await page.getByRole("button", { name: "Games", exact: true }).click();
+    await page.getByRole("button", { name: "Play Mango Run" }).click();
+    await expect(page.locator(".game-features")).toContainText(
+      `${saved.mangoRunBest}`,
+    );
+    await expect(page.locator(".wallet")).toHaveText(`✦${saved.coins}`);
+  });
+}
 
 test("the main world and dialogs have no WCAG AA accessibility violations", async ({
   page,

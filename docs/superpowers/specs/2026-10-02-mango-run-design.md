@@ -6,7 +6,7 @@ Status: Draft (awaiting review)
 
 ## Context
 
-- Repo: Club Lion (React + TypeScript + Vite). Single-player, localStorage save. 
+- Repo: Club Lion (React + TypeScript + Vite). Single-player, localStorage save.
 - Existing: Memory Safari (6 pairs, 60 coins, increments gamesPlayed once per win), adventure "game" requires gamesPlayed >= 1.
 - Arcade is "The arcade" place (PLACES.arcade). Games panel currently renders MemorySafari directly (App.tsx:296-303).
 - DOM-first UI, CSS design tokens in src/styles.css, a11y baseline (focus, reduced motion, live regions).
@@ -15,9 +15,9 @@ Status: Draft (awaiting review)
 
 - Add "Mango Run" steering minigame to the arcade.
 - End condition: endless with lives. 3 hits -> game over. Score = distance + mangoes collected. Personal best tracked (local to save).
-- Reward: scaled by score, repeatable (each win gives coins = score). Adventure "game" remains satisfied after first completion (gamesPlayed behavior). 
-- Keyboard: arrow/WASD steer lion. Respect reduced motion. 
-- Accessible: focusable controls, ARIA live regions for HUD. 
+- Reward: scaled by score, repeatable (each win gives coins = score). Adventure "game" remains satisfied after first completion (gamesPlayed behavior).
+- Keyboard: arrow/WASD steer lion. Respect reduced motion.
+- Accessible: focusable controls, ARIA live regions for HUD.
 - No network. Local-only. Follow existing patterns (MemorySafari: intro/win states, onFinish/onClose).
 
 ## Decisions
@@ -30,7 +30,7 @@ Status: Draft (awaiting review)
 - Game loop: requestAnimationFrame with delta. Cleanup on unmount.
 - States: Intro, Playing, GameOver (score, coins this round, best). Restart, Back to pride.
 - Integration: Games panel becomes a picker (Memory Safari | Mango Run). Initial state when opening Games is picker.
-- Reward: `completeMangoRun(player, score)` increments gamesPlayed and adds score coins; tracks `mangoRunBest = max(best, score)`. Repeatable. 
+- Reward: `completeMangoRun(player, score)` increments gamesPlayed and adds score coins; tracks `mangoRunBest = max(best, score)`. Repeatable.
 - Save: add `mangoRunBest?: number`. Tolerant defaults in restorePlayer.
 
 ## Architecture
@@ -54,7 +54,7 @@ Status: Draft (awaiting review)
 - Cleanup: cancel rAF, clear intervals/timeouts on unmount.
 
 ### App.tsx
-- Add state `activeGame: 'memory'|'mango'|null` when panel==='games'. Opening Games sets activeGame to null (picker). 
+- Add state `activeGame: 'memory'|'mango'|null` when panel==='games'. Opening Games sets activeGame to null (picker).
 - Games panel: null -> GamesPicker (onSelect memory/mango). 'memory' -> MemorySafari (onClose -> reset to picker or close panel? Keep MemorySafari's onClose closes panel for now; or change to return to picker? Match new flow: provide onBack to picker). Alternatively, pass onClose behavior: in picker mode, onClose closes panel; in game mode, onClose returns to picker. Add `onBackToPicker()`.
 
 But minimize changes: add GamesPicker. MemorySafari stays same API but when used from picker, wrap onClose to go back? Easier: Games panel manages substate. Initial open: show picker. Selecting game shows that game with onClose -> back to picker (or panel close if prefer). Current MemorySafari's "Back to pride" closes panel; keep consistent (back to pride = close panel). Picker is just the entry.
@@ -78,14 +78,14 @@ But minimize changes: add GamesPicker. MemorySafari stays same API but when used
 
 ## Compatibility
 
-Version 1 save format; restorePlayer backward compatible. No migration. 
+Version 1 save format; restorePlayer backward compatible. No migration.
 No multiplayer, no network. Single-player only.
 
 ## Risks
 
 - Spawn fairness (avoidable traps) -> minimum spawn gap from lion, bias away from current lane.
 - rAF performance minor; small DOM count.
-- Accessibility: ensure game area focusable for keyboard-only. 
+- Accessibility: ensure game area focusable for keyboard-only.
 
 ## Spec review
 

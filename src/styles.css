@@ -2099,6 +2099,11 @@ svg {
 }
 .mr-obstacle {
   z-index: 1;
+  flex-direction: column;
+  justify-content: space-around;
+  background: #9a8974;
+  border: 1px solid #75634f;
+  border-radius: 7px;
   font-size: 6cqw;
 }
 .mr-invuln {
