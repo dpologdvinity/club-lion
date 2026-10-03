@@ -63,13 +63,13 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightli
 | Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Task 1** | Hoverboard Glide & Footprint Sparkle Trail Engine | `feat/phase-2-task-1-trails` | **claude-sonnet-5 (claude code)** | `bc772e0` → `3c52baa` | ✅ Completed, reviewed & verified; 87/87 unit tests, 74/74 E2E; types, format & build clean |
-| **Task 2** | Wonder Park Declarative Room Manifests & Kinetic Track Engine | `feat/phase-2-task-2-coaster`<br/>(`.worktrees/phase-2-task-2-coaster`) | **claude-sonnet-5 (claude code)** | - | 🚀 In Progress (Dispatched) |
+| **Task 2** | Wonder Park Declarative Room Manifests & Kinetic Track Engine | `master` | **claude-sonnet-5 (claude code)** | `541f450` | ✅ Approved; 142/142 unit tests, 88/88 desktop/mobile E2E, types, format & build clean |
 | **Task 3** | Club Pulse Interactive Dance Floor & DJ Booth Stage | `feat/phase-2-task-3-dance` | *Open to any agent* | - | ⏳ Planned |
 | **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-task-4-dj-beat` | **claude-sonnet-5 (claude code)** | `dc18077` → `d5d0f78` | ✅ Completed, reviewed & verified; 107/107 unit tests, 82/82 E2E; types, format & build clean |
 | **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-task-5-smoothie` | **claude-sonnet-5 (claude code)** | `d627ec3` → `1487713` | ✅ Completed, reviewed & verified; 117/117 unit tests, 88/88 E2E; types, format & build clean |
 | **Task 6** | Savanna Screamer Roller Coaster Interactive Ride Mode | `feat/phase-2-task-6-coaster` | *Open to any agent* | - | ⏳ Planned |
 | **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `feat/phase-2-integration` | *Open to any agent* | - | ⏳ Planned |
-| **Phase 2 Merge Train** | Serial Rebase & Squash Integration | `master` | **Verifier & Orchestrator** | - | ⏳ Pending Review & Verification |
+| **Phase 2 Merge Train** | Serial Rebase & Squash Integration | `master` | **gpt-6-luna (codex)** | - | 🚀 In Progress; Task 2 verified and integrated, Tasks 3 and 6 remain before Task 7 |
 
 ---
 
@@ -98,4 +98,3 @@ There are **no fixed or primary roles**. All agents and models are fully interch
 - **Implementer:** Claude Code (`claude-sonnet-5`)
 - **Reviewer & Merger:** Codex (`gpt-6.1-sol`)
 *(Flexible and dynamically adjustable at any time)*
-
