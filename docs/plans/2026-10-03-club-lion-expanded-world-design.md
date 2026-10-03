@@ -15,11 +15,22 @@ Club Lion is reimagined from a small single-village browser demo into a massive,
 
 ### Core Pillars
 1. **Fantage-Style 2D Chibi Avatars:** Players design custom humanoid avatars with skin tones, expressive anime eyes, trendy streetwear/fashion, layered hairstyles, and equipable boards/skates with sparkling particle footprint trails.
-2. **Lions as Companion Pets (Puffle / Fantage Pet DNA):** Lions are loyal companion pets that follow your avatar with smooth trailing physics, wear pet accessories (bandanas, collars, bows), react to player emotes, sleep in your condo, and can be groomed and fed.
+2. **Lions as Companion Pets (Puffle / Familiar DNA):** Lions are loyal companion pets that follow your avatar with smooth trailing physics, wear pet accessories (bandanas, collars, bows), react to player emotes, sleep in your condo, and can be groomed and fed.
 3. **Massive Multi-District World:** A sprawling world map featuring bustling downtown shopping, quiet savanna reserves, beach boardwalks, snowy peaks, secret spy bunkers, a **Mega Theme Park** with interactive and spectator rides, and a **Mega Waterpark** with slides, lazy rivers, and wave pools.
 4. **Authentic Distributed Mini-Games:** A diverse balance of relaxing cozy games (Pizzatron-style Smoothie Kitchen, dock fishing, constellation connecting, pet care) and challenging high-skill games (river stunt surfing, typing fashion blitz, obstacle downhill racing, precision trick-shots).
 5. **Rich Nostalgic Culture:** Secret catalog clickables, Top Models runway catwalk showdown, Fantage-style ID cards with star ranks, Web Audio procedural Jukebox tracks, interactive mango tossing, and a 25+ stamp collection book.
 6. **Multiplayer-Ready Architecture:** Designed around serializable entity packets and room event managers, allowing seamless transition from Phase 1 local play to a multi-server MMO backend.
+
+### 1.1 Thematic Philosophy: "Tasteful Heritage, Not a Monoculture"
+Rather than forcing an in-your-face cartoon lion theme where every building and item is lion-shaped, the world treats lions with subtlety, sophistication, and emotional charm:
+* **The Living Bond:** Lions are the island's cherished companion familiars. They are not citizens or humanoid NPCs—they are the player's beloved pets that trot beside them, ride in coaster carts and lazy river tubes, and curl up in their condo.
+* **Selective Natural Habitats:** Lions have dedicated, authentic spaces—such as the **Savanna Wildlife Sanctuary** (where wild lion cubs roam and nap under baobab trees) and the **Pet Paradise & Nursery** (grooming baths and agility runs).
+* **Subtle, Non-Obvious Lion Touches Sprinkled Across the World:**
+  * *Classical Architecture:* An ornate classical marble lion fountain in Downtown Plaza; antique brass lion-head door knockers on the Le Shop boutique; carved stone lion-paw armrests on coastal boardwalk benches.
+  * *High Fashion & Brand Motifs:* Sneaker soles and denim tags from Le Shop feature an embossed subtle lion paw print; Top Models Runway trophy ribbons are stamped with a small gilded lion emblem.
+  * *Café Culture:* Baristas at Canopy Café pour subtle lion silhouette latte art in warm drinks; the bakery serves "Golden Mane" flaky honey pastries.
+  * *Amusement Park Details:* The Grand Carousel features a single majestic hand-carved gilded lion mount among the traditional horses and zebras; the roller coaster train features a sleek art-deco chrome lion prow on the front car.
+  * *Cosmic & Secret Lore:* The primary constellation in the observatory night sky is *Leo the Star Lion*; the Secret Scout Agency operates under the classified codename *The Pride*.
 
 ---
 
