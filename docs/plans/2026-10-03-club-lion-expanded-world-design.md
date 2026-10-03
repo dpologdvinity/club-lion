@@ -188,7 +188,40 @@ Games are categorized by style and distributed directly into their themed enviro
 
 ---
 
-## 8. Economy, Secrets, Audio & Progression
+## 8. Interactive World Instruments & Procedural Soundscapes
+
+Zero heavy audio file downloads. Powered entirely by the **Web Audio API** using procedural oscillators, envelope shapers (ADSR), harmonic overtone generators, and biquad filters, interactive musical instruments are placed naturally throughout the world for players to click, play, and step on:
+
+### 8.1 World Instruments Placed Across Districts
+1. 🎹 **The Grand Upright Piano (Canopy Café & Underground Speakeasy):**
+   * Clicking the piano opens an interactive 8-key wooden keyboard overlay (or players can use number keys `1`–`8`).
+   * Produces authentic acoustic piano tones with warm resonance and natural decay. Keys visibly depress when played.
+2. 🪵 **The Savanna Marimba & Balafon (The Oasis Watering Hole):**
+   * Tuned rosewood bars mounted on hollow gourds.
+   * Tapping keys produces sunny, warm, rhythmic wooden marimba notes tuned to a tropical pentatonic scale that sounds harmonious no matter what pattern you tap!
+3. 🥁 **Full Drum Kit & Bongos (Beach Bonfire & Club Pulse Stage):**
+   * Includes kick drum, snare with snappy crack, hi-hat cymbals, crash cymbal, and a pair of tuned wooden congas/bongos.
+   * Tapping elements triggers crisp percussion hits with animated drumsticks and cymbal wobbles.
+4. 🎸 **Electric Guitar & Bass Stand (Rooftop Lounge & Le Shop):**
+   * An iconic cherry-red electric guitar plugged into a tube amp.
+   * Clicking strings triggers crunchy, distorted power chords with rock vibrato.
+5. 👣 **The Giant Walkable Floor Piano (Carnival Boardwalk):**
+   * A massive 12-key walk-on floor keyboard (inspired by the classic movie *Big* and FAO Schwarz).
+   * As avatars walk, run, or dance across the keys, each tile lights up with glowing pastel LEDs and rings out a vibrant synthesizer chime!
+6. 🔔 **The Resonant Handpan / Steel Tongue Drum (Enchanted Forest Grotto):**
+   * A circular metallic tongue drum sitting on a mossy boulder.
+   * Tapping produces ethereal, meditative chime tones that echo softly with gentle reverb through the forest trees.
+7. 📯 **The Lighthouse Brass Foghorn (Sunset Beach Pier):**
+   * Pulling the brass chain sounds a deep, booming two-tone nautical foghorn that echoes across the ocean waters.
+
+### 8.2 Wearable Handheld Instruments & Synchronized Jam Mode
+* Players can equip wearable instruments from the shop: **Acoustic Guitar**, **Brass Saxophone**, **Keytar**, and **Maracas**.
+* Clicking the **"Jam"** emote causes the avatar to rock out, strumming or blowing their instrument with colorful musical note particles floating above their head.
+* **Harmonic Room Key Engine:** All instruments and jam riffs are locked to a shared room scale (C Major / A Minor). When multiple players jam together in the same room, their notes never clash—they naturally harmonize like an impromptu band!
+
+---
+
+## 9. Economy, Secrets, Audio & Progression
 
 ### 8.1 Le Shop Secret Catalog Clickables
 * Multi-page flip catalog with realistic sound effects.
@@ -222,9 +255,9 @@ Zero external MP3 weight. Procedural Web Audio synthesizers generate 4 complete 
 
 ---
 
-## 9. Multiplayer-Ready Architecture & Data Model
+## 10. Multiplayer-Ready Architecture & Data Model
 
-### 9.1 Network-Serializable Entity Schemas (`src/types/world.ts`)
+### 10.1 Network-Serializable Entity Schemas (`src/types/world.ts`)
 ```typescript
 export type AvatarLook = {
   skinTone: "fair" | "tan" | "warm" | "deep" | "bronze";
@@ -266,7 +299,7 @@ export type RoomState = {
 };
 ```
 
-### 9.2 Local-to-Multiplayer Abstraction Layer
+### 10.2 Local-to-Multiplayer Abstraction Layer
 ```
                ┌───────────────────────────────┐
                │    React UI & World Canvas    │
@@ -288,7 +321,7 @@ export type RoomState = {
 
 ---
 
-## 10. Phased Implementation Roadmap
+## 11. Phased Implementation Roadmap
 
 * **Phase 1: The Chibi Avatar, Companion Pet Lion, & Downtown Core**
   * Avatar rendering engine (SVG layers: skin, eyes, hair, clothes, shoes).
@@ -300,8 +333,9 @@ export type RoomState = {
   * **Club Pulse & Rooftop Lounge:** Interactive light-up dance floor & DJ Beat Drop mini-game.
   * 🧘 Smoothie Kitchen (Canopy Café) & ⚡ River Rapids Surf (Canyon).
   * Equipable boards with sparkle footprint trails.
-* **Phase 3: Splash Oasis (Waterpark) & Runway Showdown**
+* **Phase 3: Splash Oasis (Waterpark), Musical Instruments & Runway Showdown**
   * Splash Oasis waterpark (Tsunami Wave Pool, Lazy River, Tipping Dump Bucket, Speed Slides).
+  * **Interactive World Instruments:** Upright piano, savanna marimba, drum kit, giant floor keyboard, and wearable jam mode.
   * ⚡ Top Models Fashion Show runway competition.
   * 🧘 Waterhole Angler (cozy dock fishing) & Stamp Book (25+ stamps).
 * **Phase 4: Condo Jukebox, Secret Agent Missions & Multiplayer Servers**
