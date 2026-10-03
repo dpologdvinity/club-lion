@@ -28,6 +28,7 @@ export type PlayerBase = {
   claimed: AdventureId[];
   decor: string[];
   mangoRunBest?: number;
+  smoothiesServed?: number;
 };
 
 export type Player = PlayerBase & {
@@ -273,6 +274,11 @@ export function restorePlayer(raw: string | null): Player {
         : Number.isSafeInteger(p.mangoRunBest) && p.mangoRunBest >= 0
           ? { mangoRunBest: p.mangoRunBest as number }
           : {}),
+      ...(p.smoothiesServed === undefined
+        ? {}
+        : Number.isSafeInteger(p.smoothiesServed) && p.smoothiesServed >= 0
+          ? { smoothiesServed: p.smoothiesServed as number }
+          : {}),
     };
   } catch {
     return newPlayer();
@@ -492,5 +498,17 @@ export function completeFruitCatch<T extends PlayerBase>(
     coins: player.coins + caught * 2,
     gamesPlayed: newGamesPlayed,
     fruitCatchBest: newBest,
+  } as T;
+}
+
+export function completeSmoothieOrder<T extends PlayerBase>(
+  player: T,
+  coinsEarned: number,
+): T {
+  if (!Number.isSafeInteger(coinsEarned) || coinsEarned < 0) return player;
+  return {
+    ...player,
+    coins: player.coins + coinsEarned,
+    smoothiesServed: (player.smoothiesServed ?? 0) + 1,
   } as T;
 }
