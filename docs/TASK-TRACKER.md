@@ -18,17 +18,20 @@ Implementer: claude-sonnet-5 (claude code)
 ```
 *(Options: `claude-sonnet-5 (claude code)`, `gpt-6.1-sol (codex)`, `gemini-3.8-flash (antigravity)`)*
 
-### Merges & Major Integration Commits
-When branches, PRs, or major milestone subsystems are integrated:
+### Squashed Integration Commits on `master`
+When verified worktrees are squashed into `master`:
 
 ```text
-merge: <summary of integration / branch>
+<type>(<scope>): <summary>
+
+<bulleted list of feature capabilities, changes, and test additions>
 
 Implementer: <model> (<agent>)
 Reviewer: <model> (<agent>)
+Verifier: <model> (<agent>)
 Assigner: <model> (<agent>)
 ```
-*(All models and agents are completely interchangeable across all roles: Implementer, Reviewer, and Assigner.)*
+*(All models and agents are interchangeable across all roles: Implementer, Reviewer, Verifier, and Assigner.)*
 
 ---
 
@@ -59,14 +62,14 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightli
 
 | Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Task 1** | Hoverboard Glide & Footprint Sparkle Trail Engine | `feat/phase-2-task-1-trails`<br/>(`.worktrees/phase-2-task-1-trails`) | **claude-sonnet-5 (claude code)** | - | 🚀 In Progress (Dispatched) |
+| **Task 1** | Hoverboard Glide & Footprint Sparkle Trail Engine | `feat/phase-2-task-1-trails` | **claude-sonnet-5 (claude code)** | `bc772e0` | 🔍 Implementation complete; awaiting Review |
 | **Task 2** | Wonder Park Declarative Room Manifests & Kinetic Track Engine | `feat/phase-2-task-2-coaster` | *Open to any agent* | - | ⏳ Planned |
 | **Task 3** | Club Pulse Interactive Dance Floor & DJ Booth Stage | `feat/phase-2-task-3-dance` | *Open to any agent* | - | ⏳ Planned |
-| **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-task-4-dj-beat`<br/>(`.worktrees/phase-2-task-4-dj-beat`) | **claude-sonnet-5 (claude code)** | - | 🚀 In Progress (Dispatched) |
-| **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-task-5-smoothie`<br/>(`.worktrees/phase-2-task-5-smoothie`) | **claude-sonnet-5 (claude code)** | - | 🚀 In Progress (Dispatched) |
+| **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-task-4-dj-beat` | **claude-sonnet-5 (claude code)** | `dc18077` | 🔍 Implementation complete; awaiting Review |
+| **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-task-5-smoothie` | **claude-sonnet-5 (claude code)** | `d627ec3` | 🔍 Implementation complete; awaiting Review |
 | **Task 6** | Savanna Screamer Roller Coaster Interactive Ride Mode | `feat/phase-2-task-6-coaster` | *Open to any agent* | - | ⏳ Planned |
 | **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `feat/phase-2-integration` | *Open to any agent* | - | ⏳ Planned |
-| **Phase 2 Merge** | Milestone Integration into `master` | `master` | **gpt-6.1-sol (codex)** (Reviewer & Merger) | - | ⏳ Pending |
+| **Phase 2 Merge Train** | Serial Rebase & Squash Integration | `master` | **Verifier & Orchestrator** | - | ⏳ Pending Review & Verification |
 
 ---
 
