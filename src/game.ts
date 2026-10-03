@@ -13,6 +13,7 @@ export type Player = {
   visited: PlaceId[];
   gamesPlayed: number;
   pawStepsBest: number;
+  fruitCatchBest: number;
   claimed: AdventureId[];
   decor: string[];
 };
@@ -129,8 +130,7 @@ export const NEIGHBORS = [
     accessory: "glasses",
     x: 67,
     y: 83,
-    greeting:
-      "Psst… try the arcade! You can earn coins playing Memory Safari. 🎮",
+    greeting: "Psst… try the arcade! There are fun games and coins to win. 🎮",
   },
 ];
 
@@ -146,6 +146,7 @@ export function newPlayer(): Player {
     visited: ["square"],
     gamesPlayed: 0,
     pawStepsBest: 0,
+    fruitCatchBest: 0,
     claimed: [],
     decor: [],
   };
@@ -216,6 +217,10 @@ export function restorePlayer(raw: string | null): Player {
       ],
       gamesPlayed: p.gamesPlayed,
       pawStepsBest,
+      fruitCatchBest:
+        Number.isSafeInteger(p.fruitCatchBest) && p.fruitCatchBest >= 0
+          ? p.fruitCatchBest
+          : 0,
       claimed: [
         ...new Set<AdventureId>(
           p.claimed.filter((id: unknown) =>
@@ -301,5 +306,30 @@ export function completePawSteps(player: Player, rounds: number): Player {
     coins: player.coins + rounds * PAW_STEPS_COINS_PER_ROUND,
     gamesPlayed: player.gamesPlayed + 1,
     pawStepsBest: Math.max(player.pawStepsBest, rounds),
+  };
+}
+
+export function completeFruitCatch(
+  player: Player,
+  caught: number,
+  hits: number,
+  score: number,
+): Player {
+  if (
+    !Number.isSafeInteger(caught) ||
+    caught < 0 ||
+    !Number.isSafeInteger(hits) ||
+    hits < 0 ||
+    !Number.isSafeInteger(score) ||
+    score !== caught * 10
+  )
+    return player;
+  const newGamesPlayed = player.gamesPlayed + 1;
+  const newBest = Math.max(player.fruitCatchBest, score);
+  return {
+    ...player,
+    coins: player.coins + caught * 2,
+    gamesPlayed: newGamesPlayed,
+    fruitCatchBest: newBest,
   };
 }

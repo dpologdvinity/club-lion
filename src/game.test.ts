@@ -9,6 +9,7 @@ import {
   claimReward,
   completeGame,
   completePawSteps,
+  completeFruitCatch,
   SHOP_ITEMS,
 } from "./game.ts";
 
@@ -110,4 +111,35 @@ test("a save without a Paw Steps record starts at zero and rejects nonsense", ()
     restorePlayer(JSON.stringify({ ...newPlayer(), pawStepsBest: "many" })),
     newPlayer(),
   );
+});
+
+test("saves preserve Fruit Catch and Paw Steps records across either migration", () => {
+  const fruitSave = { ...newPlayer(), coins: 430, fruitCatchBest: 80 };
+  Reflect.deleteProperty(fruitSave, "pawStepsBest");
+  assert.deepEqual(restorePlayer(JSON.stringify(fruitSave)), {
+    ...fruitSave,
+    pawStepsBest: 0,
+  });
+
+  const pawSave = { ...newPlayer(), pawStepsBest: 3 };
+  Reflect.deleteProperty(pawSave, "fruitCatchBest");
+  assert.deepEqual(restorePlayer(JSON.stringify(pawSave)), {
+    ...pawSave,
+    fruitCatchBest: 0,
+  });
+});
+
+test("Fruit Catch awards caught fruit, tracks a best score, and restores older saves", () => {
+  const first = completeFruitCatch(newPlayer(), 8, 2, 80);
+  assert.equal(first.coins, 266);
+  assert.equal(first.gamesPlayed, 1);
+  assert.equal(first.fruitCatchBest, 80);
+  assert.deepEqual(completeFruitCatch(first, 2, 0, 20), {
+    ...first,
+    coins: 270,
+    gamesPlayed: 2,
+  });
+  assert.deepEqual(completeFruitCatch(first, 4, 0, 99), first);
+  const { fruitCatchBest: _, ...olderSave } = newPlayer();
+  assert.equal(restorePlayer(JSON.stringify(olderSave)).fruitCatchBest, 0);
 });

@@ -272,12 +272,12 @@ test("Paw Steps accepts rapid correct input and locks a completed round", async 
   await expect(page.locator(".wallet")).toHaveText("✦260");
 });
 
-test("the arcade menu keeps keyboard focus when either game is left", async ({
+test("the arcade menu keeps keyboard focus when any game is left", async ({
   page,
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Games", exact: true }).click();
-  for (const name of ["Paw Steps", "Memory Safari"]) {
+  for (const name of ["Paw Steps", "Memory Safari", "Fruit Catch!"]) {
     await page.getByRole("button", { name: new RegExp(name) }).click();
     await page.getByRole("button", { name: "All games", exact: true }).click();
     await expect(
@@ -292,6 +292,42 @@ test("the arcade menu keeps keyboard focus when either game is left", async ({
   ).toBeFocused();
   await page.reload();
   await expect(page.locator(".wallet")).toHaveText("✦250");
+});
+
+test("Fruit Catch drops fruit fast enough to catch and keeps the round busy", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await page.locator(".arcade-game").filter({ hasText: "Fruit Catch" }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  await expect(page.locator(".fruit-field")).toBeVisible();
+  for (let i = 0; i < 6; i++)
+    await page.getByRole("button", { name: "Move basket left" }).click();
+  const lowestFruit = async () =>
+    page
+      .locator(".falling-fruit")
+      .evaluateAll((els) =>
+        els.reduce(
+          (lowest, el) =>
+            Math.max(lowest, parseFloat((el as HTMLElement).style.top)),
+          -20,
+        ),
+      );
+  let lowest = -20;
+  for (let sample = 0; sample < 80 && lowest < 75; sample++) {
+    lowest = Math.max(lowest, await lowestFruit());
+    if (lowest < 75) await page.waitForTimeout(100);
+  }
+  expect(lowest).toBeGreaterThanOrEqual(75);
+  await page.waitForTimeout(4000);
+  expect(await page.locator(".falling-fruit").count()).toBeGreaterThanOrEqual(
+    3,
+  );
+  await expect(page.locator(".fruit-game-stats span").last()).toHaveAttribute(
+    "aria-label",
+    /^\d lives?$/,
+  );
 });
 
 test("the main world and dialogs have no WCAG AA accessibility violations", async ({

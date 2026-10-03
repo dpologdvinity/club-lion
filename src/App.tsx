@@ -14,6 +14,7 @@ import {
   claimReward,
   completeGame,
   completePawSteps,
+  completeFruitCatch,
   meetLion,
   PLACES,
   SHOP_ITEMS,
@@ -307,6 +308,9 @@ export default function App() {
               }
               onPawStepsFinish={(rounds) =>
                 setPlayer((p) => completePawSteps(p, rounds))
+              }
+              onFruitFinish={(caught, hits, score) =>
+                setPlayer((p) => completeFruitCatch(p, caught, hits, score))
               }
               onClose={closePanel}
             />

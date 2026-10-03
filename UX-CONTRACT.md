@@ -1,6 +1,6 @@
 # Club Lion interaction contract
 
-The user requested a Club Penguin-like website using lions. The first complete slice is a local, single-player game with an explorable savanna, scripted neighbors, character styling, an in-game coin shop, and Memory Safari. [DESIGN.md](DESIGN.md) owns visual decisions. [src/game.ts](src/game.ts) owns progression rules.
+The user requested a Club Penguin-like website using lions. The first complete slice is a local, single-player game with an explorable savanna, scripted neighbors, character styling, an in-game coin shop, Memory Safari, Fruit Catch, and Paw Steps. [DESIGN.md](DESIGN.md) owns visual decisions. [src/game.ts](src/game.ts) owns progression rules.
 
 ## Canonical UI map
 
@@ -22,14 +22,15 @@ The user requested a Club Penguin-like website using lions. The first complete s
 - A new lion starts with 250 coins and the forest scarf. Shop purchases atomically deduct the fixed catalog price once, enforce ownership and sufficient balance, and immediately equip the accessory or place the item in the den. These are fictional game coins with no real-money checkout.
 - Each of the three starter adventures awards 50 coins once. The neighborhood adventure requires 3 distinct greetings; the game adventure requires a completed game; the home adventure requires a den visit. There are no daily resets in this slice.
 - Memory Safari has 6 shuffled pairs, no time limit, and a move counter. Card pairs lock while resolving. Finishing awards 60 coins once for that game. Closing an incomplete game awards no coins; replay starts a fresh board. Pending timers are canceled on unmount.
-- The arcade opens on a menu of games. One game is playable at a time. Both games offer an All games action on their intro, play, and results screens; returning focuses the selected game card and pays nothing for an unfinished run.
+- The arcade opens on a menu of games. One game is playable at a time. All three games offer an All games action on their intro, play, and results screens; returning focuses the selected game card and pays nothing for an unfinished run.
 - Paw Steps shows a sequence of paw arrows, starting at 2 and growing by one each round, then asks the player to repeat it with the arrow keys or the pad buttons. Wrong taps lock input, reveal the arrow that was expected, and end the game. Because the sequence grows forever, ending a game is the only completion: it pays 10 coins per finished round, counts one played game, and keeps the highest round count in `pawStepsBest`. Leaving mid-round pays nothing.
 - Paw Steps ignores held-key repeats and advances accepted input synchronously. A stable game live region announces each sequence, including the opening and replay, and the expected direction after a mistake. Focus moves to the pad for playback and input, and to Play again when the run ends.
+- The arcade offers Fruit Catch as a 30-second keyboard and touch game. Catching ripe fruit scores 10 points and earns 2 coins; catching rotten fruit costs one of three hearts. The best score persists, while older saves default it to zero.
 - Non-sensitive progress is saved in versioned localStorage. Invalid saves recover to a fresh player. A save written before `pawStepsBest` existed restores that field as 0 rather than discarding the rest of the progress. Storage failures show a persistent warning while leaving the game usable. Other browser tabs receive saved changes through the storage event; simultaneous edits follow browser last-write-wins behavior.
 - Local-only, non-shareable room and dialog state remains in React. No account, network request, retention policy, billing workflow, or private data is required.
 
 ## Accessibility and verification
 
-English interface, native semantics, keyboard movement, named controls, field associations, visible focus, accessible modal behavior, reduced motion, and responsive document flow are baseline requirements. Browser tests exercise desktop and mobile, success and validation paths, lost storage, rewards, persistence, both mini-games, and automated WCAG AA scans.
+English interface, native semantics, keyboard movement, named controls, field associations, visible focus, accessible modal behavior, reduced motion, and responsive document flow are baseline requirements. Browser tests exercise desktop and mobile, success and validation paths, lost storage, rewards, persistence, all three mini-games, and automated WCAG AA scans.
 
 The Browser plugin is unavailable in this session. Verification uses Playwright Chromium against the Vite server, with temporary screenshots and reports outside source control.

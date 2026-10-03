@@ -215,7 +215,7 @@ export function World({
         )}
         {place === "arcade" && (
           <button className="room-action" onClick={onGame}>
-            <Gamepad2 size={19} /> Play a game <ArrowUpRight size={17} />
+            <Gamepad2 size={19} /> Choose a game <ArrowUpRight size={17} />
           </button>
         )}
         {place === "den" && (

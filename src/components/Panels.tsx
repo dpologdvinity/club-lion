@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  ArrowLeft,
   ArrowRight,
+  ChevronRight,
   Check,
   Coffee,
   Home,
@@ -20,6 +22,7 @@ import {
 import { Coin, Lion } from "./Lion";
 import { MemorySafari } from "./MemorySafari";
 import { PawSteps } from "./PawSteps";
+import { FruitCatch } from "./FruitCatch";
 
 export function WorldMap({
   place,
@@ -280,17 +283,19 @@ export function Shop({
   );
 }
 
-type ArcadeGame = "safari" | "paw-steps";
+type ArcadeGame = "safari" | "paw-steps" | "fruit";
 
 export function GamesPanel({
   player,
   onSafariFinish,
   onPawStepsFinish,
+  onFruitFinish,
   onClose,
 }: {
   player: Player;
   onSafariFinish: (pairs: number) => void;
   onPawStepsFinish: (rounds: number) => void;
+  onFruitFinish: (caught: number, hits: number, score: number) => void;
   onClose: () => void;
 }) {
   const [game, setGame] = useState<ArcadeGame | null>(null);
@@ -324,37 +329,76 @@ export function GamesPanel({
         onClose={onClose}
       />
     );
+  if (game === "fruit")
+    return (
+      <>
+        <button className="game-back" onClick={backToMenu}>
+          <ArrowLeft size={14} /> All games
+        </button>
+        <FruitCatch
+          best={player.fruitCatchBest}
+          onFinish={(result) =>
+            onFruitFinish(result.caught, result.hits, result.score)
+          }
+          onClose={onClose}
+        />
+      </>
+    );
   return (
-    <div className="arcade-menu">
+    <div className="arcade-picker">
       <button
         ref={(node) => {
           menuButtons.current.safari = node;
         }}
-        className="arcade-card"
+        className="arcade-game"
         onClick={() => setGame("safari")}
       >
-        <span className="arcade-card-art" aria-hidden="true">
-          🎴
+        <span className="arcade-art memory-art" aria-hidden="true">
+          🦁 🌴 🌼
         </span>
-        <strong>Memory Safari</strong>
-        <small>Find all 6 matching pairs. 60 coins a game.</small>
+        <span className="arcade-copy">
+          <strong>Memory Safari</strong>
+          <small>Find the matching pairs. No timer, no rush.</small>
+          <span className="arcade-reward">Earn up to 60 coins</span>
+        </span>
+        <ChevronRight size={20} />
+      </button>
+      <button
+        ref={(node) => {
+          menuButtons.current.fruit = node;
+        }}
+        className="arcade-game"
+        onClick={() => setGame("fruit")}
+      >
+        <span className="arcade-art fruit-art" aria-hidden="true">
+          🍎 🧺 🍊
+        </span>
+        <span className="arcade-copy">
+          <strong>Fruit Catch!</strong>
+          <small>Catch the good stuff. Dodge the icky stuff.</small>
+          <span className="arcade-reward">2 coins for every fruit caught</span>
+        </span>
+        <ChevronRight size={20} />
       </button>
       <button
         ref={(node) => {
           menuButtons.current["paw-steps"] = node;
         }}
-        className="arcade-card"
+        className="arcade-game"
         onClick={() => setGame("paw-steps")}
       >
-        <span className="arcade-card-art" aria-hidden="true">
-          🐾
+        <span className="arcade-art memory-art" aria-hidden="true">
+          🐾 🦁 🐾
         </span>
-        <strong>Paw Steps</strong>
-        <small>
-          Repeat the lion&apos;s paw steps. {PAW_STEPS_COINS_PER_ROUND} coins a
-          round.
-          {player.pawStepsBest > 0 && ` Best: ${player.pawStepsBest}.`}
-        </small>
+        <span className="arcade-copy">
+          <strong>Paw Steps</strong>
+          <small>Repeat the lion&apos;s paw steps. No timer, no rush.</small>
+          <span className="arcade-reward">
+            {PAW_STEPS_COINS_PER_ROUND} coins a round.
+            {player.pawStepsBest > 0 && ` Best: ${player.pawStepsBest}.`}
+          </span>
+        </span>
+        <ChevronRight size={20} />
       </button>
     </div>
   );
@@ -398,8 +442,8 @@ export function Help() {
         <p>
           <Shirt size={20} />
           <span>
-            <strong>Make it yours</strong>Style your lion, play Memory Safari or
-            Paw Steps to earn coins, and shop for something special.
+            <strong>Make it yours</strong>Style your lion, play an arcade game
+            to earn coins, and shop for something special.
           </span>
         </p>
       </div>

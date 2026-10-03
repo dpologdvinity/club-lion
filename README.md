@@ -19,7 +19,7 @@ Open the Vite URL, normally http://localhost:5173.
 - Say hello to Milo, Cleo, and Pip; send local messages and emotes.
 - Visit the watering hole, Canopy café, arcade, and your den using the map.
 - Name and customize your lion; spend earned coins on accessories and den decorations.
-- Match six pairs in Memory Safari to earn 60 coins. Claim completed adventure rewards for 50 coins each.
+- Play Memory Safari or Fruit Catch at the arcade to earn coins. Claim completed adventure rewards for 50 coins each.
 
 This version is single-player: neighbors are scripted, and messages stay on your screen. Progress saves in this browser. It does not include a multiplayer server or accounts.
 
@@ -38,6 +38,6 @@ The browser suite checks desktop and mobile interactions, persistence, reward an
 
 ## Architecture
 
-React and TypeScript with Vite. `src/game.ts` owns progression and save validation. Components own the world, lion presentation, sidebar, shared dialog, wardrobe/shop/map, and matching game. `src/usePlayer.ts` owns persistence. [DESIGN.md](DESIGN.md) and [UX-CONTRACT.md](UX-CONTRACT.md) document the visual and interaction decisions.
+React and TypeScript with Vite. `src/game.ts` owns progression and save validation. Components own the world, lion presentation, sidebar, shared dialog, wardrobe/shop/map, and arcade games. `src/usePlayer.ts` owns persistence. [DESIGN.md](DESIGN.md) and [UX-CONTRACT.md](UX-CONTRACT.md) document the visual and interaction decisions.
 
 Original artwork was generated with the built-in image generation tool: a sunny savanna village without characters, a transparent chibi lion sprite, and a four-scene atlas containing a watering hole, café, arcade, and cozy den. Optimized production assets live in `public/assets`; the atlas was split into standalone backgrounds to preserve scene proportions. Nunito and Lilita One are self-hosted in `public/fonts` with their SIL Open Font Licenses.
