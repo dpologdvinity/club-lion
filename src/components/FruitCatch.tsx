@@ -257,7 +257,7 @@ export function FruitCatch({
         <span className={timeLeft <= 8 ? "fruit-urgent" : "fruit-timer"}>
           {timeLeft}s
         </span>
-        <span aria-label={`${lives} lives`}>
+        <span role="img" aria-label={`${lives} lives`}>
           {Array.from({ length: 3 }, (_, index) => (
             <Heart
               key={index}
@@ -294,7 +294,7 @@ export function FruitCatch({
         </span>
         <span className="fruit-ground" />
       </div>
-      <div className="fruit-controls" aria-label="Move basket">
+      <div className="fruit-controls" role="group" aria-label="Move basket">
         <button
           className="button button-secondary"
           onClick={() => moveBasket(-1)}
