@@ -1,6 +1,11 @@
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
 import type { AvatarLook, PetState } from "./types/world.ts";
-import { CATALOG_ITEMS } from "./types/world.ts";
+import {
+  DEFAULT_AVATAR_LOOK,
+  DEFAULT_PET_STATE,
+  validateAvatarLook,
+  CATALOG_ITEMS,
+} from "./types/world.ts";
 
 export * from "./types/world.ts";
 
@@ -8,8 +13,7 @@ export const SAVE_KEY = "club-lion-player-v1";
 export type LionColor = "gold" | "sand" | "copper" | "rose";
 export type PlaceId = "square" | "water" | "cafe" | "arcade" | "den";
 export type AdventureId = "neighbors" | "game" | "home";
-export type Player = {
-  version: 1;
+export type PlayerBase = {
   name: string;
   coins: number;
   color: LionColor;
@@ -24,6 +28,10 @@ export type Player = {
   claimed: AdventureId[];
   decor: string[];
   mangoRunBest?: number;
+};
+
+export type Player = PlayerBase & {
+  version: 1;
   look?: AvatarLook;
   pet?: PetState;
 };
@@ -271,7 +279,78 @@ export function restorePlayer(raw: string | null): Player {
   }
 }
 
-export function buyItem(player: Player, id: string): Player {
+export type PlayerV2 = PlayerBase & {
+  version: 2;
+  look: AvatarLook;
+  pet: PetState;
+  starRank: number;
+  moodQuote: string;
+};
+
+const DEFAULT_MOOD_QUOTE = "Vibing in the savanna";
+
+function calculateStarRank(gamesPlayed: number, coins: number): number {
+  return 1 + Math.floor(gamesPlayed / 5) + Math.floor(coins / 500);
+}
+
+function isPlayerV2(value: unknown): value is PlayerV2 {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    candidate.version === 2 &&
+    Number.isSafeInteger(candidate.starRank) &&
+    typeof candidate.moodQuote === "string" &&
+    validateAvatarLook(candidate.look) &&
+    !!candidate.pet &&
+    typeof candidate.pet === "object"
+  );
+}
+
+export function migratePlayerSave(save: unknown): PlayerV2 {
+  if (isPlayerV2(save)) {
+    const v1 = restorePlayer(
+      JSON.stringify({ ...(save as PlayerV2), version: 1 }),
+    );
+    return {
+      ...v1,
+      version: 2,
+      look: save.look,
+      pet: save.pet,
+      starRank: save.starRank,
+      moodQuote: save.moodQuote,
+    };
+  }
+  const v1Save = save;
+  const v1 = restorePlayer(
+    typeof v1Save === "string" ? v1Save : JSON.stringify(v1Save ?? null),
+  );
+  const raw =
+    v1Save && typeof v1Save === "object"
+      ? (v1Save as Record<string, unknown>)
+      : {};
+  const look = validateAvatarLook(raw.look)
+    ? (raw.look as AvatarLook)
+    : DEFAULT_AVATAR_LOOK;
+  const pet =
+    raw.pet && typeof raw.pet === "object"
+      ? ({ ...DEFAULT_PET_STATE, ...(raw.pet as object) } as PetState)
+      : DEFAULT_PET_STATE;
+  const moodQuote =
+    typeof raw.moodQuote === "string" && raw.moodQuote.trim()
+      ? raw.moodQuote.trim().slice(0, 60)
+      : DEFAULT_MOOD_QUOTE;
+  const { version: _version, ...rest } = v1;
+  return {
+    ...rest,
+    version: 2,
+    look,
+    pet,
+    starRank: calculateStarRank(v1.gamesPlayed, v1.coins),
+    moodQuote,
+  };
+}
+
+export function buyItem<T extends PlayerBase>(player: T, id: string): T {
   const item = SHOP_ITEMS.find((item) => item.id === id);
   if (!item || player.owned.includes(id) || player.coins < item.price)
     return player;
@@ -282,22 +361,25 @@ export function buyItem(player: Player, id: string): Player {
     ...(item.kind === "accessory"
       ? { accessory: id }
       : { decor: [...player.decor, id] }),
-  };
+  } as T;
 }
 
-export function visitPlace(player: Player, id: PlaceId): Player {
+export function visitPlace<T extends PlayerBase>(player: T, id: PlaceId): T {
   return player.visited.includes(id)
     ? player
-    : { ...player, visited: [...player.visited, id] };
+    : ({ ...player, visited: [...player.visited, id] } as T);
 }
 
-export function meetLion(player: Player, id: string): Player {
+export function meetLion<T extends PlayerBase>(player: T, id: string): T {
   return player.met.includes(id) || !NEIGHBORS.some((lion) => lion.id === id)
     ? player
-    : { ...player, met: [...player.met, id] };
+    : ({ ...player, met: [...player.met, id] } as T);
 }
 
-export function isAdventureComplete(player: Player, id: AdventureId): boolean {
+export function isAdventureComplete(
+  player: PlayerBase,
+  id: AdventureId,
+): boolean {
   return id === "neighbors"
     ? player.met.length >= 3
     : id === "game"
@@ -305,32 +387,48 @@ export function isAdventureComplete(player: Player, id: AdventureId): boolean {
       : player.visited.includes("den");
 }
 
-export function claimReward(player: Player, id: AdventureId): Player {
+export function claimReward<T extends PlayerBase>(
+  player: T,
+  id: AdventureId,
+): T {
   return player.claimed.includes(id) || !isAdventureComplete(player, id)
     ? player
-    : { ...player, coins: player.coins + 50, claimed: [...player.claimed, id] };
+    : ({
+        ...player,
+        coins: player.coins + 50,
+        claimed: [...player.claimed, id],
+      } as T);
 }
 
-export function completeGame(player: Player, pairs: number): Player {
+export function completeGame<T extends PlayerBase>(
+  player: T,
+  pairs: number,
+): T {
   if (!Number.isSafeInteger(pairs) || pairs < 0 || pairs > 6) return player;
   return {
     ...player,
     coins: player.coins + pairs * 10,
     gamesPlayed: player.gamesPlayed + 1,
-  };
+  } as T;
 }
 
-export function completeMangoRun(player: Player, score: number): Player {
+export function completeMangoRun<T extends PlayerBase>(
+  player: T,
+  score: number,
+): T {
   if (!Number.isSafeInteger(score) || score < 0) return player;
   return {
     ...player,
     coins: player.coins + score,
     gamesPlayed: player.gamesPlayed + 1,
     mangoRunBest: Math.max(player.mangoRunBest ?? 0, score),
-  };
+  } as T;
 }
 
-export function completeBeeStop(player: Player, score: number): Player {
+export function completeBeeStop<T extends PlayerBase>(
+  player: T,
+  score: number,
+): T {
   if (!Number.isSafeInteger(score) || score < 0 || score > BEE_STOP_MAX_SCORE)
     return player;
   return {
@@ -338,10 +436,13 @@ export function completeBeeStop(player: Player, score: number): Player {
     coins: player.coins + coinsFor(score),
     gamesPlayed: player.gamesPlayed + 1,
     beeStopBest: Math.max(player.beeStopBest, score),
-  };
+  } as T;
 }
 
-export function completePawSteps(player: Player, rounds: number): Player {
+export function completePawSteps<T extends PlayerBase>(
+  player: T,
+  rounds: number,
+): T {
   if (
     !Number.isSafeInteger(rounds) ||
     rounds < 0 ||
@@ -353,26 +454,26 @@ export function completePawSteps(player: Player, rounds: number): Player {
     coins: player.coins + rounds * PAW_STEPS_COINS_PER_ROUND,
     gamesPlayed: player.gamesPlayed + 1,
     pawStepsBest: Math.max(player.pawStepsBest, rounds),
-  };
+  } as T;
 }
 
-export function unlockSecretCatalogItem(
-  player: Player,
+export function unlockSecretCatalogItem<T extends PlayerBase>(
+  player: T,
   secretId: string,
-): Player {
+): T {
   const item = CATALOG_ITEMS.find(
     (item) => item.isSecret && item.id === secretId,
   );
   if (!item || player.owned.includes(item.id)) return player;
-  return { ...player, owned: [...player.owned, item.id] };
+  return { ...player, owned: [...player.owned, item.id] } as T;
 }
 
-export function completeFruitCatch(
-  player: Player,
+export function completeFruitCatch<T extends PlayerBase>(
+  player: T,
   caught: number,
   hits: number,
   score: number,
-): Player {
+): T {
   if (
     !Number.isSafeInteger(caught) ||
     caught < 0 ||
@@ -389,5 +490,5 @@ export function completeFruitCatch(
     coins: player.coins + caught * 2,
     gamesPlayed: newGamesPlayed,
     fruitCatchBest: newBest,
-  };
+  } as T;
 }

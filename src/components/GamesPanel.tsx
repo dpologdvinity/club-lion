@@ -5,7 +5,7 @@ import { BeeStop } from "./BeeStop";
 import { PawSteps } from "./PawSteps";
 import { FruitCatch } from "./FruitCatch";
 import { PAW_STEPS_COINS_PER_ROUND } from "../game";
-import type { Player } from "../game.ts";
+import type { PlayerV2 } from "../game.ts";
 
 type GameId = "memory" | "bee" | "paw" | "fruit";
 
@@ -20,7 +20,7 @@ export function GamesPanel({
   onFruitFinish,
   onClose,
 }: {
-  player: Player;
+  player: PlayerV2;
   onCompleteGame?: (pairs: number) => void;
   onCompleteBeeStop?: (score: number) => void;
   onCompletePawSteps?: (rounds: number) => void;
