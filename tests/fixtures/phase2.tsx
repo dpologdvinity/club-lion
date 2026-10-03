@@ -1,21 +1,31 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { DJBeatDropModal } from "../../src/components/DJBeatDrop";
+import { SmoothieKitchen } from "../../src/components/SmoothieKitchen";
 import "../../src/styles.css";
 
 function Fixture() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<"dj" | "smoothie" | null>(null);
   const [rewards, setRewards] = useState<unknown[]>([]);
+  const [smoothies, setSmoothies] = useState<number[]>([]);
   return (
     <main>
       <h1>Phase 2 minigames</h1>
-      <button onClick={() => setOpen(true)}>Open DJ booth</button>
+      <button onClick={() => setOpen("dj")}>Open DJ booth</button>
+      <button onClick={() => setOpen("smoothie")}>Open smoothie kitchen</button>
       <output aria-label="DJ rewards">{JSON.stringify(rewards)}</output>
-      {open && (
+      <output aria-label="Smoothie rewards">{JSON.stringify(smoothies)}</output>
+      {open === "dj" && (
         <DJBeatDropModal
           best={0}
-          onClose={() => setOpen(false)}
+          onClose={() => setOpen(null)}
           onFinish={(result) => setRewards((items) => [...items, result])}
+        />
+      )}
+      {open === "smoothie" && (
+        <SmoothieKitchen
+          onClose={() => setOpen(null)}
+          onServe={(coins) => setSmoothies((items) => [...items, coins])}
         />
       )}
     </main>

@@ -1,4 +1,5 @@
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
+import { MAX_SMOOTHIE_COINS } from "./utils/smoothieRecipes.ts";
 import {
   coinsForScore,
   DJ_BEAT_COUNT,
@@ -34,6 +35,7 @@ export type PlayerBase = {
   decor: string[];
   mangoRunBest?: number;
   djBeatDropBest?: number;
+  smoothiesServed?: number;
 };
 
 export type Player = PlayerBase & {
@@ -286,6 +288,11 @@ export function restorePlayer(raw: string | null): Player {
             p.djBeatDropBest <= DJ_MAX_SCORE
           ? { djBeatDropBest: p.djBeatDropBest as number }
           : {}),
+      ...(p.smoothiesServed === undefined
+        ? {}
+        : Number.isSafeInteger(p.smoothiesServed) && p.smoothiesServed >= 0
+          ? { smoothiesServed: p.smoothiesServed as number }
+          : {}),
     };
   } catch {
     return newPlayer();
@@ -529,5 +536,24 @@ export function completeDJBeatDrop<T extends PlayerBase>(
     coins: player.coins + coinsForScore(score),
     gamesPlayed: player.gamesPlayed + 1,
     djBeatDropBest: Math.max(player.djBeatDropBest ?? 0, score),
+  } as T;
+}
+
+export function completeSmoothieOrder<T extends PlayerBase>(
+  player: T,
+  coinsEarned: number,
+): T {
+  if (
+    !Number.isSafeInteger(coinsEarned) ||
+    coinsEarned < 0 ||
+    coinsEarned > MAX_SMOOTHIE_COINS ||
+    !Number.isSafeInteger(player.coins + coinsEarned) ||
+    !Number.isSafeInteger((player.smoothiesServed ?? 0) + 1)
+  )
+    return player;
+  return {
+    ...player,
+    coins: player.coins + coinsEarned,
+    smoothiesServed: (player.smoothiesServed ?? 0) + 1,
   } as T;
 }

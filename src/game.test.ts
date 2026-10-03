@@ -13,6 +13,7 @@ import {
   completePawSteps,
   completeFruitCatch,
   completeDJBeatDrop,
+  completeSmoothieOrder,
   unlockSecretCatalogItem,
   migratePlayerSave,
   SHOP_ITEMS,
@@ -24,6 +25,43 @@ test("a corrupt save safely starts a fresh adventure", () => {
   assert.deepEqual(
     restorePlayer('{"coins":-900,"owned":["admin"]}'),
     newPlayer(),
+  );
+});
+
+test("smoothie orders pay bounded rewards and never overflow player progress", () => {
+  const player = newPlayer();
+  const served = completeSmoothieOrder(player, 42);
+  assert.equal(served.coins, 292);
+  assert.equal(served.smoothiesServed, 1);
+  assert.equal(completeSmoothieOrder(served, 0).smoothiesServed, 2);
+  for (const coins of [-1, 0.5, NaN, 43, Number.MAX_SAFE_INTEGER]) {
+    assert.equal(completeSmoothieOrder(player, coins), player);
+  }
+  const fullWallet = { ...player, coins: Number.MAX_SAFE_INTEGER };
+  assert.equal(completeSmoothieOrder(fullWallet, 30), fullWallet);
+  const fullCounter = { ...player, smoothiesServed: Number.MAX_SAFE_INTEGER };
+  assert.equal(completeSmoothieOrder(fullCounter, 0), fullCounter);
+});
+
+test("smoothie and DJ progress round trips together through v1 and v2 saves", () => {
+  const player = completeSmoothieOrder(
+    completeDJBeatDrop(newPlayer(), 400, 12),
+    30,
+  );
+  assert.deepEqual(restorePlayer(JSON.stringify(player)), player);
+  const migrated = migratePlayerSave(player);
+  assert.equal(migrated.coins, 300);
+  assert.equal(migrated.smoothiesServed, 1);
+  assert.equal(migrated.djBeatDropBest, 400);
+  assert.deepEqual(
+    migratePlayerSave(JSON.parse(JSON.stringify(migrated))),
+    migrated,
+  );
+  assert.equal(migratePlayerSave(newPlayer()).smoothiesServed, undefined);
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...player, smoothiesServed: -1 }))
+      .smoothiesServed,
+    undefined,
   );
 });
 
