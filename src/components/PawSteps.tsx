@@ -218,9 +218,14 @@ export function PawSteps({
               Best so far: {best} {best === 1 ? "round" : "rounds"}
             </p>
           )}
-          <button ref={playBtnRef} className="button button-primary" onClick={start}>
-            Let’s play <ArrowRight size={18} />
-          </button>
+          <div className="game-win-actions">
+            <button ref={playBtnRef} className="button button-primary" onClick={start}>
+              Let’s play <ArrowRight size={18} />
+            </button>
+            <button className="button button-secondary" onClick={onBack}>
+              <ArrowLeft size={16} /> All games
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -249,6 +254,9 @@ export function PawSteps({
             </button>
             <button className="button button-primary" onClick={onClose}>
               Back to the pride <ArrowRight size={16} />
+            </button>
+            <button className="button button-secondary" onClick={onBack}>
+              <ArrowLeft size={16} /> All games
             </button>
           </div>
         </div>
