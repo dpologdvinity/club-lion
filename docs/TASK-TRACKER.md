@@ -62,14 +62,24 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightli
 
 | Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Task 1** | Hoverboard Glide & Footprint Sparkle Trail Engine | `feat/phase-2-task-1-trails` | **claude-sonnet-5 (claude code)** | `bc772e0` | 🔍 Implementation complete; awaiting Review |
+| **Task 1** | Hoverboard Glide & Footprint Sparkle Trail Engine | `feat/phase-2-task-1-trails` | **claude-sonnet-5 (claude code)** | `bc772e0` → `3c52baa` | ✅ Completed, reviewed & verified; 87/87 unit tests, 74/74 E2E; types, format & build clean |
 | **Task 2** | Wonder Park Declarative Room Manifests & Kinetic Track Engine | `feat/phase-2-task-2-coaster` | *Open to any agent* | - | ⏳ Planned |
 | **Task 3** | Club Pulse Interactive Dance Floor & DJ Booth Stage | `feat/phase-2-task-3-dance` | *Open to any agent* | - | ⏳ Planned |
-| **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-task-4-dj-beat` | **claude-sonnet-5 (claude code)** | `dc18077` | 🔍 Implementation complete; awaiting Review |
-| **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-task-5-smoothie` | **claude-sonnet-5 (claude code)** | `d627ec3` | 🔍 Implementation complete; awaiting Review |
+| **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-task-4-dj-beat` | **claude-sonnet-5 (claude code)** | `dc18077` → `d5d0f78` | ✅ Completed, reviewed & verified; 107/107 unit tests, 82/82 E2E; types, format & build clean |
+| **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-task-5-smoothie` | **claude-sonnet-5 (claude code)** | `d627ec3` → `1487713` | ✅ Completed, reviewed & verified; 117/117 unit tests, 88/88 E2E; types, format & build clean |
 | **Task 6** | Savanna Screamer Roller Coaster Interactive Ride Mode | `feat/phase-2-task-6-coaster` | *Open to any agent* | - | ⏳ Planned |
 | **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `feat/phase-2-integration` | *Open to any agent* | - | ⏳ Planned |
 | **Phase 2 Merge Train** | Serial Rebase & Squash Integration | `master` | **Verifier & Orchestrator** | - | ⏳ Pending Review & Verification |
+
+---
+
+### Review and integration evidence — Tasks 1, 4, and 5
+
+Reviewed and verified by **gpt-6.1-sol (codex)**; merged in order **1 → 4 → 5** with the requested three-agent attribution trailers. The final combined gate passed **117/117 unit tests** and **88/88 desktop/mobile Playwright tests**, strict types, Prettier, and the production build. All 11 unit-test files are included in `npm test`.
+
+Codex review fixes and regression tests cover click-target accuracy, idle/reduced-motion sparkle behavior, missed-beat combo resets, peak combos, held keys, dialog focus, note timing, recipe guidance, one-time serving, audio fallback, and reward overflow. DJ best scores and smoothie counts are optional additive save fields; both v1 and v2 migrations preserve their progress. Audio uses procedural Web Audio oscillators and generated noise only, with no external audio assets or runtime audio requests.
+
+The minigames were verified in standalone browser fixtures. Their world/arcade routing remains part of **Task 7**; the remaining Phase 2 tasks and milestone are still pending. Concurrent workflow and tracker documentation changes were preserved.
 
 ---
 
