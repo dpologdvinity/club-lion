@@ -31,7 +31,7 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.m
 | **Task 2** | Vector Chibi Avatar Component (`Avatar.tsx`) | `feat/phase-1-avatar-pet-downtown` | **Antigravity (Gemini 3.8 Flash)** | `1bb1dd4`, `2c561ef` | ✅ 46/46 tests, reviewer approved |
 | **Task 3** | Pet Companion Trailing Physics Engine (`PetCompanion.tsx`) | `feat/phase-1-pet-companion` | **Claude Code (claude-sonnet-5)** | `75a1726` | ✅ 43/43 tests, strict types clean |
 | **Task 4** | Panoramic Camera Viewport & Room Engine | `feat/phase-1-camera-viewport` | **Claude Code (claude-sonnet-5)** | `b83643e` | ✅ 40/40 tests, strict types clean |
-| **Task 5** | Le Shop Catalog Secrets & Stella's Salon | `feat/phase-1-catalog-salon` | **Claude Code (claude-sonnet-5)** | *In Progress* | 🔄 Pending completion |
+| **Task 5** | Le Shop Catalog Secrets & Stella's Salon | `feat/phase-1-catalog-salon` | **Claude Code (claude-sonnet-5)** | `3017ca6` | ✅ 39/39 tests, build clean |
 | **Task 6** | Quick-Chat Action Wheel & Mango Ballistics | `feat/phase-1-actions-ballistics` | **Codex (gpt-6.1-sol)** | `2aff016` | ✅ 41/41 tests, strict types clean |
 | **Task 7** | Fantage ID Card & V1-to-V2 Save Migration | `feat/phase-1-player-id-card` | **Claude Code (claude-sonnet-5)** | *In Progress* | 🔄 Pending completion |
 | **Task 8** | Phase 1 Integration, Full Assembly & E2E Verification | `feat/phase-1-avatar-pet-downtown` | **Antigravity (Gemini 3.8 Flash)** | *Pending* | ⏳ Awaiting Tasks 5 & 7 |
