@@ -53,10 +53,10 @@ export function PawSteps({
   onBack: () => void;
   onClose: () => void;
 }) {
-  const [sequence, setSequence] = useState<Direction[]>([]);
-  const [phase, setPhase] = useState<Phase>("intro");
-  const [rounds, setRounds] = useState(0);
-  const [step, setStep] = useState(0);
+  const [sequence, setSequenceState] = useState<Direction[]>([]);
+  const [phase, setPhaseState] = useState<Phase>("intro");
+  const [rounds, setRoundsState] = useState(0);
+  const [step, setStepState] = useState(0);
   const [lit, setLit] = useState<Direction | null>(null);
   const [missed, setMissed] = useState<Direction | null>(null);
   const timers = useRef<number[]>([]);
@@ -65,25 +65,29 @@ export function PawSteps({
 
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const padRef = useRef<HTMLDivElement>(null);
-  const liveRef = useRef<HTMLDivElement>(null);
+  const [announcement, setAnnouncement] = useState("");
 
   const phaseRef = useRef<Phase>("intro");
   const stepRef = useRef(0);
   const sequenceRef = useRef<Direction[]>([]);
   const roundsRef = useRef(0);
 
-  useEffect(() => {
-    phaseRef.current = phase;
-  }, [phase]);
-  useEffect(() => {
-    stepRef.current = step;
-  }, [step]);
-  useEffect(() => {
-    sequenceRef.current = sequence;
-  }, [sequence]);
-  useEffect(() => {
-    roundsRef.current = rounds;
-  }, [rounds]);
+  const setPhase = (value: Phase) => {
+    phaseRef.current = value;
+    setPhaseState(value);
+  };
+  const setStep = (value: number) => {
+    stepRef.current = value;
+    setStepState(value);
+  };
+  const setSequence = (value: Direction[]) => {
+    sequenceRef.current = value;
+    setSequenceState(value);
+  };
+  const setRounds = (value: number) => {
+    roundsRef.current = value;
+    setRoundsState(value);
+  };
 
   const clearTimers = () => {
     timers.current.forEach((id) => window.clearTimeout(id));
@@ -106,17 +110,13 @@ export function PawSteps({
 
   useEffect(() => {
     if (phase === "intro") playBtnRef.current?.focus();
-    if (phase === "input") padRef.current?.focus();
+    if (phase === "showing" || phase === "input") padRef.current?.focus();
     if (phase === "over") playBtnRef.current?.focus();
   }, [phase]);
 
   const show = (steps: Direction[], then: () => void) => {
     setPhase("showing");
-    if (liveRef.current) {
-      liveRef.current.textContent = `Showing: ${steps
-        .map(directionLabel)
-        .join(", ")}`;
-    }
+    setAnnouncement(`Showing: ${steps.map(directionLabel).join(", ")}`);
     steps.forEach((direction, index) => {
       later(index * (STEP_MS + GAP_MS), () => flash(direction, STEP_MS));
     });
@@ -127,7 +127,7 @@ export function PawSteps({
     setPhase("over");
     if (rewarded.current) return;
     rewarded.current = true;
-    onFinish(rounds);
+    onFinish(roundsRef.current);
   };
 
   const start = () => {
@@ -138,6 +138,7 @@ export function PawSteps({
     setRounds(0);
     setStep(0);
     setMissed(null);
+    setLit(null);
     show(first, () => {
       setStep(0);
       setPhase("input");
@@ -153,17 +154,20 @@ export function PawSteps({
     flash(direction, TAP_FLASH_MS);
     if (direction !== expected) {
       setMissed(expected);
+      setAnnouncement(
+        `The next step was ${directionLabel(expected)}. Try again!`,
+      );
       setPhase("showing");
       later(MISS_FLASH_MS, () => flash(expected, REVEAL_MS));
       later(MISS_FLASH_MS + REVEAL_MS, finish);
       return;
     }
     if (currentStep + 1 < currentSeq.length) {
-      setStep((s) => s + 1);
+      setStep(currentStep + 1);
       return;
     }
     const grown = [...currentSeq, randomDirection()];
-    setRounds((r) => r + 1);
+    setRounds(roundsRef.current + 1);
     setSequence(grown);
     setPhase("showing");
     later(NEXT_ROUND_MS, () =>
@@ -179,19 +183,23 @@ export function PawSteps({
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)) return;
-      if (event.repeat) return;
       const direction = ARROW_KEYS[event.key];
       if (!direction) return;
       event.preventDefault();
+      if (event.repeat) return;
       tap(direction);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [phase, sequence, step, rounds]);
 
-  if (phase === "intro")
-    return (
-      <div className="memory-game">
+  const accepting = phase === "input";
+  return (
+    <div className="memory-game">
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {announcement}
+      </div>
+      {phase === "intro" ? (
         <div className="game-intro">
           <div className="game-illustration">
             <span>🐾</span>
@@ -219,7 +227,11 @@ export function PawSteps({
             </p>
           )}
           <div className="game-win-actions">
-            <button ref={playBtnRef} className="button button-primary" onClick={start}>
+            <button
+              ref={playBtnRef}
+              className="button button-primary"
+              onClick={start}
+            >
               Let’s play <ArrowRight size={18} />
             </button>
             <button className="button button-secondary" onClick={onBack}>
@@ -227,12 +239,7 @@ export function PawSteps({
             </button>
           </div>
         </div>
-      </div>
-    );
-
-  if (phase === "over")
-    return (
-      <div className="memory-game">
+      ) : phase === "over" ? (
         <div className="game-intro game-win game-over">
           <div className="trophy-icon">
             <Trophy size={53} />
@@ -249,7 +256,11 @@ export function PawSteps({
             + <Coin amount={rounds * PAW_STEPS_COINS_PER_ROUND} />
           </div>
           <div className="game-win-actions">
-            <button ref={playBtnRef} className="button button-secondary" onClick={start}>
+            <button
+              ref={playBtnRef}
+              className="button button-secondary"
+              onClick={start}
+            >
               <RotateCcw size={16} /> Play again
             </button>
             <button className="button button-primary" onClick={onClose}>
@@ -260,59 +271,51 @@ export function PawSteps({
             </button>
           </div>
         </div>
-      </div>
-    );
-
-  const accepting = phase === "input";
-  return (
-    <div className="memory-game">
-      <button className="arcade-back" onClick={onBack}>
-        <ArrowLeft size={15} /> All games
-      </button>
-      <div className="game-stats">
-        <span>
-          <ListChecks size={17} /> {rounds} rounds
-        </span>
-        <span>
-          <Sparkles size={17} /> {sequence.length} steps
-        </span>
-        <Coin amount={rounds * PAW_STEPS_COINS_PER_ROUND} />
-      </div>
-      <div
-        ref={padRef}
-        className="paw-pad"
-        role="group"
-        aria-label="Paw step arrows"
-        tabIndex={-1}
-      >
-        {DIRECTIONS.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            className={`paw-key paw-key-${id} ${lit === id ? "lit" : ""} ${missed === id ? "missed" : ""}`}
-            aria-label={label}
-            aria-disabled={!accepting}
-            onClick={() => tap(id)}
-          >
-            <Icon size={30} />
+      ) : (
+        <>
+          <button className="arcade-back" onClick={onBack}>
+            <ArrowLeft size={15} /> All games
           </button>
-        ))}
-        <span className="paw-center" aria-hidden="true">
-          🐾
-        </span>
-      </div>
-      <div
-        ref={liveRef}
-        className="sr-only"
-        aria-live="polite"
-        aria-atomic="true"
-      />
-      <p className="game-help" role="status">
-        {accepting
-          ? `Your turn — repeat ${sequence.length - step} ${
-              sequence.length - step === 1 ? "step" : "steps"
-            }.`
-          : "Watch the paws…"}
-      </p>
+          <div className="game-stats">
+            <span>
+              <ListChecks size={17} /> {rounds} rounds
+            </span>
+            <span>
+              <Sparkles size={17} /> {sequence.length} steps
+            </span>
+            <Coin amount={rounds * PAW_STEPS_COINS_PER_ROUND} />
+          </div>
+          <div
+            ref={padRef}
+            className="paw-pad"
+            role="group"
+            aria-label="Paw step arrows"
+            tabIndex={-1}
+          >
+            {DIRECTIONS.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                className={`paw-key paw-key-${id} ${lit === id ? "lit" : ""} ${missed === id ? "missed" : ""}`}
+                aria-label={label}
+                aria-disabled={!accepting}
+                onClick={() => tap(id)}
+              >
+                <Icon size={30} />
+              </button>
+            ))}
+            <span className="paw-center" aria-hidden="true">
+              🐾
+            </span>
+          </div>
+          <p className="game-help" role="status">
+            {accepting
+              ? `Your turn — repeat ${sequence.length - step} ${
+                  sequence.length - step === 1 ? "step" : "steps"
+                }.`
+              : "Watch the paws…"}
+          </p>
+        </>
+      )}
     </div>
   );
 }

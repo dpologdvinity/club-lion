@@ -17,6 +17,11 @@ async function watchPaws(page: Page, count: number) {
     seen.push((await lit.first().getAttribute("aria-label"))!);
     await page.waitForFunction(() => !document.querySelector(".paw-key.lit"));
   }
+  await page.waitForFunction(
+    () =>
+      document.querySelector(".paw-key")?.getAttribute("aria-disabled") ===
+      "false",
+  );
   return seen;
 }
 
@@ -164,6 +169,9 @@ test("Memory Safari can be completed and awards exactly 60 coins", async ({
     page.getByRole("heading", { name: "That’s a roaring success!" }),
   ).toBeVisible();
   await expect(page.locator(".wallet")).toHaveText("✦310");
+  await expect(
+    page.getByRole("button", { name: "All games", exact: true }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Back to the pride" }).click();
   await page.getByRole("button", { name: "Claim 50" }).click();
   await expect(page.locator(".wallet")).toHaveText("✦360");
@@ -176,10 +184,23 @@ test("Paw Steps pays for every finished round, then remembers the best score", a
   await page.getByRole("button", { name: "Games", exact: true }).click();
   await page.getByRole("button", { name: /Paw Steps/ }).click();
   await page.getByRole("button", { name: "Let’s play" }).click();
+  await expect(
+    page.getByRole("dialog").locator('[aria-live="polite"]'),
+  ).toHaveText(/^Showing: (Up|Down|Left|Right), (Up|Down|Left|Right)$/);
   const opening = await watchPaws(page, 2);
   expect(opening).toHaveLength(2);
-  for (const label of opening)
-    await page.getByRole("button", { name: label, exact: true }).click();
+  await page.keyboard.down(PAW_KEYS[opening[0]]);
+  await expect(page.locator(".game-help")).toHaveText(
+    "Your turn — repeat 1 step.",
+  );
+  await page.keyboard.down(PAW_KEYS[opening[0]]);
+  await expect(page.locator(".game-help")).toHaveText(
+    "Your turn — repeat 1 step.",
+  );
+  await page.keyboard.up(PAW_KEYS[opening[0]]);
+  await page.keyboard.press(PAW_KEYS[opening[1]]);
+  await expect(page.locator(".game-stats span").first()).toHaveText("1 rounds");
+  await page.waitForFunction(() => !document.querySelector(".paw-key.lit"));
   const next = await watchPaws(page, 3);
   expect(next).toHaveLength(3);
   await page.keyboard.press(PAW_KEYS[next[0]]);
@@ -197,6 +218,80 @@ test("Paw Steps pays for every finished round, then remembers the best score", a
   await expect(page.locator(".wallet")).toHaveText("✦260");
   await page.getByRole("button", { name: "Games", exact: true }).click();
   await expect(page.getByText("Best: 1.", { exact: false })).toBeVisible();
+});
+
+test("Paw Steps accepts rapid correct input and locks a completed round", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await page.getByRole("button", { name: /Paw Steps/ }).click();
+  await page.evaluate(() => {
+    let index = 0;
+    Math.random = () => [0, 0.26, 0.51][index++ % 3];
+  });
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector(".paw-key")?.getAttribute("aria-disabled") ===
+      "false",
+  );
+  await expect(
+    page.getByRole("group", { name: "Paw step arrows" }),
+  ).toBeFocused();
+  await page.evaluate(() => {
+    for (const key of ["ArrowUp", "ArrowLeft", "ArrowRight", "ArrowUp"]) {
+      window.dispatchEvent(
+        new KeyboardEvent("keydown", { key, bubbles: true }),
+      );
+    }
+  });
+  await expect(page.locator(".game-stats span").first()).toHaveText("1 rounds");
+  await page.waitForFunction(
+    () =>
+      document.querySelector(".paw-key")?.getAttribute("aria-disabled") ===
+      "false",
+  );
+  await page.keyboard.press("ArrowDown");
+  await expect(
+    page.getByRole("heading", { name: "What a run!" }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
+  await expect(page.locator(".wallet")).toHaveText("✦260");
+  await page.getByRole("button", { name: "Play again" }).click();
+  await expect(
+    page.getByRole("dialog").locator('[aria-live="polite"]'),
+  ).toHaveText(/^Showing: /);
+  await page.getByRole("button", { name: "All games", exact: true }).click();
+  await expect(page.getByRole("button", { name: /Paw Steps/ })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: "Games", exact: true }),
+  ).toBeFocused();
+  await page.reload();
+  await expect(page.locator(".wallet")).toHaveText("✦260");
+});
+
+test("the arcade menu keeps keyboard focus when either game is left", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  for (const name of ["Paw Steps", "Memory Safari"]) {
+    await page.getByRole("button", { name: new RegExp(name) }).click();
+    await page.getByRole("button", { name: "All games", exact: true }).click();
+    await expect(
+      page.getByRole("button", { name: new RegExp(name) }),
+    ).toBeFocused();
+  }
+  await page.getByRole("button", { name: /Paw Steps/ }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: "Games", exact: true }),
+  ).toBeFocused();
+  await page.reload();
+  await expect(page.locator(".wallet")).toHaveText("✦250");
 });
 
 test("the main world and dialogs have no WCAG AA accessibility violations", async ({

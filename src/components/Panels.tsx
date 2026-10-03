@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  ArrowLeft,
   ArrowRight,
   Check,
   Coffee,
@@ -295,11 +294,24 @@ export function GamesPanel({
   onClose: () => void;
 }) {
   const [game, setGame] = useState<ArcadeGame | null>(null);
+  const menuButtons = useRef<
+    Partial<Record<ArcadeGame, HTMLButtonElement | null>>
+  >({});
+  const returnTo = useRef<ArcadeGame | null>(null);
+  const backToMenu = () => {
+    returnTo.current = game;
+    setGame(null);
+  };
+  useEffect(() => {
+    if (game === null && returnTo.current) {
+      menuButtons.current[returnTo.current]?.focus();
+    }
+  }, [game]);
   if (game === "safari")
     return (
       <MemorySafari
         onFinish={onSafariFinish}
-        onBack={() => setGame(null)}
+        onBack={backToMenu}
         onClose={onClose}
       />
     );
@@ -308,20 +320,32 @@ export function GamesPanel({
       <PawSteps
         best={player.pawStepsBest}
         onFinish={onPawStepsFinish}
-        onBack={() => setGame(null)}
+        onBack={backToMenu}
         onClose={onClose}
       />
     );
   return (
     <div className="arcade-menu">
-      <button className="arcade-card" onClick={() => setGame("safari")}>
+      <button
+        ref={(node) => {
+          menuButtons.current.safari = node;
+        }}
+        className="arcade-card"
+        onClick={() => setGame("safari")}
+      >
         <span className="arcade-card-art" aria-hidden="true">
           🎴
         </span>
         <strong>Memory Safari</strong>
         <small>Find all 6 matching pairs. 60 coins a game.</small>
       </button>
-      <button className="arcade-card" onClick={() => setGame("paw-steps")}>
+      <button
+        ref={(node) => {
+          menuButtons.current["paw-steps"] = node;
+        }}
+        className="arcade-card"
+        onClick={() => setGame("paw-steps")}
+      >
         <span className="arcade-card-art" aria-hidden="true">
           🐾
         </span>

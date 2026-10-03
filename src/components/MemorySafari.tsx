@@ -86,6 +86,9 @@ export function MemorySafari({
 
   return (
     <div className="memory-game">
+      <button className="arcade-back" onClick={onBack}>
+        <ArrowLeft size={15} /> All games
+      </button>
       {!playing && !won ? (
         <div className="game-intro">
           <div className="game-illustration">
@@ -135,9 +138,6 @@ export function MemorySafari({
         </div>
       ) : (
         <>
-          <button className="arcade-back" onClick={onBack}>
-            <ArrowLeft size={15} /> All games
-          </button>
           <div className="game-stats">
             <span>
               <Gamepad2 size={17} /> {moves} moves

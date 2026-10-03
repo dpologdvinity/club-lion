@@ -87,7 +87,16 @@ test("Paw Steps rejects scores no round could produce", () => {
 });
 
 test("a save without a Paw Steps record starts at zero and rejects nonsense", () => {
-  assert.equal(restorePlayer(JSON.stringify(newPlayer())).pawStepsBest, 0);
+  const legacySave = {
+    ...newPlayer(),
+    name: "Roary",
+    coins: 430,
+    owned: ["scarf", "hat"],
+    accessory: "hat",
+  };
+  Reflect.deleteProperty(legacySave, "pawStepsBest");
+  const restoredLegacy = restorePlayer(JSON.stringify(legacySave));
+  assert.deepEqual(restoredLegacy, { ...legacySave, pawStepsBest: 0 });
   assert.equal(
     restorePlayer(JSON.stringify({ ...newPlayer(), pawStepsBest: 4 }))
       .pawStepsBest,
