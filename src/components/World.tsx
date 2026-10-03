@@ -21,6 +21,13 @@ import { Avatar } from "./Avatar";
 import { PetCompanion } from "./PetCompanion";
 import { ActionWheel, type ActionId, type EmoteId } from "./ActionWheel";
 import { MangoToss } from "./MangoToss";
+import {
+  generateSparkleStep,
+  type SparkleParticle,
+} from "../utils/particleTrail";
+
+const BOARD_SPEED_MULTIPLIER = 1.5;
+const WALK_DURATION_MS = 850;
 
 const EMOTE_SYMBOLS: Record<EmoteId, string> = {
   heart: "❤️",
@@ -68,6 +75,13 @@ export function World({
   } | null>(null);
   const [tossPending, setTossPending] = useState(false);
   const walkTimer = useRef<number | null>(null);
+  const [sparkles, setSparkles] = useState<SparkleParticle[]>([]);
+  const sparklesRef = useRef<SparkleParticle[]>([]);
+  const characterRef = useRef<HTMLDivElement>(null);
+  const [reducedMotion, setReducedMotion] = useState(
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  const boardId = player.look.boardId;
   const [message, setMessage] = useState("");
   const [bubble, setBubble] = useState<{ id: string; text: string } | null>(
     null,
@@ -82,6 +96,9 @@ export function World({
     setBubble(null);
     setAvatarAction("idle");
     setIsTrotting(false);
+    if (walkTimer.current) window.clearTimeout(walkTimer.current);
+    sparklesRef.current = [];
+    setSparkles([]);
   }, [place]);
   useEffect(() => {
     if (!bubble) return;
@@ -91,9 +108,55 @@ export function World({
   useEffect(
     () => () => {
       void audio.current?.close();
+      if (walkTimer.current) window.clearTimeout(walkTimer.current);
     },
     [],
   );
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion || !boardId) {
+      sparklesRef.current = [];
+      setSparkles([]);
+      return;
+    }
+    if (!isTrotting && sparklesRef.current.length === 0) return;
+    let frame: number;
+    let last: number | null = null;
+    const tick = (now: number) => {
+      const deltaMs = Math.min(100, now - (last ?? now));
+      last = now;
+      const character = characterRef.current;
+      const stage = character?.parentElement;
+      const style = character && getComputedStyle(character);
+      const renderedPosition =
+        stage && style
+          ? {
+              x: (parseFloat(style.left) / stage.clientWidth) * 100,
+              y: (parseFloat(style.top) / stage.clientHeight) * 100,
+            }
+          : position;
+      sparklesRef.current = generateSparkleStep(
+        sparklesRef.current,
+        renderedPosition,
+        isTrotting,
+        boardId,
+        deltaMs,
+      );
+      setSparkles(sparklesRef.current);
+      if (isTrotting || sparklesRef.current.length > 0) {
+        frame = requestAnimationFrame(tick);
+      }
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [position, isTrotting, boardId, reducedMotion]);
 
   const chime = () => {
     if (!sound) return;
@@ -121,6 +184,7 @@ export function World({
   };
 
   const walk = (x: number, y: number) => {
+    const speedMultiplier = boardId ? BOARD_SPEED_MULTIPLIER : 1;
     const targetX = Math.max(12, Math.min(88, x));
     const targetY = Math.max(57, Math.min(89, y));
     setAvatarHeading(targetX < position.x ? "left" : "right");
@@ -131,7 +195,7 @@ export function World({
     walkTimer.current = window.setTimeout(() => {
       setIsTrotting(false);
       setAvatarAction("idle");
-    }, 450);
+    }, WALK_DURATION_MS / speedMultiplier);
     chime();
   };
   const keyboardWalk = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -148,7 +212,11 @@ export function World({
     const delta = directions[event.key];
     if (delta) {
       event.preventDefault();
-      walk(position.x + delta[0], position.y + delta[1]);
+      const speedMultiplier = boardId ? BOARD_SPEED_MULTIPLIER : 1;
+      walk(
+        position.x + delta[0] * speedMultiplier,
+        position.y + delta[1] * speedMultiplier,
+      );
     }
   };
   const say = (text: string) => {
@@ -328,8 +396,25 @@ export function World({
             </span>
           </button>
         ))}
+        <div className="sparkle-trail-layer" aria-hidden="true">
+          {sparkles.map((p) => (
+            <span
+              key={p.id}
+              className="sparkle-particle"
+              style={{
+                left: `${p.x}%`,
+                top: `${p.y}%`,
+                width: `${p.size}px`,
+                height: `${p.size}px`,
+                backgroundColor: p.color,
+                opacity: p.alpha,
+              }}
+            />
+          ))}
+        </div>
         <div
-          className="world-character your-character"
+          ref={characterRef}
+          className={`world-character your-character${boardId ? " is-gliding" : ""}`}
           style={{
             left: `${position.x}%`,
             top: `${position.y}%`,
