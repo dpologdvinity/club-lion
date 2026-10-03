@@ -1,4 +1,7 @@
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
+import type { AvatarLook, PetState } from "./types/world.ts";
+
+export * from "./types/world.ts";
 
 export const SAVE_KEY = "club-lion-player-v1";
 export type LionColor = "gold" | "sand" | "copper" | "rose";
@@ -20,6 +23,8 @@ export type Player = {
   claimed: AdventureId[];
   decor: string[];
   mangoRunBest?: number;
+  look?: AvatarLook;
+  pet?: PetState;
 };
 
 export const PAW_STEPS_MAX_ROUNDS = 999;
