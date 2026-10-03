@@ -126,8 +126,7 @@ export const NEIGHBORS = [
     accessory: "glasses",
     x: 67,
     y: 83,
-    greeting:
-      "Psst… try the arcade! You can earn coins playing Memory Safari. 🎮",
+    greeting: "Psst… try the arcade! There are fun games and coins to win. 🎮",
   },
 ];
 

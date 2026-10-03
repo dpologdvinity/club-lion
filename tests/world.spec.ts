@@ -107,6 +107,10 @@ test("Memory Safari can be completed and awards exactly 60 coins", async ({
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Games", exact: true }).click();
+  await page
+    .locator(".arcade-game")
+    .filter({ hasText: "Memory Safari" })
+    .click();
   await page.getByRole("button", { name: "Let’s play" }).click();
   const cards = page.locator(".memory-card");
   const known = new Map<number, string>();

@@ -1,6 +1,6 @@
 # Club Lion interaction contract
 
-The user requested a Club Penguin-like website using lions. The first complete slice is a local, single-player game with an explorable savanna, scripted neighbors, character styling, an in-game coin shop, and Memory Safari. [DESIGN.md](DESIGN.md) owns visual decisions. [src/game.ts](src/game.ts) owns progression rules.
+The user requested a Club Penguin-like website using lions. The first complete slice is a local, single-player game with an explorable savanna, scripted neighbors, character styling, an in-game coin shop, Memory Safari, and Fruit Catch. [DESIGN.md](DESIGN.md) owns visual decisions. [src/game.ts](src/game.ts) owns progression rules.
 
 ## Canonical UI map
 
@@ -21,6 +21,7 @@ The user requested a Club Penguin-like website using lions. The first complete s
 - A new lion starts with 250 coins and the forest scarf. Shop purchases atomically deduct the fixed catalog price once, enforce ownership and sufficient balance, and immediately equip the accessory or place the item in the den. These are fictional game coins with no real-money checkout.
 - Each of the three starter adventures awards 50 coins once. The neighborhood adventure requires 3 distinct greetings; the game adventure requires a completed game; the home adventure requires a den visit. There are no daily resets in this slice.
 - Memory Safari has 6 shuffled pairs, no time limit, and a move counter. Card pairs lock while resolving. Finishing awards 60 coins once for that game. Closing an incomplete game awards no coins; replay starts a fresh board. Pending timers are canceled on unmount.
+- The arcade offers Fruit Catch as a 30-second keyboard and touch game. Catching ripe fruit scores 10 points and earns 2 coins; catching rotten fruit costs one of three hearts. The best score persists, while older saves default it to zero.
 - Non-sensitive progress is saved in versioned localStorage. Invalid saves recover to a fresh player. Storage failures show a persistent warning while leaving the game usable. Other browser tabs receive saved changes through the storage event; simultaneous edits follow browser last-write-wins behavior.
 - Local-only, non-shareable room and dialog state remains in React. No account, network request, retention policy, billing workflow, or private data is required.
 
