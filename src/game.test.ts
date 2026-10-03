@@ -12,6 +12,7 @@ import {
   completeBeeStop,
   completePawSteps,
   completeFruitCatch,
+  completeDJBeatDrop,
   unlockSecretCatalogItem,
   migratePlayerSave,
   SHOP_ITEMS,
@@ -118,6 +119,49 @@ test("saving keeps a valid mango run best and drops an invalid one", () => {
     JSON.stringify({ ...newPlayer(), mangoRunBest: -1 }),
   );
   assert.equal(invalid.mangoRunBest, undefined);
+  assert.deepEqual(invalid, newPlayer());
+});
+
+test("a DJ Beat Drop run pays coins, counts a game, and sets the first best score", () => {
+  const player = newPlayer();
+  const run = completeDJBeatDrop(player, 400, 12);
+  assert.equal(run.coins, player.coins + 20);
+  assert.equal(run.gamesPlayed, player.gamesPlayed + 1);
+  assert.equal(run.djBeatDropBest, 400);
+});
+
+test("DJ Beat Drop keeps the highest score as the best", () => {
+  const first = completeDJBeatDrop(newPlayer(), 400, 12);
+  assert.equal(completeDJBeatDrop(first, 100, 3).djBeatDropBest, 400);
+  assert.equal(completeDJBeatDrop(first, 900, 30).djBeatDropBest, 900);
+});
+
+test("DJ Beat Drop runs are repeatable and each one pays out again", () => {
+  const once = completeDJBeatDrop(newPlayer(), 100, 3);
+  const twice = completeDJBeatDrop(once, 60, 2);
+  assert.equal(twice.coins, once.coins + 3);
+  assert.equal(twice.gamesPlayed, once.gamesPlayed + 1);
+  assert.equal(twice.djBeatDropBest, 100);
+});
+
+test("DJ Beat Drop ignores negative, non-integer, or NaN scores and combos", () => {
+  const player = newPlayer();
+  assert.deepEqual(completeDJBeatDrop(player, -5, 0), player);
+  assert.deepEqual(completeDJBeatDrop(player, 4.5, 0), player);
+  assert.deepEqual(completeDJBeatDrop(player, Number.NaN, 0), player);
+  assert.deepEqual(completeDJBeatDrop(player, 100, -1), player);
+});
+
+test("saving keeps a valid DJ Beat Drop best and drops an invalid one", () => {
+  const best = { ...newPlayer(), djBeatDropBest: 650 };
+  assert.deepEqual(restorePlayer(JSON.stringify(best)), best);
+  const missing = restorePlayer(JSON.stringify(newPlayer()));
+  assert.equal(missing.djBeatDropBest, undefined);
+  assert.deepEqual(missing, newPlayer());
+  const invalid = restorePlayer(
+    JSON.stringify({ ...newPlayer(), djBeatDropBest: -1 }),
+  );
+  assert.equal(invalid.djBeatDropBest, undefined);
   assert.deepEqual(invalid, newPlayer());
 });
 
