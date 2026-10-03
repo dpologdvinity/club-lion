@@ -2,13 +2,14 @@
 
 Welcome, Codex (`gpt-6.1-sol`)! You are operating in **Club Lion**, a React 19, TypeScript (strict), and Vite browser game inspired by the golden era of Fantage × Club Penguin.
 
-### Active Multi-Agent Workflow
-In our current flexible tri-agent workflow:
-- **Lead Orchestrator & Assigner:** Antigravity (`gemini-3.8-flash`) — architecture, roadmaps, task breakdowns, and worktree setup.
-- **Reviewer & Merger:** Codex (`gpt-6.1-sol`) — code review, strict quality audits, verification (`npm run verify`, `npm run test:e2e`), integrating merge commits to `master`, and pruning retired worktrees/branches.
-- **Implementer:** Claude Code (`claude-sonnet-5`) — implementing feature code and RED-GREEN TDD unit tests inside isolated worktrees.
+### Official 4-Role Operating Lifecycle
+Club Lion operates under a 4-role development and integration lifecycle (full spec: [`docs/WORKFLOW.md`](../docs/WORKFLOW.md)):
+- **Orchestrator (Phase level):** Assigns tasks, creates worktrees with `PROMPT.md`, manages the merge queue, squashes verified worktrees into `master`, and cleans up branches.
+- **Implementer (Task level):** Works inside `.worktrees/<task-name>` with RED-GREEN TDD, deletes `PROMPT.md`, and commits with `Implementer: <model> (<agent>)`.
+- **Reviewer (Task level):** Audits commits in the worktree. Uses judgment to make minor fixes directly and commit, or writes a new `PROMPT.md` with review feedback for the Implementer.
+- **Verifier (Integration level):** Pre-merge specialist. Rebases the candidate worktree onto latest `master`, resolves all merge conflicts (e.g. `package.json` test scripts, shared types, CSS), and runs `npm run verify` + `npm run test:e2e` to confirm 100% green tests before `master` is touched.
 
-*(Roles remain flexible and can change dynamically whenever Kaitlyn directs: any agent can step into implementation, review, or orchestration as needed.)*
+*(Roles remain flexible and any agent can play any role as directed by Kaitlyn.)*
 
 ---
 
@@ -16,25 +17,26 @@ In our current flexible tri-agent workflow:
 
 Every commit and merge MUST follow the model attribution trailer format:
 
-### Standard Commits
-Every commit across all branches and worktrees must conclude with the `Implementer` trailer:
+### Standard Worktree Commits (Implementer & Reviewer)
 ```text
 <type>(<scope>): <summary>
 
 Implementer: <model> (<agent>)
 ```
-*Standard identifiers:* `claude-sonnet-5 (claude code)`, `gpt-6.1-sol (codex)`, `gemini-3.8-flash (antigravity)`. Use whichever model implemented the code.
+*Standard identifiers:* `claude-sonnet-5 (claude code)`, `gpt-6.1-sol (codex)`, `gemini-3.8-flash (antigravity)`.
 
-### Merges & Milestone Integrations
-When reviewing and merging a feature branch into `master`, include the complete multi-agent trailer:
+### Squashed Integration Commits on `master` (Orchestrator)
+When squashing a verified worktree into `master`:
 ```text
-merge: <summary>
+<type>(<scope>): <summary>
 
-Implementer: claude-sonnet-5 (claude code)
-Reviewer: gpt-6.1-sol (codex)
-Assigner: gemini-3.8-flash (antigravity)
+<bulleted list of feature capabilities, changes, and test additions>
+
+Implementer: <model> (<agent>)
+Reviewer: <model> (<agent>)
+Verifier: <model> (<agent>)
+Assigner: <model> (<agent>)
 ```
-*(If you implement a feature yourself, use `Implementer: gpt-6.1-sol (codex)`.)*
 
 ---
 
@@ -100,30 +102,36 @@ When implementing plans or multi-agent tasks:
 
 ---
 
-## 6. Review & Merge Protocol (Your Core Flow)
+## 6. Reviewer & Verifier Operating Protocols
 
-When Claude Code (or another agent) completes a task in an isolated worktree/branch:
-1. **Audit Diff & Requirements**: Inspect changes against [`DESIGN.md`](../DESIGN.md), [`UX-CONTRACT.md`](../UX-CONTRACT.md), and the phase plan. Ensure procedural Web Audio is used for all sounds ($0 asset rule).
-2. **Execute Verification Gate**:
+Full architectural specification: [`docs/WORKFLOW.md`](../docs/WORKFLOW.md)
+
+### When Acting as Reviewer (Task Level)
+1. **Audit Diff & Requirements**: Inspect changes in `.worktrees/<task-name>` against [`DESIGN.md`](../DESIGN.md), [`UX-CONTRACT.md`](../UX-CONTRACT.md), and the phase plan. Ensure procedural Web Audio API is used for all sounds ($0 external asset rule) and strict typing is preserved.
+2. **Dual-Agency Action**:
+   - **Minor fixes / nits** (styling tweaks, missing type annotation, test edge case):
+     Make the changes directly in the worktree, run `npm run verify`, and commit with your trailer.
+   - **Major architectural changes or missing requirements**:
+     Write a structured `PROMPT.md` in the worktree detailing what needs fixing, and hand it back to the Implementer.
+3. **Approval**: Once satisfied, sign off on the worktree so it can enter the merge train.
+
+### When Acting as Verifier (Integration Level)
+1. **Rebase against Master**:
+   When designated by the Orchestrator as the next worktree to merge:
+   ```bash
+   cd .worktrees/<task-name>
+   git fetch origin master
+   git rebase master
+   ```
+2. **Resolve Conflicts in Worktree**:
+   Resolve all conflicts (e.g. combining test file paths on the `"test"` line in `package.json`, shared types in `src/game.ts`, shared styles in `src/styles.css`). Never let a conflict reach `master`.
+3. **Execute Verification Gate**:
    ```bash
    npm run verify
    npm run test:e2e
    ```
    Both suites must pass with 100% green tests and zero type errors.
-3. **Merge into `master` with Complete Attribution**:
-   ```bash
-   git checkout master
-   git merge feat/<task-name> --no-ff -m "merge: <summary of task>" -m "Implementer: claude-sonnet-5 (claude code)
-   Reviewer: gpt-6.1-sol (codex)
-   Assigner: gemini-3.8-flash (antigravity)"
-   ```
-4. **Prune Worktree & Branch**:
-   ```bash
-   git worktree remove --force .worktrees/<task-name>
-   git branch -d feat/<task-name>
-   ```
-5. **Update Task Ledger**: Update [`docs/TASK-TRACKER.md`](../docs/TASK-TRACKER.md) on `master` to mark the task complete with commit hash and verification checkmark.
-6. **Synchronize Remote**:
-   ```bash
-   git push origin master
-   ```
+4. **Handoff to Orchestrator**:
+   Notify the Orchestrator that the worktree is green, rebased, and ready for squash merge.
+5. **Advance Merge Train**:
+   As soon as the Orchestrator squashes Worktree $N$ into `master`, take Worktree $N+1$, rebase it against the newly updated `master`, resolve conflicts, and repeat!

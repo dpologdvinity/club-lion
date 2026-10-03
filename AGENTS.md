@@ -31,38 +31,45 @@ Name unit tests `*.test.ts` and browser tests `*.spec.ts`. Protect coin balances
 
 Use focused Conventional Commits, matching history: `feat: add illustrated savanna` or `fix: restore dialog focus`. Commit meaningful increments often. PRs should explain the resulting behavior, list validation results, link relevant issues, and include desktop/mobile screenshots for visual changes. Highlight save-format changes. Exclude secrets, `node_modules/`, and generated build/test artifacts.
 
-### Mandatory Model Attribution Standards
-Every git commit across all branches and worktrees MUST end with the `Implementer` trailer:
+### Multi-Agent Operating Roles & Lifecycle
+
+Club Lion uses a 4-role development lifecycle (documented fully in [`docs/WORKFLOW.md`](docs/WORKFLOW.md)). All models (`gemini-3.8-flash`, `gpt-6.1-sol`, `claude-sonnet-5`) are equal peers and can execute any role:
+
+1. **Orchestrator (Phase level)**: Assigns tasks, creates isolated worktrees with `PROMPT.md`, manages the merge queue, squashes verified worktrees into `master`, prunes branches, and updates `docs/TASK-TRACKER.md`.
+2. **Implementer (Task level)**: Develops inside `.worktrees/<task-name>` with RED-GREEN TDD, deletes `PROMPT.md`, and commits with `Implementer: <model> (<agent>)`.
+3. **Reviewer (Task level)**: Audits commits in the worktree. Exercises judgment to either make minor fixes directly and commit, or write a new `PROMPT.md` for the Implementer.
+4. **Verifier (Integration level)**: Pre-merge integration specialist. Rebases the candidate worktree onto latest `master`, resolves merge conflicts (e.g. `package.json` test scripts, shared types, CSS), and runs `npm run verify` + `npm run test:e2e` to ensure 100% green tests before `master` is touched.
+
+### Merge Train Protocol
+- The Verifier rebases Worktree $N$ onto `master`, resolves conflicts, and runs verification.
+- The Orchestrator squashes Worktree $N$ into `master` as a single Conventional Commit, deletes the worktree/branch, and updates `docs/TASK-TRACKER.md`.
+- The Verifier immediately rebases Worktree $N+1$ onto the updated `master`.
+- Repeat until all worktrees are integrated.
+
+### Mandatory Commit & Attribution Standards
+
+#### Standard Worktree Commits (Implementer / Reviewer):
 ```text
 <type>(<scope>): <summary>
 
 Implementer: <model> (<agent>)
 ```
+
+#### Squashed Integration Commits on `master` (Orchestrator):
+```text
+<type>(<scope>): <summary>
+
+<bulleted list of feature capabilities, changes, and test additions>
+
+Implementer: <model> (<agent>)
+Reviewer: <model> (<agent>)
+Verifier: <model> (<agent>)
+Assigner: <model> (<agent>)
+```
 *Standard agent/model identifiers:*
 - `gpt-6.1-sol (codex)`
 - `claude-sonnet-5 (claude code)`
 - `gemini-3.8-flash (antigravity)`
-
-On branch merges, pull requests, and milestone integrations, include the complete multi-agent trailer:
-```text
-merge: <summary>
-
-Implementer: <model> (<agent>)
-Reviewer: <model> (<agent>)
-Assigner: <model> (<agent>)
-```
-*(There are no primary or fixed roles: all agents are equal peers and can serve as Implementer, Reviewer, or Assigner for any task or milestone.)*
-
-## Task Tracking & Worktree Workflow
-
-All multi-agent tasks and phase milestones are tracked in `docs/TASK-TRACKER.md`. When developing multi-step features:
-1. Create an isolated worktree: `git worktree add .worktrees/<task-name> -b feat/<task-name>`.
-2. Work inside `.worktrees/<task-name>`.
-3. Verify changes with `npm run verify` and `npm run test:e2e`.
-4. Commit with the appropriate `Implementer:` trailer.
-5. Merge into target branch with the merge trailer, then clean up:
-   `git worktree remove --force .worktrees/<task-name>` and `git branch -d feat/<task-name>`.
-6. Update `docs/TASK-TRACKER.md` on `master` to record completed tasks.
 
 ## Architecture & Agent Notes
 
