@@ -14,6 +14,7 @@ export type Player = {
   gamesPlayed: number;
   claimed: AdventureId[];
   decor: string[];
+  mangoRunBest?: number;
 };
 
 export const SHOP_ITEMS = [
@@ -217,6 +218,11 @@ export function restorePlayer(raw: string | null): Player {
           ),
         ),
       ],
+      ...(p.mangoRunBest === undefined
+        ? {}
+        : Number.isSafeInteger(p.mangoRunBest) && p.mangoRunBest >= 0
+          ? { mangoRunBest: p.mangoRunBest as number }
+          : {}),
     };
   } catch {
     return newPlayer();
@@ -269,5 +275,15 @@ export function completeGame(player: Player, pairs: number): Player {
     ...player,
     coins: player.coins + pairs * 10,
     gamesPlayed: player.gamesPlayed + 1,
+  };
+}
+
+export function completeMangoRun(player: Player, score: number): Player {
+  if (!Number.isSafeInteger(score) || score < 0) return player;
+  return {
+    ...player,
+    coins: player.coins + score,
+    gamesPlayed: player.gamesPlayed + 1,
+    mangoRunBest: Math.max(player.mangoRunBest ?? 0, score),
   };
 }
