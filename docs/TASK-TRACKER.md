@@ -26,8 +26,9 @@ merge: <summary of integration / branch>
 
 Implementer: <model> (<agent>)
 Reviewer: <model> (<agent>)
-Assigner: gemini-3.8-flash (antigravity)
+Assigner: <model> (<agent>)
 ```
+*(All models and agents are completely interchangeable across all roles: Implementer, Reviewer, and Assigner.)*
 
 ---
 
@@ -58,22 +59,24 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightli
 
 | Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Task 1** | Hoverboard Glide & Footprint Sparkle Trail Engine | `feat/phase-2-boards-wonder-park` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
-| **Task 2** | Wonder Park Declarative Room Manifests & Kinetic Track Engine | `feat/phase-2-boards-wonder-park` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
-| **Task 3** | Club Pulse Interactive Dance Floor & DJ Booth Stage | `feat/phase-2-club-pulse-dance` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
-| **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-club-pulse-dance` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
-| **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-smoothie-kitchen` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
-| **Task 6** | Savanna Screamer Roller Coaster Interactive Ride Mode | `feat/phase-2-roller-coaster` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
-| **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `feat/phase-2-boards-wonder-park` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
-| **Phase 2 Merge** | Milestone Integration into `master` | `master` | **gpt-6.1-sol (codex)** | - | ⏳ Pending |
+| **Task 1** | Hoverboard Glide & Footprint Sparkle Trail Engine | `feat/phase-2-boards-wonder-park` | *Open to any agent* | - | ⏳ Planned |
+| **Task 2** | Wonder Park Declarative Room Manifests & Kinetic Track Engine | `feat/phase-2-boards-wonder-park` | *Open to any agent* | - | ⏳ Planned |
+| **Task 3** | Club Pulse Interactive Dance Floor & DJ Booth Stage | `feat/phase-2-club-pulse-dance` | *Open to any agent* | - | ⏳ Planned |
+| **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-club-pulse-dance` | *Open to any agent* | - | ⏳ Planned |
+| **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-smoothie-kitchen` | *Open to any agent* | - | ⏳ Planned |
+| **Task 6** | Savanna Screamer Roller Coaster Interactive Ride Mode | `feat/phase-2-roller-coaster` | *Open to any agent* | - | ⏳ Planned |
+| **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `feat/phase-2-boards-wonder-park` | *Open to any agent* | - | ⏳ Planned |
+| **Phase 2 Merge** | Milestone Integration into `master` | `master` | *Open to any agent* | - | ⏳ Pending |
 
 ---
 
-## Model Roster & Roles
+## Agent Roster & Universal Interchangeability
 
-| Model Identifier | Agent Platform | Typical Responsibilities |
+There are **no fixed or primary roles**. All agents and models are fully interchangeable peers capable of executing any task, architecture, physics, frontend, minigame, test suite, review, or milestone merge:
+
+| Model Identifier | Agent Platform | Role Flexibility |
 | :--- | :--- | :--- |
-| `gemini-3.8-flash (antigravity)` | Antigravity | Architecture, specification planning, core data schemas, vector avatar engine, integration controller |
-| `claude-sonnet-5 (claude code)` | Claude Code | Motion physics engines, camera mathematics, catalog & secret triggers, save migration engines |
-| `gpt-6.1-sol (codex)` | Codex | Ballistics mathematics, interactive modal UI components, touch & input controls, Playwright test suites, Phase 2 lead implementer |
+| `gpt-6.1-sol (codex)` | Codex | Any role: Implementer, Reviewer, Assigner, Architect, Tester |
+| `claude-sonnet-5 (claude code)` | Claude Code | Any role: Implementer, Reviewer, Assigner, Architect, Tester |
+| `gemini-3.8-flash (antigravity)` | Antigravity | Any role: Implementer, Reviewer, Assigner, Architect, Tester |
 

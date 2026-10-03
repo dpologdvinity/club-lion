@@ -51,6 +51,7 @@ Implementer: <model> (<agent>)
 Reviewer: <model> (<agent>)
 Assigner: <model> (<agent>)
 ```
+*(There are no primary or fixed roles: all agents are equal peers and can serve as Implementer, Reviewer, or Assigner for any task or milestone.)*
 
 ## Task Tracking & Worktree Workflow
 

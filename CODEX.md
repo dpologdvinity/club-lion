@@ -18,6 +18,7 @@ Implementer: <model> (<agent>)
 Reviewer: <model> (<agent>)
 Assigner: <model> (<agent>)
 ```
+*(No fixed roles: all agents are equal peers and can execute any role or task.)*
 
 ### 2. Fast Verification
 ```bash

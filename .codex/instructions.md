@@ -1,6 +1,8 @@
 # Codex Agent Instructions — Club Lion
 
-Welcome, Codex (`gpt-6.1-sol`)! You are operating as the lead agent / implementer in **Club Lion**, a React 19, TypeScript (strict), and Vite browser game inspired by the golden era of Fantage × Club Penguin.
+Welcome, Codex (`gpt-6.1-sol`)! You are operating in **Club Lion**, a React 19, TypeScript (strict), and Vite browser game inspired by the golden era of Fantage × Club Penguin.
+
+All agents (Codex, Claude Code, Antigravity) are equal peers with **no fixed or primary roles**. Any agent can handle any subsystem, feature, physics engine, UI modal, test suite, review, or milestone merge interchangeably.
 
 ---
 
@@ -15,7 +17,7 @@ Every commit across all branches and worktrees must conclude with the `Implement
 
 Implementer: gpt-6.1-sol (codex)
 ```
-*(If collaborating with other agents: `claude-sonnet-5 (claude code)` or `gemini-3.8-flash (antigravity)`)*
+*(When collaborating across agents: use `gpt-6.1-sol (codex)`, `claude-sonnet-5 (claude code)`, or `gemini-3.8-flash (antigravity)` according to which model wrote the commit)*
 
 ### Merges & Milestone Integrations
 On branch merges, pull requests, and milestone integrations, include the complete multi-agent trailer:

@@ -1,7 +1,7 @@
 # Phase 2: Savanna Wonder Park & Nightlife Core Implementation Plan
 
-> **For Codex (`gpt-6.1-sol`) & Multi-Agent Implementers:**
-> Use superpowers:subagent-driven-development or superpowers:executing-plans to implement this plan task-by-task.
+> **For Multi-Agent Implementers (Codex, Claude Code, Antigravity):**
+> Any agent can implement any task in this plan using superpowers:subagent-driven-development or superpowers:executing-plans. There are no primary or fixed roles.
 > All commits must conclude with the mandatory attribution trailer: `Implementer: <model> (<agent>)`.
 
 **Goal:** Expand Club Lion with the vibrant Savanna Wonder Park (theme park rides & kinetic spectacles), Club Pulse nightlife (interactive light-up dance floor & DJ Beat Drop rhythm mini-game), Canopy Café Smoothie Kitchen, and equipable hoverboard sparkle trails.
@@ -20,8 +20,8 @@
 - **Zero Heavy Audio Assets ($0 constraint):** All DJ beats, coaster rattles, splash sounds, and dance floor music must use procedural Web Audio oscillator synthesis (zero external audio files).
 - **Zero Cost ($0 infrastructure):** 100% playable offline and locally in localStorage.
 - **Attribution Convention (MANDATORY):**
-  - Standard commit trailer: `Implementer: gpt-6.1-sol (codex)` (or appropriate model).
-  - Merge trailer: `Implementer: ...`, `Reviewer: ...`, `Assigner: ...`.
+  - Standard commit trailer: `Implementer: <model> (<agent>)` (`gpt-6.1-sol (codex)` / `claude-sonnet-5 (claude code)` / `gemini-3.8-flash (antigravity)`).
+  - Merge trailer: `Implementer: ...`, `Reviewer: ...`, `Assigner: ...` (any agent can hold any role).
 - **Testing Standard:** All business logic, rhythm timing, scoring, and ride states must have unit tests run via `npm test` and verification via `npm run verify`.
 
 ---
@@ -55,7 +55,7 @@ Expected: PASS
 - [ ] **Step 5: Commit**
 ```bash
 git add src/utils/particleTrail.ts src/utils/particleTrail.test.ts
-git commit -m "feat(boards): implement hoverboard glide speed and sparkle trail engine" -m "Implementer: gpt-6.1-sol (codex)"
+git commit -m "feat(boards): implement hoverboard glide speed and sparkle trail engine" -m "Implementer: <model> (<agent>)"
 ```
 
 ---
@@ -90,7 +90,7 @@ Expected: PASS
 - [ ] **Step 5: Commit**
 ```bash
 git add src/rooms/manifests/ src/utils/kineticRides.ts src/utils/kineticRides.test.ts src/rooms/types.ts
-git commit -m "feat(wonder-park): add panoramic room manifests and kinetic coaster track engine" -m "Implementer: gpt-6.1-sol (codex)"
+git commit -m "feat(wonder-park): add panoramic room manifests and kinetic coaster track engine" -m "Implementer: <model> (<agent>)"
 ```
 
 ---
@@ -125,7 +125,7 @@ Expected: PASS
 - [ ] **Step 5: Commit**
 ```bash
 git add src/rooms/manifests/clubPulse.ts src/components/DanceFloor.tsx src/utils/danceFloorRhythm.ts src/utils/danceFloorRhythm.test.ts src/styles.css
-git commit -m "feat(nightlife): add Club Pulse manifest and interactive light-up dance floor" -m "Implementer: gpt-6.1-sol (codex)"
+git commit -m "feat(nightlife): add Club Pulse manifest and interactive light-up dance floor" -m "Implementer: <model> (<agent>)"
 ```
 
 ---
@@ -160,7 +160,7 @@ Expected: PASS
 - [ ] **Step 5: Commit**
 ```bash
 git add src/components/DJBeatDrop.tsx src/utils/rhythmEngine.ts src/utils/rhythmEngine.test.ts src/game.ts src/game.test.ts
-git commit -m "feat(minigames): implement DJ Beat Drop rhythm game and procedural synth audio" -m "Implementer: gpt-6.1-sol (codex)"
+git commit -m "feat(minigames): implement DJ Beat Drop rhythm game and procedural synth audio" -m "Implementer: <model> (<agent>)"
 ```
 
 ---
@@ -193,7 +193,7 @@ Expected: PASS
 - [ ] **Step 5: Commit**
 ```bash
 git add src/components/SmoothieKitchen.tsx src/utils/smoothieRecipes.ts src/utils/smoothieRecipes.test.ts src/game.ts
-git commit -m "feat(minigames): add Canopy Café Smoothie Kitchen cozy crafting minigame" -m "Implementer: gpt-6.1-sol (codex)"
+git commit -m "feat(minigames): add Canopy Café Smoothie Kitchen cozy crafting minigame" -m "Implementer: <model> (<agent>)"
 ```
 
 ---
@@ -226,7 +226,7 @@ Expected: PASS
 - [ ] **Step 5: Commit**
 ```bash
 git add src/components/RollerCoasterRide.tsx src/utils/coasterPhysics.ts src/utils/coasterPhysics.test.ts src/styles.css
-git commit -m "feat(rides): implement Savanna Screamer roller coaster ride mode and photo capture" -m "Implementer: gpt-6.1-sol (codex)"
+git commit -m "feat(rides): implement Savanna Screamer roller coaster ride mode and photo capture" -m "Implementer: <model> (<agent>)"
 ```
 
 ---
@@ -256,5 +256,5 @@ Expected: PASS across desktop and mobile viewports
 - [ ] **Step 4: Commit**
 ```bash
 git add src/App.tsx src/components/World.tsx tests/world.spec.ts docs/TASK-TRACKER.md
-git commit -m "feat: assemble Phase 2 Wonder Park, Club Pulse nightlife, and minigames" -m "Implementer: gpt-6.1-sol (codex)"
+git commit -m "feat: assemble Phase 2 Wonder Park, Club Pulse nightlife, and minigames" -m "Implementer: <model> (<agent>)"
 ```
