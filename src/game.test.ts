@@ -12,6 +12,7 @@ import {
   completeBeeStop,
   completePawSteps,
   completeFruitCatch,
+  unlockSecretCatalogItem,
   SHOP_ITEMS,
 } from "./game.ts";
 
@@ -262,4 +263,27 @@ test("arcade saves preserve both game records and migrate each older format", ()
   assert.equal(fromBee.beeStopBest, 700);
   assert.equal(fromBee.fruitCatchBest, 0);
   assert.equal(fromBee.gamesPlayed, 2);
+});
+
+test("unlocking a secret catalog item adds it to owned items", () => {
+  const player = newPlayer();
+  const unlocked = unlockSecretCatalogItem(player, "barista_apron");
+  assert.ok(unlocked.owned.includes("barista_apron"));
+  assert.equal(unlocked.coins, player.coins);
+});
+
+test("unlocking the same secret item twice does not duplicate it", () => {
+  const player = newPlayer();
+  const once = unlockSecretCatalogItem(player, "retro_neon_visor");
+  const twice = unlockSecretCatalogItem(once, "retro_neon_visor");
+  assert.deepEqual(twice, once);
+  assert.equal(twice.owned.filter((id) => id === "retro_neon_visor").length, 1);
+});
+
+test("unlocking an unknown secret id leaves the player unchanged", () => {
+  const player = newPlayer();
+  assert.deepEqual(
+    unlockSecretCatalogItem(player, "not_a_real_secret"),
+    player,
+  );
 });

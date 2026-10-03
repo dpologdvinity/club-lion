@@ -1,5 +1,6 @@
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
 import type { AvatarLook, PetState } from "./types/world.ts";
+import { CATALOG_ITEMS } from "./types/world.ts";
 
 export * from "./types/world.ts";
 
@@ -353,6 +354,17 @@ export function completePawSteps(player: Player, rounds: number): Player {
     gamesPlayed: player.gamesPlayed + 1,
     pawStepsBest: Math.max(player.pawStepsBest, rounds),
   };
+}
+
+export function unlockSecretCatalogItem(
+  player: Player,
+  secretId: string,
+): Player {
+  const item = CATALOG_ITEMS.find(
+    (item) => item.isSecret && item.id === secretId,
+  );
+  if (!item || player.owned.includes(item.id)) return player;
+  return { ...player, owned: [...player.owned, item.id] };
 }
 
 export function completeFruitCatch(
