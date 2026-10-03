@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  ArrowLeft,
   ArrowUpRight,
   Check,
   ChevronDown,
@@ -14,6 +15,7 @@ import {
   claimReward,
   completeGame,
   completeMangoRun,
+  completeFruitCatch,
   meetLion,
   PLACES,
   SHOP_ITEMS,
@@ -36,6 +38,7 @@ import {
   type GameId,
 } from "./components/Panels";
 import { MemorySafari } from "./components/MemorySafari";
+import { FruitCatch } from "./components/FruitCatch";
 import { MangoRun } from "./components/MangoRun";
 
 type Panel = "map" | "style" | "shop" | "games" | "help" | null;
@@ -312,6 +315,27 @@ export default function App() {
           )}
           {panel === "games" && !activeGame && (
             <GamesPicker onSelect={setActiveGame} />
+          )}
+          {panel === "games" && activeGame && (
+            <button className="game-back" onClick={() => setActiveGame(null)}>
+              <ArrowLeft size={14} /> All games
+            </button>
+          )}
+          {panel === "games" && activeGame === "fruit" && (
+            <FruitCatch
+              best={player.fruitCatchBest}
+              onFinish={(result) =>
+                setPlayer((p) =>
+                  completeFruitCatch(
+                    p,
+                    result.caught,
+                    result.hits,
+                    result.score,
+                  ),
+                )
+              }
+              onClose={closePanel}
+            />
           )}
           {panel === "games" && activeGame === "memory" && (
             <MemorySafari

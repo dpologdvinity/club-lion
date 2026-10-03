@@ -9,6 +9,7 @@ import {
   claimReward,
   completeGame,
   completeMangoRun,
+  completeFruitCatch,
   SHOP_ITEMS,
 } from "./game.ts";
 
@@ -113,4 +114,30 @@ test("saving keeps a valid mango run best and drops an invalid one", () => {
   );
   assert.equal(invalid.mangoRunBest, undefined);
   assert.deepEqual(invalid, newPlayer());
+});
+
+test("Fruit Catch awards caught fruit, tracks a best score, and restores older saves", () => {
+  const first = completeFruitCatch(newPlayer(), 8, 2, 80);
+  assert.equal(first.coins, 266);
+  assert.equal(first.gamesPlayed, 1);
+  assert.equal(first.fruitCatchBest, 80);
+  assert.deepEqual(completeFruitCatch(first, 2, 0, 20), {
+    ...first,
+    coins: 270,
+    gamesPlayed: 2,
+  });
+  assert.deepEqual(completeFruitCatch(first, 4, 0, 99), first);
+  const { fruitCatchBest: _, ...olderSave } = newPlayer();
+  assert.equal(restorePlayer(JSON.stringify(olderSave)).fruitCatchBest, 0);
+});
+
+test("arcade scores and rewards survive switching games and restoring the save", () => {
+  const fruit = completeFruitCatch(newPlayer(), 8, 2, 80);
+  const mango = completeMangoRun(fruit, 42);
+  const replay = completeFruitCatch(mango, 2, 0, 20);
+  assert.equal(replay.coins, 312);
+  assert.equal(replay.gamesPlayed, 3);
+  assert.equal(replay.mangoRunBest, 42);
+  assert.equal(replay.fruitCatchBest, 80);
+  assert.deepEqual(restorePlayer(JSON.stringify(replay)), replay);
 });

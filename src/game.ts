@@ -15,6 +15,7 @@ export type Player = {
   claimed: AdventureId[];
   decor: string[];
   mangoRunBest?: number;
+  fruitCatchBest: number;
 };
 
 export const SHOP_ITEMS = [
@@ -126,8 +127,7 @@ export const NEIGHBORS = [
     accessory: "glasses",
     x: 67,
     y: 83,
-    greeting:
-      "Psst… try the arcade! You can earn coins playing Memory Safari. 🎮",
+    greeting: "Psst… try the arcade! There are fun games and coins to win. 🎮",
   },
 ];
 
@@ -144,6 +144,7 @@ export function newPlayer(): Player {
     gamesPlayed: 0,
     claimed: [],
     decor: [],
+    fruitCatchBest: 0,
   };
 }
 
@@ -200,6 +201,10 @@ export function restorePlayer(raw: string | null): Player {
         ),
       ],
       gamesPlayed: p.gamesPlayed,
+      fruitCatchBest:
+        Number.isSafeInteger(p.fruitCatchBest) && p.fruitCatchBest >= 0
+          ? p.fruitCatchBest
+          : 0,
       claimed: [
         ...new Set<AdventureId>(
           p.claimed.filter((id: unknown) =>
@@ -285,5 +290,30 @@ export function completeMangoRun(player: Player, score: number): Player {
     coins: player.coins + score,
     gamesPlayed: player.gamesPlayed + 1,
     mangoRunBest: Math.max(player.mangoRunBest ?? 0, score),
+  };
+}
+
+export function completeFruitCatch(
+  player: Player,
+  caught: number,
+  hits: number,
+  score: number,
+): Player {
+  if (
+    !Number.isSafeInteger(caught) ||
+    caught < 0 ||
+    !Number.isSafeInteger(hits) ||
+    hits < 0 ||
+    !Number.isSafeInteger(score) ||
+    score !== caught * 10
+  )
+    return player;
+  const newGamesPlayed = player.gamesPlayed + 1;
+  const newBest = Math.max(player.fruitCatchBest, score);
+  return {
+    ...player,
+    coins: player.coins + caught * 2,
+    gamesPlayed: newGamesPlayed,
+    fruitCatchBest: newBest,
   };
 }

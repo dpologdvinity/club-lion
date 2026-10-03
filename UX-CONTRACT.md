@@ -1,6 +1,6 @@
 # Club Lion interaction contract
 
-The user requested a Club Penguin-like website using lions. The first complete slice is a local, single-player game with an explorable savanna, scripted neighbors, character styling, an in-game coin shop, and Memory Safari. [DESIGN.md](DESIGN.md) owns visual decisions. [src/game.ts](src/game.ts) owns progression rules.
+The user requested a Club Penguin-like website using lions. The first complete slice is a local, single-player game with an explorable savanna, scripted neighbors, character styling, an in-game coin shop, Memory Safari, Mango Run, and Fruit Catch. [DESIGN.md](DESIGN.md) owns visual decisions. [src/game.ts](src/game.ts) owns progression rules.
 
 ## Canonical UI map
 
@@ -22,6 +22,7 @@ The user requested a Club Penguin-like website using lions. The first complete s
 - Each of the three starter adventures awards 50 coins once. The neighborhood adventure requires 3 distinct greetings; the game adventure requires a completed game; the home adventure requires a den visit. There are no daily resets in this slice.
 - Memory Safari has 6 shuffled pairs, no time limit, and a move counter. Card pairs lock while resolving. Finishing awards 60 coins once for that game. Closing an incomplete game awards no coins; replay starts a fresh board. Pending timers are canceled on unmount.
 - Mango Run steers from held arrow or WASD keys and from the on-screen pad shown on coarse-pointer devices. A direction stays active until it is released, and losing page focus or hiding the tab releases every direction. Pausing freezes the trail in place, resuming continues it, Escape resumes a paused run instead of closing the game, and every obstacle pattern leaves a full lane open. Escape timing includes the lion’s hitbox, a reaction margin, and the actual movement speed in reduced-motion mode; waves leave time to cross the trail after the previous wall clears. Rocks occupy entire blocked lanes, and safe and risky mango trails alternate. Steering stays in the left half of the trail to keep incoming hazards visible. Completing a run pays its score once and persists the personal best.
+- The arcade offers Fruit Catch as a 30-second keyboard and touch game. Catching ripe fruit scores 10 points and earns 2 coins; catching rotten fruit costs one of three hearts. The best score persists, while older saves default it to zero.
 - Non-sensitive progress is saved in versioned localStorage. Invalid saves recover to a fresh player. Storage failures show a persistent warning while leaving the game usable. Other browser tabs receive saved changes through the storage event; simultaneous edits follow browser last-write-wins behavior.
 - Local-only, non-shareable room and dialog state remains in React. No account, network request, retention policy, billing workflow, or private data is required.
 

@@ -278,7 +278,7 @@ export function Shop({
   );
 }
 
-export type GameId = "memory" | "mango";
+export type GameId = "memory" | "mango" | "fruit";
 
 const GAMES: {
   id: GameId;
@@ -320,6 +320,20 @@ const GAMES: {
       </>,
       <>
         <Coin amount={1} /> per point
+      </>,
+    ],
+  },
+  {
+    id: "fruit",
+    name: "Fruit Catch!",
+    description: "Catch the good stuff. Dodge the icky stuff.",
+    art: <span className="game-card-art-icons">🍎 🧺 🍊</span>,
+    features: [
+      <>
+        <Heart size={15} /> 3 lives, 30 seconds
+      </>,
+      <>
+        <Coin amount={2} /> per fruit caught
       </>,
     ],
   },
@@ -392,8 +406,8 @@ export function Help() {
         <p>
           <Shirt size={20} />
           <span>
-            <strong>Make it yours</strong>Style your lion, play Memory Safari to
-            earn coins, and shop for something special.
+            <strong>Make it yours</strong>Style your lion, play an arcade game
+            to earn coins, and shop for something special.
           </span>
         </p>
       </div>

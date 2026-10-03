@@ -1912,6 +1912,286 @@ svg {
 .memory-card.revealed > span {
   font-size: 35px;
 }
+.arcade-picker {
+  display: grid;
+  gap: 12px;
+}
+.arcade-game {
+  display: grid;
+  grid-template-columns: 96px 1fr 20px;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 12px;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: #fffdf9;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+.arcade-game:hover {
+  border-color: #b7c3a9;
+  box-shadow: 0 5px 16px #294b3c12;
+  transform: translateY(-1px);
+}
+.arcade-art {
+  display: grid;
+  place-items: center;
+  min-height: 82px;
+  border-radius: 11px;
+  font-size: 23px;
+  white-space: nowrap;
+}
+.memory-art {
+  background: #f1f0df;
+}
+.fruit-art {
+  background: #fff0d6;
+}
+.arcade-copy {
+  display: grid;
+  gap: 4px;
+}
+.arcade-copy strong {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 400;
+}
+.arcade-copy small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.arcade-reward {
+  color: #467353;
+  font-size: 11px;
+  font-weight: 850;
+}
+.game-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: -7px 0 13px;
+  padding: 5px 7px;
+  color: var(--muted);
+  background: transparent;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+}
+.game-back:hover {
+  background: #f2f0e8;
+  color: var(--text);
+}
+.fruit-intro {
+  padding-bottom: 10px;
+}
+.fruit-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(3px, 2vw, 18px);
+  height: 128px;
+  margin-bottom: 18px;
+  overflow: hidden;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 50% 115%, #83a76d 0 26%, transparent 27%),
+    linear-gradient(#c8e6e4 0%, #e4f1d6 75%, #f3e8bf 100%);
+}
+.fruit-hero span {
+  font-size: clamp(27px, 8vw, 50px);
+  filter: drop-shadow(0 3px 1px #315a3a20);
+}
+.fruit-hero span:nth-child(3) {
+  font-size: clamp(44px, 12vw, 74px);
+  transform: translateY(-4px);
+}
+.fruit-intro > p {
+  max-width: 430px;
+  margin: 8px auto 0;
+}
+.fruit-instructions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 17px 0;
+}
+.fruit-instructions span {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #f4f2e9;
+  color: #53644f;
+  font-size: 10px;
+  font-weight: 800;
+}
+.fruit-best {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  color: var(--accent-dark) !important;
+  font-size: 12px !important;
+}
+.fruit-game {
+  display: grid;
+  gap: 10px;
+}
+.fruit-game-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 27px;
+  color: #59644e;
+  font-size: 13px;
+  font-weight: 900;
+}
+.fruit-game-stats > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.fruit-game-stats > span:first-child {
+  color: var(--accent-dark);
+}
+.fruit-game-stats > span:last-child {
+  color: #ba6253;
+  gap: 3px;
+}
+.fruit-timer {
+  font-variant-numeric: tabular-nums;
+}
+.fruit-urgent {
+  color: #b54c3c;
+  font-variant-numeric: tabular-nums;
+  animation: fruit-pulse 700ms ease-in-out infinite alternate;
+}
+@keyframes fruit-pulse {
+  to {
+    transform: scale(1.13);
+  }
+}
+.fruit-field {
+  position: relative;
+  height: clamp(260px, 48vh, 390px);
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid #d6e2cb;
+  border-radius: 17px;
+  background: linear-gradient(#c8e6e4 0%, #e4f1d6 76%, #f3e8bf 100%);
+}
+.fruit-sun {
+  position: absolute;
+  top: 22px;
+  right: 26px;
+  width: 49px;
+  height: 49px;
+  border-radius: 50%;
+  background: #ffdf8c;
+  box-shadow: 0 0 0 10px #ffdf8c35;
+}
+.fruit-cloud {
+  position: absolute;
+  width: 56px;
+  height: 18px;
+  border-radius: 99px;
+  background: #ffffffa6;
+}
+.fruit-cloud::before,
+.fruit-cloud::after {
+  position: absolute;
+  content: "";
+  bottom: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: inherit;
+}
+.fruit-cloud::before {
+  left: 8px;
+}
+.fruit-cloud::after {
+  left: 25px;
+  width: 18px;
+  height: 18px;
+}
+.cloud-one {
+  top: 46px;
+  left: 14%;
+}
+.cloud-two {
+  top: 112px;
+  right: 20%;
+  transform: scale(0.76);
+}
+.falling-fruit {
+  position: absolute;
+  z-index: 2;
+  font-size: clamp(23px, 5vw, 31px);
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 3px 1px #315a3a30);
+}
+.fruit-basket {
+  position: absolute;
+  z-index: 3;
+  bottom: 10%;
+  font-size: clamp(37px, 7vw, 48px);
+  line-height: 1;
+  transform: translateX(-50%);
+  transition: left 110ms ease-out;
+  filter: drop-shadow(0 4px 1px #315a3a30);
+}
+.fruit-ground {
+  position: absolute;
+  z-index: 1;
+  left: -5%;
+  right: -5%;
+  bottom: -38px;
+  height: 76px;
+  border-radius: 50% 50% 0 0;
+  background: #8ca96a;
+}
+.fruit-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.fruit-controls p {
+  color: var(--muted);
+  text-align: center;
+  font-size: 11px;
+}
+.fruit-controls .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 11px;
+  font-size: 11px;
+}
+.fruit-score {
+  display: grid;
+  place-items: center;
+  margin: 15px 0 5px;
+  color: #a26b24;
+  font-family: var(--font-display);
+  font-size: 54px;
+  line-height: 1;
+}
+.fruit-score span {
+  margin-top: 4px;
+  color: var(--muted);
+  font: 800 11px var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.fruit-result .game-win-actions {
+  margin-top: 17px;
+}
 .game-help {
   text-align: center;
   color: var(--muted);
