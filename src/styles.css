@@ -3459,6 +3459,105 @@ svg {
     display: none;
   }
 }
+
+/* Chibi Avatar Vector Paper-Doll Styles */
+.chibi-avatar {
+  display: inline-block;
+  overflow: visible;
+  user-select: none;
+  vertical-align: middle;
+}
+
+.chibi-avatar.action-idle {
+  animation: avatar-breathe 2.6s ease-in-out infinite;
+}
+
+.chibi-avatar.action-walk {
+  animation: avatar-walk-bob 0.45s ease-in-out infinite alternate;
+}
+
+.chibi-avatar.action-wave .avatar-right-arm {
+  transform-origin: 32px 72px;
+  animation: avatar-arm-wave 0.75s ease-in-out infinite alternate;
+}
+
+.chibi-avatar.action-dance {
+  animation: avatar-dance-hop 0.5s ease-in-out infinite alternate;
+}
+
+.chibi-avatar.action-sit {
+  transform: translateY(6px);
+}
+
+.chibi-avatar.action-jam {
+  animation: avatar-jam-rock 0.55s ease-in-out infinite alternate;
+}
+
+.chibi-avatar .sparkle-trail path,
+.chibi-avatar .sparkle-trail circle {
+  animation: avatar-sparkle-pulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes avatar-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.008);
+  }
+}
+
+@keyframes avatar-walk-bob {
+  0% {
+    transform: translateY(0) rotate(-1.5deg);
+  }
+  100% {
+    transform: translateY(-3.5px) rotate(1.5deg);
+  }
+}
+
+@keyframes avatar-arm-wave {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-22deg);
+  }
+}
+
+@keyframes avatar-dance-hop {
+  0% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-6px) scaleY(1.03);
+  }
+  100% {
+    transform: translateY(0) rotate(4deg);
+  }
+}
+
+@keyframes avatar-jam-rock {
+  0% {
+    transform: rotate(-3deg) translateY(0);
+  }
+  100% {
+    transform: rotate(3deg) translateY(-2.5px);
+  }
+}
+
+@keyframes avatar-sparkle-pulse {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
