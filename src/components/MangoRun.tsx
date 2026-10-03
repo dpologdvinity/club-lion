@@ -8,6 +8,13 @@ import {
   Trophy,
 } from "lucide-react";
 import { Coin, Lion } from "./Lion";
+import {
+  buildPattern,
+  buildTrail,
+  laneOf,
+  laneTop,
+  spawnX,
+} from "./mangoPattern";
 
 type Mode = "intro" | "playing" | "gameover";
 type Point = { x: number; y: number };
@@ -25,7 +32,6 @@ const FIELD_H = 340;
 const LION_SIZE = 36;
 const MANGO_SIZE = 26;
 const OBSTACLE_SIZE = 30;
-const LANES = 4;
 const LION_SPEED = 200;
 const SCROLL_SPEED = 95;
 const DISTANCE_POINTS = 0.1;
@@ -64,28 +70,6 @@ function usePrefersReducedMotion() {
     return () => query.removeEventListener("change", update);
   }, []);
   return reduced;
-}
-
-function laneTop(lane: number, size: number) {
-  const laneHeight = FIELD_H / LANES;
-  return lane * laneHeight + (laneHeight - size) / 2;
-}
-
-function laneOf(y: number) {
-  const laneHeight = FIELD_H / LANES;
-  return Math.min(LANES - 1, Math.max(0, Math.floor(y / laneHeight)));
-}
-
-function pickLanes(count: number, lionLane: number, taken: number[] = []) {
-  const used = new Set(taken);
-  const free = [...Array(LANES).keys()].filter((lane) => !used.has(lane));
-  const away = free.filter((lane) => lane !== lionLane);
-  const pool = away.length >= count ? away : free;
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  return pool.slice(0, count);
 }
 
 function overlaps(a: Point, aSize: number, b: Point, bSize: number) {
@@ -207,27 +191,23 @@ export function MangoRun({
       spawnIn.current -= dt;
       if (spawnIn.current <= 0) {
         spawnIn.current = Math.max(0.5, 1.6 - ramp * 0.7);
-        const lionLane = laneOf(y);
-        const mangoLanes = pickLanes(Math.random() < 0.35 ? 2 : 1, lionLane);
-        const obstacleLanes = pickLanes(
-          Math.random() < 0.15 + ramp * 0.4 ? 2 : 1,
-          lionLane,
-          mangoLanes,
-        );
-        const offset = FIELD_W + 6 + Math.random() * 24;
-        for (const lane of mangoLanes) {
+        const pattern = buildPattern(ramp, laneOf(y), Math.random);
+        const base = Math.max(FIELD_W + 6, spawnX(x, scroll));
+        for (const mango of buildTrail(pattern.rows)) {
           mangoes.current.push({
             id: nextId.current++,
-            x: offset + Math.random() * 40,
-            y: laneTop(lane, MANGO_SIZE),
+            x: base + mango.x,
+            y: laneTop(mango.lane, MANGO_SIZE),
           });
         }
-        for (const lane of obstacleLanes) {
-          obstacles.current.push({
-            id: nextId.current++,
-            x: offset,
-            y: laneTop(lane, OBSTACLE_SIZE),
-          });
+        for (const row of pattern.rows) {
+          for (const lane of row.blocked) {
+            obstacles.current.push({
+              id: nextId.current++,
+              x: base + row.x,
+              y: laneTop(lane, OBSTACLE_SIZE),
+            });
+          }
         }
       }
 
