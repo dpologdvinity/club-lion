@@ -67,10 +67,71 @@ Player avatars are rendered using crisp vector SVG layers, allowing scalable res
 * **Toss Mango / Water Balloon:** Clicking the action reticle allows tossing a projectile anywhere on screen. It follows a parabolic ballistic trajectory, splashing on impact with audio effects and triggering environmental secrets if hitting special targets.
 * **Emotes & Dances:** Waving, sitting, savanna groove dance, sipping drinks, and expressing mood flairs.
 
+### 2.5 Standardized "Paper-Doll" Layer & Anchor Matrix
+To prevent clothing clipping, floating accessories, and alignment bugs across 50+ fashion items:
+* Every SVG asset adheres to a universal **120×160px coordinate canvas** with fixed anchor origins:
+  * `Anchor_HeadCenter`: `(60, 38)` (Hair front/back, hats, glasses rotate and pin here).
+  * `Anchor_Neck`: `(60, 68)` (Scarves, collars, necklaces).
+  * `Anchor_Waist`: `(60, 98)` (Belts, skirts, pant waistbands).
+  * `Anchor_HandRight`: `(32, 92)` (Handheld smoothies, sparklers, fishing rods).
+  * `Anchor_Feet`: `(60, 142)` (Sneakers, roller skates, board attachment point).
+* Layer ordering strictly guarantees hair flows naturally over hoodies, hats clip cleanly above bangs, and footwear anchors onto hoverboards.
+
+### 2.6 The Quick-Chat & Emote Action Wheel (`ActionWheel.tsx`)
+An iconic pop-up radial wheel for instant, touch-friendly, safe social communication:
+* **Emote Hub:** Instant expressive reaction bubbles (Floating Hearts `♡`, Starlight Sparkles `★`, Laughing Tears, Shocked Eyes, Sleeping Zzz).
+* **Action Shortcuts:** Instant one-tap triggers for *Dance*, *Wave*, *Sit*, *Jam*, and *Toss Mango*.
+* **Quick-Phrases:** Classic curated phrases formatted for fast mobile chatting:
+  * *"Meet me at the café!"*
+  * *"Let's ride the roller coaster!"*
+  * *"Waterpark race!"*
+  * *"Love your outfit!"*
+  * *"Check out my den!"*
+  * *"AFK getting a smoothie 🥭"*
+
 ---
 
 ## 3. The Grand World Map & Districts
 
+### 3.1 Panoramic Camera Scrolling & Viewport Engine (`CameraViewport.tsx`)
+To accommodate sprawling environments like multi-ride theme parks, waterparks, and long beachfronts without cramping assets:
+* **Dynamic Panoramic Stages:** Rooms can range from standard single-screen (1280px) up to wide panoramic canvases (1920px–2880px).
+* **Smooth Camera Following:** As the player avatar walks left or right, a cinematic virtual camera smoothly interpolates (`lerp`) to center on the avatar, bounded smoothly by the room's edges:
+  $$X_{cam}(t + \Delta t) = X_{cam}(t) + (X_{target} - X_{cam}(t)) \cdot 0.12$$
+  * Edge damping ensures the camera never scrolls into black borders.
+  * Avatars and pets feel like they are exploring a true, expansive geographic space.
+
+### 3.2 Declarative Modular Room Manifest Architecture (`src/rooms/types.ts`)
+Instead of hardcoding room logic inside monolithic React components, rooms are defined as declarative data manifests:
+```typescript
+export type RoomManifest = {
+  id: string;                      // e.g. "theme_park_midway"
+  name: string;                    // "Wonder Park Midway"
+  district: string;                // "wonder_park"
+  stageWidth: number;              // e.g. 2400 (scrolling width)
+  stageHeight: number;             // e.g. 720 (stage height)
+  backgroundAsset: string;         // SVG / WebP stage layer
+  walkablePolygon: [number, number][]; // 2D boundary polygon for walking
+  depthLayers: { id: string; y: number; asset: string }[]; // scenery Y-sorting
+  portals: {
+    targetRoomId: string;
+    targetSpawn: { x: number; y: number };
+    triggerBounds: { x1: number; y1: number; x2: number; y2: number };
+    label: string;
+  }[];
+  interactives: {
+    id: string;
+    type: "ride" | "instrument" | "game_launch" | "secret_clickable" | "shop";
+    position: { x: number; y: number };
+    actionData: Record<string, unknown>;
+  }[];
+  ambientAudioPreset: string;      // e.g. "carnival_ambience", "savanna_breeze"
+  scriptedNpcs: WorldEntity[];     // Local room occupants & clerks
+};
+```
+* **Scalability:** Adding any new room, slide, or secret room across any future phase requires simply creating a new manifest object—never touching core engine code!
+
+### 3.3 The 9 Thematic Districts Overview
 The world map is organized into 9 major thematic districts comprising 30+ explorable rooms:
 
 ```
