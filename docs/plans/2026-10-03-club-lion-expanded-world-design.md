@@ -223,7 +223,7 @@ Zero heavy audio file downloads. Powered entirely by the **Web Audio API** using
 
 ## 9. Economy, Secrets, Audio & Progression
 
-### 8.1 Le Shop Secret Catalog Clickables
+### 9.1 Le Shop Secret Catalog Clickables
 * Multi-page flip catalog with realistic sound effects.
 * Hidden clickable hot spots tucked into catalog artwork:
   * Page 2: Coffee cup steam unlocks the *Barista Apron*.
@@ -231,14 +231,14 @@ Zero heavy audio file downloads. Powered entirely by the **Web Audio API** using
   * Page 6: Hidden leaf unlocks the *Golden Mane Wreath*.
   * Page 8: Pirate skull on beach page unlocks the *Eyepatch & Cutlass*.
 
-### 8.2 The Procedural Web Audio Jukebox (`Jukebox.tsx`)
+### 9.2 The Procedural Web Audio Jukebox (`Jukebox.tsx`)
 Zero external MP3 weight. Procedural Web Audio synthesizers generate 4 complete authentic music tracks:
 1. *Savanna Nightclub:* Four-on-the-floor kick, synth bassline, and catchy arpeggios.
 2. *Canopy Lo-Fi Lounge:* Warm electric piano chords with gentle vinyl crackle and acoustic brush percussion.
 3. *Waterhole Twilight:* Soothing pan flute melodies, ambient water ripples, and evening crickets.
 4. *Carnival Calliope:* Nostalgic mechanical carousel organ waltz.
 
-### 8.3 Fantage-Style ID Card (`PlayerCard.tsx`)
+### 9.3 Fantage-Style ID Card (`PlayerCard.tsx`)
 * Clickable on self or any neighbor/player in a room:
   * Animated avatar preview wearing current outfit and riding board.
   * Companion pet lion preview with pet name and happiness hearts.
@@ -246,12 +246,37 @@ Zero external MP3 weight. Procedural Web Audio synthesizers generate 4 complete 
   * **Editable Status Quote:** Custom tagline visible to other players.
   * **4 Ribbon Medal Slots:** Showcase rarest earned achievements.
 
-### 8.4 The Savanna Stamp Book
+### 9.4 The Savanna Stamp Book
 * 25+ collectible stamps categorized across:
   * *World Secrets:* (e.g. Find 5 catalog secrets, trigger night mode, uncover pirate chest).
   * *Park & Water Thrills:* (e.g. Ride all 7 theme park rides, get drenched by the 1000-gallon dump bucket).
   * *Fashion & Style:* (e.g. Score 5 stars on the runway, dye hair 3 times, own 10 outfits).
   * *Arcade Mastery:* (e.g. Catch the Golden Catfish, blend 50 smoothies, score 1,000 on River Surf).
+
+### 9.5 Prestigious "Grail" Collectibles & Boutique Rotations
+To give the economy sustained long-term appeal for young adults, shops feature high-tier aspirational items:
+* **The Chroma Hoverboard:** Animated rainbow glow board with prismatic chromatic trail particles.
+* **Vintage Hair Capsule:** Limited-edition retro hairstyles (e.g., *Y2K Star Streaks*, *Messy Grunge Shag*) that rotate with seasonal in-game events.
+* **Golden Bell Lion Collar & Aviator Goggles:** Ultra-rare companion accessories.
+* **Penthouse Grand Jukebox & Velvet Modular Sofa:** Top-tier condo customization flex items.
+
+### 9.6 Global Audio & Persistent Header Controls (`AudioControls.tsx`)
+* A discreet, stylish audio widget pinned in the global top header at all times:
+  * Master volume slider (0% to 100%).
+  * Independent toggles for **Music / Jukebox** vs. **Sound FX / Instruments**.
+  * **Instant Mute Shortcut (`M` key):** Seamless for players who want to study or listen to their own Spotify / background audio without closing the game.
+
+### 9.7 Smart Contextual NPC Chatter (Phase 1 Life)
+In Phase 1 (prior to live multiplayer servers), scripted room occupants make rooms feel lively and responsive:
+* **Contextual Keywords:** Typing words in local chat triggers responses from nearby NPCs:
+  * Typing *"smoothie"* or *"latte"* at Canopy Café prompts the barista to say *"Coming right up! Freshly blended 🥭"* and toss an imaginary cup.
+  * Typing *"dance"* at Club Pulse causes nearby dancers to mirror your emote.
+  * Typing *"coaster"* at Wonder Park makes the ride attendant cheer *"Hold on tight!"*.
+* **Audience Reactions:** Playing instruments (piano, marimba, drums) causes nearby NPCs to listen and pop small `♡` or `♫` appreciation bubbles.
+
+### 9.8 Universal Touch & Keyboard Control Parity
+* **Full Desktop Keyboard Navigation:** Full WASD / arrow-key walking, Spacebar interact, `1`–`8` instrument keys, `M` mute toggle, and Escape modal dismiss.
+* **Full Mobile / Tablet Touch Controls:** On-screen virtual joystick / tap-to-move, large touch-friendly button targets (minimum 44×44px), swipe-to-turn catalog pages, and touch drag-and-drop for wardrobe styling.
 
 ---
 
