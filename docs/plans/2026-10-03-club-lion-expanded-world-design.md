@@ -341,79 +341,62 @@ In Phase 1 (prior to live multiplayer servers), scripted room occupants make roo
 
 ---
 
-## 10. Multiplayer-Ready Architecture & Data Model
+## 10. Scalable MMO Architecture & Zero-Cost Cloud Infrastructure
 
-### 10.1 Network-Serializable Entity Schemas (`src/types/world.ts`)
-```typescript
-export type AvatarLook = {
-  skinTone: "fair" | "tan" | "warm" | "deep" | "bronze";
-  eyeStyle: "chibi_sparkle" | "anime_cool" | "sleepy" | "wink";
-  hairId: string;
-  hairColor: string;
-  outfitId: string;
-  shoesId: string;
-  boardId?: string;
-  handheldId?: string;
-};
+Designed for massive 10× long-term growth (300+ rooms, 1,000+ fashion pieces, player accounts, friends lists, and 50–100 player servers) with **$0 upfront or ongoing server costs** until the entire plan is complete:
 
-export type PetState = {
-  id: string;
-  name: string;
-  species: "lion";
-  color: "gold" | "sand" | "copper" | "rose";
-  accessory?: string;
-  position: { x: number; y: number };
-  mood: "happy" | "sleepy" | "bouncy";
-};
+### 10.1 The $0 Infrastructure Stack (Free-Tier Production Architecture)
+To ensure absolute zero cost ($0.00) during development and through full release of all phases:
+1. **Client & Web Assets ($0):** **Cloudflare Pages / GitHub Pages** provides unlimited free static hosting, automatic SSL, and a global edge CDN with zero bandwidth caps.
+2. **User Accounts & Authentication ($0):** **Supabase Auth** free tier supports up to **50,000 Monthly Active Users (MAU)** with secure email/password signup, session JWTs, and password reset workflows.
+3. **Database & Cloud Save Sync ($0):** **Supabase PostgreSQL** free tier provides 500MB of storage (enough for 200,000+ player saves, inventories, and social friend graphs).
+4. **Real-Time Room Multiplayer ($0):** **Supabase Realtime (Phoenix Channels)** supports up to **200 concurrent WebSocket connections** completely free. Alternatively, a lightweight Node.js/WebSocket server can run on free container tiers (e.g. Fly.io / Render) or run 100% locally during development.
+5. **Local-First Zero-Cost Development:** The entire game runs 100% locally with offline saves. Cloud accounts and multiplayer seamlessly layer on top without requiring paid infrastructure.
 
-export type WorldEntity = {
-  id: string;
-  name: string;
-  look: AvatarLook;
-  pet?: PetState;
-  position: { x: number; y: number };
-  action: "idle" | "walk" | "ride" | "dance" | "wave" | "sit";
-  bubble?: { text: string; timestamp: number };
-  badgeTitle?: string;
-  isLocalPlayer?: boolean;
-};
+### 10.2 50–100 Player Server & Room Synchronization Engine
+* **Spatial Room Partitioning:** Servers do not broadcast island-wide. Network traffic is strictly isolated by `roomId`. A server running 50–100 players distributes them across 30+ rooms, keeping each room at a smooth, lively 5–25 avatars.
+* **Low-Bandwidth Delta Packets:** Updates are stripped of bloat and packed into minimal delta arrays (`[entityId, x, y, action, timestamp]`, <40 bytes).
+* **Client-Side Linear Interpolation (`lerp`):** The server ticks at 12–15Hz; the client renders silky-smooth 60 FPS movement by interpolating between received target coordinates.
+* **Dead Reckoning:** If a packet drops, client avatars continue moving in their active velocity vector, snapping softly when the next state arrives.
 
-export type RoomState = {
-  roomId: string;
-  entities: Record<string, WorldEntity>;
-  timeOfDay: "day" | "sunset" | "night";
-};
-```
+### 10.3 Player Accounts & Cloud Save Migration
+* **Seamless Account Creation:**
+  * Players can start playing immediately as a guest with instant local storage.
+  * At any time, players can click **"Create Account"** or **"Log In"** to attach their username and password.
+  * Local progress (coins, inventory, pet status, stamps) automatically migrates atomically into their cloud account.
+* **Security & Fair Economy:** Server validates catalog purchases, coin deductions, and high scores against server timestamps, preventing client-side coin tampering.
 
-### 10.2 Local-to-Multiplayer Abstraction Layer
-```
-               ┌───────────────────────────────┐
-               │    React UI & World Canvas    │
-               └───────────────┬───────────────┘
-                               │ (Room Entities & Events)
-                               ▼
-               ┌───────────────────────────────┐
-               │     IWorldNetworkAdapter      │
-               └───────┬───────────────┬───────┘
-                       │               │
-        (Phase 1: Local)               (Phase 4: Real Multiplayer)
-                       ▼                               ▼
-       ┌────────────────────────┐      ┌────────────────────────┐
-       │    MockWorldServer     │      │   WebSocketServer      │
-       │  • Scripted Neighbors  │      │  • Multi-Server Rooms  │
-       │  • Local Storage Sync  │      │  • Global Chat & Sync  │
-       └────────────────────────┘      └────────────────────────┘
-```
+### 10.4 Friends List & Social Graph (`FriendsPanel.tsx`)
+* **Add Friends:** Click any avatar in a room or search by username to send a friend request.
+* **Friends Roster:**
+  * Real-time **Online / Offline** status indicators.
+  * Current location display (e.g., *"Maya — Chilling at Canopy Café"*).
+  * **"Jump to Friend" Action:** Clicking Jump automatically navigates you directly to the server and room where your friend is currently hanging out!
+* **Friend Emotes & Best Friend Stars:** Special high-five and tandem dance emotes when interacting with friends on your list.
+
+### 10.5 Player-Owned Custom Servers & Private Rooms
+* In addition to public official servers (e.g., *Savanna Sunny*, *Twilight Island*), players can spin up their own **Named Community Servers & Private Lounges**:
+  * Create a custom server name (e.g., *"Kaitlyn's VIP Hangout"*, *"Late Night Lo-Fi Beats"*).
+  * Optional **Password Lock / Invite Link** for private parties, friend group hangouts, or stream communities.
+  * Room owners have kick/mute moderation controls within their private server.
+
+### 10.6 Architectural Foundations for 10× Long-Term Scale
+1. **Dynamic Room Lazy-Loading (`import()`):** Core client loads in <1s. Every room manifest and its assets load on-demand asynchronously, ensuring 300+ rooms never bloat initial load times.
+2. **Global Environmental Lighting Pipeline:** Global shader matrix gives every room Day, Sunset, and Night atmospheres with zero duplicate artwork.
+3. **Universal 10-Slot Wardrobe Taxonomy:** Explicit `EquipSlot` matrix guarantees 1,000+ clothing items layer without clipping.
+4. **Isometric Den Grid Engine:** 16×16 floor tile grid ensures condos scale cleanly with mathematical Z-sorting and exportable room layout strings.
 
 ---
 
 ## 11. Phased Implementation Roadmap
 
 * **Phase 1: The Chibi Avatar, Companion Pet Lion, & Downtown Core**
-  * Avatar rendering engine (SVG layers: skin, eyes, hair, clothes, shoes).
+  * Vector Chibi avatar engine with standardized 10-slot wardrobe taxonomy.
   * Companion pet lion follower physics and synchronized emote reactions.
   * Downtown Plaza (Le Shop with secret catalog clickables, Stella Salon, Canopy Café).
-  * Fantage ID Card & Action Emotes (tossing mangos, dances).
+  * Panoramic camera scrolling engine & declarative room manifest system.
+  * Fantage ID Card, mango tossing, and quick-chat emote wheel.
+  * Guest save system architected for seamless cloud account migration.
 * **Phase 2: Savanna Wonder Park (Theme Park) & Nightlife Core**
   * Wonder Park map & interactive rides (Roller Coaster, Ferris Wheel, Bumper Cars, Flume).
   * **Club Pulse & Rooftop Lounge:** Interactive light-up dance floor & DJ Beat Drop mini-game.
@@ -424,7 +407,10 @@ export type RoomState = {
   * **Interactive World Instruments:** Upright piano, savanna marimba, drum kit, giant floor keyboard, and wearable jam mode.
   * ⚡ Top Models Fashion Show runway competition.
   * 🧘 Waterhole Angler (cozy dock fishing) & Stamp Book (25+ stamps).
-* **Phase 4: Condo Jukebox, Secret Agent Missions & Multiplayer Servers**
+* **Phase 4: Player Accounts, Cloud Sync, Friends & Multiplayer Servers ($0 Stack)**
+  * User account registration, login, and cloud save synchronization via Supabase Auth ($0).
+  * 50–100 player room servers with spatial partitioning and delta sync via Supabase Realtime ($0).
+  * Friends list, online presence, and "Jump to Friend" fast-travel.
+  * Player-owned custom servers and private room instances.
   * Condo customization, furniture placement, and Web Audio Jukebox.
   * Secret Scout Command Center (PSA/EPF spy missions, secret base).
-  * WebSocket Room Server infrastructure connecting live players across servers.
