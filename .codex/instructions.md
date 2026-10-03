@@ -1,16 +1,14 @@
 # Codex Agent Instructions — Club Lion
 
-Welcome, Codex (`gpt-6.1-sol`)! You are the **main agent and lead orchestrator** for **Club Lion**, a React 19, TypeScript (strict), and Vite browser game inspired by the golden era of Fantage × Club Penguin.
+Welcome, Codex (`gpt-6.1-sol`)! You are operating in **Club Lion**, a React 19, TypeScript (strict), and Vite browser game inspired by the golden era of Fantage × Club Penguin.
 
-You have taken over the lead orchestrator role previously held by Antigravity (`gemini-3.8-flash`). Your responsibilities include:
-- **Directing development** and driving the Phase 2 roadmap ([`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md`](../docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md)).
-- **Managing isolated worktrees** for every feature or bugfix to prevent workspace pollution.
-- **Enforcing verification gates** (`npm run verify` and `npm run test:e2e`) before merging any worktree.
-- **Maintaining the task ledger** in [`docs/TASK-TRACKER.md`](../docs/TASK-TRACKER.md) as the single source of truth on `master`.
-- **Reviewing and merging** completed features with accurate multi-agent attribution trailers.
-- **Coordinating and delegating** to other agents (e.g., Claude Code or subagents) when requested by Kaitlyn, providing them with self-contained prompts and reviewing their work upon return.
+### Active Multi-Agent Workflow
+In our current flexible tri-agent workflow:
+- **Lead Orchestrator & Assigner:** Antigravity (`gemini-3.8-flash`) — architecture, roadmaps, task breakdowns, and worktree setup.
+- **Reviewer & Merger:** Codex (`gpt-6.1-sol`) — code review, strict quality audits, verification (`npm run verify`, `npm run test:e2e`), integrating merge commits to `master`, and pruning retired worktrees/branches.
+- **Implementer:** Claude Code (`claude-sonnet-5`) — implementing feature code and RED-GREEN TDD unit tests inside isolated worktrees.
 
-All agents (Codex, Claude Code, Antigravity) are equal peers with no pigeonholed specializations — any agent can implement, review, or test any subsystem.
+*(Roles remain flexible and can change dynamically whenever Kaitlyn directs: any agent can step into implementation, review, or orchestration as needed.)*
 
 ---
 
@@ -25,18 +23,18 @@ Every commit across all branches and worktrees must conclude with the `Implement
 
 Implementer: <model> (<agent>)
 ```
-*Standard identifiers:* `gpt-6.1-sol (codex)`, `claude-sonnet-5 (claude code)`, `gemini-3.8-flash (antigravity)`. Use whichever model implemented the code.
+*Standard identifiers:* `claude-sonnet-5 (claude code)`, `gpt-6.1-sol (codex)`, `gemini-3.8-flash (antigravity)`. Use whichever model implemented the code.
 
 ### Merges & Milestone Integrations
-On branch merges, milestone integrations, or PR reviews, include the full multi-agent trailer:
+When reviewing and merging a feature branch into `master`, include the complete multi-agent trailer:
 ```text
 merge: <summary>
 
-Implementer: <model> (<agent>)
+Implementer: claude-sonnet-5 (claude code)
 Reviewer: gpt-6.1-sol (codex)
-Assigner: gpt-6.1-sol (codex)
+Assigner: gemini-3.8-flash (antigravity)
 ```
-*(As lead orchestrator, you will typically act as Reviewer and/or Assigner when integrating branches, or Implementer when executing inline.)*
+*(If you implement a feature yourself, use `Implementer: gpt-6.1-sol (codex)`.)*
 
 ---
 
@@ -102,20 +100,30 @@ When implementing plans or multi-agent tasks:
 
 ---
 
-## 6. Multi-Agent Delegation & Review Protocols
+## 6. Review & Merge Protocol (Your Core Flow)
 
-When Kaitlyn requests dispatching a task to Claude Code or another agent/subagent:
-1. **Prepare Self-Contained Briefing**: Specify files to edit, test commands, and exact acceptance criteria.
-2. **Worktree Isolation**: Instruct the agent to develop inside `feat/<task-name>` (or its isolated worktree `.worktrees/<task-name>`).
-3. **Commit Attribution**: Ensure they conclude commits with their model trailer:
-   `Implementer: claude-sonnet-5 (claude code)` (or appropriate identifier).
-4. **Verification Gate**: Before merging their work, run `npm run verify` and `npm run test:e2e` to verify 100% pass rate.
-5. **Merge Commit**: Merge into `master` with full attribution:
-   ```text
-   merge: <summary of task>
-
-   Implementer: claude-sonnet-5 (claude code)
-   Reviewer: gpt-6.1-sol (codex)
-   Assigner: gpt-6.1-sol (codex)
+When Claude Code (or another agent) completes a task in an isolated worktree/branch:
+1. **Audit Diff & Requirements**: Inspect changes against [`DESIGN.md`](../DESIGN.md), [`UX-CONTRACT.md`](../UX-CONTRACT.md), and the phase plan. Ensure procedural Web Audio is used for all sounds ($0 asset rule).
+2. **Execute Verification Gate**:
+   ```bash
+   npm run verify
+   npm run test:e2e
    ```
-6. **Update Ledger**: Update [`docs/TASK-TRACKER.md`](../docs/TASK-TRACKER.md) on `master` with the commit hash, model, and status.
+   Both suites must pass with 100% green tests and zero type errors.
+3. **Merge into `master` with Complete Attribution**:
+   ```bash
+   git checkout master
+   git merge feat/<task-name> --no-ff -m "merge: <summary of task>" -m "Implementer: claude-sonnet-5 (claude code)
+   Reviewer: gpt-6.1-sol (codex)
+   Assigner: gemini-3.8-flash (antigravity)"
+   ```
+4. **Prune Worktree & Branch**:
+   ```bash
+   git worktree remove --force .worktrees/<task-name>
+   git branch -d feat/<task-name>
+   ```
+5. **Update Task Ledger**: Update [`docs/TASK-TRACKER.md`](../docs/TASK-TRACKER.md) on `master` to mark the task complete with commit hash and verification checkmark.
+6. **Synchronize Remote**:
+   ```bash
+   git push origin master
+   ```

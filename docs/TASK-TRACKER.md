@@ -76,7 +76,13 @@ There are **no fixed or primary roles**. All agents and models are fully interch
 
 | Model Identifier | Agent Platform | Role Flexibility |
 | :--- | :--- | :--- |
-| `gpt-6.1-sol (codex)` | Codex | Any role: Implementer, Reviewer, Assigner, Architect, Tester |
+| `gemini-3.8-flash (antigravity)` | Antigravity | Any role: Lead Orchestrator, Assigner, Architect, Implementer, Reviewer |
 | `claude-sonnet-5 (claude code)` | Claude Code | Any role: Implementer, Reviewer, Assigner, Architect, Tester |
-| `gemini-3.8-flash (antigravity)` | Antigravity | Any role: Implementer, Reviewer, Assigner, Architect, Tester |
+| `gpt-6.1-sol (codex)` | Codex | Any role: Reviewer, Merger, Implementer, Assigner, Tester |
+
+### Active Phase 2 Operating Configuration
+- **Lead Orchestrator & Assigner:** Antigravity (`gemini-3.8-flash`)
+- **Implementer:** Claude Code (`claude-sonnet-5`)
+- **Reviewer & Merger:** Codex (`gpt-6.1-sol`)
+*(Flexible and dynamically adjustable at any time)*
 
