@@ -315,8 +315,8 @@ export function Help() {
         <p>
           <Shirt size={20} />
           <span>
-            <strong>Make it yours</strong>Style your lion, play Memory Safari to
-            earn coins, and shop for something special.
+            <strong>Make it yours</strong>Style your lion, play an arcade game
+            to earn coins, and shop for something special.
           </span>
         </p>
       </div>

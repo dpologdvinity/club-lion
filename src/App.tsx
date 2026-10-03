@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  ArrowLeft,
   ArrowUpRight,
   Check,
   ChevronDown,
@@ -13,6 +14,7 @@ import {
   buyItem,
   claimReward,
   completeGame,
+  completeFruitCatch,
   meetLion,
   PLACES,
   SHOP_ITEMS,
@@ -28,6 +30,7 @@ import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
 import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
 import { MemorySafari } from "./components/MemorySafari";
+import { FruitCatch } from "./components/FruitCatch";
 
 type Panel = "map" | "style" | "shop" | "games" | "help" | null;
 
@@ -35,6 +38,7 @@ export default function App() {
   const { player, setPlayer, saveError } = usePlayer();
   const [place, setPlace] = useState<PlaceId>("square");
   const [panel, setPanel] = useState<Panel>(null);
+  const [arcadeGame, setArcadeGame] = useState<"memory" | "fruit" | null>(null);
   const [toast, setToast] = useState("");
   useEffect(() => {
     if (!toast) return;
@@ -57,7 +61,10 @@ export default function App() {
       setPanel("games");
     } else navigate("den");
   };
-  const closePanel = () => setPanel(null);
+  const closePanel = () => {
+    setPanel(null);
+    setArcadeGame(null);
+  };
   const titles = {
     map: ["A whole little world", "Where will your paws take you next?"],
     style: [
@@ -293,13 +300,71 @@ export default function App() {
               }}
             />
           )}
-          {panel === "games" && (
-            <MemorySafari
-              onFinish={(pairs) => {
-                setPlayer((p) => completeGame(p, pairs));
-              }}
-              onClose={closePanel}
-            />
+          {panel === "games" && !arcadeGame && (
+            <div className="arcade-picker">
+              <button
+                className="arcade-game"
+                onClick={() => setArcadeGame("memory")}
+              >
+                <span className="arcade-art memory-art" aria-hidden="true">
+                  🦁 🌴 🌼
+                </span>
+                <span className="arcade-copy">
+                  <strong>Memory Safari</strong>
+                  <small>Find the matching pairs. No timer, no rush.</small>
+                  <span className="arcade-reward">Earn up to 60 coins</span>
+                </span>
+                <ChevronRight size={20} />
+              </button>
+              <button
+                className="arcade-game"
+                onClick={() => setArcadeGame("fruit")}
+              >
+                <span className="arcade-art fruit-art" aria-hidden="true">
+                  🍎 🧺 🍊
+                </span>
+                <span className="arcade-copy">
+                  <strong>Fruit Catch!</strong>
+                  <small>Catch the good stuff. Dodge the icky stuff.</small>
+                  <span className="arcade-reward">
+                    2 coins for every fruit caught
+                  </span>
+                </span>
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          )}
+          {panel === "games" && arcadeGame === "memory" && (
+            <>
+              <button className="game-back" onClick={() => setArcadeGame(null)}>
+                <ArrowLeft size={14} /> All games
+              </button>
+              <MemorySafari
+                onFinish={(pairs) => setPlayer((p) => completeGame(p, pairs))}
+                onClose={closePanel}
+              />
+            </>
+          )}
+          {panel === "games" && arcadeGame === "fruit" && (
+            <>
+              <button className="game-back" onClick={() => setArcadeGame(null)}>
+                <ArrowLeft size={14} /> All games
+              </button>
+              <FruitCatch
+                onFinish={(result) =>
+                  setPlayer((p) =>
+                    completeFruitCatch(
+                      p,
+                      result.caught,
+                      result.hits,
+                      result.score,
+                    ),
+                  )
+                }
+                onClose={closePanel}
+                best={player.fruitCatchBest}
+              />
+            </>
           )}
           {panel === "help" && <Help />}
         </Dialog>
