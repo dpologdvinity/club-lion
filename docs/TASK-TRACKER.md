@@ -51,10 +51,29 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.m
 
 ---
 
+## Phase 2: Savanna Wonder Park & Nightlife Core
+
+Master Spec: [`docs/plans/2026-10-03-club-lion-expanded-world-design.md`](2026-10-03-club-lion-expanded-world-design.md)  
+Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md`](2026-10-03-phase-2-savanna-wonder-park-nightlife.md)
+
+| Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Task 1** | Hoverboard Glide & Footprint Sparkle Trail Engine | `feat/phase-2-boards-wonder-park` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
+| **Task 2** | Wonder Park Declarative Room Manifests & Kinetic Track Engine | `feat/phase-2-boards-wonder-park` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
+| **Task 3** | Club Pulse Interactive Dance Floor & DJ Booth Stage | `feat/phase-2-club-pulse-dance` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
+| **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-club-pulse-dance` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
+| **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-smoothie-kitchen` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
+| **Task 6** | Savanna Screamer Roller Coaster Interactive Ride Mode | `feat/phase-2-roller-coaster` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
+| **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `feat/phase-2-boards-wonder-park` | **gpt-6.1-sol (codex)** | - | ⏳ Planned |
+| **Phase 2 Merge** | Milestone Integration into `master` | `master` | **gpt-6.1-sol (codex)** | - | ⏳ Pending |
+
+---
+
 ## Model Roster & Roles
 
 | Model Identifier | Agent Platform | Typical Responsibilities |
 | :--- | :--- | :--- |
 | `gemini-3.8-flash (antigravity)` | Antigravity | Architecture, specification planning, core data schemas, vector avatar engine, integration controller |
 | `claude-sonnet-5 (claude code)` | Claude Code | Motion physics engines, camera mathematics, catalog & secret triggers, save migration engines |
-| `gpt-6.1-sol (codex)` | Codex | Ballistics mathematics, interactive modal UI components, touch & input controls, Playwright test suites |
+| `gpt-6.1-sol (codex)` | Codex | Ballistics mathematics, interactive modal UI components, touch & input controls, Playwright test suites, Phase 2 lead implementer |
+
