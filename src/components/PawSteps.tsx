@@ -63,6 +63,10 @@ export function PawSteps({
   const litTimer = useRef<number | undefined>(undefined);
   const rewarded = useRef(false);
 
+  const playBtnRef = useRef<HTMLButtonElement>(null);
+  const padRef = useRef<HTMLDivElement>(null);
+  const liveRef = useRef<HTMLDivElement>(null);
+
   const phaseRef = useRef<Phase>("intro");
   const stepRef = useRef(0);
   const sequenceRef = useRef<Direction[]>([]);
@@ -97,8 +101,22 @@ export function PawSteps({
     litTimer.current = window.setTimeout(() => setLit(null), ms);
   };
 
+  const directionLabel = (d: Direction) =>
+    DIRECTIONS.find((x) => x.id === d)?.label ?? d;
+
+  useEffect(() => {
+    if (phase === "intro") playBtnRef.current?.focus();
+    if (phase === "input") padRef.current?.focus();
+    if (phase === "over") playBtnRef.current?.focus();
+  }, [phase]);
+
   const show = (steps: Direction[], then: () => void) => {
     setPhase("showing");
+    if (liveRef.current) {
+      liveRef.current.textContent = `Showing: ${steps
+        .map(directionLabel)
+        .join(", ")}`;
+    }
     steps.forEach((direction, index) => {
       later(index * (STEP_MS + GAP_MS), () => flash(direction, STEP_MS));
     });
@@ -200,7 +218,7 @@ export function PawSteps({
               Best so far: {best} {best === 1 ? "round" : "rounds"}
             </p>
           )}
-          <button className="button button-primary" onClick={start}>
+          <button ref={playBtnRef} className="button button-primary" onClick={start}>
             Let’s play <ArrowRight size={18} />
           </button>
         </div>
@@ -226,7 +244,7 @@ export function PawSteps({
             + <Coin amount={rounds * PAW_STEPS_COINS_PER_ROUND} />
           </div>
           <div className="game-win-actions">
-            <button className="button button-secondary" onClick={start}>
+            <button ref={playBtnRef} className="button button-secondary" onClick={start}>
               <RotateCcw size={16} /> Play again
             </button>
             <button className="button button-primary" onClick={onClose}>
@@ -252,7 +270,13 @@ export function PawSteps({
         </span>
         <Coin amount={rounds * PAW_STEPS_COINS_PER_ROUND} />
       </div>
-      <div className="paw-pad" role="group" aria-label="Paw step arrows">
+      <div
+        ref={padRef}
+        className="paw-pad"
+        role="group"
+        aria-label="Paw step arrows"
+        tabIndex={-1}
+      >
         {DIRECTIONS.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -268,6 +292,12 @@ export function PawSteps({
           🐾
         </span>
       </div>
+      <div
+        ref={liveRef}
+        className="sr-only"
+        aria-live="polite"
+        aria-atomic="true"
+      />
       <p className="game-help" role="status">
         {accepting
           ? `Your turn — repeat ${sequence.length - step} ${
