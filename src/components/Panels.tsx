@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  ArrowLeft,
   ArrowRight,
   Check,
   Coffee,
@@ -10,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import {
+  PAW_STEPS_COINS_PER_ROUND,
   PLACES,
   SHOP_ITEMS,
   type LionColor,
@@ -17,6 +19,8 @@ import {
   type Player,
 } from "../game";
 import { Coin, Lion } from "./Lion";
+import { MemorySafari } from "./MemorySafari";
+import { PawSteps } from "./PawSteps";
 
 export function WorldMap({
   place,
@@ -277,6 +281,61 @@ export function Shop({
   );
 }
 
+type ArcadeGame = "safari" | "paw-steps";
+
+export function GamesPanel({
+  player,
+  onSafariFinish,
+  onPawStepsFinish,
+  onClose,
+}: {
+  player: Player;
+  onSafariFinish: (pairs: number) => void;
+  onPawStepsFinish: (rounds: number) => void;
+  onClose: () => void;
+}) {
+  const [game, setGame] = useState<ArcadeGame | null>(null);
+  if (game === "safari")
+    return (
+      <MemorySafari
+        onFinish={onSafariFinish}
+        onBack={() => setGame(null)}
+        onClose={onClose}
+      />
+    );
+  if (game === "paw-steps")
+    return (
+      <PawSteps
+        best={player.pawStepsBest}
+        onFinish={onPawStepsFinish}
+        onBack={() => setGame(null)}
+        onClose={onClose}
+      />
+    );
+  return (
+    <div className="arcade-menu">
+      <button className="arcade-card" onClick={() => setGame("safari")}>
+        <span className="arcade-card-art" aria-hidden="true">
+          🎴
+        </span>
+        <strong>Memory Safari</strong>
+        <small>Find all 6 matching pairs. 60 coins a game.</small>
+      </button>
+      <button className="arcade-card" onClick={() => setGame("paw-steps")}>
+        <span className="arcade-card-art" aria-hidden="true">
+          🐾
+        </span>
+        <strong>Paw Steps</strong>
+        <small>
+          Repeat the lion&apos;s paw steps. {PAW_STEPS_COINS_PER_ROUND} coins a
+          round.
+          {player.pawStepsBest > 0 && ` Best: ${player.pawStepsBest}.`}
+        </small>
+      </button>
+    </div>
+  );
+}
+
 export function Help() {
   return (
     <div className="help-content">
@@ -315,8 +374,8 @@ export function Help() {
         <p>
           <Shirt size={20} />
           <span>
-            <strong>Make it yours</strong>Style your lion, play Memory Safari to
-            earn coins, and shop for something special.
+            <strong>Make it yours</strong>Style your lion, play Memory Safari or
+            Paw Steps to earn coins, and shop for something special.
           </span>
         </p>
       </div>

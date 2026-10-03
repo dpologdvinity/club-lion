@@ -1,5 +1,24 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+
+const PAW_LABELS = ["Up", "Down", "Left", "Right"];
+const PAW_KEYS: Record<string, string> = {
+  Up: "ArrowUp",
+  Down: "ArrowDown",
+  Left: "ArrowLeft",
+  Right: "ArrowRight",
+};
+
+async function watchPaws(page: Page, count: number) {
+  const seen: string[] = [];
+  for (let index = 0; index < count; index++) {
+    const lit = page.locator(".paw-key.lit");
+    await lit.waitFor({ state: "attached", timeout: 10_000 });
+    seen.push((await lit.first().getAttribute("aria-label"))!);
+    await page.waitForFunction(() => !document.querySelector(".paw-key.lit"));
+  }
+  return seen;
+}
 
 test("the world loads, supports movement and chat, and has no horizontal overflow", async ({
   page,
@@ -107,6 +126,7 @@ test("Memory Safari can be completed and awards exactly 60 coins", async ({
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Games", exact: true }).click();
+  await page.getByRole("button", { name: /Memory Safari/ }).click();
   await page.getByRole("button", { name: "Let’s play" }).click();
   const cards = page.locator(".memory-card");
   const known = new Map<number, string>();
@@ -149,6 +169,36 @@ test("Memory Safari can be completed and awards exactly 60 coins", async ({
   await expect(page.locator(".wallet")).toHaveText("✦360");
 });
 
+test("Paw Steps pays for every finished round, then remembers the best score", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await page.getByRole("button", { name: /Paw Steps/ }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  const opening = await watchPaws(page, 2);
+  expect(opening).toHaveLength(2);
+  for (const label of opening)
+    await page.getByRole("button", { name: label, exact: true }).click();
+  const next = await watchPaws(page, 3);
+  expect(next).toHaveLength(3);
+  await page.keyboard.press(PAW_KEYS[next[0]]);
+  const wrong = PAW_LABELS.find((label) => label !== next[1]);
+  await page.getByRole("button", { name: wrong!, exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "What a run!" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("You repeated 1 round", { exact: false }),
+  ).toBeVisible();
+  await expect(page.locator(".wallet")).toHaveText("✦260");
+  await expect(page.getByRole("button", { name: "Claim 50" })).toHaveCount(1);
+  await page.reload();
+  await expect(page.locator(".wallet")).toHaveText("✦260");
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  await expect(page.getByText("Best: 1.", { exact: false })).toBeVisible();
+});
+
 test("the main world and dialogs have no WCAG AA accessibility violations", async ({
   page,
 }) => {
@@ -167,6 +217,17 @@ test("the main world and dialogs have no WCAG AA accessibility violations", asyn
   await expect(
     page.getByRole("button", { name: "Style your lion" }),
   ).toBeFocused();
+  await page.getByRole("button", { name: "Games", exact: true }).click();
+  const menuResults = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+    .analyze();
+  expect(menuResults.violations).toEqual([]);
+  await page.getByRole("button", { name: /Paw Steps/ }).click();
+  await page.getByRole("button", { name: "Let’s play" }).click();
+  const padResults = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+    .analyze();
+  expect(padResults.violations).toEqual([]);
 });
 
 test("unavailable browser storage preserves a playable world with an honest warning", async ({

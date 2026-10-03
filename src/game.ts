@@ -12,9 +12,13 @@ export type Player = {
   met: string[];
   visited: PlaceId[];
   gamesPlayed: number;
+  pawStepsBest: number;
   claimed: AdventureId[];
   decor: string[];
 };
+
+export const PAW_STEPS_MAX_ROUNDS = 999;
+export const PAW_STEPS_COINS_PER_ROUND = 10;
 
 export const SHOP_ITEMS = [
   {
@@ -141,9 +145,19 @@ export function newPlayer(): Player {
     met: [],
     visited: ["square"],
     gamesPlayed: 0,
+    pawStepsBest: 0,
     claimed: [],
     decor: [],
   };
+}
+
+function restoredRounds(value: unknown): number | null {
+  if (value === undefined) return 0;
+  return Number.isSafeInteger(value) &&
+    (value as number) >= 0 &&
+    (value as number) <= PAW_STEPS_MAX_ROUNDS
+    ? (value as number)
+    : null;
 }
 
 export function restorePlayer(raw: string | null): Player {
@@ -165,6 +179,8 @@ export function restorePlayer(raw: string | null): Player {
       p.gamesPlayed < 0
     )
       return newPlayer();
+    const pawStepsBest = restoredRounds(p.pawStepsBest);
+    if (pawStepsBest === null) return newPlayer();
     const owned = [
       ...new Set<string>(
         p.owned.filter((id: unknown) =>
@@ -199,6 +215,7 @@ export function restorePlayer(raw: string | null): Player {
         ),
       ],
       gamesPlayed: p.gamesPlayed,
+      pawStepsBest,
       claimed: [
         ...new Set<AdventureId>(
           p.claimed.filter((id: unknown) =>
@@ -269,5 +286,20 @@ export function completeGame(player: Player, pairs: number): Player {
     ...player,
     coins: player.coins + pairs * 10,
     gamesPlayed: player.gamesPlayed + 1,
+  };
+}
+
+export function completePawSteps(player: Player, rounds: number): Player {
+  if (
+    !Number.isSafeInteger(rounds) ||
+    rounds < 0 ||
+    rounds > PAW_STEPS_MAX_ROUNDS
+  )
+    return player;
+  return {
+    ...player,
+    coins: player.coins + rounds * PAW_STEPS_COINS_PER_ROUND,
+    gamesPlayed: player.gamesPlayed + 1,
+    pawStepsBest: Math.max(player.pawStepsBest, rounds),
   };
 }

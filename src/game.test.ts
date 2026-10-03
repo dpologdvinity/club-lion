@@ -8,6 +8,7 @@ import {
   meetLion,
   claimReward,
   completeGame,
+  completePawSteps,
   SHOP_ITEMS,
 } from "./game.ts";
 
@@ -60,5 +61,44 @@ test("save round trips preserve valid progress and reject invalid character choi
   assert.equal(
     restorePlayer(JSON.stringify({ ...player, color: "invisible" })).color,
     "gold",
+  );
+});
+
+test("Paw Steps pays ten coins per finished round and counts one game", () => {
+  const played = completePawSteps(newPlayer(), 5);
+  assert.equal(played.coins, newPlayer().coins + 50);
+  assert.equal(played.gamesPlayed, 1);
+  assert.equal(played.pawStepsBest, 5);
+});
+
+test("Paw Steps keeps the highest round count across games", () => {
+  const best = completePawSteps(completePawSteps(newPlayer(), 7), 3);
+  assert.equal(best.pawStepsBest, 7);
+  assert.equal(best.gamesPlayed, 2);
+  assert.equal(best.coins, newPlayer().coins + 100);
+});
+
+test("Paw Steps rejects scores no round could produce", () => {
+  const player = newPlayer();
+  assert.deepEqual(completePawSteps(player, -1), player);
+  assert.deepEqual(completePawSteps(player, 2.5), player);
+  assert.deepEqual(completePawSteps(player, 10_000), player);
+  assert.deepEqual(completePawSteps(player, Number.NaN), player);
+});
+
+test("a save without a Paw Steps record starts at zero and rejects nonsense", () => {
+  assert.equal(restorePlayer(JSON.stringify(newPlayer())).pawStepsBest, 0);
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...newPlayer(), pawStepsBest: 4 }))
+      .pawStepsBest,
+    4,
+  );
+  assert.deepEqual(
+    restorePlayer(JSON.stringify({ ...newPlayer(), pawStepsBest: -3 })),
+    newPlayer(),
+  );
+  assert.deepEqual(
+    restorePlayer(JSON.stringify({ ...newPlayer(), pawStepsBest: "many" })),
+    newPlayer(),
   );
 });
