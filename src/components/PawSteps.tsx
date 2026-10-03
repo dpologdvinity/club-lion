@@ -63,6 +63,24 @@ export function PawSteps({
   const litTimer = useRef<number | undefined>(undefined);
   const rewarded = useRef(false);
 
+  const phaseRef = useRef<Phase>("intro");
+  const stepRef = useRef(0);
+  const sequenceRef = useRef<Direction[]>([]);
+  const roundsRef = useRef(0);
+
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
+  useEffect(() => {
+    stepRef.current = step;
+  }, [step]);
+  useEffect(() => {
+    sequenceRef.current = sequence;
+  }, [sequence]);
+  useEffect(() => {
+    roundsRef.current = rounds;
+  }, [rounds]);
+
   const clearTimers = () => {
     timers.current.forEach((id) => window.clearTimeout(id));
     timers.current = [];
@@ -109,8 +127,10 @@ export function PawSteps({
   };
 
   const tap = (direction: Direction) => {
-    if (phase !== "input") return;
-    const expected = sequence[step];
+    if (phaseRef.current !== "input") return;
+    const currentSeq = sequenceRef.current;
+    const currentStep = stepRef.current;
+    const expected = currentSeq[currentStep];
     if (!expected) return;
     flash(direction, TAP_FLASH_MS);
     if (direction !== expected) {
@@ -120,12 +140,12 @@ export function PawSteps({
       later(MISS_FLASH_MS + REVEAL_MS, finish);
       return;
     }
-    if (step + 1 < sequence.length) {
-      setStep(step + 1);
+    if (currentStep + 1 < currentSeq.length) {
+      setStep((s) => s + 1);
       return;
     }
-    const grown = [...sequence, randomDirection()];
-    setRounds(rounds + 1);
+    const grown = [...currentSeq, randomDirection()];
+    setRounds((r) => r + 1);
     setSequence(grown);
     setPhase("showing");
     later(NEXT_ROUND_MS, () =>
@@ -141,6 +161,7 @@ export function PawSteps({
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)) return;
+      if (event.repeat) return;
       const direction = ARROW_KEYS[event.key];
       if (!direction) return;
       event.preventDefault();
