@@ -8,9 +8,29 @@ import {
   Trophy,
 } from "lucide-react";
 
-type Fruit = { id: number; x: number; y: number; ripe: boolean };
+type Fruit = { id: number; x: number; y: number; ripe: boolean; born: number };
 type Result = { caught: number; hits: number; score: number };
 const ROUND_MS = 30_000;
+const FRUIT_TOP = -8;
+const CATCH_TOP = 83;
+const MISS_TOP = 105;
+const BASKET_CATCH = 10;
+// Percent of field height per millisecond: ripe and rotten fruit reach the
+// basket about three seconds after they spawn, on any frame rate.
+const FALL_PER_MS = 0.03;
+// Spawns start about every 900ms and tighten toward 500ms as the round ends,
+// so the field stays busy without flooding the basket.
+const SPAWN_START_MS = 900;
+const SPAWN_END_MS = 500;
+const SPAWN_RAMP_MS = 95;
+
+// Rotten fruit only hurts when it lands in the basket, so say that plainly.
+const hitLine = (hits: number) => {
+  if (hits === 0) return "No rotten fruit landed in your basket.";
+  const fruit = hits === 1 ? "One rotten piece" : `${hits} rotten pieces`;
+  const hearts = hits === 1 ? "a heart" : `${hits} hearts`;
+  return `${fruit} landed in your basket and cost you ${hearts}.`;
+};
 
 export function FruitCatch({
   onFinish,
@@ -32,7 +52,6 @@ export function FruitCatch({
   const [hits, setHits] = useState(0);
   const basketRef = useRef(50);
   const frameRef = useRef(0);
-  const lastFrameRef = useRef(0);
   const spawnRef = useRef(0);
   const nextSpawnRef = useRef(0);
   const fruitIdRef = useRef(0);
@@ -58,9 +77,6 @@ export function FruitCatch({
   useEffect(() => {
     if (!playing) return;
     const tick = (now: number) => {
-      if (!lastFrameRef.current) lastFrameRef.current = now;
-      const delta = Math.min(now - lastFrameRef.current, 50);
-      lastFrameRef.current = now;
       const elapsed = now - spawnRef.current;
       if (elapsed >= ROUND_MS) {
         finish(ROUND_MS);
@@ -70,13 +86,17 @@ export function FruitCatch({
       let nextCaught = 0;
       let nextHits = 0;
       const next = fruitsRef.current.flatMap((fruit) => {
-        const y = fruit.y + delta * 0.0042;
-        if (y >= 83 && y <= 97 && Math.abs(fruit.x - basketRef.current) < 10) {
+        const y = FRUIT_TOP + (now - fruit.born) * FALL_PER_MS;
+        if (
+          y >= CATCH_TOP &&
+          y < MISS_TOP &&
+          Math.abs(fruit.x - basketRef.current) < BASKET_CATCH
+        ) {
           if (fruit.ripe) nextCaught += 1;
           else nextHits += 1;
           return [];
         }
-        return y > 105 ? [] : [{ ...fruit, y }];
+        return y >= MISS_TOP ? [] : [{ ...fruit, y }];
       });
       if (nextCaught) {
         totalsRef.current.caught += nextCaught;
@@ -88,13 +108,17 @@ export function FruitCatch({
         livesRef.current = Math.max(0, livesRef.current - nextHits);
         setLives(livesRef.current);
       }
-      const spawnEvery = Math.max(420, 780 - elapsed / 65);
+      const spawnEvery = Math.max(
+        SPAWN_END_MS,
+        SPAWN_START_MS - elapsed / SPAWN_RAMP_MS,
+      );
       if (elapsed >= nextSpawnRef.current) {
         next.push({
           id: ++fruitIdRef.current,
           x: 9 + Math.random() * 82,
-          y: -8,
+          y: FRUIT_TOP,
           ripe: Math.random() < 0.78,
+          born: now,
         });
         nextSpawnRef.current = elapsed + spawnEvery;
       }
@@ -140,7 +164,6 @@ export function FruitCatch({
     doneRef.current = false;
     spawnRef.current = performance.now();
     nextSpawnRef.current = 0;
-    lastFrameRef.current = 0;
     setCaught(0);
     setHits(0);
     setLives(3);
@@ -198,8 +221,8 @@ export function FruitCatch({
         </div>
         <h3>{result.caught >= 20 ? "Fruit-tastic!" : "Nice catching!"}</h3>
         <p>
-          You caught <strong>{result.caught}</strong> ripe fruit and dodged{" "}
-          <strong>{result.hits}</strong> rotten ones.
+          You caught <strong>{result.caught}</strong> ripe fruit.{" "}
+          {hitLine(result.hits)}
         </p>
         <div className="fruit-score">
           {result.score}
