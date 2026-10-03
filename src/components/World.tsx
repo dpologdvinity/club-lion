@@ -21,6 +21,12 @@ import { Avatar } from "./Avatar";
 import { PetCompanion } from "./PetCompanion";
 import { ActionWheel, type ActionId, type EmoteId } from "./ActionWheel";
 import { MangoToss } from "./MangoToss";
+import {
+  generateSparkleStep,
+  type SparkleParticle,
+} from "../utils/particleTrail";
+
+const BOARD_SPEED_MULTIPLIER = 1.5;
 
 const EMOTE_SYMBOLS: Record<EmoteId, string> = {
   heart: "❤️",
@@ -68,6 +74,10 @@ export function World({
   } | null>(null);
   const [tossPending, setTossPending] = useState(false);
   const walkTimer = useRef<number | null>(null);
+  const [sparkles, setSparkles] = useState<SparkleParticle[]>([]);
+  const sparklesRef = useRef<SparkleParticle[]>([]);
+  const lastFrameRef = useRef<number | null>(null);
+  const boardId = player.look.boardId;
   const [message, setMessage] = useState("");
   const [bubble, setBubble] = useState<{ id: string; text: string } | null>(
     null,
@@ -82,6 +92,8 @@ export function World({
     setBubble(null);
     setAvatarAction("idle");
     setIsTrotting(false);
+    sparklesRef.current = [];
+    setSparkles([]);
   }, [place]);
   useEffect(() => {
     if (!bubble) return;
@@ -94,6 +106,26 @@ export function World({
     },
     [],
   );
+
+  useEffect(() => {
+    let frame: number;
+    const tick = (now: number) => {
+      const last = lastFrameRef.current ?? now;
+      const deltaMs = Math.min(100, now - last);
+      lastFrameRef.current = now;
+      sparklesRef.current = generateSparkleStep(
+        sparklesRef.current,
+        position,
+        isTrotting && Boolean(boardId),
+        boardId,
+        deltaMs,
+      );
+      setSparkles(sparklesRef.current);
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [position, isTrotting, boardId]);
 
   const chime = () => {
     if (!sound) return;
@@ -121,8 +153,11 @@ export function World({
   };
 
   const walk = (x: number, y: number) => {
-    const targetX = Math.max(12, Math.min(88, x));
-    const targetY = Math.max(57, Math.min(89, y));
+    const speedMultiplier = boardId ? BOARD_SPEED_MULTIPLIER : 1;
+    const glideX = position.x + (x - position.x) * speedMultiplier;
+    const glideY = position.y + (y - position.y) * speedMultiplier;
+    const targetX = Math.max(12, Math.min(88, glideX));
+    const targetY = Math.max(57, Math.min(89, glideY));
     setAvatarHeading(targetX < position.x ? "left" : "right");
     setPosition({ x: targetX, y: targetY });
     setIsTrotting(true);
@@ -328,6 +363,22 @@ export function World({
             </span>
           </button>
         ))}
+        <div className="sparkle-trail-layer" aria-hidden="true">
+          {sparkles.map((p) => (
+            <span
+              key={p.id}
+              className="sparkle-particle"
+              style={{
+                left: `${p.x}%`,
+                top: `${p.y}%`,
+                width: `${p.size}px`,
+                height: `${p.size}px`,
+                backgroundColor: p.color,
+                opacity: p.alpha,
+              }}
+            />
+          ))}
+        </div>
         <div
           className="world-character your-character"
           style={{
