@@ -49,6 +49,7 @@ export function BeeStop({
   const [finalScore, setFinalScore] = useState(0);
   const trackRef = useRef<HTMLButtonElement>(null);
   const posRef = useRef(0);
+  const displayPosRef = useRef(0);
   const dirRef = useRef(1);
   const scoreRef = useRef(0);
   const finishRef = useRef(onFinish);
@@ -70,6 +71,7 @@ export function BeeStop({
     if (!track) return;
     track.style.setProperty("--bee-pos", pos.toFixed(4));
     track.dataset.beePos = pos.toFixed(4);
+    displayPosRef.current = pos;
   };
 
   useEffect(() => {
@@ -112,6 +114,7 @@ export function BeeStop({
     if (phase !== "feedback") return;
     const id = window.setTimeout(() => {
       if (round < BEE_STOP_ROUNDS) {
+        stoppedRef.current = false;
         setRound(round + 1);
         setLastBand(null);
         setPhase("running");
@@ -127,9 +130,12 @@ export function BeeStop({
     return () => window.clearTimeout(id);
   }, [phase, round]);
 
+  const stoppedRef = useRef(false);
   const stop = () => {
     if (phase !== "running") return;
-    const band = bandFor(Math.abs(posRef.current - flower), round);
+    if (stoppedRef.current) return;
+    stoppedRef.current = true;
+    const band = bandFor(Math.abs(displayPosRef.current - flower), round);
     scoreRef.current += BAND_POINTS[band];
     setBands((previous) => [...previous.slice(0, round - 1), band]);
     setLastBand(band);
@@ -139,8 +145,10 @@ export function BeeStop({
   const restart = () => {
     scoreRef.current = 0;
     settledRef.current = false;
+    stoppedRef.current = false;
     bestAtStart.current = best;
     posRef.current = 0;
+    displayPosRef.current = 0;
     dirRef.current = 1;
     setBands([]);
     setLastBand(null);
@@ -226,6 +234,7 @@ export function BeeStop({
         ref={trackRef}
         className="bee-track"
         onPointerDown={stop}
+        onClick={stop}
         onKeyDown={(event) => {
           if (event.key !== " " && event.key !== "Enter") return;
           event.preventDefault();
