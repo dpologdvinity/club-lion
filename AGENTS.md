@@ -25,7 +25,7 @@ Follow Prettier defaults: two-space indentation, double quotes, and semicolons. 
 
 ## Testing Guidelines
 
-Name unit tests `*.test.ts` and browser tests `*.spec.ts`. Protect coin balances, one-time rewards, purchase ownership, and save round trips. Exercise changed interactions, keyboard navigation, dialog focus, persistence, and mobile layouts; browser tests also use axe accessibility checks. No numeric coverage threshold is configured. Run relevant tests, typechecking, formatting, and the build before submitting changes (`npm run verify`).
+Name unit tests `*.test.ts` and browser tests `*.spec.ts`. Protect coin balances, one-time rewards, purchase ownership, and save round trips. Exercise changed interactions, keyboard navigation, dialog focus, persistence, and mobile layouts; browser tests also use axe accessibility checks. No numeric coverage threshold is configured. Inside task worktrees, Implementers and Reviewers run `npm test` (~100ms) to verify logic. Full verification (`npm run verify` + `test:e2e`) is executed once by the Verifier at the integration merge gate.
 
 ## Commit & Pull Request Guidelines
 

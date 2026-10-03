@@ -79,7 +79,7 @@ There are no rigid or permanently locked model assignments—any capable model (
    - Implements minimal, clean production code until tests pass (GREEN).
 3. **Completion**:
    - Deletes `PROMPT.md` before committing (`rm PROMPT.md`).
-   - Runs `npm test` and `npm run verify`.
+   - Runs `npm test` (~100ms) to ensure tests pass. (Do not run full `npm run verify` or build; that belongs to the merge gate).
    - Commits with the mandatory trailer:
      ```text
      <type>(<scope>): <summary>
@@ -101,7 +101,7 @@ There are no rigid or permanently locked model assignments—any capable model (
      - Architecture constraints: $0 Web Audio procedural synthesis (zero external MP3 assets), offline localStorage, strict TypeScript.
 2. **Dual-Agency Action**:
    - **Minor fixes / nits** (styling tweaks, missing type annotation, test edge case):
-     The Reviewer uses its judgment to make changes directly in the worktree, verifies with `npm run verify`, and commits with its own `Implementer:` or `Reviewer:` trailer.
+     The Reviewer uses its judgment to make changes directly in the worktree, verifies with `npm test`, and commits with its own `Implementer:` or `Reviewer:` trailer.
    - **Major architectural flaws or missing requirements**:
      The Reviewer writes a structured `PROMPT.md` in the worktree detailing what needs fixing, and hands it back to the Implementer.
 3. **Sign-off**:

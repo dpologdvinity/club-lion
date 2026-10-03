@@ -87,7 +87,22 @@ tail -n 25 .worktrees/<task-name>/agent.log
 
 ---
 
-## 3. Step-by-Step Task Execution Protocol
+## 3. Lean Verification Matrix (Eliminating Redundant Builds & Checks)
+
+Running `npm run verify` (`npm test && npm run typecheck && npm run format:check && npm run build`) repeatedly across all three agents wastes massive time on redundant Vite production builds and Prettier checks. Testing responsibilities are strictly tiered:
+
+| Role | Verification Command | Scope & Rationale | Speed |
+| :--- | :--- | :--- | :--- |
+| **Implementer (Claude Code)** | `npm test` | Unit tests only to confirm RED-GREEN TDD logic passes | **~100 ms** |
+| **Reviewer (Codex)** | `npm test` (or focused probe) | Quick regression probe to verify code logic and review fixes | **~100 ms** |
+| **Verifier & Merger (Antigravity)** | `npm run verify`<br/>`npm run test:e2e` | **Single Official Gatekeeper:** Unit tests, strict typechecking, Prettier check, production build, and browser tests | **Run ONCE at merge gate** |
+
+> [!IMPORTANT]
+> **Implementer and Reviewer must NEVER run `npm run verify` or full E2E suites.** Doing full Vite production builds and format checks 3 separate times per task is prohibited. Fast `npm test` (~100ms) is the only check needed inside the worktree.
+
+---
+
+## 4. Step-by-Step Task Execution Protocol
 
 ### Step 1: Worktree & Prompt Preparation (Orchestrator)
 ```bash
@@ -101,13 +116,13 @@ Update `docs/TASK-TRACKER.md` on `master` to mark the task as in-progress.
 ### Step 2: Implementation (Claude Code)
 Summon Claude in the worktree with output redirection:
 ```bash
-claude --dangerously-skip-permissions -p "Follow PROMPT.md strictly. Delete PROMPT.md when complete, verify with npm run verify, and commit with trailer 'Implementer: claude-sonnet-5 (claude code)'" > .worktrees/<task-name>/claude.log 2>&1
+claude --dangerously-skip-permissions -p "Follow PROMPT.md strictly. Run 'npm test' to verify TDD passes. Delete PROMPT.md when complete, and commit with trailer 'Implementer: claude-sonnet-5 (claude code)'" > .worktrees/<task-name>/claude.log 2>&1
 ```
 
 ### Step 3: Review & Audit (Codex)
 Summon Codex in the worktree with output redirection:
 ```bash
-codex exec --dangerously-bypass-approvals-and-sandbox -C .worktrees/<task-name> "Read .codex/instructions.md and audit the latest commit in this worktree against DESIGN.md, UX-CONTRACT.md, and procedural audio rules ($0 MP3 assets). Run npm run verify. If satisfied, sign off; if minor fixes are needed, apply and commit." > .worktrees/<task-name>/codex.log 2>&1
+codex exec --dangerously-bypass-approvals-and-sandbox -C .worktrees/<task-name> "Read .codex/instructions.md and audit the latest commit in this worktree against DESIGN.md, UX-CONTRACT.md, and procedural audio rules ($0 MP3 assets). Run 'npm test'. If satisfied, sign off; if minor fixes are needed, apply and commit." > .worktrees/<task-name>/codex.log 2>&1
 ```
 
 ### Step 4: Verification & Integration (Orchestrator)
@@ -115,7 +130,7 @@ codex exec --dangerously-bypass-approvals-and-sandbox -C .worktrees/<task-name> 
    ```bash
    git -C .worktrees/<task-name> rebase master
    ```
-2. Run full verification suites:
+2. Run the **Single Official Verification Gate**:
    ```bash
    npm run verify
    npm run test:e2e

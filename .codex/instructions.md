@@ -110,7 +110,7 @@ Full architectural specification: [`docs/WORKFLOW.md`](../docs/WORKFLOW.md)
 1. **Audit Diff & Requirements**: Inspect changes in `.worktrees/<task-name>` against [`DESIGN.md`](../DESIGN.md), [`UX-CONTRACT.md`](../UX-CONTRACT.md), and the phase plan. Ensure procedural Web Audio API is used for all sounds ($0 external asset rule) and strict typing is preserved.
 2. **Dual-Agency Action**:
    - **Minor fixes / nits** (styling tweaks, missing type annotation, test edge case):
-     Make the changes directly in the worktree, run `npm run verify`, and commit with your trailer.
+     Make the changes directly in the worktree, run `npm test` (or focused probe: ~100ms), and commit with your trailer. (Do NOT run full `npm run verify` or E2E tests during task review; that gate is run once at merge time).
    - **Major architectural changes or missing requirements**:
      Write a structured `PROMPT.md` in the worktree detailing what needs fixing, and hand it back to the Implementer.
 3. **Approval**: Once satisfied, sign off on the worktree so it can enter the merge train.
