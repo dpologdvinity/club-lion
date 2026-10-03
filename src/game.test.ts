@@ -8,6 +8,7 @@ import {
   meetLion,
   claimReward,
   completeGame,
+  completeBeeStop,
   SHOP_ITEMS,
 } from "./game.ts";
 
@@ -60,5 +61,44 @@ test("save round trips preserve valid progress and reject invalid character choi
   assert.equal(
     restorePlayer(JSON.stringify({ ...player, color: "invisible" })).color,
     "gold",
+  );
+});
+
+test("finishing Bee Stop pays its score band once and keeps the best result", () => {
+  const start = newPlayer();
+  const sloppy = completeBeeStop(start, 460);
+  assert.equal(sloppy.coins, start.coins + 60);
+  assert.equal(sloppy.gamesPlayed, 1);
+  assert.equal(sloppy.beeStopBest, 460);
+  const perfect = completeBeeStop(sloppy, 1000);
+  assert.equal(perfect.coins, sloppy.coins + 120);
+  assert.equal(perfect.gamesPlayed, 2);
+  assert.equal(perfect.beeStopBest, 1000);
+  const worse = completeBeeStop(perfect, 120);
+  assert.equal(worse.beeStopBest, 1000);
+  assert.equal(worse.coins, perfect.coins + 15);
+});
+
+test("Bee Stop rejects impossible scores instead of paying out", () => {
+  const start = newPlayer();
+  for (const score of [-1, 1001, 12.5, Number.NaN, Number.POSITIVE_INFINITY])
+    assert.deepEqual(completeBeeStop(start, score), start);
+});
+
+test("a save from before Bee Stop existed keeps its progress and reports no best score", () => {
+  const { beeStopBest: _omitted, ...legacy } = newPlayer();
+  const restored = restorePlayer(
+    JSON.stringify({ ...legacy, coins: 999, name: "Roary" }),
+  );
+  assert.equal(restored.beeStopBest, 0);
+  assert.equal(restored.coins, 999);
+  assert.equal(restored.name, "Roary");
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...legacy, beeStopBest: 5000 })).beeStopBest,
+    1000,
+  );
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...legacy, beeStopBest: -7 })).beeStopBest,
+    0,
   );
 });

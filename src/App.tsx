@@ -12,6 +12,7 @@ import {
 import {
   buyItem,
   claimReward,
+  completeBeeStop,
   completeGame,
   meetLion,
   PLACES,
@@ -27,7 +28,7 @@ import { Dialog } from "./components/Dialog";
 import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
 import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
-import { MemorySafari } from "./components/MemorySafari";
+import { GamesPanel } from "./components/GamesPanel";
 
 type Panel = "map" | "style" | "shop" | "games" | "help" | null;
 
@@ -294,10 +295,14 @@ export default function App() {
             />
           )}
           {panel === "games" && (
-            <MemorySafari
-              onFinish={(pairs) => {
-                setPlayer((p) => completeGame(p, pairs));
-              }}
+            <GamesPanel
+              player={player}
+              onCompleteGame={(pairs) =>
+                setPlayer((p) => completeGame(p, pairs))
+              }
+              onCompleteBeeStop={(score) =>
+                setPlayer((p) => completeBeeStop(p, score))
+              }
               onClose={closePanel}
             />
           )}
