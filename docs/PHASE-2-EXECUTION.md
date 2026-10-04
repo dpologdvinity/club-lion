@@ -7,9 +7,9 @@ User authorized full orchestration, implementation, review, verification, integr
 
 - Tasks 1, 4, 5: already reviewed, verified, and integrated before this run. Do not redispatch.
 - Task 2: complete, integrated as `f65cc9b`; worktree/branch retired. Source repair `541f450`. Fresh gate: 142/142 unit tests, strict types, Prettier, production build, and 88/88 desktop/mobile browser tests.
-- Task 3: complete, squash integrated from `a778dda`. Reviewed bounded geometry repair and narrow DJ contrast fix. Fresh final gate: 154/154 unit tests, strict types, Prettier, build, 108/108 browser tests. Initial gate 107/108 identified DJ shared-stat CSS contrast; corrected before integration. Worktree/branch retired after merge.
-- Task 6: branch `feat/phase-2-task-6-coaster`, worktree `.worktrees/phase-2-task-6-coaster`. Claude CLI failed before edits because its OAuth session expired. Codex substitute dispatched with PROMPT.md; failed CLI output `/tmp/club-lion-task6-claude.log`. Implementation `b7b48d5` complete; independent review and merge gate remain.
-- Task 7: pending Tasks 3 and 6 integration. Wire room routing, park scenes, Club Pulse floor, DJ booth, smoothie café, coaster ride, arcade/map destinations, and desktop/mobile browser proof.
+- Task 3: complete, integrated as `76e757a` from `a778dda`. Reviewed bounded geometry repair and narrow DJ contrast fix. Fresh final gate: 154/154 unit tests, strict types, Prettier, build, 108/108 browser tests. Initial gate 107/108 identified DJ shared-stat CSS contrast; corrected before integration. Worktree/branch retired after merge.
+- Task 6: complete, squash integrated from rebased candidate `faeb19b6ac5c313c56dca5ae27f52654313fc5da`. Codex substituted after Claude OAuth expired. Source `b7b48d5`, reviewed repair `0f23762`. Fresh gate: 161/161 unit tests, strict types, Prettier, build and 118/118 browser tests. Worktree/branch retired after integration.
+- Task 7: Codex implementing in `.worktrees/phase-2-integration`, branch `feat/phase-2-integration`. Created from reviewed Task 6 candidate `faeb19b6ac5c313c56dca5ae27f52654313fc5da`. After Task 6 squash, replay ONLY Task 7 commits with `git rebase --onto master faeb19b6ac5c313c56dca5ae27f52654313fc5da` inside that worktree. Orchestrator owns tracker/ledger; worker owns remaining task-relevant source, scenes, tests and handoff. Brief copied from `/tmp/club-lion-task7-brief.md` to worktree PROMPT.md.
 
 ## Decisions and integration contracts
 
@@ -26,4 +26,4 @@ Root cause confirmed: native Node HTTP probes to both localhost and 127.0.0.1 on
 
 ## Merge queue
 
-Task 3 → Task 6 → Task 7. Rebase each candidate onto current master, resolve shared package/CSS changes, run the official full gate once for the resulting candidate, squash with attribution, update tracker, and retire its worktree/branch.
+Tasks 3 and 6 integrated. Task 7 remains. Rebase each candidate onto current master, resolve shared package/CSS changes, run the official full gate once for the resulting candidate, squash with attribution, update tracker, and retire its worktree/branch.
