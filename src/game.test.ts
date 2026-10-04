@@ -17,6 +17,7 @@ import {
   completeSmoothieOrder,
   completeFishingCatch,
   completeSpyPuzzle,
+  applyPetCareAction,
   unlockSecretCatalogItem,
   unlockStamp,
   migratePlayerSave,
@@ -955,4 +956,87 @@ test("sled completion derives rewards, raises best, and rejects invalid or overf
   );
   const crashAtFinish = completeSledRun(player, { ...result, crashed: true });
   assert.equal(crashAtFinish.coins, 295);
+});
+
+test("legacy V2 saves without pet care preserve progress and profile", () => {
+  const current = {
+    ...migratePlayerSave(newPlayer()),
+    coins: 987,
+    gamesPlayed: 12,
+    starRank: 9,
+    moodQuote: "Ready for the nursery",
+    visited: ["pet-paradise" as const],
+  };
+  const { petCare: _care, ...legacy } = current;
+  for (const raw of [legacy, JSON.stringify(legacy)]) {
+    const restored = migratePlayerSave(raw);
+    assert.equal(restored.coins, 987);
+    assert.equal(restored.gamesPlayed, 12);
+    assert.equal(restored.starRank, 9);
+    assert.equal(restored.moodQuote, legacy.moodQuote);
+    assert.deepEqual(restored.visited, legacy.visited);
+    assert.equal(restored.petCare.happiness, 60);
+  }
+});
+
+test("pet care survives V1 and V2 round trips without mutating the player", () => {
+  for (const original of [newPlayer(), migratePlayerSave(newPlayer())]) {
+    const before = structuredClone(original);
+    const cared = applyPetCareAction(original, "wash");
+    assert.deepEqual(original, before);
+    if (cared.version === 1) {
+      assert.deepEqual(
+        restorePlayer(JSON.stringify(cared)).petCare,
+        cared.petCare,
+      );
+    }
+    assert.deepEqual(migratePlayerSave(cared).petCare, cared.petCare);
+    assert.deepEqual(
+      migratePlayerSave(JSON.stringify(cared)).petCare,
+      cared.petCare,
+    );
+  }
+});
+
+test("invalid pet stats recover safely without discarding other progress", () => {
+  const saved = {
+    ...migratePlayerSave(newPlayer()),
+    coins: 987,
+    petCare: {
+      happiness: "100",
+      cleanliness: -20,
+      energy: 200,
+      hunger: null,
+      lastCareTimestamp: -1,
+      unexpected: "discard",
+    },
+  };
+  for (const version of [1, 2]) {
+    const restored = migratePlayerSave({ ...saved, version });
+    assert.equal(restored.coins, 987);
+    assert.deepEqual(restored.petCare, {
+      happiness: 60,
+      cleanliness: 0,
+      energy: 100,
+      hunger: 60,
+      lastCareTimestamp: 0,
+    });
+  }
+});
+
+test("pet care grants Pampered Pride atomically and once without coin rewards", () => {
+  const player = migratePlayerSave(newPlayer());
+  const first = applyPetCareAction(player, "brush");
+  assert.equal(first.stamps?.includes("pet_pampered"), false);
+  const pampered = applyPetCareAction(first, "brush");
+  assert.equal(pampered.petCare.happiness, 100);
+  assert.deepEqual(pampered.stamps, ["pet_pampered"]);
+  const replay = applyPetCareAction(pampered, "play");
+  assert.deepEqual(replay.stamps, ["pet_pampered"]);
+  assert.equal(replay.coins, player.coins);
+  assert.equal(replay.gamesPlayed, player.gamesPlayed);
+  assert.deepEqual(
+    migratePlayerSave(JSON.stringify(replay)).stamps,
+    replay.stamps,
+  );
 });

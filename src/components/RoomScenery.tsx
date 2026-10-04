@@ -609,6 +609,129 @@ function CondoScenery({ seconds, width }: { seconds: number; width: number }) {
   );
 }
 
+function PetParadiseScenery({
+  seconds: _seconds,
+  width,
+}: {
+  seconds: number;
+  width: number;
+}) {
+  return (
+    <g className="scene-petparadise">
+      {/* Clawfoot tubs row */}
+      {[200, 600, 1000, 1400, 1800, 2200].map((x, i) => (
+        <g key={`tub-${i}`} transform={`translate(${x} 450)`}>
+          {/* Tub base */}
+          <ellipse cx="0" cy="0" rx="80" ry="30" fill="#d4a574" />
+          {/* Tub body */}
+          <rect x="-70" y="-40" width="140" height="50" rx="8" fill="#fefbf0" />
+          {/* Claw feet */}
+          {[-50, 50].map((fx, fi) => (
+            <g key={`foot-${fi}`}>
+              <circle cx={fx} cy="15" r="6" fill="#d4a574" />
+            </g>
+          ))}
+          {/* Water bubbles */}
+          {[...Array(3)].map((_, bi) => (
+            <circle
+              key={`bubble-${bi}`}
+              cx={-40 + bi * 40}
+              cy={-15 + Math.sin(i + bi) * 5}
+              r="4"
+              fill="#a8d8ea"
+              opacity="0.6"
+            />
+          ))}
+        </g>
+      ))}
+
+      {/* Plush velvet cushions */}
+      {[400, 1000, 1600, 2000].map((x, i) => (
+        <g key={`cushion-${i}`} transform={`translate(${x} 550)`}>
+          {/* Cushion shape */}
+          <ellipse cx="0" cy="0" rx="60" ry="50" fill="#d8b4d8" />
+          {/* Texture lines */}
+          {[...Array(4)].map((_, ti) => (
+            <line
+              key={`line-${ti}`}
+              x1="-50"
+              y1={-25 + ti * 15}
+              x2="50"
+              y2={-25 + ti * 15}
+              stroke="#c8a4c8"
+              strokeWidth="1"
+              opacity="0.5"
+            />
+          ))}
+        </g>
+      ))}
+
+      {/* Colorful agility tunnels */}
+      {[300, 1200, 2100].map((x, i) => (
+        <g key={`tunnel-${i}`} transform={`translate(${x} 480)`}>
+          {/* Tunnel barrel */}
+          <ellipse
+            cx="0"
+            cy="0"
+            rx="90"
+            ry="45"
+            fill={["#ffb3ba", "#ffdfba", "#ffffba"][i]}
+            opacity="0.8"
+          />
+          {/* Tunnel opening */}
+          <ellipse
+            cx="0"
+            cy="0"
+            rx="75"
+            ry="35"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="2"
+          />
+          {/* Rings */}
+          {[...Array(3)].map((_, ri) => (
+            <circle
+              key={`ring-${ri}`}
+              cx={-60 + ri * 60}
+              cy="0"
+              r="5"
+              fill={["#ffb3ba", "#ffdfba", "#ffffba"][i]}
+              opacity="0.6"
+            />
+          ))}
+        </g>
+      ))}
+
+      {/* Paw-print chandeliers hanging from above */}
+      {[600, 1200, 1800].map((x, i) => (
+        <g key={`chandelier-${i}`} transform={`translate(${x} 250)`}>
+          {/* Hanging chain */}
+          <line x1="0" y1="0" x2="0" y2="80" stroke="#d4a574" strokeWidth="2" />
+          {/* Main paw center pad */}
+          <circle cx="0" cy="80" r="15" fill="#f4c430" />
+          {/* Toe pads arranged in paw pattern */}
+          {[
+            { x: -20, y: 50 },
+            { x: 20, y: 50 },
+            { x: -10, y: 30 },
+            { x: 10, y: 30 },
+          ].map((pos, pi) => (
+            <circle
+              key={`toe-${pi}`}
+              cx={pos.x}
+              cy={pos.y}
+              r="8"
+              fill="#f4c430"
+            />
+          ))}
+          {/* Light glow */}
+          <circle cx="0" cy="80" r="20" fill="#ffd700" opacity="0.2" />
+        </g>
+      ))}
+    </g>
+  );
+}
+
 function ScoutBaseScenery({
   seconds,
   width,
@@ -1608,10 +1731,11 @@ export function RoomScenery({
   const isScoutBase = place === "secret-scout-base";
   const isMtMist = place === "mt-mist";
   const isCanyonRapids = place === "canyon-rapids";
+  const isPetParadise = place === "pet-paradise";
   const width =
     club || isCondo || isScoutBase
       ? 1920
-      : downtown || isMtMist || isCanyonRapids
+      : downtown || isMtMist || isCanyonRapids || isPetParadise
         ? 2400
         : 2800;
   const cart = computeCoasterTrackPosition(seconds / 28);
@@ -1634,9 +1758,11 @@ export function RoomScenery({
                     ? "#0e1517"
                     : isCanyonRapids
                       ? "#cf9a64"
-                      : isSplashEntry || isSplashRiver
-                        ? "#58b5be"
-                        : "#91cfc9"
+                      : isPetParadise
+                        ? "#f5e6f0"
+                        : isSplashEntry || isSplashRiver
+                          ? "#58b5be"
+                          : "#91cfc9"
             }
           />
           <stop
@@ -1650,9 +1776,11 @@ export function RoomScenery({
                     ? "#192529"
                     : isCanyonRapids
                       ? "#f6ddb0"
-                      : isSplashEntry || isSplashRiver
-                        ? "#e3f3db"
-                        : "#f7e4aa"
+                      : isPetParadise
+                        ? "#d0f0e8"
+                        : isSplashEntry || isSplashRiver
+                          ? "#e3f3db"
+                          : "#f7e4aa"
             }
           />
         </linearGradient>
@@ -1732,6 +1860,8 @@ export function RoomScenery({
         <ScoutBaseScenery seconds={seconds} width={width} />
       ) : isCanyonRapids ? (
         <CanyonRapidsScenery seconds={seconds} width={width} />
+      ) : isPetParadise ? (
+        <PetParadiseScenery seconds={seconds} width={width} />
       ) : isSplashEntry ? (
         <>
           <g transform="translate(900 500)">

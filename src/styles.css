@@ -6395,3 +6395,269 @@ svg {
 .server-feedback:empty {
   display: none;
 }
+
+/* Pet Care Modal */
+
+.pet-care-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.pet-avatar-section {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.pet-avatar-container {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5e6f0 0%, #d0f0e8 100%);
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(212, 165, 212, 0.2);
+}
+
+.pet-avatar {
+  transform: scale(0.75);
+}
+
+.heart-burst {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.floating-heart {
+  position: absolute;
+  font-size: 24px;
+  animation: float-up 1.5s ease-out forwards;
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100px) scale(0.5);
+  }
+}
+
+.effect-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  font-size: 16px;
+  animation: particle-burst 0.6s ease-out forwards;
+}
+
+@keyframes particle-burst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx, 50px), var(--ty, -60px)) scale(0);
+  }
+}
+
+.effect-bubbles .particle {
+  --tx: -50px;
+  --ty: -60px;
+}
+
+.effect-particles .particle {
+  left: 50%;
+  top: 45%;
+}
+.effect-particles .particle:nth-child(even) {
+  --tx: 50px;
+  --ty: -40px;
+}
+.effect-particles .particle:nth-child(3n) {
+  --tx: 0px;
+  --ty: -80px;
+}
+
+.effect-sparkle .particle {
+  animation: sparkle-burst 0.8s ease-out forwards;
+}
+
+@keyframes sparkle-burst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx, 50px), var(--ty, -60px)) scale(0)
+      rotate(360deg);
+  }
+}
+
+.effect-bounce .bounce-particle {
+  animation: bounce-burst 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+@keyframes bounce-burst {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) scale(1.2);
+  }
+}
+
+.pet-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.pet-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pet-stat-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.pet-stat-bar {
+  width: 100%;
+  height: 20px;
+  background: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.stat-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+  border-radius: 10px;
+}
+
+.happiness-fill {
+  background: linear-gradient(90deg, #ff6b9d 0%, #ffb3d9 100%);
+}
+
+.cleanliness-fill {
+  background: linear-gradient(90deg, #64b5f6 0%, #bbdefb 100%);
+}
+
+.energy-fill {
+  background: linear-gradient(90deg, #ffd54f 0%, #ffe082 100%);
+}
+
+.hunger-fill {
+  background: linear-gradient(90deg, #a1887f 0%, #d7ccc8 100%);
+}
+
+.pet-stat-value {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.care-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.care-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--accent);
+  border: 2px solid var(--accent-dark);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 13px;
+  color: #59361b;
+}
+
+.care-action-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(212, 165, 212, 0.2);
+}
+
+.care-action-btn:active {
+  transform: translateY(0);
+}
+
+.action-icon {
+  font-size: 24px;
+}
+
+.achievement-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--green-soft);
+  border: 2px solid var(--green);
+  border-radius: 10px;
+  font-weight: 700;
+  color: var(--text);
+  font-size: 14px;
+  margin-top: 10px;
+  animation: achievement-pulse 0.6s ease;
+}
+
+@keyframes achievement-pulse {
+  0% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 590px) {
+  .care-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heart-burst,
+  .effect-particles {
+    display: none;
+  }
+}

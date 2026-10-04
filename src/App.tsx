@@ -23,6 +23,7 @@ import {
   recordFashionShowResult,
   completeRiverSurf,
   completeSpyPuzzle,
+  applyPetCareAction,
   meetLion,
   unlockSecretCatalogItem,
   unlockStamp,
@@ -57,6 +58,8 @@ import { SpyTerminalModal } from "./components/SpyTerminal";
 import { AccountModal } from "./components/AccountModal";
 import { ServerListModal } from "./components/ServerListModal";
 import { LOCAL_PLAYER_ID, useCustomServers } from "./useCustomServers";
+import { PetCareModal } from "./components/PetCareModal";
+import { performPetCare } from "./utils/petCare";
 
 type Panel =
   | "map"
@@ -76,6 +79,7 @@ type Panel =
   | "sled-run"
   | "river-surf"
   | "servers"
+  | "pet-care"
   | null;
 
 export default function App() {
@@ -326,6 +330,7 @@ export default function App() {
               setPlayer((p) => unlockStamp(p, stampId))
             }
             onOpenRiverSurf={() => setPanel("river-surf")}
+            onOpenPetCare={() => setPanel("pet-care")}
           />
           <Sidebar
             player={player}
@@ -565,6 +570,23 @@ export default function App() {
           />
         </Dialog>
       )}
+      {panel === "pet-care" && (
+        <PetCareModal
+          lionColor={player.color}
+          lionAccessory={player.accessory}
+          petCare={player.petCare}
+          onCare={(action) => {
+            setPlayer((p) => applyPetCareAction(p, action));
+            if (
+              !player.stamps?.includes("pet_pampered") &&
+              performPetCare(player.petCare, action).nextState.happiness >= 100
+            ) {
+              notify("🐾 Pampered Pride stamp unlocked!");
+            }
+          }}
+          onClose={closePanel}
+        />
+      )}
       {panel &&
         panel !== "card" &&
         panel !== "catalog" &&
@@ -576,7 +598,8 @@ export default function App() {
         panel !== "spy" &&
         panel !== "account" &&
         panel !== "servers" &&
-        panel !== "river-surf" && (
+        panel !== "river-surf" &&
+        panel !== "pet-care" && (
           <Dialog
             title={titles[panel][0]}
             subtitle={titles[panel][1]}

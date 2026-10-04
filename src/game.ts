@@ -29,6 +29,8 @@ import {
   validateAvatarLook,
   CATALOG_ITEMS,
 } from "./types/world.ts";
+import type { PetCareState, CareAction } from "./utils/petCare.ts";
+import { DEFAULT_PET_CARE_STATE, performPetCare } from "./utils/petCare.ts";
 
 export * from "./types/world.ts";
 
@@ -51,7 +53,8 @@ export type PlaceId =
   | "sunset-beach"
   | "coastal-pier"
   | "mt-mist"
-  | "canyon-rapids";
+  | "canyon-rapids"
+  | "pet-paradise";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -85,6 +88,7 @@ export type PlayerBase = {
   outgoingFriendRequests?: string[];
   recentVisitors?: string[];
   riverSurfBest?: number;
+  petCare?: PetCareState;
 };
 
 export type Player = PlayerBase & {
@@ -249,6 +253,12 @@ export const PLACES: {
     subtitle: "Red rock walls & whitewater thrills",
     imageClass: "scene-canyon",
   },
+  {
+    id: "pet-paradise",
+    name: "Pet Paradise Nursery",
+    subtitle: "Pamper your pride with care",
+    imageClass: "scene-petparadise",
+  },
 ];
 
 export const NEIGHBORS = [
@@ -322,6 +332,30 @@ function restoredRounds(value: unknown): number | null {
     (value as number) <= PAW_STEPS_MAX_ROUNDS
     ? (value as number)
     : null;
+}
+
+function restorePetCare(value: unknown): PetCareState {
+  const saved =
+    value && typeof value === "object"
+      ? (value as Record<string, unknown>)
+      : {};
+  const stat = (key: "happiness" | "cleanliness" | "energy" | "hunger") => {
+    const value = saved[key];
+    return typeof value === "number" && Number.isFinite(value)
+      ? Math.max(0, Math.min(100, value))
+      : DEFAULT_PET_CARE_STATE[key];
+  };
+  return {
+    happiness: stat("happiness"),
+    cleanliness: stat("cleanliness"),
+    energy: stat("energy"),
+    hunger: stat("hunger"),
+    lastCareTimestamp:
+      Number.isSafeInteger(saved.lastCareTimestamp) &&
+      (saved.lastCareTimestamp as number) >= 0
+        ? (saved.lastCareTimestamp as number)
+        : 0,
+  };
 }
 
 export function restorePlayer(raw: string | null): Player {
@@ -401,6 +435,9 @@ export function restorePlayer(raw: string | null): Player {
             ),
           ]
         : [],
+      ...(p.petCare === undefined
+        ? {}
+        : { petCare: restorePetCare(p.petCare) }),
       gamesPlayed: p.gamesPlayed,
       beeStopBest: restoreBeeStopBest(p.beeStopBest),
       pawStepsBest,
@@ -518,6 +555,7 @@ export type PlayerV2 = PlayerBase & {
   version: 2;
   look: AvatarLook;
   pet: PetState;
+  petCare: PetCareState;
   starRank: number;
   moodQuote: string;
 };
@@ -530,7 +568,9 @@ function calculateStarRank(gamesPlayed: number, coins: number): number {
   return 1 + Math.floor(gamesPlayed / 5) + Math.floor(coins / 500);
 }
 
-function isPlayerV2(value: unknown): value is PlayerV2 {
+function isPlayerV2(
+  value: unknown,
+): value is Omit<PlayerV2, "petCare"> & { petCare?: unknown } {
   if (!value || typeof value !== "object") return false;
   const candidate = value as Record<string, unknown>;
   return (
@@ -544,15 +584,21 @@ function isPlayerV2(value: unknown): value is PlayerV2 {
 }
 
 export function migratePlayerSave(save: unknown): PlayerV2 {
+  if (typeof save === "string") {
+    try {
+      return migratePlayerSave(JSON.parse(save));
+    } catch {
+      return migratePlayerSave(null);
+    }
+  }
   if (isPlayerV2(save)) {
-    const v1 = restorePlayer(
-      JSON.stringify({ ...(save as PlayerV2), version: 1 }),
-    );
+    const v1 = restorePlayer(JSON.stringify({ ...save, version: 1 }));
     return {
       ...v1,
       version: 2,
       look: save.look,
       pet: save.pet,
+      petCare: restorePetCare(save.petCare),
       starRank: save.starRank,
       moodQuote: save.moodQuote,
     };
@@ -572,6 +618,7 @@ export function migratePlayerSave(save: unknown): PlayerV2 {
     raw.pet && typeof raw.pet === "object"
       ? ({ ...DEFAULT_PET_STATE, ...(raw.pet as object) } as PetState)
       : DEFAULT_PET_STATE;
+  const petCare = restorePetCare(v1.petCare);
   const moodQuote =
     typeof raw.moodQuote === "string" && raw.moodQuote.trim()
       ? raw.moodQuote.trim().slice(0, 60)
@@ -582,6 +629,7 @@ export function migratePlayerSave(save: unknown): PlayerV2 {
     version: 2,
     look,
     pet,
+    petCare,
     starRank: calculateStarRank(v1.gamesPlayed, v1.coins),
     moodQuote,
   };
@@ -777,6 +825,20 @@ export function completeSmoothieOrder<T extends PlayerBase>(
     coins: player.coins + coinsEarned,
     smoothiesServed: (player.smoothiesServed ?? 0) + 1,
   } as T;
+}
+
+export function applyPetCareAction<T extends PlayerBase>(
+  player: T,
+  action: CareAction,
+): T {
+  const { nextState } = performPetCare(
+    player.petCare ?? DEFAULT_PET_CARE_STATE,
+    action,
+  );
+  const cared = { ...player, petCare: nextState } as T;
+  return nextState.happiness >= 100
+    ? unlockStamp(cared, "pet_pampered")
+    : cared;
 }
 
 export function completeSpyPuzzle<T extends PlayerBase>(

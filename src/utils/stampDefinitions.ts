@@ -254,6 +254,15 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     icon: "🧠",
     unlockHint: "Complete all six pairs in Memory Safari.",
   },
+  {
+    id: "pet_pampered",
+    name: "Pampered Pride",
+    category: "world_secrets",
+    description:
+      "Pampered your companion pet lion to 100% happiness in the Pet Nursery.",
+    icon: "🐾",
+    unlockHint: "Max out your pet's happiness at the Pet Paradise Nursery.",
+  },
 ];
 
 export function isStampUnlocked(

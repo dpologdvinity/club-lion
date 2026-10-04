@@ -86,6 +86,12 @@ export const downtownPlazaManifest: RoomManifest = {
       triggerBounds: { x1: 500, y1: 675, x2: 640, y2: 720 },
       label: "Canyon Rapids",
     },
+    {
+      targetRoomId: "pet-paradise",
+      targetSpawn: { x: 1200, y: 600 },
+      triggerBounds: { x1: 700, y1: 675, x2: 840, y2: 720 },
+      label: "Pet Paradise",
+    },
   ],
   interactives: [
     {

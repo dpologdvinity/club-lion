@@ -77,6 +77,7 @@ type WorldProps = {
   onOpenCondo?: () => void;
   onUnlockStamp?: (stampId: string) => void;
   onOpenRiverSurf?: () => void;
+  onOpenPetCare?: () => void;
 };
 
 export function World({
@@ -98,6 +99,7 @@ export function World({
   onOpenCondo,
   onUnlockStamp,
   onOpenRiverSurf,
+  onOpenPetCare,
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
   const [position, setPosition] = useState(() =>
@@ -402,6 +404,7 @@ export function World({
       );
     else if (id === "lazy-river-current")
       notify("Drift along the gentle tropical current on your inner tube.");
+    else if (id === "pet-grooming-station") onOpenPetCare?.();
     else if (id === "spy-terminal") onOpenSpy?.();
     else if (id === "river-surf-dock") onOpenRiverSurf?.();
     else if (id === "condo-furniture-editor") onOpenCondo?.();
@@ -432,6 +435,7 @@ export function World({
     "tsunami-wave-pool": "Tsunami Wave Pool",
     "dump-bucket-fortress": "Dump Bucket Fortress",
     "lazy-river-current": "Lazy River Current",
+    "pet-grooming-station": "Grooming Spa",
     "spy-terminal": "Launch Spy Terminal",
     "condo-furniture-editor": "Customize Furniture Grid",
     "condo-jukebox": "Grand Jukebox",
