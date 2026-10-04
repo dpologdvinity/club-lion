@@ -125,9 +125,9 @@ Implementation Plan: [`docs/plans/2026-10-04-phase-5-sunset-beach-mt-mist-pet-pa
 | Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Spec** | Phase 5 Architecture Plan & Task Ledger | `master` | **gemini-3.8-flash (antigravity)** | `master` | ✅ Approved & Dispatched |
-| **Task 1** | Global Environmental Lighting & Time-of-Day Pipeline | `feat/phase-5-lighting` | **claude-sonnet-5 (claude code)** | - | ⏳ Dispatched |
-| **Task 2** | Sunset Beach, Coastal Boardwalk & Nautical Foghorn | `feat/phase-5-beach` | **gpt-6.1-sol (codex)** | - | ⏳ Queued |
-| **Task 3** | Mt. Mist Alpine Basecamp & Extreme Sled Downhill Minigame | `feat/phase-5-sled` | **claude-sonnet-5 (claude code)** | - | ⏳ Queued |
+| **Task 1** | Global Environmental Lighting & Time-of-Day Pipeline | `feat/phase-5-lighting` | **claude-sonnet-5 (claude code)** | - | ⏳ In Progress (Parallel) |
+| **Task 2** | Sunset Beach, Coastal Boardwalk & Nautical Foghorn | `feat/phase-5-beach` | **gpt-6.1-sol (codex)** | - | ⏳ In Progress (Parallel) |
+| **Task 3** | Mt. Mist Alpine Basecamp & Extreme Sled Downhill Minigame | `feat/phase-5-sled` | **gpt-6.1-sol (codex)** | - | ⏳ In Progress (Parallel) |
 | **Task 4** | Canyon Rapids River Surf Stunt Minigame | `feat/phase-5-river-surf` | **gpt-6.1-sol (codex)** | - | ⏳ Queued |
 | **Task 5** | Pet Paradise Nursery & Grooming Care Engine | `feat/phase-5-pet-paradise` | **claude-sonnet-5 (claude code)** | - | ⏳ Queued |
 | **Task 6** | Named Community Servers & Custom Lounges ($0 Stack) | `feat/phase-5-servers` | **gpt-6.1-sol (codex)** | - | ⏳ Queued |
