@@ -61,8 +61,8 @@ There are no rigid or permanently locked model assignments—any capable model (
 3. **Squash Integration & Cleanup**:
    - Once the Verifier confirms the worktree is rebased, conflict-free, and verified:
      - Merges and squashes the worktree into `master` as a single Conventional Commit.
-     - Removes the worktree: `git worktree remove --force .worktrees/<task-name>`.
-     - Deletes the feature branch: `git branch -d feat/<task-name>`.
+     - Removes the worktree: `git worktree remove .worktrees/<task-name>`.
+     - After confirming the squash commit and preserving its evidence, deletes the feature branch: `git branch -D feat/<task-name>`.
      - Updates `docs/TASK-TRACKER.md` on `master` with completion status and commit hash.
      - Pushes `master` to remote: `git push origin master`.
    - Directs the Verifier to process the next worktree in the queue.

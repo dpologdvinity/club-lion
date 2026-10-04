@@ -46,10 +46,10 @@ Never let stdout or stderr print to the orchestrator terminal. Redirect all stre
 
 ```bash
 # Claude implementation invocation
-(cd .worktrees/<task-name> && claude --dangerously-skip-permissions -p "$(cat PROMPT.md)" > claude.log 2>&1) &
+(cd .worktrees/<task-name> && claude --dangerously-skip-permissions -p "$(cat PROMPT.md)" > /tmp/club-lion-<task-name>-claude.log 2>&1) &
 
 # Codex review invocation
-codex exec --dangerously-bypass-approvals-and-sandbox -C .worktrees/<task-name> "<review prompt>" > .worktrees/<task-name>/codex.log 2>&1 &
+codex exec --dangerously-bypass-approvals-and-sandbox -C .worktrees/<task-name> "<review prompt>" > /tmp/club-lion-<task-name>-codex.log 2>&1 &
 ```
 
 ### B. Event-Driven Wakeup
@@ -82,7 +82,7 @@ Instead of ingesting the agent's verbose log file, the orchestrator verifies the
 ### D. Error Isolation
 If and only if an agent exits with a non-zero exit code, inspect only the tail of the log:
 ```bash
-tail -n 25 .worktrees/<task-name>/agent.log
+tail -n 25 /tmp/club-lion-<task-name>-agent.log
 ```
 
 ---
@@ -116,13 +116,13 @@ Update `docs/TASK-TRACKER.md` on `master` to mark the task as in-progress.
 ### Step 2: Implementation (Claude Code)
 Summon Claude in the worktree with output redirection:
 ```bash
-claude --dangerously-skip-permissions -p "Follow PROMPT.md strictly. Run 'npm test' to verify TDD passes. Delete PROMPT.md when complete, and commit with trailer 'Implementer: claude-sonnet-5 (claude code)'" > .worktrees/<task-name>/claude.log 2>&1
+claude --dangerously-skip-permissions -p "Follow PROMPT.md strictly. Run 'npm test' to verify TDD passes. Delete PROMPT.md when complete, and commit with trailer 'Implementer: claude-sonnet-5 (claude code)'" > /tmp/club-lion-<task-name>-claude.log 2>&1
 ```
 
 ### Step 3: Review & Audit (Codex)
 Summon Codex in the worktree with output redirection:
 ```bash
-codex exec --dangerously-bypass-approvals-and-sandbox -C .worktrees/<task-name> "Read .codex/instructions.md and audit the latest commit in this worktree against DESIGN.md, UX-CONTRACT.md, and procedural audio rules ($0 MP3 assets). Run 'npm test'. If satisfied, sign off; if minor fixes are needed, apply and commit." > .worktrees/<task-name>/codex.log 2>&1
+codex exec --dangerously-bypass-approvals-and-sandbox -C .worktrees/<task-name> "Read .codex/instructions.md and audit the latest commit in this worktree against DESIGN.md, UX-CONTRACT.md, and procedural audio rules ($0 MP3 assets). Run 'npm test'. If satisfied, sign off; if minor fixes are needed, apply and commit." > /tmp/club-lion-<task-name>-codex.log 2>&1
 ```
 
 ### Step 4: Verification & Integration (Orchestrator)
@@ -153,3 +153,23 @@ codex exec --dangerously-bypass-approvals-and-sandbox -C .worktrees/<task-name> 
    git branch -d feat/<task-name>
    ```
 5. Update `docs/TASK-TRACKER.md` on `master`.
+
+
+## 5. Recovery rules from Phase 2 integration
+
+- Keep runner transcripts in `/tmp`, outside worktrees. Stage explicit source/test/document paths; never commit a runner transcript. Preserve diagnostic logs until the task is integrated.
+- If a CLI cannot authenticate or its usage limit is reached, record the failure in the execution ledger and dispatch an available authorized model. Attribute actual implementers and reviewers.
+- In this local environment, HTTP requests to an unopened localhost port can hang. Playwright checks server availability before spawning its configured server, so a run can stall before any test or browser starts. Prestart the candidate worktree's Vite server, confirm HTTP 200, then run the installed Playwright CLI with server reuse enabled:
+
+```bash
+# Run in the candidate worktree; keep this server session until the gate ends.
+node ./node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173 --strictPort
+
+# Run in a second session in the same candidate worktree.
+CI= node ./node_modules/@playwright/test/cli.js test --reporter=line > /tmp/club-lion-<task-name>-e2e.log 2>&1
+```
+
+Stop the manually started Vite server after verification. Only one integration server may own port 5173; never reuse a server serving a different worktree. This recovery invokes the same suite and projects as `npm run test:e2e`. Server reuse and the local `!process.env.CI` setting follow the [Playwright 1.63 web-server documentation](https://github.com/microsoft/playwright/blob/v1.63.0/docs/src/test-webserver-js.md).
+
+- A squash integration does not mark the feature branch's ancestry as merged. After confirming the squash commit, clean worktree, and tracker evidence, use `git worktree remove` and `git branch -D` to retire it; `git branch -d` will usually refuse. Do not force-remove a dirty worktree before preserving its changes.
+- An independent integration task may start from a reviewed parent candidate while its gate runs. Record the exact parent source commit. After the parent is squashed, replay only the child task commits with `git rebase --onto master <recorded-parent-source-head>`; do not replay the parent's feature commits a second time. Master integration remains serial.

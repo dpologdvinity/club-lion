@@ -37,8 +37,8 @@ Assigner: <model> (<agent>)
 
 ## Phase 1: Chibi Avatar, Pet Lion Companion & Downtown Core
 
-Master Spec: [`docs/plans/2026-10-03-club-lion-expanded-world-design.md`](2026-10-03-club-lion-expanded-world-design.md)  
-Implementation Plan: [`docs/plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.md`](2026-10-03-phase-1-chibi-avatar-pet-downtown.md)
+Master Spec: [`docs/plans/2026-10-03-club-lion-expanded-world-design.md`](plans/2026-10-03-club-lion-expanded-world-design.md)  
+Implementation Plan: [`docs/plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.md`](plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.md)
 
 | Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -57,8 +57,8 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.m
 
 ## Phase 2: Savanna Wonder Park & Nightlife Core
 
-Master Spec: [`docs/plans/2026-10-03-club-lion-expanded-world-design.md`](2026-10-03-club-lion-expanded-world-design.md)  
-Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md`](2026-10-03-phase-2-savanna-wonder-park-nightlife.md)
+Master Spec: [`docs/plans/2026-10-03-club-lion-expanded-world-design.md`](plans/2026-10-03-club-lion-expanded-world-design.md)  
+Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md`](plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md)
 
 | Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -67,7 +67,7 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightli
 | **Task 3** | Club Pulse Interactive Dance Floor & DJ Booth Stage | `master` | **claude-sonnet-5 (claude code)** + **gpt-6.1-sol (codex)** | `a778dda` → `76e757a` | ✅ Integrated; 154/154 unit tests, 108/108 E2E, types, format & build clean |
 | **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-task-4-dj-beat` | **claude-sonnet-5 (claude code)** | `dc18077` → `d5d0f78` | ✅ Completed, reviewed & verified; 107/107 unit tests, 82/82 E2E; types, format & build clean |
 | **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-task-5-smoothie` | **claude-sonnet-5 (claude code)** | `d627ec3` → `1487713` | ✅ Completed, reviewed & verified; 117/117 unit tests, 88/88 E2E; types, format & build clean |
-| **Task 6** | Savanna Screamer Roller Coaster Interactive Ride Mode | `master` | **gpt-6.1-sol (codex)** | `faeb19b` | ✅ Integrated; 161/161 unit tests, 118/118 E2E, types, format & build clean |
+| **Task 6** | Savanna Screamer Roller Coaster Interactive Ride Mode | `master` | **gpt-6.1-sol (codex)** | `faeb19b` → `9bb700a` | ✅ Integrated; 161/161 unit tests, 118/118 E2E, types, format & build clean |
 | **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `feat/phase-2-integration` | **gpt-6.1-sol (codex)** | - | 🚀 Integration implementation; reviewed Task 6 base |
 | **Phase 2 Merge Train** | Serial Rebase & Squash Integration | `master` | **gpt-6-luna (codex)** | - | 🚀 Tasks 1–6 integrated; Task 7 world integration in progress |
 
@@ -94,7 +94,8 @@ There are **no fixed or primary roles**. All agents and models are fully interch
 | `gpt-6.1-sol (codex)` | Codex | Any role: Reviewer, Merger, Implementer, Assigner, Tester |
 
 ### Active Phase 2 Operating Configuration
-- **Lead Orchestrator & Assigner:** Antigravity (`gemini-3.8-flash`)
-- **Implementer:** Claude Code (`claude-sonnet-5`)
-- **Reviewer & Merger:** Codex (`gpt-6.1-sol`)
+- **Lead Orchestrator & Assigner:** Codex (delegated by Kaitlyn)
+- **Implementers:** Available Claude Code, Codex, or Antigravity models; Codex substituted after Claude authentication expired
+- **Reviewer:** Separate task reviewer
+- **Verifier & Merger:** Codex
 *(Flexible and dynamically adjustable at any time)*
