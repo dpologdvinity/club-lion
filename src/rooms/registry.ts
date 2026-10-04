@@ -12,8 +12,10 @@ import { secretScoutBaseManifest } from "./manifests/secretScoutBase.ts";
 
 import { sunsetBeachManifest } from "./manifests/sunsetBeach.ts";
 import { coastalPierManifest } from "./manifests/coastalPier.ts";
+import { mtMistBasecampManifest } from "./manifests/mtMistBasecamp.ts";
 
 export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
+  "mt-mist": mtMistBasecampManifest,
   "downtown-plaza": downtownPlazaManifest,
   "wonder-park-entrance": wonderParkEntranceManifest,
   "wonder-park-midway": wonderParkMidwayManifest,

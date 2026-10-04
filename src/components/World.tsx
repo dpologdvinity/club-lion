@@ -372,7 +372,8 @@ export function World({
       playFoghorn(sound ? undefined : null);
       onUnlockStamp?.("lighthouse_foghorn");
       notify("BWWWOOOOMMM! 📯 The lighthouse foghorn echoes across the bay!");
-    } else if (id === "coaster-ticket-gate") onActivity("coaster");
+    } else if (id === "sled-run-gate") onActivity("sled-run");
+    else if (id === "coaster-ticket-gate") onActivity("coaster");
     else if (id === "club-pulse-dj-booth") onActivity("dj-beat-drop");
     else if (id === "midway-game-booth") onActivity("fruit");
     else if (id === "park-map-kiosk") onMap();
@@ -414,6 +415,7 @@ export function World({
   };
   const hotspotLabels: Record<string, string> = {
     "lighthouse-foghorn": "Sound Foghorn",
+    "sled-run-gate": "Sled Run Race",
     "coaster-ticket-gate": "Ride Savanna Screamer",
     "giant-ferris-wheel": "Watch the Ferris wheel",
     "park-map-kiosk": "Park map",
@@ -571,6 +573,14 @@ export function World({
               <Shirt size={13} /> Paw & style <ArrowUpRight size={12} />
             </button>
           </>
+        )}
+        {place === "mt-mist" && (
+          <button
+            className="room-action"
+            onClick={() => onActivity("sled-run")}
+          >
+            Sled Run Race <ArrowUpRight size={17} />
+          </button>
         )}
         {place === "arcade" && (
           <button className="room-action" onClick={onGame}>

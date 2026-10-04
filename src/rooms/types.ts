@@ -23,7 +23,13 @@ export type RoomManifest = {
   portals: RoomPortal[];
   interactives: {
     id: string;
-    type: "ride" | "instrument" | "game_launch" | "secret_clickable" | "shop";
+    type:
+      | "activity"
+      | "ride"
+      | "instrument"
+      | "game_launch"
+      | "secret_clickable"
+      | "shop";
     position: { x: number; y: number };
     actionData: Record<string, unknown>;
   }[];

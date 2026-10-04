@@ -13,6 +13,7 @@ import {
   buyItem,
   claimReward,
   completeBeeStop,
+  completeSledRun,
   completeGame,
   completeDJBeatDrop,
   completeSmoothieOrder,
@@ -35,6 +36,7 @@ import {
 import { usePlayer } from "./usePlayer";
 import { Coin, Lion } from "./components/Lion";
 import { Dialog } from "./components/Dialog";
+import { SledRun } from "./components/SledRun";
 import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
 import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
@@ -67,6 +69,7 @@ type Panel =
   | "condo"
   | "spy"
   | "account"
+  | "sled-run"
   | null;
 
 export default function App() {
@@ -84,7 +87,7 @@ export default function App() {
   const notify = (message: string) => setToast(message);
   const openGames = (game: GameId | null = null) => {
     setInitialGame(game);
-    setPanel("games");
+    setPanel(game === "sled-run" ? "sled-run" : "games");
   };
   const closePanel = () => {
     setPanel(null);
@@ -116,6 +119,10 @@ export default function App() {
       "Big personality. Little finishing touches.",
     ],
     shop: ["Paw & style", "A little something for your next adventure."],
+    "sled-run": [
+      "Mt. Mist Sled Run",
+      "Follow the snow trail. Land your stunts.",
+    ],
     games: [
       "Let the good times roar",
       "A little friendly competition at the arcade.",
@@ -517,7 +524,8 @@ export default function App() {
               panel === "shop" ||
               panel === "map" ||
               panel === "style" ||
-              panel === "games"
+              panel === "games" ||
+              panel === "sled-run"
             }
           >
             {panel === "map" && (
@@ -563,6 +571,17 @@ export default function App() {
                     },
                   }));
                   notify("The perfect finishing touch!");
+                }}
+              />
+            )}
+            {panel === "sled-run" && (
+              <SledRun
+                look={player.look}
+                best={player.sledRunBest}
+                onComplete={(coins, result) => {
+                  setPlayer((p) => completeSledRun(p, result));
+                  navigate("mt-mist", { x: 1800, y: 600 });
+                  notify(`Sled run complete! +${coins} coins.`);
                 }}
               />
             )}

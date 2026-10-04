@@ -1,3 +1,11 @@
+import {
+  calculateSledPayout,
+  SLED_FINISH_DISTANCE,
+  SLED_MAX_PINECONES,
+  SLED_MAX_TRICKS,
+  SLED_MAX_PAYOUT,
+  type SledState,
+} from "./utils/sledPhysics.ts";
 import { sanitizeSocialGraph } from "./utils/socialGraph.ts";
 import { STAMP_DEFINITIONS } from "./utils/stampDefinitions.ts";
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
@@ -41,7 +49,8 @@ export type PlaceId =
   | "penthouse-condo"
   | "secret-scout-base"
   | "sunset-beach"
-  | "coastal-pier";
+  | "coastal-pier"
+  | "mt-mist";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -55,6 +64,7 @@ export type PlayerBase = {
   beeStopBest: number;
   pawStepsBest: number;
   fruitCatchBest: number;
+  sledRunBest: number;
   claimed: AdventureId[];
   decor: string[];
   mangoRunBest?: number;
@@ -208,6 +218,12 @@ export const PLACES: {
     imageClass: "scene-condo",
   },
   {
+    id: "mt-mist",
+    name: "Mt. Mist Alpine Basecamp",
+    subtitle: "Snowy peaks & downhill sled stunts",
+    imageClass: "scene-mtmist",
+  },
+  {
     id: "secret-scout-base",
     name: "The Pride HQ - Secret Scout Command Center",
     subtitle: "Shh… classified savanna business",
@@ -271,6 +287,7 @@ export function newPlayer(): Player {
     beeStopBest: 0,
     pawStepsBest: 0,
     fruitCatchBest: 0,
+    sledRunBest: 0,
     claimed: [],
     decor: [],
     stamps: [],
@@ -379,6 +396,12 @@ export function restorePlayer(raw: string | null): Player {
       gamesPlayed: p.gamesPlayed,
       beeStopBest: restoreBeeStopBest(p.beeStopBest),
       pawStepsBest,
+      sledRunBest:
+        Number.isSafeInteger(p.sledRunBest) &&
+        p.sledRunBest >= 0 &&
+        p.sledRunBest <= SLED_MAX_PAYOUT
+          ? p.sledRunBest
+          : 0,
       fruitCatchBest:
         Number.isSafeInteger(p.fruitCatchBest) && p.fruitCatchBest >= 0
           ? p.fruitCatchBest
@@ -838,4 +861,46 @@ export function recordFashionShowResult<T extends PlayerBase>(
     fashionShowsCompleted: (player.fashionShowsCompleted ?? 0) + 1,
     fashionBestScore: Math.max(player.fashionBestScore ?? 0, Math.round(score)),
   } as T;
+}
+
+export type SledResult = Pick<
+  SledState,
+  "distance" | "coinsCollected" | "tricksCompleted" | "crashed"
+>;
+
+export function completeSledRun<T extends PlayerBase>(
+  player: T,
+  result: SledResult,
+): T {
+  const { distance, coinsCollected, tricksCompleted, crashed } = result;
+  if (
+    !Number.isFinite(distance) ||
+    distance < 0 ||
+    distance > SLED_FINISH_DISTANCE ||
+    typeof crashed !== "boolean" ||
+    (!crashed && distance !== SLED_FINISH_DISTANCE) ||
+    !Number.isSafeInteger(coinsCollected) ||
+    coinsCollected < 0 ||
+    coinsCollected > SLED_MAX_PINECONES ||
+    !Number.isSafeInteger(tricksCompleted) ||
+    tricksCompleted < 0 ||
+    tricksCompleted > SLED_MAX_TRICKS
+  )
+    return player;
+  const coins = calculateSledPayout(
+    crashed ? Math.min(distance, SLED_FINISH_DISTANCE - 1) : distance,
+    coinsCollected,
+    tricksCompleted,
+  );
+  if (
+    !Number.isSafeInteger(player.coins + coins) ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
+  return {
+    ...player,
+    coins: player.coins + coins,
+    gamesPlayed: player.gamesPlayed + 1,
+    sledRunBest: Math.max(player.sledRunBest, coins),
+  };
 }

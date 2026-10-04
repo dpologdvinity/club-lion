@@ -9,6 +9,7 @@ import {
   claimReward,
   completeGame,
   completeMangoRun,
+  completeSledRun,
   completeBeeStop,
   completePawSteps,
   completeFruitCatch,
@@ -894,4 +895,64 @@ test("foghorn stamp awards 40 coins once and persists alongside coastal visits",
   assert.ok(restored.visited.includes("sunset-beach"));
   assert.ok(restored.visited.includes("coastal-pier"));
   assert.equal(unlockStamp(restored, "lighthouse_foghorn"), restored);
+});
+
+test("sled best and Mt. Mist visits survive V1/V2 saves and legacy defaults", () => {
+  const legacy = { ...newPlayer(), coins: 350 };
+  delete (legacy as Partial<Player>).sledRunBest;
+  assert.equal(restorePlayer(JSON.stringify(legacy)).sledRunBest, 0);
+  assert.equal(migratePlayerSave(legacy).sledRunBest, 0);
+  const saved = visitPlace({ ...newPlayer(), sledRunBest: 135 }, "mt-mist");
+  assert.equal(restorePlayer(JSON.stringify(saved)).sledRunBest, 135);
+  const v2 = migratePlayerSave(saved);
+  assert.equal(migratePlayerSave(v2).sledRunBest, 135);
+  assert.ok(migratePlayerSave(v2).visited.includes("mt-mist"));
+  for (const value of [-1, 0.5, "100", null, Number.MAX_VALUE]) {
+    const restored = restorePlayer(
+      JSON.stringify({ ...legacy, sledRunBest: value }),
+    );
+    assert.equal(restored.sledRunBest, 0);
+    assert.equal(restored.coins, legacy.coins);
+  }
+});
+
+test("sled completion derives rewards, raises best, and rejects invalid or overflowing results", () => {
+  const player = newPlayer();
+  const result = {
+    distance: 800,
+    coinsCollected: 3,
+    tricksCompleted: 2,
+    crashed: false,
+  };
+  const completed = completeSledRun(player, result);
+  assert.equal(completed.coins, 325);
+  assert.equal(completed.sledRunBest, 75);
+  assert.equal(completed.gamesPlayed, 1);
+  const crashed = completeSledRun(completed, {
+    ...result,
+    distance: 200,
+    crashed: true,
+    coinsCollected: 0,
+    tricksCompleted: 0,
+  });
+  assert.equal(crashed.coins, 335);
+  assert.equal(crashed.sledRunBest, 75);
+  assert.equal(crashed.gamesPlayed, 2);
+  for (const invalid of [
+    { ...result, distance: 400 },
+    { ...result, distance: NaN },
+    { ...result, distance: 801 },
+    { ...result, coinsCollected: -1 },
+    { ...result, coinsCollected: 10000 },
+    { ...result, tricksCompleted: 0.5 },
+    { ...result, tricksCompleted: 10000 },
+  ])
+    assert.equal(completeSledRun(player, invalid), player);
+  assert.equal(
+    completeSledRun({ ...player, coins: Number.MAX_SAFE_INTEGER }, result)
+      .coins,
+    Number.MAX_SAFE_INTEGER,
+  );
+  const crashAtFinish = completeSledRun(player, { ...result, crashed: true });
+  assert.equal(crashAtFinish.coins, 295);
 });

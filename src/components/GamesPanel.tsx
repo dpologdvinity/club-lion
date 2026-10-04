@@ -23,7 +23,8 @@ export type GameId =
   | "coaster"
   | "fishing"
   | "runway"
-  | "instrument";
+  | "instrument"
+  | "sled-run";
 
 export function GamesPanel({
   player,

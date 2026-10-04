@@ -27,6 +27,12 @@ export const downtownPlazaManifest: RoomManifest = {
       label: "Sunset Beach",
     },
     {
+      targetRoomId: "mt-mist",
+      targetSpawn: { x: 250, y: 600 },
+      triggerBounds: { x1: 300, y1: 675, x2: 440, y2: 720 },
+      label: "Mt. Mist Basecamp",
+    },
+    {
       targetRoomId: "square",
       targetSpawn: { x: 43, y: 78 },
       triggerBounds: { x1: 950, y1: 675, x2: 1100, y2: 720 },
