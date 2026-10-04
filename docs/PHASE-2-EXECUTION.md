@@ -7,8 +7,8 @@ User authorized full orchestration, implementation, review, verification, integr
 
 - Tasks 1, 4, 5: already reviewed, verified, and integrated before this run. Do not redispatch.
 - Task 2: complete, integrated as `f65cc9b`; worktree/branch retired. Source repair `541f450`. Fresh gate: 142/142 unit tests, strict types, Prettier, production build, and 88/88 desktop/mobile browser tests.
-- Task 3: branch `feat/phase-2-task-3-dance`, worktree `.worktrees/phase-2-task-3-dance`. Initial implementation `b3a16f4`; uncommitted repair aligns bounded floor geometry and adds fixture regression. Prior Claude process terminated without final commit. Codex owns completion; independent review and merge gate remain.
-- Task 6: branch `feat/phase-2-task-6-coaster`, worktree `.worktrees/phase-2-task-6-coaster`. Claude implementation dispatched with PROMPT.md; output `/tmp/club-lion-task6-claude.log`. Review and merge gate remain.
+- Task 3: complete, squash integrated from `a778dda`. Reviewed bounded geometry repair and narrow DJ contrast fix. Fresh final gate: 154/154 unit tests, strict types, Prettier, build, 108/108 browser tests. Initial gate 107/108 identified DJ shared-stat CSS contrast; corrected before integration. Worktree/branch retired after merge.
+- Task 6: branch `feat/phase-2-task-6-coaster`, worktree `.worktrees/phase-2-task-6-coaster`. Claude CLI failed before edits because its OAuth session expired. Codex substitute dispatched with PROMPT.md; failed CLI output `/tmp/club-lion-task6-claude.log`. Implementation `b7b48d5` complete; independent review and merge gate remain.
 - Task 7: pending Tasks 3 and 6 integration. Wire room routing, park scenes, Club Pulse floor, DJ booth, smoothie café, coaster ride, arcade/map destinations, and desktop/mobile browser proof.
 
 ## Decisions and integration contracts
@@ -22,7 +22,7 @@ User authorized full orchestration, implementation, review, verification, integr
 
 ## Runner recovery
 
-The npm/npx Playwright wrapper stalled without launching Vite or browsers. Direct `node ./node_modules/@playwright/test/cli.js test --reporter=line` ran the same suite successfully (88/88). Use that direct CLI when the wrapper stalls, with one active integration server and logs outside source control. Do not repeat successful gates without relevant new changes.
+Root cause confirmed: native Node HTTP probes to both localhost and 127.0.0.1 on unopened port 5173 timed out; Playwright's initial availability request has no timeout, so it can hang before spawning Vite. Start Vite first using `node ./node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173 --strictPort`, confirm HTTP 200, then run `CI= node ./node_modules/@playwright/test/cli.js test --reporter=line` against that candidate worktree. Stop the manually started server after the gate. Keep one active integration server and logs outside source control. The earlier wrapper diagnosis was provisional; direct CLI alone does not prevent this startup hang. Do not repeat successful gates without relevant new changes.
 
 ## Merge queue
 

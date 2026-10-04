@@ -3923,9 +3923,9 @@ svg {
   margin-bottom: 20px;
   font-size: 40px;
 }
-.dj-combo-banner {
+.fruit-game-stats > span.dj-combo-banner {
   font-weight: 800;
-  color: #ff6ec7;
+  color: var(--text);
 }
 .dj-game {
   display: flex;
@@ -4107,4 +4107,124 @@ svg {
   display: flex;
   gap: 0.2rem;
   color: #f4a53a;
+}
+
+.dance-floor-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.dance-floor {
+  --floor-pulse: 0.35;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 2px;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 8 / 6;
+  padding: 4px;
+  border-radius: 0.75rem;
+  background: #1a1430;
+  box-shadow: 0 0 calc(6px + 18px * var(--floor-pulse)) rgba(120, 90, 255, 0.55);
+}
+
+/*
+ * Bounded mode: the floor is placed by its stage bounds, so the grid rectangle
+ * must equal those bounds exactly. Padding, border, gap and radius all drop to
+ * zero, which keeps each cell at width/8 by height/6 and keeps tile edges on
+ * the same lines `tileFromPosition` divides the bounds along.
+ */
+.dance-floor-stage[data-bounded="true"] {
+  position: absolute;
+  gap: 0;
+}
+
+.dance-floor-stage[data-bounded="true"] .dance-floor {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  aspect-ratio: auto;
+  padding: 0;
+  gap: 0;
+  border-radius: 0;
+}
+
+.dance-floor-stage[data-bounded="true"] .dance-floor-tile {
+  border-radius: 0;
+}
+
+.dance-floor-tile {
+  --tile-color: #4fa8ff;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.2rem;
+  background: color-mix(
+    in srgb,
+    var(--tile-color) calc(20% + 40% * var(--floor-pulse)),
+    #120d24
+  );
+  cursor: pointer;
+}
+
+.dance-floor-tile:hover {
+  background: color-mix(in srgb, var(--tile-color) 70%, #120d24);
+}
+
+.dance-floor-tile:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 1px;
+  z-index: 1;
+}
+
+.dance-floor-tile[data-lit="true"] {
+  background: var(--tile-color);
+}
+
+.dance-floor-tile-led {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #fff;
+  animation: dance-floor-led 420ms ease-out forwards;
+}
+
+@keyframes dance-floor-led {
+  from {
+    opacity: 0.85;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.dance-floor-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dance-floor {
+    box-shadow: 0 0 10px rgba(120, 90, 255, 0.55);
+  }
+  .dance-floor-tile-led {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+@media (forced-colors: active) {
+  .dance-floor-tile {
+    border: 1px solid ButtonText;
+  }
+  .dance-floor-tile[data-lit="true"] {
+    background: Highlight;
+  }
 }
