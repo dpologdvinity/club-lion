@@ -110,7 +110,7 @@ Implementation Plan: [`docs/plans/2026-10-04-phase-4-social-condo-spy-servers.md
 | **Task 1** | Procedural Web Audio Jukebox & Persistent Audio Controls | `master` | **claude-sonnet-5 (claude code)** | `aa5a998` | ✅ Integrated; 266/266 unit tests, lookahead scheduler, types, format & build clean |
 | **Task 2** | Isometric Condo Customization & 16×16 Furniture Grid Engine | `master` | **claude-sonnet-5 (claude code)** | `c0cbccd` | ✅ Integrated; 304/304 unit tests, layer depth sort, types, format & build clean |
 | **Task 3** | Secret Scout Command Center & Laser Grid / Cipher Spy Puzzles | `master` | **claude-sonnet-5 (claude code)** | `68750da` | ✅ Integrated; 340/340 unit tests, CRT retro UI, shared audio bus SFX, types & build clean |
-| **Task 4** | Local-First Entity Network Protocol & Multi-Room Server | `.worktrees/phase-4-task-4-network` | **Open** | - | ⏳ Planned |
+| **Task 4** | Local-First Entity Network Protocol & Multi-Room Server | `master` | **claude-sonnet-5 (claude code)** | `95df89a` | ✅ Integrated; 375/375 unit tests, compact delta encoding, spatial isolation, lerp/extrapolation math |
 | **Task 5** | Friends System, Social Presence & Jump-to-Friend Travel | `.worktrees/phase-4-task-5-friends` | **Open** | - | ⏳ Planned |
 | **Task 6** | Phase 4 World Integration, Accounts & Full E2E Verification | `master` | **gemini-3.8-flash (antigravity)** | - | ⏳ Planned |
 | **Phase 4 Milestone** | Milestone Integration into `master` | `master` | **gemini-3.8-flash (antigravity)** (Lead, Verifier & Merger) | - | ⏳ Pending |
