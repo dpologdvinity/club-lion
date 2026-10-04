@@ -50,6 +50,8 @@ export type PlayerBase = {
   stamps?: string[];
   fishCaughtCount?: number;
   largestFishWeight?: number;
+  fashionBestScore?: number;
+  fashionShowsCompleted?: number;
 };
 
 export type Player = PlayerBase & {
@@ -357,6 +359,17 @@ export function restorePlayer(raw: string | null): Player {
             p.largestFishWeight >= 0
           ? { largestFishWeight: p.largestFishWeight as number }
           : {}),
+      ...(p.fashionBestScore === undefined
+        ? {}
+        : Number.isSafeInteger(p.fashionBestScore) && p.fashionBestScore >= 0
+          ? { fashionBestScore: p.fashionBestScore as number }
+          : {}),
+      ...(p.fashionShowsCompleted === undefined
+        ? {}
+        : Number.isSafeInteger(p.fashionShowsCompleted) &&
+            p.fashionShowsCompleted >= 0
+          ? { fashionShowsCompleted: p.fashionShowsCompleted as number }
+          : {}),
     };
   } catch {
     return newPlayer();
@@ -662,5 +675,28 @@ export function completeFishingCatch<T extends PlayerBase>(
     gamesPlayed: player.gamesPlayed + 1,
     fishCaughtCount: (player.fishCaughtCount ?? 0) + 1,
     largestFishWeight: Math.max(player.largestFishWeight ?? 0, weight),
+  } as T;
+}
+
+export function recordFashionShowResult<T extends PlayerBase>(
+  player: T,
+  result: { score: number; coins: number },
+): T {
+  const { score, coins } = result;
+  if (
+    !Number.isFinite(score) ||
+    score < 0 ||
+    !Number.isSafeInteger(coins) ||
+    coins < 0 ||
+    !Number.isSafeInteger(player.coins + coins) ||
+    !Number.isSafeInteger((player.fashionShowsCompleted ?? 0) + 1)
+  )
+    return player;
+  return {
+    ...player,
+    coins: player.coins + coins,
+    gamesPlayed: player.gamesPlayed + 1,
+    fashionShowsCompleted: (player.fashionShowsCompleted ?? 0) + 1,
+    fashionBestScore: Math.max(player.fashionBestScore ?? 0, Math.round(score)),
   } as T;
 }
