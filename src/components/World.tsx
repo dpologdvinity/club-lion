@@ -20,6 +20,7 @@ import {
   Sparkles,
   Volume2,
   VolumeX,
+  Waves,
 } from "lucide-react";
 import { NEIGHBORS, PLACES, type PlaceId, type PlayerV2 } from "../game";
 import { ROOM_MANIFESTS } from "../rooms/registry";
@@ -75,6 +76,7 @@ type WorldProps = {
   onOpenJukebox?: () => void;
   onOpenCondo?: () => void;
   onUnlockStamp?: (stampId: string) => void;
+  onOpenRiverSurf?: () => void;
 };
 
 export function World({
@@ -95,6 +97,7 @@ export function World({
   onOpenJukebox,
   onOpenCondo,
   onUnlockStamp,
+  onOpenRiverSurf,
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
   const [position, setPosition] = useState(() =>
@@ -400,6 +403,7 @@ export function World({
     else if (id === "lazy-river-current")
       notify("Drift along the gentle tropical current on your inner tube.");
     else if (id === "spy-terminal") onOpenSpy?.();
+    else if (id === "river-surf-dock") onOpenRiverSurf?.();
     else if (id === "condo-furniture-editor") onOpenCondo?.();
     else if (id === "condo-jukebox") onOpenJukebox?.();
     else if (id === "surveillance-holo-map")
@@ -432,6 +436,7 @@ export function World({
     "condo-furniture-editor": "Customize Furniture Grid",
     "condo-jukebox": "Grand Jukebox",
     "surveillance-holo-map": "Surveillance Holo-Map",
+    "river-surf-dock": "River Surf Rapids",
   };
   return (
     <section className="world-panel" aria-label="Lion world">
@@ -598,6 +603,11 @@ export function World({
             onClick={() => onActivity("smoothie")}
           >
             <Coffee size={18} /> Blend smoothies
+          </button>
+        )}
+        {place === "canyon-rapids" && (
+          <button className="room-action" onClick={() => onOpenRiverSurf?.()}>
+            <Waves size={18} /> River Surf Rapids
           </button>
         )}
         {place === "penthouse-condo" && (

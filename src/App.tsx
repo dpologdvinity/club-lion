@@ -21,6 +21,7 @@ import {
   completeFruitCatch,
   completeFishingCatch,
   recordFashionShowResult,
+  completeRiverSurf,
   completeSpyPuzzle,
   meetLion,
   unlockSecretCatalogItem,
@@ -37,6 +38,7 @@ import { usePlayer } from "./usePlayer";
 import { Coin, Lion } from "./components/Lion";
 import { Dialog } from "./components/Dialog";
 import { SledRun } from "./components/SledRun";
+import { RiverSurf } from "./components/RiverSurf";
 import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
 import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
@@ -70,6 +72,7 @@ type Panel =
   | "spy"
   | "account"
   | "sled-run"
+  | "river-surf"
   | null;
 
 export default function App() {
@@ -299,6 +302,7 @@ export default function App() {
             onUnlockStamp={(stampId) =>
               setPlayer((p) => unlockStamp(p, stampId))
             }
+            onOpenRiverSurf={() => setPanel("river-surf")}
           />
           <Sidebar
             player={player}
@@ -506,6 +510,18 @@ export default function App() {
           notify={notify}
         />
       )}
+      {panel === "river-surf" && (
+        <Dialog title="Canyon Rapids River Surf" onClose={closePanel}>
+          <RiverSurf
+            best={player.riverSurfBest ?? 0}
+            onComplete={(coins) => {
+              setPlayer((p) => completeRiverSurf(p, { score: coins, coins }));
+              notify(`Gnarly run! +${coins} coins.`);
+            }}
+            onClose={closePanel}
+          />
+        </Dialog>
+      )}
       {panel &&
         panel !== "card" &&
         panel !== "catalog" &&
@@ -515,7 +531,8 @@ export default function App() {
         panel !== "jukebox" &&
         panel !== "condo" &&
         panel !== "spy" &&
-        panel !== "account" && (
+        panel !== "account" &&
+        panel !== "river-surf" && (
           <Dialog
             title={titles[panel][0]}
             subtitle={titles[panel][1]}

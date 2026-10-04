@@ -50,7 +50,8 @@ export type PlaceId =
   | "secret-scout-base"
   | "sunset-beach"
   | "coastal-pier"
-  | "mt-mist";
+  | "mt-mist"
+  | "canyon-rapids";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -83,6 +84,7 @@ export type PlayerBase = {
   incomingFriendRequests?: string[];
   outgoingFriendRequests?: string[];
   recentVisitors?: string[];
+  riverSurfBest?: number;
 };
 
 export type Player = PlayerBase & {
@@ -240,6 +242,12 @@ export const PLACES: {
     name: "Coastal Pier & Boardwalk",
     subtitle: "Follow the lighthouse across the bay",
     imageClass: "scene-pier",
+  },
+  {
+    id: "canyon-rapids",
+    name: "Canyon Rapids",
+    subtitle: "Red rock walls & whitewater thrills",
+    imageClass: "scene-canyon",
   },
 ];
 
@@ -903,4 +911,25 @@ export function completeSledRun<T extends PlayerBase>(
     gamesPlayed: player.gamesPlayed + 1,
     sledRunBest: Math.max(player.sledRunBest, coins),
   };
+}
+
+export function completeRiverSurf<T extends PlayerBase>(
+  player: T,
+  result: { score: number; coins: number },
+): T {
+  const { score, coins } = result;
+  if (
+    !Number.isFinite(score) ||
+    score < 0 ||
+    !Number.isSafeInteger(coins) ||
+    coins < 0 ||
+    !Number.isSafeInteger(player.coins + coins)
+  )
+    return player;
+  return {
+    ...player,
+    coins: player.coins + coins,
+    gamesPlayed: player.gamesPlayed + 1,
+    riverSurfBest: Math.max(player.riverSurfBest ?? 0, Math.round(score)),
+  } as T;
 }

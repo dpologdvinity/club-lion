@@ -1446,6 +1446,109 @@ function MtMistScenery({ seconds }: { seconds: number }) {
   );
 }
 
+function CanyonRapidsScenery({
+  seconds,
+  width,
+}: {
+  seconds: number;
+  width: number;
+}) {
+  const foamOffset = (seconds * 220) % 60;
+  return (
+    <g className="canyon-rapids-scenery">
+      <defs>
+        <linearGradient id="canyon-wall" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#c1613f" />
+          <stop offset="55%" stopColor="#9c4a30" />
+          <stop offset="100%" stopColor="#7a3620" />
+        </linearGradient>
+        <linearGradient id="canyon-river" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4fa7c9" />
+          <stop offset="100%" stopColor="#2c7496" />
+        </linearGradient>
+        <pattern
+          id="canyon-foam"
+          width="60"
+          height="24"
+          patternUnits="userSpaceOnUse"
+          patternTransform={`translate(${foamOffset} 0)`}
+        >
+          <path
+            d="M0 12Q15 0 30 12Q45 24 60 12"
+            fill="none"
+            stroke="#eaf6fb"
+            strokeWidth="4"
+            opacity="0.65"
+          />
+        </pattern>
+      </defs>
+
+      <rect x="0" y="40" width={width} height="420" fill="url(#canyon-wall)" />
+      {[260, 820, 1380, 1940].map((x, i) => (
+        <path
+          key={x}
+          d={`M${x} 40 L${x + 90} 40 L${x + 150} 460 L${x - 60} 460 Z`}
+          fill={i % 2 === 0 ? "#b2572f" : "#a24f2b"}
+          opacity="0.85"
+        />
+      ))}
+      {[400, 1000, 1600, 2150].map((x) => (
+        <g key={x} transform={`translate(${x} 470)`}>
+          <path
+            d="M0 0 L-10 -90 L10 -90 Z"
+            fill="#2f5d3a"
+            transform="translate(0 -20) scale(1.6)"
+          />
+          <path
+            d="M0 0 L-8 -60 L8 -60 Z"
+            fill="#3c7a48"
+            transform="translate(0 -10)"
+          />
+          <rect x="-4" y="-4" width="8" height="24" fill="#5a3d21" />
+        </g>
+      ))}
+
+      <path
+        d="M0 420 Q480 390 960 425 Q1440 395 1920 425 Q2160 395 2400 420 V720H0Z"
+        fill="#8a4a2e"
+      />
+
+      <rect y="500" width={width} height="150" fill="url(#canyon-river)" />
+      <rect
+        y="500"
+        width={width}
+        height="150"
+        fill="url(#canyon-foam)"
+        opacity="0.5"
+      />
+
+      <g transform="translate(1100 440)">
+        <path
+          d="M-260 0 Q-130 30 0 5 Q130 -20 260 10"
+          fill="none"
+          stroke="#8b6540"
+          strokeWidth="10"
+        />
+        {Array.from({ length: 9 }, (_, i) => {
+          const x = -240 + i * 60;
+          const y = 5 + Math.sin(i * 0.8) * 12;
+          return (
+            <line
+              key={i}
+              x1={x}
+              y1={y - 12}
+              x2={x}
+              y2={y + 22}
+              stroke="#6b4a2a"
+              strokeWidth="6"
+            />
+          );
+        })}
+      </g>
+    </g>
+  );
+}
+
 export function RoomScenery({
   place,
   preview = false,
@@ -1504,8 +1607,13 @@ export function RoomScenery({
   const isCondo = place === "penthouse-condo";
   const isScoutBase = place === "secret-scout-base";
   const isMtMist = place === "mt-mist";
+  const isCanyonRapids = place === "canyon-rapids";
   const width =
-    club || isCondo || isScoutBase ? 1920 : downtown || isMtMist ? 2400 : 2800;
+    club || isCondo || isScoutBase
+      ? 1920
+      : downtown || isMtMist || isCanyonRapids
+        ? 2400
+        : 2800;
   const cart = computeCoasterTrackPosition(seconds / 28);
   return (
     <svg
@@ -1524,9 +1632,11 @@ export function RoomScenery({
                   ? "#100d24"
                   : isScoutBase
                     ? "#0e1517"
-                    : isSplashEntry || isSplashRiver
-                      ? "#58b5be"
-                      : "#91cfc9"
+                    : isCanyonRapids
+                      ? "#cf9a64"
+                      : isSplashEntry || isSplashRiver
+                        ? "#58b5be"
+                        : "#91cfc9"
             }
           />
           <stop
@@ -1538,9 +1648,11 @@ export function RoomScenery({
                   ? "#2d1a38"
                   : isScoutBase
                     ? "#192529"
-                    : isSplashEntry || isSplashRiver
-                      ? "#e3f3db"
-                      : "#f7e4aa"
+                    : isCanyonRapids
+                      ? "#f6ddb0"
+                      : isSplashEntry || isSplashRiver
+                        ? "#e3f3db"
+                        : "#f7e4aa"
             }
           />
         </linearGradient>
@@ -1601,7 +1713,9 @@ export function RoomScenery({
                   ? "#dfca99"
                   : isSplashRiver
                     ? "#d6be8e"
-                    : "#e7c794"
+                    : isCanyonRapids
+                      ? "#b5693f"
+                      : "#e7c794"
         }
       />
       <rect
@@ -1616,6 +1730,8 @@ export function RoomScenery({
         <CondoScenery seconds={seconds} width={width} />
       ) : isScoutBase ? (
         <ScoutBaseScenery seconds={seconds} width={width} />
+      ) : isCanyonRapids ? (
+        <CanyonRapidsScenery seconds={seconds} width={width} />
       ) : isSplashEntry ? (
         <>
           <g transform="translate(900 500)">

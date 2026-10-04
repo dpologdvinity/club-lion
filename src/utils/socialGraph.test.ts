@@ -145,6 +145,7 @@ test("jump spawns are deterministic, strictly walkable and outside every portal 
   assert.equal(ids.size, PLACES.length);
   assert.ok(ids.has("sunset-beach"));
   assert.ok(ids.has("mt-mist"));
+  assert.ok(ids.has("canyon-rapids"));
   for (const id of ids) {
     const spawn = getJumpSpawnCoordinate(
       id as Parameters<typeof getJumpSpawnCoordinate>[0],

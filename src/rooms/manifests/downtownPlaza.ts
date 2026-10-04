@@ -80,6 +80,12 @@ export const downtownPlazaManifest: RoomManifest = {
       triggerBounds: { x1: 1910, y1: 560, x2: 2010, y2: 650 },
       label: "Secret Scout HQ",
     },
+    {
+      targetRoomId: "canyon-rapids",
+      targetSpawn: { x: 600, y: 600 },
+      triggerBounds: { x1: 500, y1: 675, x2: 640, y2: 720 },
+      label: "Canyon Rapids",
+    },
   ],
   interactives: [
     {
