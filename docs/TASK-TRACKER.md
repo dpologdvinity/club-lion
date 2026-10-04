@@ -90,9 +90,9 @@ Implementation Plan: [`docs/plans/2026-10-04-phase-3-splash-oasis-instruments-ru
 
 | Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Task 1** | The 25+ Savanna Stamp Book & Save Migration | `feat/phase-3-task-1-stamp-book`<br/>(`.worktrees/phase-3-task-1-stamp-book`) | **gpt-6.1-sol (codex)** | - | 🚀 In Progress (Dispatched) |
+| **Task 1** | The 25+ Savanna Stamp Book & Save Migration | `master` | **gpt-6.1-sol (codex)** | `01c4d88` → `1aeb078` | ✅ Integrated; 190/190 unit tests, strict types, format & build clean |
 | **Task 2** | World Instruments & Procedural Web Audio Jam Engine | `master` | **claude-sonnet-5 (claude code)** | `2a6b76f` → `0a5844f` | ✅ Integrated; 177/177 unit tests, strict types, format & build clean |
-| **Task 3** | Waterhole Angler Cozy Dock Fishing Minigame | `feat/phase-3-task-3-fishing`<br/>(`.worktrees/phase-3-task-3-fishing`) | **claude-sonnet-5 (claude code)** | - | 🚀 In Progress (Dispatched) |
+| **Task 3** | Waterhole Angler Cozy Dock Fishing Minigame | `master` | **claude-sonnet-5 (claude code)** | `e2df7b5` → `28c842b` | ✅ Integrated; 205/205 unit tests, strict types, format & build clean |
 | **Task 4** | Splash Oasis Waterpark Rooms & Wave / Dump Bucket Engine | `feat/phase-3-task-4-waterpark` | **Open** | - | ⏳ Planned |
 | **Task 5** | Top Models Fashion Show Runway Minigame | `feat/phase-3-task-5-runway` | **Open** | - | ⏳ Planned |
 | **Task 6** | Phase 3 World Integration & Full E2E Verification | `feat/phase-3-integration` | **gemini-3.8-flash (antigravity)** | - | ⏳ Planned |
