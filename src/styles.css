@@ -204,6 +204,11 @@ svg {
   display: flex;
   gap: 16px;
   align-items: center;
+  min-width: 0;
+  overflow-x: auto;
+}
+.main-nav button {
+  flex-shrink: 0;
 }
 .main-nav button {
   background: none;
@@ -225,6 +230,7 @@ svg {
   display: flex;
   align-items: center;
   gap: 21px;
+  flex-shrink: 0;
 }
 .icon-button {
   display: inline-flex;
@@ -2960,6 +2966,11 @@ svg {
     top: -13px;
   }
   .header-actions {
+    order: 2;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-left: 0;
     gap: 8px;
   }
   .player-menu {
@@ -4417,8 +4428,45 @@ svg {
   pointer-events: none;
   font-family: var(--font-display, "Lilita One", sans-serif);
 }
-.environmental-lighting-overlay {
+.global-lighting-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
   transition: opacity 0.8s ease;
+}
+.global-lighting-dim,
+.global-lighting-tint {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.8s ease;
+}
+.global-lighting-dim {
+  background: #000;
+}
+.global-lighting-sun-glow {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffedbb80, transparent 70%);
+}
+.global-lighting-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: translate(-50%, -50%);
+}
+.global-lighting-firefly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #d9f564;
+  box-shadow: 0 0 6px 2px #d9f56499;
+  transform: translate(-50%, -50%);
 }
 .lighting-star-twinkle {
   animation: lighting-star-twinkle 2.4s ease-in-out infinite;
@@ -4432,8 +4480,21 @@ svg {
     opacity: 1;
   }
 }
+.lighting-firefly-drift {
+  animation: lighting-firefly-drift 5s ease-in-out infinite;
+}
+@keyframes lighting-firefly-drift {
+  0%,
+  100% {
+    transform: translate(-50%, -50%);
+  }
+  50% {
+    transform: translate(calc(-50% + 10px), calc(-50% - 14px));
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .lighting-star-twinkle {
+  .lighting-star-twinkle,
+  .lighting-firefly-drift {
     animation: none;
   }
 }
@@ -5124,8 +5185,16 @@ svg {
 }
 .lighting-btn[aria-pressed="true"] {
   opacity: 1;
-  color: var(--accent);
-  background: #fdf1e2;
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-dark);
+}
+@media (forced-colors: active) {
+  .lighting-btn[aria-pressed="true"] {
+    background: Highlight;
+    color: HighlightText;
+    border-color: ButtonText;
+  }
 }
 .lighting-btn-auto {
   margin-left: 4px;

@@ -33,6 +33,7 @@ import {
   type PlaceId,
 } from "./game";
 import { usePlayer } from "./usePlayer";
+import { useLightingPrefs } from "./useLightingPrefs";
 import { Coin, Lion } from "./components/Lion";
 import { Dialog } from "./components/Dialog";
 import { World } from "./components/World";
@@ -48,10 +49,6 @@ import { SalonModal } from "./components/SalonModal";
 import { FriendsPanel } from "./components/FriendsPanel";
 import { AudioControls } from "./components/AudioControls";
 import { LightingControls } from "./components/LightingControls";
-import {
-  calculateTimeOfDayFromLocalTime,
-  type TimeOfDay,
-} from "./utils/environmentalLighting.ts";
 import { JukeboxModal } from "./components/JukeboxModal";
 import { Condo } from "./components/Condo";
 import { SpyTerminalModal } from "./components/SpyTerminal";
@@ -75,34 +72,20 @@ type Panel =
   | null;
 
 export default function App() {
-  const { player, setPlayer, saveError } = usePlayer();
+  const { player, setPlayer, saveError: playerSaveError } = usePlayer();
+  const {
+    autoTime,
+    setAutoTime,
+    timeOfDay,
+    setTimeOfDay,
+    saveError: lightingSaveError,
+  } = useLightingPrefs();
+  const saveError = playerSaveError || lightingSaveError;
   const [place, setPlace] = useState<PlaceId>("square");
   const [spawn, setSpawn] = useState<{ x: number; y: number } | undefined>();
   const [initialGame, setInitialGame] = useState<GameId | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
   const [toast, setToast] = useState("");
-  const [autoTime, setAutoTime] = useState(
-    () => localStorage.getItem("clubLion.autoTime") !== "false",
-  );
-  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(() => {
-    const saved = localStorage.getItem(
-      "clubLion.timeOfDay",
-    ) as TimeOfDay | null;
-    return saved ?? calculateTimeOfDayFromLocalTime();
-  });
-  useEffect(() => {
-    localStorage.setItem("clubLion.autoTime", String(autoTime));
-  }, [autoTime]);
-  useEffect(() => {
-    localStorage.setItem("clubLion.timeOfDay", timeOfDay);
-  }, [timeOfDay]);
-  useEffect(() => {
-    if (!autoTime) return;
-    const sync = () => setTimeOfDay(calculateTimeOfDayFromLocalTime());
-    sync();
-    const id = window.setInterval(sync, 60_000);
-    return () => window.clearInterval(id);
-  }, [autoTime]);
   useEffect(() => {
     if (!toast) return;
     const id = window.setTimeout(() => setToast(""), 4800);

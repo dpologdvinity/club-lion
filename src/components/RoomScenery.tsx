@@ -9,57 +9,6 @@ import {
   calculateBucketCycle,
   calculateRiverDrift,
 } from "../utils/waterparkPhysics.ts";
-import {
-  getLightingProfile,
-  generateStars,
-  type TimeOfDay,
-} from "../utils/environmentalLighting.ts";
-
-const STAGE_STARS = generateStars(60);
-
-function LightingOverlay({
-  width,
-  timeOfDay,
-  reducedMotion,
-}: {
-  width: number;
-  timeOfDay: TimeOfDay;
-  reducedMotion: boolean;
-}) {
-  const profile = getLightingProfile(timeOfDay);
-  if (profile.overlayOpacity === 0 && !profile.showStars) return null;
-  return (
-    <g className="environmental-lighting-overlay" aria-hidden="true">
-      {profile.showStars &&
-        STAGE_STARS.map((star, i) => (
-          <circle
-            key={i}
-            className={reducedMotion ? "" : "lighting-star-twinkle"}
-            cx={(star.x / 100) * width}
-            cy={(star.y / 100) * 420}
-            r={star.size}
-            fill="#ffffff"
-            opacity={star.opacity}
-            style={
-              reducedMotion
-                ? undefined
-                : { animationDelay: `${(i % 10) * 0.3}s` }
-            }
-          />
-        ))}
-      {profile.overlayOpacity > 0 && (
-        <rect
-          x="0"
-          y="0"
-          width={width}
-          height="720"
-          fill={profile.overlayColor}
-          opacity={profile.overlayOpacity}
-        />
-      )}
-    </g>
-  );
-}
 
 const COASTER_LINE = Array.from({ length: 260 }, (_, i) => {
   const p = computeCoasterTrackPosition(i / 259);
@@ -1019,11 +968,9 @@ function ScoutBaseScenery({
 export function RoomScenery({
   place,
   preview = false,
-  timeOfDay = "day",
 }: {
   place: PlaceId;
   preview?: boolean;
-  timeOfDay?: TimeOfDay;
 }) {
   const [seconds, setSeconds] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -1901,13 +1848,6 @@ export function RoomScenery({
             </g>
           ))}
         </>
-      )}
-      {!preview && (
-        <LightingOverlay
-          width={width}
-          timeOfDay={timeOfDay}
-          reducedMotion={reducedMotion}
-        />
       )}
     </svg>
   );

@@ -541,8 +541,105 @@ test("unavailable browser storage preserves a playable world with an honest warn
   await expect(page.getByRole("alert")).toContainText(
     "Your browser couldn’t save",
   );
+  await expect(
+    page.getByRole("group", { name: "Environmental lighting" }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "My den", exact: true }).click();
   await expect(page.locator(".world-location h2")).toHaveText("Your cozy den");
+});
+
+test("a valid saved lighting preference survives reload", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Night", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Night", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: "Night", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".global-lighting-tint")).toBeVisible();
+});
+
+test("an invalid saved lighting preference recovers instead of blanking the world", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("clubLion.autoTime", "false");
+    localStorage.setItem("clubLion.timeOfDay", "invalid");
+  });
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "Welcome to the pride." }),
+  ).toBeVisible();
+  await page
+    .getByRole("region", { name: "Lion world" })
+    .getByRole("button", { name: "Downtown Plaza", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Downtown Plaza", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Lion world" }).locator(".room-scenery"),
+  ).toBeVisible();
+});
+
+test("environmental lighting applies globally to raster rooms without manifests", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Night", exact: true }).click();
+  await expect(page.locator(".global-lighting-tint")).toBeVisible();
+  await page.getByRole("button", { name: "My den", exact: true }).click();
+  await expect(page.locator(".world-location h2")).toHaveText("Your cozy den");
+  await expect(page.locator(".global-lighting-tint")).toBeVisible();
+  await expect(page.locator(".global-lighting-star").first()).toBeVisible();
+});
+
+test("lighting controls are keyboard selectable with visible focus", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const dusk = page.getByRole("button", { name: "Dusk", exact: true });
+  await dusk.focus();
+  await page.keyboard.press("Enter");
+  await expect(dusk).toHaveAttribute("aria-pressed", "true");
+  await expect(dusk).toBeFocused();
+});
+
+test.describe("with reduced motion", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  test("star and firefly animation freezes, including mid-session preference changes", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Night", exact: true }).click();
+    const star = page.locator(".global-lighting-star").first();
+    await expect(star).toBeVisible();
+    await expect(star).not.toHaveClass(/lighting-star-twinkle/);
+    await page.getByRole("button", { name: "Day", exact: true }).click();
+    await page.getByRole("button", { name: "Night", exact: true }).click();
+    await expect(star).not.toHaveClass(/lighting-star-twinkle/);
+  });
+});
+
+test("the header with lighting controls fits narrow viewports without overflow", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await expect(
+    page.getByRole("group", { name: "Environmental lighting" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Customize your lion" }),
+  ).toBeVisible();
 });
 
 test("Phase 1 ID Card modal opens, displays stats, and edits mood quote with persistence", async ({

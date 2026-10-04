@@ -27,6 +27,7 @@ import type { RoomManifest } from "../rooms/types";
 import { clampToWalkable } from "../rooms/camera";
 import { CameraViewport } from "./CameraViewport";
 import { RoomScenery } from "./RoomScenery";
+import { GlobalLightingOverlay } from "./GlobalLightingOverlay";
 import { DanceFloor } from "./DanceFloor";
 import { CLUB_PULSE_DANCE_FLOOR_BOUNDS } from "../rooms/manifests/clubPulse";
 import type { GameId } from "./GamesPanel";
@@ -467,8 +468,10 @@ export function World({
         onWalk={stageWalk}
         onPortal={portal}
         board={!!boardId}
+        timeOfDay={timeOfDay}
+        reducedMotion={reducedMotion}
       >
-        {manifest && <RoomScenery place={place} timeOfDay={timeOfDay} />}
+        {manifest && <RoomScenery place={place} />}
         {place === "club-pulse" && (
           <DanceFloor
             floorBounds={CLUB_PULSE_DANCE_FLOOR_BOUNDS}
@@ -858,6 +861,8 @@ function WorldStage({
   onWalk,
   onPortal,
   board,
+  timeOfDay,
+  reducedMotion,
   children,
 }: {
   manifest?: RoomManifest;
@@ -867,12 +872,18 @@ function WorldStage({
   onWalk: (x: number, y: number) => void;
   onPortal: (target: string, spawn: { x: number; y: number }) => void;
   board: boolean;
+  timeOfDay: TimeOfDay;
+  reducedMotion: boolean;
   children: ReactNode;
 }) {
   return (
     <div
       className={`world-stage scene ${imageClass}${manifest ? " camera-world" : ""}`}
     >
+      <GlobalLightingOverlay
+        timeOfDay={timeOfDay}
+        reducedMotion={reducedMotion}
+      />
       {manifest ? (
         <CameraViewport
           manifest={manifest}

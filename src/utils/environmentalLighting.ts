@@ -1,5 +1,26 @@
 export type TimeOfDay = "day" | "sunset" | "dusk" | "night";
 
+const TIME_OF_DAY_VALUES: readonly TimeOfDay[] = [
+  "day",
+  "sunset",
+  "dusk",
+  "night",
+];
+
+export function isTimeOfDay(value: unknown): value is TimeOfDay {
+  return (
+    typeof value === "string" && TIME_OF_DAY_VALUES.includes(value as TimeOfDay)
+  );
+}
+
+export function decodeTimeOfDay(value: unknown): TimeOfDay | null {
+  return isTimeOfDay(value) ? value : null;
+}
+
+export function decodeAutoTime(value: unknown): boolean {
+  return value !== "false";
+}
+
 export type LightingProfile = {
   time: TimeOfDay;
   overlayColor: string;
@@ -50,7 +71,7 @@ const PROFILES: Record<TimeOfDay, LightingProfile> = {
 };
 
 export function getLightingProfile(time: TimeOfDay): LightingProfile {
-  return PROFILES[time];
+  return PROFILES[time] ?? PROFILES.day;
 }
 
 export function calculateTimeOfDayFromLocalTime(
@@ -84,5 +105,17 @@ export function generateStars(
     y: Math.round(random() * 600) / 10,
     size: Math.round((0.5 + random() * 1.5) * 100) / 100,
     opacity: Math.round((0.4 + random() * 0.6) * 100) / 100,
+  }));
+}
+
+export function generateFireflies(
+  count: number,
+  seed: number = 13,
+): { x: number; y: number; delay: number }[] {
+  const random = mulberry32(seed);
+  return Array.from({ length: count }, () => ({
+    x: Math.round(random() * 1000) / 10,
+    y: Math.round((40 + random() * 55) * 10) / 10,
+    delay: Math.round(random() * 400) / 100,
   }));
 }
