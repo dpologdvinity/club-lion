@@ -1,3 +1,4 @@
+import { sanitizeSocialGraph } from "./utils/socialGraph.ts";
 import { STAMP_DEFINITIONS } from "./utils/stampDefinitions.ts";
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
 import { MAX_SMOOTHIE_COINS } from "./utils/smoothieRecipes.ts";
@@ -66,6 +67,10 @@ export type PlayerBase = {
   spyRank?: number;
   spyPuzzlesSolved?: number;
   spyBadges?: string[];
+  friends?: string[];
+  incomingFriendRequests?: string[];
+  outgoingFriendRequests?: string[];
+  recentVisitors?: string[];
 };
 
 export type Player = PlayerBase & {
@@ -249,6 +254,10 @@ export function newPlayer(): Player {
     claimed: [],
     decor: [],
     stamps: [],
+    friends: [],
+    incomingFriendRequests: [],
+    outgoingFriendRequests: [],
+    recentVisitors: [],
   };
 }
 
@@ -300,7 +309,17 @@ export function restorePlayer(raw: string | null): Player {
         ),
       ),
     ];
+    const social = sanitizeSocialGraph({
+      friends: p.friends,
+      pendingIncoming: p.incomingFriendRequests,
+      pendingOutgoing: p.outgoingFriendRequests,
+      recentVisitors: p.recentVisitors,
+    });
     return {
+      friends: social.friends,
+      incomingFriendRequests: social.pendingIncoming,
+      outgoingFriendRequests: social.pendingOutgoing,
+      recentVisitors: social.recentVisitors,
       version: 1,
       name: p.name.trim().slice(0, 16),
       coins: p.coins,

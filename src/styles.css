@@ -5488,3 +5488,121 @@ svg {
 .spy-debrief {
   color: var(--text);
 }
+
+/* Social lists share the native modal and savanna palette. */
+.friends-panel {
+  display: grid;
+  gap: 16px;
+}
+.friends-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  background: var(--accent-soft);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+}
+.friends-search label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 800;
+}
+.friends-search > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.friends-search input {
+  flex: 1 1 160px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  color: var(--text);
+}
+.friends-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.friends-tabs button,
+.friend-actions button,
+.friends-search button {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--green-soft);
+  font-weight: 800;
+}
+.friends-tabs button[aria-selected="true"] {
+  background: var(--text);
+  color: var(--surface);
+}
+.friends-panel button.friends-primary {
+  background: var(--accent);
+  color: #59361b;
+}
+.friends-panel button:disabled {
+  background: var(--background);
+  color: var(--muted);
+}
+.friends-feedback,
+.friends-empty {
+  color: var(--muted);
+  line-height: 1.5;
+}
+.friends-feedback:empty {
+  display: none;
+}
+.friends-empty {
+  margin: 12px 0;
+}
+.friends-list {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 20px;
+  padding: 0;
+  list-style: none;
+}
+.friend-card {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  min-width: 0;
+}
+.friend-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-wrap: anywhere;
+}
+.friend-avatar {
+  display: flex;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+}
+.friend-avatar img,
+.friend-avatar svg {
+  width: 100%;
+}
+.friend-status,
+.friend-identity small {
+  display: block;
+  color: var(--muted);
+}
+.friend-online {
+  color: var(--text);
+}
+.friend-room {
+  margin: 10px 0;
+  overflow-wrap: anywhere;
+}
+.friend-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}

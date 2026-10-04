@@ -787,3 +787,91 @@ test("a save from before spy progression existed restores without spy fields", (
   assert.equal(restored.spyRank, undefined);
   assert.equal(restored.spyBadges, undefined);
 });
+
+test("legacy saves restore empty social arrays and preserve progress", () => {
+  const legacy = { ...newPlayer(), coins: 789 };
+  for (const key of [
+    "friends",
+    "incomingFriendRequests",
+    "outgoingFriendRequests",
+    "recentVisitors",
+  ] as const)
+    delete legacy[key];
+  const restored = restorePlayer(JSON.stringify(legacy));
+  assert.equal(restored.coins, 789);
+  for (const key of [
+    "friends",
+    "incomingFriendRequests",
+    "outgoingFriendRequests",
+    "recentVisitors",
+  ] as const) {
+    assert.deepEqual(restored[key], []);
+  }
+});
+
+test("social save arrays validate IDs, deduplicate, resolve conflicts and bound size", () => {
+  const ids = Array.from({ length: 130 }, (_, i) => `lion-${i}`);
+  const restored = restorePlayer(
+    JSON.stringify({
+      ...newPlayer(),
+      friends: [null, 10, {}, "", " ", "x".repeat(33), "cleo", "cleo", ...ids],
+      incomingFriendRequests: [
+        "cleo",
+        "pip",
+        "pip",
+        ...ids.map((id) => `incoming-${id}`),
+      ],
+      outgoingFriendRequests: [
+        "cleo",
+        "pip",
+        "milo",
+        "milo",
+        ...ids.map((id) => `outgoing-${id}`),
+      ],
+      recentVisitors: [false, "cleo", "cleo", ...ids],
+    }),
+  );
+  assert.equal(restored.friends?.length, 100);
+  assert.equal(restored.friends?.[0], "cleo");
+  assert.equal(restored.incomingFriendRequests?.length, 100);
+  assert.equal(restored.incomingFriendRequests?.[0], "pip");
+  assert.equal(restored.outgoingFriendRequests?.length, 100);
+  assert.equal(restored.outgoingFriendRequests?.[0], "milo");
+  assert.equal(restored.recentVisitors?.length, 15);
+  const malformed = restorePlayer(
+    JSON.stringify({
+      ...newPlayer(),
+      friends: "cleo",
+      incomingFriendRequests: {},
+      outgoingFriendRequests: null,
+      recentVisitors: 15,
+    }),
+  );
+  assert.deepEqual(malformed.friends, []);
+  assert.deepEqual(malformed.incomingFriendRequests, []);
+  assert.deepEqual(malformed.outgoingFriendRequests, []);
+  assert.deepEqual(malformed.recentVisitors, []);
+});
+
+test("social arrays round trip through V1 and V2 migration without persisting presence", () => {
+  const save = {
+    ...newPlayer(),
+    friends: ["cleo"],
+    incomingFriendRequests: ["pip"],
+    outgoingFriendRequests: ["milo"],
+    recentVisitors: ["cleo", "pip"],
+  };
+  const migrated = migratePlayerSave(save);
+  const reloaded = migratePlayerSave(JSON.parse(JSON.stringify(migrated)));
+  for (const key of [
+    "friends",
+    "incomingFriendRequests",
+    "outgoingFriendRequests",
+    "recentVisitors",
+  ] as const) {
+    assert.deepEqual(restorePlayer(JSON.stringify(save))[key], save[key]);
+    assert.deepEqual(migrated[key], save[key]);
+    assert.deepEqual(reloaded[key], save[key]);
+  }
+  assert.equal("isOnline" in reloaded, false);
+});

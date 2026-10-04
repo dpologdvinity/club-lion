@@ -44,6 +44,7 @@ import { PlayerCard } from "./components/PlayerCard";
 import { CatalogModal } from "./components/CatalogModal";
 import { StampBook } from "./components/StampBook";
 import { SalonModal } from "./components/SalonModal";
+import { FriendsPanel } from "./components/FriendsPanel";
 
 type Panel =
   | "map"
@@ -55,6 +56,7 @@ type Panel =
   | "catalog"
   | "stamps"
   | "salon"
+  | "friends"
   | null;
 
 export default function App() {
@@ -190,6 +192,12 @@ export default function App() {
               onClick={() => setPanel("stamps")}
             >
               Stamp Book
+            </button>
+            <button
+              className={panel === "friends" ? "selected" : ""}
+              onClick={() => setPanel("friends")}
+            >
+              Friends
             </button>
           </nav>
           <div className="header-actions">
@@ -337,6 +345,32 @@ export default function App() {
         </span>
         <span>{toast}</span>
       </div>
+      {panel === "friends" && (
+        <FriendsPanel
+          myId="local-player"
+          graph={{
+            friends: player.friends ?? [],
+            pendingIncoming: player.incomingFriendRequests ?? [],
+            pendingOutgoing: player.outgoingFriendRequests ?? [],
+            recentVisitors: player.recentVisitors ?? [],
+          }}
+          profiles={[]}
+          onJumpToFriend={navigate}
+          onSendEmote={() =>
+            notify("No online player is connected in this local session.")
+          }
+          onUpdateSocialGraph={(graph) =>
+            setPlayer((p) => ({
+              ...p,
+              friends: graph.friends,
+              incomingFriendRequests: graph.pendingIncoming,
+              outgoingFriendRequests: graph.pendingOutgoing,
+              recentVisitors: graph.recentVisitors,
+            }))
+          }
+          onClose={closePanel}
+        />
+      )}
       {panel === "stamps" && <StampBook player={player} onClose={closePanel} />}
       {panel === "card" && (
         <PlayerCard
@@ -402,7 +436,8 @@ export default function App() {
         panel !== "card" &&
         panel !== "catalog" &&
         panel !== "salon" &&
-        panel !== "stamps" && (
+        panel !== "stamps" &&
+        panel !== "friends" && (
           <Dialog
             title={titles[panel][0]}
             subtitle={titles[panel][1]}

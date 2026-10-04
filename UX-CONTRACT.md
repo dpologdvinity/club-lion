@@ -37,6 +37,8 @@ The user requested a Club Penguin-like website using lions. The first complete s
 - All destinations derive from `PLACES`; added visits survive V1/V2 restoration under the existing save key. Current room and position stay local to the open session and reset to Savanna Square on reload. Scene vectors are rendered directly; illustrative manifest asset names never cause missing image requests.
 - Local-only, non-shareable room and dialog state remains in React. No account, network request, retention policy, billing workflow, or private data is required.
 
+- Friends stores only IDs in the local save (100 friends, 100 requests in each direction, 15 recent visitors). The panel accepts a session profile directory for online status, current rooms, and username lookup; missing profiles are offline and cannot receive jumps or emotes. The local app has no connected player directory and does not present scripted neighbors as online friends. Graph edits persist; live request delivery and presence belong to the caller supplying profiles and callbacks. Jumps use safe walkable positions outside portal triggers, including jumps within the current room.
+
 ## Accessibility and verification
 
 English interface, native semantics, keyboard movement, named controls, field associations, visible focus, accessible modal behavior, reduced motion, and responsive document flow are baseline requirements. Browser tests exercise desktop and mobile, success and validation paths, lost storage, rewards, persistence, all seven arcade activities, and automated WCAG AA scans.

@@ -90,7 +90,7 @@ export function World({
             ((spawn?.x ?? manifest.stageWidth / 2) / manifest.stageWidth) * 100,
           y: ((spawn?.y ?? 600) / manifest.stageHeight) * 100,
         }
-      : { x: 43, y: 78 },
+      : (spawn ?? { x: 43, y: 78 }),
   );
   const stagePosition = manifest
     ? {
@@ -98,6 +98,18 @@ export function World({
         y: Math.round((position.y / 100) * manifest.stageHeight * 1e6) / 1e6,
       }
     : position;
+  // Apply explicit fast-travel spawns even when the destination is this room.
+  useEffect(() => {
+    if (!spawn) return;
+    setPosition(
+      manifest
+        ? {
+            x: (spawn.x / manifest.stageWidth) * 100,
+            y: (spawn.y / manifest.stageHeight) * 100,
+          }
+        : spawn,
+    );
+  }, [spawn, manifest]);
   const [avatarAction, setAvatarAction] = useState<string>("idle");
   const [avatarHeading, setAvatarHeading] = useState<"left" | "right">("right");
   const [isTrotting, setIsTrotting] = useState(false);
