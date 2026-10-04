@@ -2,10 +2,16 @@ import type { Player, PlayerV2 } from "../game.ts";
 import { CATALOG_ITEMS, DEFAULT_AVATAR_LOOK } from "../types/world.ts";
 
 export type StampCategory =
-  "world_secrets" | "park_thrills" | "fashion_style" | "arcade_mastery";
+  | "world_secrets"
+  | "park_thrills"
+  | "fashion_style"
+  | "arcade_mastery"
+  | "secrets";
 export type StampDefinition = {
   id: string;
   name: string;
+  title?: string;
+  rewardCoins?: number;
   category: StampCategory;
   description: string;
   icon: string;
@@ -13,6 +19,17 @@ export type StampDefinition = {
 };
 
 export const STAMP_DEFINITIONS: StampDefinition[] = [
+  {
+    id: "lighthouse_foghorn",
+    name: "Foghorn Mariner",
+    title: "Foghorn Mariner",
+    category: "secrets",
+    description:
+      "Sound the two-tone brass foghorn atop the coastal lighthouse.",
+    icon: "📯",
+    rewardCoins: 40,
+    unlockHint: "Pull the brass chain at the Coastal Pier lighthouse.",
+  },
   {
     id: "catalog_barista",
     name: "Canopy Barista",

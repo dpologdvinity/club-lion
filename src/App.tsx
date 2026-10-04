@@ -289,6 +289,9 @@ export default function App() {
             onOpenSpy={() => setPanel("spy")}
             onOpenJukebox={() => setPanel("jukebox")}
             onOpenCondo={() => setPanel("condo")}
+            onUnlockStamp={(stampId) =>
+              setPlayer((p) => unlockStamp(p, stampId))
+            }
           />
           <Sidebar
             player={player}

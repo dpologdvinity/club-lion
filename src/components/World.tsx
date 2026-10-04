@@ -39,6 +39,11 @@ import {
   generateSparkleStep,
   type SparkleParticle,
 } from "../utils/particleTrail";
+import {
+  playFoghorn,
+  playOceanSurf,
+  stopOceanSurf,
+} from "../utils/nauticalAudio.ts";
 import { SpyPinModal } from "./SpyPinModal.tsx";
 
 const BOARD_SPEED_MULTIPLIER = 1.5;
@@ -69,6 +74,7 @@ type WorldProps = {
   onOpenSpy?: () => void;
   onOpenJukebox?: () => void;
   onOpenCondo?: () => void;
+  onUnlockStamp?: (stampId: string) => void;
 };
 
 export function World({
@@ -88,6 +94,7 @@ export function World({
   onOpenSpy,
   onOpenJukebox,
   onOpenCondo,
+  onUnlockStamp,
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
   const [position, setPosition] = useState(() =>
@@ -141,6 +148,15 @@ export function World({
   const [emotesOpen, setEmotesOpen] = useState(false);
   const [sound, setSound] = useState(false);
   const audio = useRef<AudioContext | null>(null);
+  useEffect(() => {
+    if (!sound || manifest?.ambientAudioPreset !== "ocean-surf") return;
+    playOceanSurf();
+    const interval = window.setInterval(() => playOceanSurf(), 6500);
+    return () => {
+      window.clearInterval(interval);
+      stopOceanSurf();
+    };
+  }, [sound, manifest]);
   const currentPlace = PLACES.find((p) => p.id === place)!;
   const [spyPinOpen, setSpyPinOpen] = useState(false);
   const [pendingPortalSpawn, setPendingPortalSpawn] = useState<{
@@ -352,7 +368,11 @@ export function World({
       walk((x / manifest.stageWidth) * 100, (y / manifest.stageHeight) * 100);
   };
   const hotspot = (id: string) => {
-    if (id === "coaster-ticket-gate") onActivity("coaster");
+    if (id === "lighthouse-foghorn") {
+      playFoghorn(sound ? undefined : null);
+      onUnlockStamp?.("lighthouse_foghorn");
+      notify("BWWWOOOOMMM! 📯 The lighthouse foghorn echoes across the bay!");
+    } else if (id === "coaster-ticket-gate") onActivity("coaster");
     else if (id === "club-pulse-dj-booth") onActivity("dj-beat-drop");
     else if (id === "midway-game-booth") onActivity("fruit");
     else if (id === "park-map-kiosk") onMap();
@@ -393,6 +413,7 @@ export function World({
       );
   };
   const hotspotLabels: Record<string, string> = {
+    "lighthouse-foghorn": "Sound Foghorn",
     "coaster-ticket-gate": "Ride Savanna Screamer",
     "giant-ferris-wheel": "Watch the Ferris wheel",
     "park-map-kiosk": "Park map",
@@ -475,13 +496,21 @@ export function World({
           />
         )}
         {manifest?.interactives
-          .filter((item) => item.type !== "instrument")
+          .filter(
+            (item) =>
+              item.type !== "instrument" || item.id === "lighthouse-foghorn",
+          )
           .map((item) => (
             <button
               key={item.id}
               className="building-label room-hotspot"
               tabIndex={-1}
-              style={{ left: item.position.x, top: item.position.y - 95 }}
+              style={{
+                left: item.position.x,
+                top:
+                  item.position.y -
+                  (item.id === "lighthouse-foghorn" ? 210 : 95),
+              }}
               onClick={() => hotspot(item.id)}
             >
               {hotspotLabels[item.id]} <ArrowUpRight size={17} />
@@ -574,6 +603,14 @@ export function World({
               <Sparkles size={18} /> Grand Jukebox
             </button>
           </>
+        )}
+        {place === "coastal-pier" && (
+          <button
+            className="room-action"
+            onClick={() => hotspot("lighthouse-foghorn")}
+          >
+            <Volume2 size={18} /> Sound Foghorn
+          </button>
         )}
         {place === "secret-scout-base" && (
           <button className="room-action" onClick={onOpenSpy}>

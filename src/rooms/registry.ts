@@ -10,6 +10,9 @@ import { splashOasisRiverManifest } from "./manifests/splashOasisRiver.ts";
 import { penthouseCondoManifest } from "./manifests/penthouseCondo.ts";
 import { secretScoutBaseManifest } from "./manifests/secretScoutBase.ts";
 
+import { sunsetBeachManifest } from "./manifests/sunsetBeach.ts";
+import { coastalPierManifest } from "./manifests/coastalPier.ts";
+
 export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
   "downtown-plaza": downtownPlazaManifest,
   "wonder-park-entrance": wonderParkEntranceManifest,
@@ -19,4 +22,6 @@ export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
   "splash-oasis-river": splashOasisRiverManifest,
   "penthouse-condo": penthouseCondoManifest,
   "secret-scout-base": secretScoutBaseManifest,
+  "sunset-beach": sunsetBeachManifest,
+  "coastal-pier": coastalPierManifest,
 };

@@ -39,7 +39,9 @@ export type PlaceId =
   | "splash-oasis-entry"
   | "splash-oasis-river"
   | "penthouse-condo"
-  | "secret-scout-base";
+  | "secret-scout-base"
+  | "sunset-beach"
+  | "coastal-pier";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -210,6 +212,18 @@ export const PLACES: {
     name: "The Pride HQ - Secret Scout Command Center",
     subtitle: "Shh… classified savanna business",
     imageClass: "scene-scout-base",
+  },
+  {
+    id: "sunset-beach",
+    name: "Sunset Beach",
+    subtitle: "Golden dunes & ocean sunsets",
+    imageClass: "scene-beach",
+  },
+  {
+    id: "coastal-pier",
+    name: "Coastal Pier & Boardwalk",
+    subtitle: "Follow the lighthouse across the bay",
+    imageClass: "scene-pier",
   },
 ];
 
@@ -769,12 +783,13 @@ export function unlockStamp<T extends PlayerBase>(
   player: T,
   stampId: string,
 ): T {
-  if (
-    !STAMP_DEFINITIONS.some((stamp) => stamp.id === stampId) ||
-    player.stamps?.includes(stampId)
-  )
-    return player;
-  return { ...player, stamps: [...(player.stamps ?? []), stampId] };
+  const stamp = STAMP_DEFINITIONS.find((stamp) => stamp.id === stampId);
+  if (!stamp || player.stamps?.includes(stampId)) return player;
+  return {
+    ...player,
+    coins: player.coins + (stamp.rewardCoins ?? 0),
+    stamps: [...(player.stamps ?? []), stampId],
+  };
 }
 
 export function completeFishingCatch<T extends PlayerBase>(

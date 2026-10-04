@@ -11,6 +11,7 @@ import { Dialog } from "./Dialog";
 const CATEGORIES: { id: StampCategory | "all"; label: string }[] = [
   { id: "all", label: "All" },
   { id: "world_secrets", label: "World Secrets" },
+  { id: "secrets", label: "Coastal Secrets" },
   { id: "park_thrills", label: "Park Thrills" },
   { id: "fashion_style", label: "Fashion & Style" },
   { id: "arcade_mastery", label: "Arcade Mastery" },

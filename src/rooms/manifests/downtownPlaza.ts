@@ -21,6 +21,12 @@ export const downtownPlazaManifest: RoomManifest = {
   ],
   portals: [
     {
+      targetRoomId: "sunset-beach",
+      targetSpawn: { x: 280, y: 620 },
+      triggerBounds: { x1: 100, y1: 675, x2: 240, y2: 720 },
+      label: "Sunset Beach",
+    },
+    {
       targetRoomId: "square",
       targetSpawn: { x: 43, y: 78 },
       triggerBounds: { x1: 950, y1: 675, x2: 1100, y2: 720 },

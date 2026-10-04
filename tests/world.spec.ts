@@ -656,3 +656,92 @@ test("Phase 1 Action Wheel triggers quick chat, emotes, and mango tossing", asyn
     page.getByRole("heading", { name: "Downtown Plaza", exact: true }),
   ).toBeVisible();
 });
+
+test("coastal travel and the lighthouse foghorn award a persistent stamp once", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/");
+  // The existing desktop header can overflow; coastal rooms must not add overflow.
+  const initialOverflow = await page.evaluate(() =>
+    Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
+  );
+  await page
+    .getByRole("region", { name: "Lion world", exact: true })
+    .getByRole("button", { name: "Downtown Plaza", exact: true })
+    .click();
+  const paths = page.getByLabel("Room paths and activities");
+  await paths
+    .getByRole("button", { name: "Sunset Beach", exact: true })
+    .click();
+  await expect(page.locator(".world-location h2")).toHaveText("Sunset Beach");
+  await paths
+    .getByRole("button", { name: "Coastal Pier & Boardwalk", exact: true })
+    .click();
+  await expect(page.locator(".world-location h2")).toHaveText(
+    "Coastal Pier & Boardwalk",
+  );
+  const horn = paths.getByRole("button", {
+    name: "Sound Foghorn",
+    exact: true,
+  });
+  await horn.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".wallet")).toHaveText("✦290");
+  await expect(page.getByRole("status")).toContainText(
+    "BWWWOOOOMMM! 📯 The lighthouse foghorn echoes across the bay!",
+  );
+  await page
+    .getByRole("button", { name: "Turn sound on", exact: true })
+    .click();
+  await horn.click();
+  await expect(page.locator(".wallet")).toHaveText("✦290");
+  await page
+    .getByRole("button", { name: "Turn sound off", exact: true })
+    .click();
+  await page.locator(".camera-viewport-ground").focus();
+  for (let step = 0; step < 37; step++) await page.keyboard.press("ArrowRight");
+  await page
+    .locator(".room-hotspot")
+    .filter({ hasText: "Sound Foghorn" })
+    .click();
+  await expect(page.locator(".wallet")).toHaveText("✦290");
+  await page.screenshot({
+    path: `/tmp/club-lion-coastal-${test.info().project.name}.png`,
+  });
+  expect(
+    await page.evaluate(() =>
+      Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
+    ),
+  ).toBeLessThanOrEqual(initialOverflow);
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(results.violations).toEqual([]);
+  await paths
+    .getByRole("button", { name: "Sunset Beach", exact: true })
+    .click();
+  await paths
+    .getByRole("button", { name: "Downtown Plaza", exact: true })
+    .click();
+  await page.reload();
+  await expect(page.locator(".wallet")).toHaveText("✦290");
+  const saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key)!),
+    SAVE_KEY,
+  );
+  expect(saved.stamps).toContain("lighthouse_foghorn");
+  expect(saved.visited).toEqual(
+    expect.arrayContaining(["sunset-beach", "coastal-pier"]),
+  );
+  await page
+    .locator(".destination-card")
+    .filter({ hasText: "Coastal Pier & Boardwalk" })
+    .click();
+  await paths
+    .getByRole("button", { name: "Sound Foghorn", exact: true })
+    .click();
+  await expect(page.locator(".wallet")).toHaveText("✦290");
+  expect(errors).toEqual([]);
+});

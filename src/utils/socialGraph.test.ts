@@ -142,7 +142,7 @@ test("jump spawns are deterministic, strictly walkable and outside every portal 
     ...PLACES.map((place) => place.id),
     ...Object.keys(ROOM_MANIFESTS),
   ]);
-  assert.equal(ids.size, 13);
+  assert.equal(ids.size, 15);
   for (const id of ids) {
     const spawn = getJumpSpawnCoordinate(
       id as Parameters<typeof getJumpSpawnCoordinate>[0],

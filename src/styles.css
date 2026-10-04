@@ -4366,6 +4366,12 @@ svg {
 .scene-oasis {
   background: #a5d8d3;
 }
+.scene-beach {
+  background: #e7be80;
+}
+.scene-pier {
+  background: #6ba8af;
+}
 .scene-river {
   background: #89c5cc;
 }

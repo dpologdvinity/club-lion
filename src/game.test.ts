@@ -875,3 +875,23 @@ test("social arrays round trip through V1 and V2 migration without persisting pr
   }
   assert.equal("isOnline" in reloaded, false);
 });
+
+test("foghorn stamp awards 40 coins once and persists alongside coastal visits", () => {
+  const player = migratePlayerSave(newPlayer());
+  const before = structuredClone(player);
+  const unlocked = unlockStamp(player, "lighthouse_foghorn");
+  assert.equal(unlocked.coins, player.coins + 40);
+  assert.deepEqual(unlocked.stamps, ["lighthouse_foghorn"]);
+  assert.deepEqual(player, before);
+  assert.equal(unlockStamp(unlocked, "lighthouse_foghorn"), unlocked);
+  const visited = visitPlace(
+    visitPlace(unlocked, "sunset-beach"),
+    "coastal-pier",
+  );
+  const restored = migratePlayerSave(JSON.parse(JSON.stringify(visited)));
+  assert.deepEqual(restored.stamps, unlocked.stamps);
+  assert.equal(restored.coins, unlocked.coins);
+  assert.ok(restored.visited.includes("sunset-beach"));
+  assert.ok(restored.visited.includes("coastal-pier"));
+  assert.equal(unlockStamp(restored, "lighthouse_foghorn"), restored);
+});

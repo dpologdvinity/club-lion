@@ -205,3 +205,23 @@ test("arcade milestones require their own score thresholds rather than total pla
     [],
   );
 });
+
+test("Foghorn Mariner is a secret event stamp with a 40 coin reward", () => {
+  const stamp = STAMP_DEFINITIONS.find((s) => s.id === "lighthouse_foghorn");
+  assert.ok(stamp);
+  assert.equal(stamp.title, "Foghorn Mariner");
+  assert.equal(stamp.name, "Foghorn Mariner");
+  assert.equal(stamp.category, "secrets");
+  assert.equal(
+    stamp.description,
+    "Sound the two-tone brass foghorn atop the coastal lighthouse.",
+  );
+  assert.equal(stamp.icon, "📯");
+  assert.equal(stamp.rewardCoins, 40);
+  assert.ok(
+    !evaluateStampUnlocks({
+      ...newPlayer(),
+      visited: ["coastal-pier"],
+    }).includes(stamp.id),
+  );
+});

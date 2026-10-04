@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import type { PlaceId } from "../game.ts";
 import {
   computeCoasterTrackPosition,
@@ -964,6 +964,313 @@ function ScoutBaseScenery({
   );
 }
 
+function CoastalOcean({ seconds }: { seconds: number }) {
+  const id = useId();
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${id}-sunset`} x2="0" y2="1">
+          <stop stopColor="#d79291" />
+          <stop offset=".6" stopColor="#f7c78b" />
+          <stop offset="1" stopColor="#ffe3ae" />
+        </linearGradient>
+        <linearGradient id={`${id}-water`} x2="0" y2="1">
+          <stop stopColor="#80b5b8" />
+          <stop offset="1" stopColor="#397d8e" />
+        </linearGradient>
+      </defs>
+      <rect width="2400" height="720" fill={`url(#${id}-sunset)`} />
+      <circle cx="1350" cy="265" r="100" fill="#ffecb1" />
+      <g fill="#fff1cf" opacity=".5">
+        <ellipse cx="480" cy="150" rx="180" ry="24" />
+        <ellipse cx="1850" cy="110" rx="220" ry="20" />
+      </g>
+      <rect y="310" width="2400" height="410" fill={`url(#${id}-water)`} />
+      {Array.from({ length: 7 }, (_, i) => (
+        <path
+          key={i}
+          d={`M${1240 - i * 26} ${328 + i * 24}h${220 + i * 52}`}
+          stroke="#ffe1a0"
+          strokeWidth="8"
+          opacity={0.5 - i * 0.05}
+          strokeLinecap="round"
+        />
+      ))}
+      {Array.from({ length: 12 }, (_, i) => (
+        <path
+          key={i}
+          d={`M${i * 210 - 50} ${390 + (i % 3) * 43 + Math.sin(seconds * 0.7 + i) * 8}q60 -13 120 0t120 0`}
+          fill="none"
+          stroke="#c7e1d9"
+          strokeWidth="5"
+          opacity=".65"
+          strokeLinecap="round"
+        />
+      ))}
+      <path
+        d="M470 255q18 -20 36 0q18 -20 36 0M720 210q14 -16 28 0q14 -16 28 0"
+        fill="none"
+        stroke="#6a6762"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+    </>
+  );
+}
+
+function SunsetBeachScenery({ seconds }: { seconds: number }) {
+  return (
+    <g>
+      <CoastalOcean seconds={seconds} />
+      <path
+        d="M0 515Q430 450 870 515T1670 515T2400 495V720H0Z"
+        fill="#e8ba78"
+      />
+      <path
+        d="M0 553Q440 505 940 556T1800 550T2400 544V720H0Z"
+        fill="#f3d298"
+      />
+      <path
+        d="M0 519Q430 454 870 519T1670 519T2400 499"
+        fill="none"
+        stroke="#fff3d2"
+        strokeWidth="9"
+      />
+      <path
+        d="M0 670Q350 594 780 644T1450 667T2400 637V720H0Z"
+        fill="#eac28a"
+      />
+      {[230, 430, 2140, 2290].map((x, i) => (
+        <PalmTree key={x} x={x} y={550} scale={i % 2 ? 0.85 : 1.15} />
+      ))}
+      <g transform="translate(930 540)">
+        <ellipse cy="15" rx="250" ry="36" fill="#bd8f59" opacity=".35" />
+        <path d="M-175 0V-125M175 0V-125" stroke="#916741" strokeWidth="13" />
+        <path
+          d="M-230-120Q-140-200 0-240Q140-200 230-120Z"
+          fill="#b48a4b"
+          stroke="#8e693d"
+          strokeWidth="5"
+        />
+        {[-180, -120, -60, 0, 60, 120, 180].map((x) => (
+          <path
+            key={x}
+            d={`M0-240L${x}-120l-15 28`}
+            fill="none"
+            stroke="#e1bd72"
+            strokeWidth="12"
+          />
+        ))}
+        <rect
+          x="-170"
+          y="-40"
+          width="340"
+          height="55"
+          rx="16"
+          fill="#ffecd0"
+          stroke="#a8794b"
+          strokeWidth="5"
+        />
+        <rect x="-156" y="-29" width="140" height="24" rx="8" fill="#d77f61" />
+        <rect x="16" y="-29" width="140" height="24" rx="8" fill="#76a99a" />
+        <text y="-92" textAnchor="middle" fontSize="25" fill="#634c32">
+          SUNSET CABANA
+        </text>
+      </g>
+      <g transform="translate(1590 570)">
+        <path d="M0 0V-175" stroke="#8e6845" strokeWidth="8" />
+        <path
+          d="M-140-165Q-60-255 0-245Q60-255 140-165Z"
+          fill="#de8a64"
+          stroke="#aa604c"
+          strokeWidth="4"
+        />
+        <path d="M0-245Q-40-205-50-165H50Q40-205 0-245" fill="#fff0c8" />
+        <path
+          d="M-90 15L-30-45H65L35 15Z"
+          fill="#fff0c8"
+          stroke="#a68059"
+          strokeWidth="5"
+        />
+      </g>
+      {[550, 1320, 1850].map((x) => (
+        <g key={x} transform={`translate(${x} 654)`}>
+          <path
+            d="M-16 0Q0-30 16 0Z"
+            fill="#ffe7cb"
+            stroke="#c18d60"
+            strokeWidth="3"
+          />
+          <path
+            d="M0-13V0M-7-9L-4 0M7-9L4 0"
+            stroke="#d8ae88"
+            strokeWidth="2"
+          />
+        </g>
+      ))}
+    </g>
+  );
+}
+
+function CoastalPierScenery({ seconds }: { seconds: number }) {
+  const planksId = useId();
+  return (
+    <g>
+      <CoastalOcean seconds={seconds} />
+      <defs>
+        <pattern
+          id={planksId}
+          width="160"
+          height="36"
+          patternUnits="userSpaceOnUse"
+        >
+          <rect width="160" height="36" fill="#b38e6a" />
+          <path
+            d="M0 0H160M0 36H160M80 0V36"
+            stroke="#755e4a"
+            strokeWidth="3"
+          />
+          <path
+            d="M10 12h53M90 24h45"
+            stroke="#d4b692"
+            strokeWidth="2"
+            opacity=".6"
+          />
+          <circle cx="8" cy="7" r="2" fill="#675a4c" />
+          <circle cx="150" cy="29" r="2" fill="#675a4c" />
+        </pattern>
+      </defs>
+      {Array.from({ length: 13 }, (_, i) => (
+        <g key={i} transform={`translate(${i * 200} 480)`}>
+          <path d="M-12-10V70H12V-10" fill="#79614b" />
+          <ellipse cy="65" rx="35" ry="6" fill="#c2dbcf" opacity=".5" />
+        </g>
+      ))}
+      <path d="M0 475H2400V510H0Z" fill="#745d48" />
+      <path d="M0 475H2400" stroke="#d8b78c" strokeWidth="9" />
+      <rect y="540" width="2400" height="180" fill={`url(#${planksId})`} />
+      {Array.from({ length: 17 }, (_, i) => (
+        <path
+          key={i}
+          d={`M${i * 150} 540V455`}
+          stroke="#8e7358"
+          strokeWidth="12"
+          strokeLinecap="round"
+        />
+      ))}
+      <path d="M0 460H2400M0 500H2400" stroke="#e1c39b" strokeWidth="8" />
+      <g transform="translate(1950 540)">
+        <ellipse cy="4" rx="160" ry="26" fill="#624f42" opacity=".35" />
+        <path
+          d="M-105 0L-65-300H65L105 0Z"
+          fill="#fff5dc"
+          stroke="#8d6552"
+          strokeWidth="6"
+        />
+        <path
+          d="M-91-95H91L82-160H-82ZM-74-220H74L65-285H-65Z"
+          fill="#c46757"
+        />
+        <path
+          d="M-44 0V-65Q0-110 44-65V0"
+          fill="#5c594d"
+          stroke="#ae8260"
+          strokeWidth="6"
+        />
+        <rect
+          x="-72"
+          y="-360"
+          width="144"
+          height="62"
+          rx="6"
+          fill="#f5dfa5"
+          stroke="#6a5d51"
+          strokeWidth="7"
+        />
+        <path
+          d="M-45-360V-300M0-360V-300M45-360V-300"
+          stroke="#6a5d51"
+          strokeWidth="5"
+        />
+        <path
+          d="M-98-365L0-425L98-365Z"
+          fill="#b4574a"
+          stroke="#854c40"
+          strokeWidth="5"
+        />
+        <path
+          d="M-95-298H95M-105-318V-288M105-318V-288"
+          fill="none"
+          stroke="#695a4c"
+          strokeWidth="7"
+        />
+        <circle cy="-330" r="16" fill="#fff4c2" />
+        <g transform="translate(80 -265)">
+          <path
+            d="M-20-10H20L65-30V30L20 10H-20Z"
+            fill="#d9ae50"
+            stroke="#946b32"
+            strokeWidth="4"
+          />
+          <ellipse cx="65" rx="9" ry="30" fill="#a47a34" />
+          <path
+            d="M0 12V218"
+            fill="none"
+            stroke="#caa54d"
+            strokeWidth="6"
+            strokeDasharray="4 5"
+            strokeLinecap="round"
+          />
+          <ellipse
+            cy="222"
+            rx="9"
+            ry="14"
+            fill="none"
+            stroke="#d9ae50"
+            strokeWidth="5"
+          />
+        </g>
+        <rect
+          x="-145"
+          y="30"
+          width="290"
+          height="40"
+          rx="8"
+          fill="#fff0cf"
+          stroke="#987650"
+          strokeWidth="4"
+        />
+        <text y="57" textAnchor="middle" fontSize="24" fill="#674f3e">
+          HISTORIC LIGHTHOUSE
+        </text>
+      </g>
+      <g transform="translate(820 533)">
+        <rect
+          x="-125"
+          y="-100"
+          width="250"
+          height="38"
+          rx="7"
+          fill="#c59b6e"
+          stroke="#795e43"
+          strokeWidth="4"
+        />
+        <path
+          d="M-140-48H140M-105-48V0M105-48V0"
+          stroke="#795e43"
+          strokeWidth="12"
+        />
+        <path d="M-110-80V-48M110-80V-48" stroke="#795e43" strokeWidth="8" />
+      </g>
+      <g fill="#617a72" opacity=".6">
+        <path d="M270 337l70-75 4 75Z" />
+        <path d="M350 340l-6-95 85 95Z" />
+        <path d="M265 350h170l-30 23H300Z" />
+      </g>
+    </g>
+  );
+}
+
 /** Original vector scenery. Manifest asset names describe layers, never requests. */
 export function RoomScenery({
   place,
@@ -999,6 +1306,22 @@ export function RoomScenery({
       query.removeEventListener("change", update);
     };
   }, [preview]);
+  if (place === "sunset-beach" || place === "coastal-pier") {
+    return (
+      <svg
+        className="room-scenery"
+        viewBox="0 0 2400 720"
+        preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
+        aria-hidden="true"
+      >
+        {place === "sunset-beach" ? (
+          <SunsetBeachScenery seconds={seconds} />
+        ) : (
+          <CoastalPierScenery seconds={seconds} />
+        )}
+      </svg>
+    );
+  }
   const club = place === "club-pulse";
   const downtown = place === "downtown-plaza";
   const midway = place === "wonder-park-midway";
