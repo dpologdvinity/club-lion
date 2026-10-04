@@ -4349,3 +4349,156 @@ svg {
     padding: 5px 8px;
   }
 }
+
+/* Phase 2 panoramas use one logical stage, scaled as a whole inside its camera. */
+.scene-downtown {
+  background: #cbd7af;
+}
+.scene-park {
+  background: #e6d5a2;
+}
+.scene-midway {
+  background: #ddc899;
+}
+.scene-pulse {
+  background: #425566;
+}
+.camera-world {
+  aspect-ratio: auto;
+}
+.camera-viewport {
+  position: relative;
+  height: clamp(300px, 32vw, 410px);
+  overflow: hidden;
+  isolation: isolate;
+}
+.camera-viewport-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  pointer-events: none;
+  z-index: 2;
+}
+.camera-viewport-stage button,
+.camera-viewport-stage [role="button"] {
+  pointer-events: auto;
+}
+.camera-viewport-stage .your-character {
+  width: 132px;
+  transition: none;
+}
+.camera-viewport-stage .your-name {
+  position: absolute;
+  top: 100%;
+  font-size: 17px;
+  padding: 3px 10px;
+}
+.camera-viewport-stage .your-name .you-tag {
+  font-size: 14px;
+}
+.camera-viewport-stage .walk-hint {
+  display: none;
+}
+.camera-viewport-stage .speech-bubble {
+  font-size: 22px;
+}
+.room-scenery {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  font-family: var(--font-display, "Lilita One", sans-serif);
+}
+.room-hotspot {
+  transform: translateX(-50%);
+  font-size: 24px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  gap: 10px;
+}
+.room-hotspot:not(:disabled):active {
+  transform: translateX(-50%) translateY(1px);
+}
+.room-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #faf6eb;
+  border-bottom: 1px solid var(--border);
+}
+.room-navigation .button-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 12px;
+  font-size: 12px;
+  min-height: 38px;
+}
+.room-navigation-hint {
+  width: 100%;
+  color: var(--muted);
+  font-size: 12px;
+}
+.downtown-label {
+  top: 47%;
+  left: 46%;
+}
+.phase-two-art {
+  background: #f5e5c7;
+}
+.destination-image {
+  position: relative;
+  overflow: hidden;
+}
+.destination-caption {
+  z-index: 1;
+  position: relative;
+}
+.camera-viewport .dance-floor-stage {
+  z-index: 0;
+}
+.camera-viewport .dance-floor-tile {
+  pointer-events: auto;
+}
+@media (max-width: 590px) {
+  .camera-viewport {
+    height: 300px;
+  }
+  .room-navigation {
+    padding: 10px;
+    gap: 6px;
+  }
+  .room-navigation .button-secondary {
+    font-size: 11px;
+  }
+}
+
+.camera-viewport:has(.world-ground:focus-visible) {
+  outline: 3px solid #fff4c1;
+  outline-offset: -5px;
+}
+
+.camera-viewport-stage .avatar-with-companion {
+  width: 132px;
+}
+.camera-viewport-stage .pet-companion {
+  position: absolute;
+  left: 100%;
+  bottom: 0;
+}
+.map-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.camera-world,
+.camera-viewport {
+  overflow: clip;
+}
+.camera-viewport-stage .pet-companion {
+  pointer-events: none;
+}

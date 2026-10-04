@@ -68,8 +68,8 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightli
 | **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-task-4-dj-beat` | **claude-sonnet-5 (claude code)** | `dc18077` → `d5d0f78` | ✅ Completed, reviewed & verified; 107/107 unit tests, 82/82 E2E; types, format & build clean |
 | **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-task-5-smoothie` | **claude-sonnet-5 (claude code)** | `d627ec3` → `1487713` | ✅ Completed, reviewed & verified; 117/117 unit tests, 88/88 E2E; types, format & build clean |
 | **Task 6** | Savanna Screamer Roller Coaster Interactive Ride Mode | `master` | **gpt-6.1-sol (codex)** | `faeb19b` → `9bb700a` | ✅ Integrated; 161/161 unit tests, 118/118 E2E, types, format & build clean |
-| **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `feat/phase-2-integration` | **gpt-6.1-sol (codex)** | - | 🚀 Integration implementation; reviewed Task 6 base |
-| **Phase 2 Merge Train** | Serial Rebase & Squash Integration | `master` | **gpt-6-luna (codex)** | - | 🚀 Tasks 1–6 integrated; Task 7 world integration in progress |
+| **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `master` | **gpt-6.1-sol (codex)** | `4853f99` → final world squash | ✅ Integrated; 165/165 unit tests, 140/140 desktop/mobile E2E, types, format & build clean |
+| **Phase 2 Merge Train** | Serial Rebase & Squash Integration | `master` | **gpt-6-luna (codex)** | Tasks 1–7 integrated | ✅ Complete; all worktrees and task branches retired after verified squashes |
 
 ---
 
@@ -79,7 +79,7 @@ Reviewed and verified by **gpt-6.1-sol (codex)**; merged in order **1 → 4 → 
 
 Codex review fixes and regression tests cover click-target accuracy, idle/reduced-motion sparkle behavior, missed-beat combo resets, peak combos, held keys, dialog focus, note timing, recipe guidance, one-time serving, audio fallback, and reward overflow. DJ best scores and smoothie counts are optional additive save fields; both v1 and v2 migrations preserve their progress. Audio uses procedural Web Audio oscillators and generated noise only, with no external audio assets or runtime audio requests.
 
-The minigames were verified in standalone browser fixtures. Their world/arcade routing remains part of **Task 7**; the remaining Phase 2 tasks and milestone are still pending. Concurrent workflow and tracker documentation changes were preserved.
+Those minigames were first verified in standalone browser fixtures. Task 7 now connects their live world/arcade routing, and the final milestone passed **165/165 unit tests** and **140/140 desktop/mobile browser tests**, strict types, Prettier and production build. Concurrent workflow and tracker documentation changes were preserved. [Completion evidence](PHASE-2-COMPLETION.md) records the review decisions, final gate and local screenshots.
 
 ---
 
@@ -93,7 +93,7 @@ There are **no fixed or primary roles**. All agents and models are fully interch
 | `claude-sonnet-5 (claude code)` | Claude Code | Any role: Implementer, Reviewer, Assigner, Architect, Tester |
 | `gpt-6.1-sol (codex)` | Codex | Any role: Reviewer, Merger, Implementer, Assigner, Tester |
 
-### Active Phase 2 Operating Configuration
+### Phase 2 Operating Configuration
 - **Lead Orchestrator & Assigner:** Codex (delegated by Kaitlyn)
 - **Implementers:** Available Claude Code, Codex, or Antigravity models; Codex substituted after Claude authentication expired
 - **Reviewer:** Separate task reviewer

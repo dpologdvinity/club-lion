@@ -128,7 +128,7 @@ test("wardrobe validation, purchases, and persistent customizations work", async
   await expect(page.locator(".your-character .accessory-hat")).toBeVisible();
 });
 
-test("the arcade offers all four games", async ({ page }) => {
+test("the arcade offers all seven activities", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Games", exact: true }).click();
   await expect(
@@ -143,6 +143,13 @@ test("the arcade offers all four games", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Play Fruit Catch!" }),
   ).toBeVisible();
+  for (const name of [
+    "Play DJ Beat Drop",
+    "Play Smoothie Kitchen",
+    "Play Savanna Screamer",
+  ]) {
+    await expect(page.getByRole("button", { name, exact: true })).toBeVisible();
+  }
   await page.getByRole("button", { name: "Play Bee Stop" }).click();
   await expect(page.getByRole("heading", { name: "Bee Stop" })).toBeVisible();
   await expect(page.getByText("Best", { exact: false })).toHaveCount(0);
@@ -634,8 +641,18 @@ test("Phase 1 Action Wheel triggers quick chat, emotes, and mango tossing", asyn
   const ground = page.getByRole("button", {
     name: "Walk around the village.",
   });
-  await ground.click({ position: { x: 200, y: 150 } });
+  const groundBox = (await ground.boundingBox())!;
+  await ground.click({
+    position: { x: groundBox.width * 0.7, y: groundBox.height * 0.9 },
+  });
   await expect(page.locator(".toast")).toContainText(
     "Splash! 🥭 Mango landed!",
   );
+  await page
+    .getByRole("region", { name: "Lion world", exact: true })
+    .getByRole("button", { name: "Downtown Plaza", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Downtown Plaza", exact: true }),
+  ).toBeVisible();
 });

@@ -21,13 +21,31 @@ export const downtownPlazaManifest: RoomManifest = {
   ],
   portals: [
     {
+      targetRoomId: "square",
+      targetSpawn: { x: 43, y: 78 },
+      triggerBounds: { x1: 950, y1: 675, x2: 1100, y2: 720 },
+      label: "Savanna Square",
+    },
+    {
+      targetRoomId: "wonder-park-entrance",
+      targetSpawn: { x: 2500, y: 600 },
+      triggerBounds: { x1: 1700, y1: 560, x2: 1850, y2: 650 },
+      label: "Wonder Park Entrance",
+    },
+    {
+      targetRoomId: "club-pulse",
+      targetSpawn: { x: 280, y: 600 },
+      triggerBounds: { x1: 600, y1: 560, x2: 740, y2: 650 },
+      label: "Club Pulse",
+    },
+    {
       targetRoomId: "le-shop",
       targetSpawn: { x: 100, y: 600 },
       triggerBounds: { x1: 40, y1: 520, x2: 220, y2: 650 },
       label: "Le Shop",
     },
     {
-      targetRoomId: "canopy-cafe",
+      targetRoomId: "cafe",
       targetSpawn: { x: 2300, y: 600 },
       triggerBounds: { x1: 2180, y1: 520, x2: 2360, y2: 650 },
       label: "Canopy Café",

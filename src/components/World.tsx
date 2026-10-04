@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from "react";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -16,6 +22,14 @@ import {
   VolumeX,
 } from "lucide-react";
 import { NEIGHBORS, PLACES, type PlaceId, type PlayerV2 } from "../game";
+import { ROOM_MANIFESTS } from "../rooms/registry";
+import type { RoomManifest } from "../rooms/types";
+import { clampToWalkable } from "../rooms/camera";
+import { CameraViewport } from "./CameraViewport";
+import { RoomScenery } from "./RoomScenery";
+import { DanceFloor } from "./DanceFloor";
+import { CLUB_PULSE_DANCE_FLOOR_BOUNDS } from "../rooms/manifests/clubPulse";
+import type { GameId } from "./GamesPanel";
 import { Lion } from "./Lion";
 import { Avatar } from "./Avatar";
 import { PetCompanion } from "./PetCompanion";
@@ -40,7 +54,9 @@ const EMOTE_SYMBOLS: Record<EmoteId, string> = {
 type WorldProps = {
   player: PlayerV2;
   place: PlaceId;
-  navigate: (id: PlaceId) => void;
+  navigate: (id: PlaceId, spawn?: { x: number; y: number }) => void;
+  spawn?: { x: number; y: number };
+  onActivity: (id: GameId) => void;
   onMap: () => void;
   onShop: () => void;
   onGame: () => void;
@@ -55,6 +71,8 @@ export function World({
   player,
   place,
   navigate,
+  spawn,
+  onActivity,
   onMap,
   onShop,
   onGame,
@@ -64,7 +82,22 @@ export function World({
   onOpenCatalog,
   onOpenSalon,
 }: WorldProps) {
-  const [position, setPosition] = useState({ x: 43, y: 78 });
+  const manifest = ROOM_MANIFESTS[place];
+  const [position, setPosition] = useState(() =>
+    manifest
+      ? {
+          x:
+            ((spawn?.x ?? manifest.stageWidth / 2) / manifest.stageWidth) * 100,
+          y: ((spawn?.y ?? 600) / manifest.stageHeight) * 100,
+        }
+      : { x: 43, y: 78 },
+  );
+  const stagePosition = manifest
+    ? {
+        x: Math.round((position.x / 100) * manifest.stageWidth * 1e6) / 1e6,
+        y: Math.round((position.y / 100) * manifest.stageHeight * 1e6) / 1e6,
+      }
+    : position;
   const [avatarAction, setAvatarAction] = useState<string>("idle");
   const [avatarHeading, setAvatarHeading] = useState<"left" | "right">("right");
   const [isTrotting, setIsTrotting] = useState(false);
@@ -92,7 +125,10 @@ export function World({
   const currentPlace = PLACES.find((p) => p.id === place)!;
 
   useEffect(() => {
-    setPosition({ x: 43, y: 78 });
+    if (manifest)
+      document
+        .querySelector<HTMLButtonElement>(".camera-viewport-ground")
+        ?.focus({ preventScroll: true });
     setBubble(null);
     setAvatarAction("idle");
     setIsTrotting(false);
@@ -107,7 +143,7 @@ export function World({
   }, [bubble]);
   useEffect(
     () => () => {
-      void audio.current?.close();
+      void audio.current?.close().catch(() => {});
       if (walkTimer.current) window.clearTimeout(walkTimer.current);
     },
     [],
@@ -163,7 +199,7 @@ export function World({
     try {
       const context = audio.current ?? new AudioContext();
       audio.current = context;
-      void context.resume();
+      void context.resume().catch(() => {});
       const oscillator = context.createOscillator();
       const gain = context.createGain();
       oscillator.type = "sine";
@@ -185,8 +221,23 @@ export function World({
 
   const walk = (x: number, y: number) => {
     const speedMultiplier = boardId ? BOARD_SPEED_MULTIPLIER : 1;
-    const targetX = Math.max(12, Math.min(88, x));
-    const targetY = Math.max(57, Math.min(89, y));
+    const clamped = manifest
+      ? clampToWalkable(
+          {
+            x: (x / 100) * manifest.stageWidth,
+            y: (y / 100) * manifest.stageHeight,
+          },
+          manifest.walkablePolygon,
+        )
+      : null;
+    const targetX =
+      clamped && manifest
+        ? (clamped.x / manifest.stageWidth) * 100
+        : Math.max(12, Math.min(88, x));
+    const targetY =
+      clamped && manifest
+        ? (clamped.y / manifest.stageHeight) * 100
+        : Math.max(57, Math.min(89, y));
     setAvatarHeading(targetX < position.x ? "left" : "right");
     setPosition({ x: targetX, y: targetY });
     setIsTrotting(true);
@@ -234,7 +285,7 @@ export function World({
     chime();
   };
   const visibleNeighbors =
-    place === "den"
+    place === "den" || manifest
       ? []
       : place === "square"
         ? NEIGHBORS
@@ -246,6 +297,62 @@ export function World({
                 : n.id === "cleo",
           );
 
+  const portal = (target: string, targetSpawn: { x: number; y: number }) => {
+    if (target === "le-shop") {
+      onOpenCatalog?.();
+      return;
+    }
+    const destination = PLACES.find((p) => p.id === target);
+    if (destination) navigate(destination.id, targetSpawn);
+  };
+  const stageWalk = (x: number, y: number) => {
+    if (!manifest) return;
+    if (tossPending) {
+      setMangoToss({
+        origin: { x: stagePosition.x, y: stagePosition.y - 40 },
+        target: { x, y },
+      });
+      setTossPending(false);
+    } else
+      walk((x / manifest.stageWidth) * 100, (y / manifest.stageHeight) * 100);
+  };
+  const hotspot = (id: string) => {
+    if (id === "coaster-ticket-gate") onActivity("coaster");
+    else if (id === "club-pulse-dj-booth") onActivity("dj-beat-drop");
+    else if (id === "midway-game-booth") onActivity("fruit");
+    else if (id === "park-map-kiosk") onMap();
+    else if (id === "club-pulse-dance-floor") {
+      walk(50, 75);
+      document
+        .querySelector<HTMLButtonElement>(".camera-viewport-ground")
+        ?.focus();
+      notify(
+        "Walk across the tiles with arrow keys to light your path. Press a tile to play its chime.",
+      );
+    } else if (id === "marble-lion-fountain")
+      notify(
+        "A little splash of sunshine! The lion fountain keeps the plaza cool.",
+      );
+    else
+      notify(
+        id === "giant-ferris-wheel"
+          ? "Watch the Ferris wheel cabins turn above Wonder Park."
+          : id === "spinning-mango-teacups"
+            ? "The mango teacups spin around the midway. Enjoy the spectacle!"
+            : "The golden carousel horses bob to the carnival rhythm. Enjoy the spectacle!",
+      );
+  };
+  const hotspotLabels: Record<string, string> = {
+    "coaster-ticket-gate": "Ride Savanna Screamer",
+    "giant-ferris-wheel": "Watch the Ferris wheel",
+    "park-map-kiosk": "Park map",
+    "spinning-mango-teacups": "Watch Mango Teacups",
+    "grand-golden-carousel": "Watch Golden Carousel",
+    "midway-game-booth": "Play Fruit Catch!",
+    "club-pulse-dj-booth": "DJ Booth · DJ Beat Drop",
+    "club-pulse-dance-floor": "Step onto the dance floor",
+    "marble-lion-fountain": "Visit the lion fountain",
+  };
   return (
     <section className="world-panel" aria-label="Lion world">
       <div className="world-heading">
@@ -292,7 +399,37 @@ export function World({
           </button>
         </div>
       </div>
-      <div className={`world-stage scene ${currentPlace.imageClass}`}>
+      <WorldStage
+        manifest={manifest}
+        imageClass={currentPlace.imageClass}
+        avatarPos={stagePosition}
+        heading={avatarHeading}
+        onWalk={stageWalk}
+        onPortal={portal}
+        board={!!boardId}
+      >
+        {manifest && <RoomScenery place={place} />}
+        {place === "club-pulse" && (
+          <DanceFloor
+            floorBounds={CLUB_PULSE_DANCE_FLOOR_BOUNDS}
+            avatarPosition={stagePosition}
+            muted={!sound}
+            onStep={(point) => stageWalk(point.x, point.y)}
+          />
+        )}
+        {manifest?.interactives
+          .filter((item) => item.type !== "instrument")
+          .map((item) => (
+            <button
+              key={item.id}
+              className="building-label room-hotspot"
+              tabIndex={-1}
+              style={{ left: item.position.x, top: item.position.y - 95 }}
+              onClick={() => hotspot(item.id)}
+            >
+              {hotspotLabels[item.id]} <ArrowUpRight size={17} />
+            </button>
+          ))}
         {mangoToss && (
           <MangoToss
             origin={mangoToss.origin}
@@ -304,32 +441,40 @@ export function World({
             }}
           />
         )}
-        <button
-          className="world-ground"
-          aria-label="Walk around the village. Use arrow keys or click the ground."
-          onKeyDown={keyboardWalk}
-          onClick={(e) => {
-            const box = e.currentTarget.getBoundingClientRect();
-            if (tossPending) {
-              const clickX = e.clientX - box.left;
-              const clickY = e.clientY - box.top;
-              const startX = (position.x / 100) * box.width;
-              const startY = (position.y / 100) * box.height - 40;
-              setMangoToss({
-                origin: { x: startX, y: startY },
-                target: { x: clickX, y: clickY },
-              });
-              setTossPending(false);
-              return;
-            }
-            walk(
-              ((e.clientX - box.left) / box.width) * 100,
-              ((e.clientY - box.top) / box.height) * 100,
-            );
-          }}
-        />
+        {!manifest && (
+          <button
+            className="world-ground"
+            aria-label="Walk around the village. Use arrow keys or click the ground."
+            onKeyDown={keyboardWalk}
+            onClick={(e) => {
+              const box = e.currentTarget.getBoundingClientRect();
+              if (tossPending) {
+                const clickX = e.clientX - box.left;
+                const clickY = e.clientY - box.top;
+                const startX = (position.x / 100) * box.width;
+                const startY = (position.y / 100) * box.height - 40;
+                setMangoToss({
+                  origin: { x: startX, y: startY },
+                  target: { x: clickX, y: clickY },
+                });
+                setTossPending(false);
+                return;
+              }
+              walk(
+                ((e.clientX - box.left) / box.width) * 100,
+                ((e.clientY - box.top) / box.height) * 100,
+              );
+            }}
+          />
+        )}
         {place === "square" && (
           <>
+            <button
+              className="building-label downtown-label"
+              onClick={() => navigate("downtown-plaza")}
+            >
+              Downtown Plaza <ArrowUpRight size={12} />
+            </button>
             <button
               className="building-label cafe-label"
               onClick={() => navigate("cafe")}
@@ -354,12 +499,9 @@ export function World({
         {place === "cafe" && (
           <button
             className="room-action"
-            onClick={() => {
-              setBubble({ id: "you", text: "One mango smoothie, please! 🥭" });
-              notify("One imaginary mango smoothie, on the house!");
-            }}
+            onClick={() => onActivity("smoothie")}
           >
-            <Coffee size={18} /> Order a mango smoothie
+            <Coffee size={18} /> Blend smoothies
           </button>
         )}
         {player.decor.includes("plant") && place === "den" && (
@@ -414,6 +556,8 @@ export function World({
         </div>
         <div
           ref={characterRef}
+          data-stage-x={manifest ? stagePosition.x : undefined}
+          data-stage-y={manifest ? stagePosition.y : undefined}
           className={`world-character your-character${boardId ? " is-gliding" : ""}`}
           style={{
             left: `${position.x}%`,
@@ -432,6 +576,7 @@ export function World({
           onKeyDown={(e) => {
             if (onOpenCard && (e.key === "Enter" || e.key === " ")) {
               e.stopPropagation();
+              e.preventDefault();
               onOpenCard();
             }
           }}
@@ -440,7 +585,11 @@ export function World({
             <span className="speech-bubble">{bubble.text}</span>
           )}
           <div className="avatar-with-companion">
-            <Avatar look={player.look} action={avatarAction} size={84} />
+            <Avatar
+              look={player.look}
+              action={avatarAction}
+              size={manifest ? 132 : 84}
+            />
             <PetCompanion
               pet={{
                 ...player.pet,
@@ -463,7 +612,33 @@ export function World({
           <span>✧</span> Click anywhere to wander <span>✧</span>
         </span>
         <div className="scene-vignette" />
-      </div>
+      </WorldStage>
+      {manifest && (
+        <div className="room-navigation" aria-label="Room paths and activities">
+          {manifest.portals.map((p) => (
+            <button
+              key={p.targetRoomId}
+              className="button-secondary"
+              onClick={() => portal(p.targetRoomId, p.targetSpawn)}
+            >
+              {p.label} <ArrowUpRight size={14} />
+            </button>
+          ))}
+          {manifest.interactives.map((item) => (
+            <button
+              key={item.id}
+              className="button-secondary"
+              onClick={() => hotspot(item.id)}
+            >
+              {hotspotLabels[item.id]}
+            </button>
+          ))}
+          <span className="room-navigation-hint">
+            Click the ground or use arrow keys to explore. Paths at the edges
+            lead to the next room.
+          </span>
+        </div>
+      )}
       <div className="chat-toolbar">
         <button
           type="button"
@@ -565,5 +740,46 @@ export function World({
         onPhrase={(text) => say(text)}
       />
     </section>
+  );
+}
+
+function WorldStage({
+  manifest,
+  imageClass,
+  avatarPos,
+  heading,
+  onWalk,
+  onPortal,
+  board,
+  children,
+}: {
+  manifest?: RoomManifest;
+  imageClass: string;
+  avatarPos: { x: number; y: number };
+  heading: "left" | "right";
+  onWalk: (x: number, y: number) => void;
+  onPortal: (target: string, spawn: { x: number; y: number }) => void;
+  board: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className={`world-stage scene ${imageClass}${manifest ? " camera-world" : ""}`}
+    >
+      {manifest ? (
+        <CameraViewport
+          manifest={manifest}
+          avatarPos={avatarPos}
+          avatarHeading={heading}
+          onWalk={onWalk}
+          onPortal={onPortal}
+          movementMultiplier={board ? BOARD_SPEED_MULTIPLIER : 1}
+        >
+          {children}
+        </CameraViewport>
+      ) : (
+        children
+      )}
+    </div>
   );
 }

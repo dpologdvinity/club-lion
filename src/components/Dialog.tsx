@@ -15,7 +15,12 @@ export function Dialog({
   wide?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
-  const returnFocus = useRef<HTMLElement | null>(null);
+  // Capture the opener before a directly launched activity focuses its controls.
+  const returnFocus = useRef<HTMLElement | null>(
+    document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null,
+  );
   useEffect(() => {
     const el = ref.current;
     if (!returnFocus.current && document.activeElement instanceof HTMLElement) {
@@ -27,7 +32,10 @@ export function Dialog({
     return () => {
       el?.close();
       document.body.style.overflow = oldOverflow;
-      returnFocus.current?.focus({ preventScroll: true });
+      const target = returnFocus.current?.isConnected
+        ? returnFocus.current
+        : document.querySelector<HTMLElement>(".world-ground");
+      target?.focus({ preventScroll: true });
     };
   }, []);
   return (

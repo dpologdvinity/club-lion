@@ -31,9 +31,9 @@ export function MangoToss({
     let height = 0;
 
     const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      width = rect.width;
-      height = rect.height;
+      // Logical CSS pixels stay correct when a panoramic stage is scaled.
+      width = canvas.clientWidth;
+      height = canvas.clientHeight;
       const scale = window.devicePixelRatio || 1;
       canvas.width = Math.round(width * scale);
       canvas.height = Math.round(height * scale);

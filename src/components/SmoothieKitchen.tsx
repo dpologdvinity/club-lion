@@ -72,14 +72,35 @@ function drawWhirlpool(
   context.restore();
 }
 
-export function SmoothieKitchen({
-  onClose,
-  onServe,
-}: {
+type KitchenProps = {
   onClose: () => void;
   onServe: (coinsEarned: number) => void;
-}) {
+  onOrder?: (name: string) => void;
+};
+
+/** Standalone fixture wrapper; live world uses the shared games dialog. */
+export function SmoothieKitchen(props: KitchenProps) {
+  const [orderName, setOrderName] = useState("");
+  return (
+    <Dialog
+      title="Canopy Café Smoothie Kitchen"
+      subtitle={`Order up: ${orderName}`}
+      onClose={props.onClose}
+    >
+      <SmoothieKitchenContent {...props} onOrder={setOrderName} />
+    </Dialog>
+  );
+}
+
+export function SmoothieKitchenContent({
+  onClose,
+  onServe,
+  onOrder,
+}: KitchenProps) {
   const [order, setOrder] = useState<Recipe>(() => pickOrder());
+  useEffect(() => {
+    onOrder?.(order.name);
+  }, [order.name, onOrder]);
   const [pitcher, setPitcher] = useState<Ingredient[]>([]);
   const [blending, setBlending] = useState(false);
   const [result, setResult] = useState<SmoothieScore | null>(null);
@@ -186,11 +207,11 @@ export function SmoothieKitchen({
   };
 
   return (
-    <Dialog
-      title="Canopy Café Smoothie Kitchen"
-      subtitle={`Order up: ${order.name}`}
-      onClose={onClose}
-    >
+    <>
+      <h3>Smoothie Kitchen</h3>
+      <p id="smoothie-order" className="game-instructions">
+        Order up: <strong>{order.name}</strong>
+      </p>
       <div className="smoothie-kitchen">
         <div className="smoothie-order-card">
           <Martini size={18} aria-hidden="true" />
@@ -300,6 +321,6 @@ export function SmoothieKitchen({
           </div>
         )}
       </div>
-    </Dialog>
+    </>
   );
 }

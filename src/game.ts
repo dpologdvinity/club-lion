@@ -17,7 +17,16 @@ export * from "./types/world.ts";
 
 export const SAVE_KEY = "club-lion-player-v1";
 export type LionColor = "gold" | "sand" | "copper" | "rose";
-export type PlaceId = "square" | "water" | "cafe" | "arcade" | "den";
+export type PlaceId =
+  | "square"
+  | "water"
+  | "cafe"
+  | "arcade"
+  | "den"
+  | "downtown-plaza"
+  | "wonder-park-entrance"
+  | "wonder-park-midway"
+  | "club-pulse";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -127,6 +136,30 @@ export const PLACES: {
     name: "Your cozy den",
     subtitle: "Make yourself right at home",
     imageClass: "scene-den",
+  },
+  {
+    id: "downtown-plaza",
+    name: "Downtown Plaza",
+    subtitle: "Fountains, fashion & café days",
+    imageClass: "scene-downtown",
+  },
+  {
+    id: "wonder-park-entrance",
+    name: "Wonder Park Entrance",
+    subtitle: "A sky full of adventure",
+    imageClass: "scene-park",
+  },
+  {
+    id: "wonder-park-midway",
+    name: "Carnival Midway",
+    subtitle: "Round and round we roar",
+    imageClass: "scene-midway",
+  },
+  {
+    id: "club-pulse",
+    name: "Club Pulse",
+    subtitle: "Follow your paws to the beat",
+    imageClass: "scene-pulse",
   },
 ];
 

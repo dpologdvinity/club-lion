@@ -466,3 +466,31 @@ test("migratePlayerSave falls back cleanly to a default v2 player for corrupt sa
   );
   assert.equal(fallback.version, 2);
 });
+
+test("Phase 2 destinations deduplicate visits and survive both save versions", () => {
+  for (const destination of [
+    "downtown-plaza",
+    "wonder-park-entrance",
+    "wonder-park-midway",
+    "club-pulse",
+  ] as const) {
+    const player = visitPlace(newPlayer(), destination);
+    assert.equal(player.visited.includes(destination), true);
+    assert.deepEqual(visitPlace(player, destination).visited, player.visited);
+    assert.equal(
+      restorePlayer(JSON.stringify(player)).visited.includes(destination),
+      true,
+    );
+    assert.equal(
+      migratePlayerSave({
+        ...player,
+        version: 2,
+        look: DEFAULT_AVATAR_LOOK,
+        pet: DEFAULT_PET_STATE,
+        starRank: 1,
+        moodQuote: "Hello",
+      }).visited.includes(destination),
+      true,
+    );
+  }
+});

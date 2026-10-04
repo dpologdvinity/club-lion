@@ -62,7 +62,7 @@ Lilita One at its native 400 weight supplies the logo and short display headings
 
 ## Layout
 
-The desktop shell is bounded at 1464px with 40px gutters. A wide game canvas sits beside a compact lion profile and adventure list. Four destination previews continue below the world. At 850px, the world fills the width and sidebar panels follow. At 590px, navigation wraps onto its own row, profiles and adventures stack, and destinations form two columns. Preserve document scrolling; dialogs scroll within the viewport.
+The desktop shell is bounded at 1464px with 40px gutters. A wide game canvas sits beside a compact lion profile and adventure list. Destination previews continue below the world, including the park, midway, plaza, and club. At 850px, the world fills the width and sidebar panels follow. At 590px, navigation wraps onto its own row, profiles and adventures stack, and destinations form two columns. Preserve document scrolling; dialogs scroll within the viewport.
 
 ## Elevation & Depth
 
@@ -76,7 +76,7 @@ Use 16px panels, 10px buttons, softly rounded 12px destination previews, and 22p
 
 Native buttons own all actions, with hover, pressed, disabled, and visible focus states. Primary buttons use orange with dark text; secondary buttons use muted sage. A single native modal dialog supplies all map, wardrobe, shop, game, and help surfaces. One shared live status region supplies transient feedback.
 
-Lucide outline icons use mostly 16–22px sizes with consistent strokes. The lion is a reusable generated transparent sprite with color variants and code-native accessories. World characters use smooth position transitions; reduced-motion mode disables them and all other transitions. Background atlas quadrants become independent WebP assets and render with cover sizing, preserving their proportions.
+Lucide outline icons use mostly 16–22px sizes with consistent strokes. The lion is a reusable generated transparent sprite with color variants and code-native accessories. World characters use smooth position transitions; reduced-motion mode disables them and all other transitions. Background atlas quadrants become independent WebP assets and render with cover sizing, preserving their proportions. The four panoramic rooms use original code-native SVG landscapes: warm carnival tents, a moving coaster and upright Ferris cabins, a fountain plaza, and a dusky blue Club Pulse with warm gold signage. A single stage scale positions scenery, portals, avatars, trails, and the 8×6 dance floor; the camera reveals the panorama as the lion moves. Named room controls sit in a quiet ivory strip below the scene, providing access to off-camera paths and activities. Reduced motion freezes ambient scenery.
 
 Copy is friendly, concrete, and short. Real progress owns every coin count, adventure bar, and level. The help screen clearly describes the single-player neighborhood and local chat.
 

@@ -46,7 +46,7 @@ export const wonderParkMidwayManifest: RoomManifest = {
       id: "midway-game-booth",
       type: "game_launch",
       position: { x: 2200, y: 610 },
-      actionData: { gameId: "midway-toss" },
+      actionData: { gameId: "fruit" },
     },
   ],
   ambientAudioPreset: "carnival-midway",

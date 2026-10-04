@@ -71,6 +71,7 @@ export type DanceFloorProps = {
   /** Silences the procedural chimes without changing the lighting. */
   muted?: boolean;
   /** Reports every tile that lights, from a footfall or a direct press. */
+  onStep?: (point: FloorPoint) => void;
   onTileLight?: (tile: number) => void;
 };
 
@@ -107,6 +108,7 @@ export function DanceFloor({
   avatarPosition,
   muted = false,
   onTileLight,
+  onStep,
 }: DanceFloorProps) {
   const floorRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<AudioContext | null>(null);
@@ -150,16 +152,20 @@ export function DanceFloor({
     (tile: number, fromGesture: boolean) => {
       setFootfalls((current) => registerFootfall(current, tile, Date.now()));
       if (!muted) {
-        // Only a direct press counts as an activation gesture, so footfalls
-        // stay silent until one press has created the context.
-        if (!audioRef.current && fromGesture) {
-          const AudioContextClass = getAudioContextClass();
-          if (AudioContextClass) audioRef.current = new AudioContextClass();
-        }
-        const ctx = audioRef.current;
-        if (ctx) {
-          if (ctx.state === "suspended") void ctx.resume();
-          playTileChime(ctx, tile);
+        try {
+          // Only a direct press counts as an activation gesture, so footfalls
+          // stay silent until one press has created the context.
+          if (!audioRef.current && fromGesture) {
+            const AudioContextClass = getAudioContextClass();
+            if (AudioContextClass) audioRef.current = new AudioContextClass();
+          }
+          const ctx = audioRef.current;
+          if (ctx) {
+            if (ctx.state === "suspended") void ctx.resume().catch(() => {});
+            playTileChime(ctx, tile);
+          }
+        } catch {
+          // Optional audio must not interrupt lighting or avatar movement.
         }
       }
       onTileLight?.(tile);
@@ -195,7 +201,7 @@ export function DanceFloor({
 
   useEffect(
     () => () => {
-      void audioRef.current?.close();
+      void audioRef.current?.close().catch(() => {});
       audioRef.current = null;
     },
     [],
@@ -241,7 +247,30 @@ export function DanceFloor({
               className="dance-floor-tile"
               data-lit={litAt === undefined ? "false" : "true"}
               style={{ ["--tile-color" as string]: tileColor(tile, beat) }}
-              onClick={() => lightTile(tile, true)}
+              onFocus={(event) => {
+                if (bounded && event.currentTarget.matches(":focus-visible")) {
+                  onStep?.({
+                    x:
+                      bounded.x +
+                      ((coord.column + 0.5) * bounded.width) / FLOOR_COLUMNS,
+                    y:
+                      bounded.y +
+                      ((coord.row + 0.5) * bounded.height) / FLOOR_ROWS,
+                  });
+                }
+              }}
+              onClick={() => {
+                lightTile(tile, true);
+                if (bounded)
+                  onStep?.({
+                    x:
+                      bounded.x +
+                      ((coord.column + 0.5) * bounded.width) / FLOOR_COLUMNS,
+                    y:
+                      bounded.y +
+                      ((coord.row + 0.5) * bounded.height) / FLOOR_ROWS,
+                  });
+              }}
             >
               <span className="sr-only">
                 Light tile column {coord.column + 1}, row {coord.row + 1}

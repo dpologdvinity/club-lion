@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { RoomManifest } from "../rooms/types.ts";
-import { computeCameraOffset } from "../rooms/camera.ts";
+import { computeCameraOffset, pointerToStage } from "../rooms/camera.ts";
 
 export function CameraViewport({
   manifest,
@@ -9,67 +9,96 @@ export function CameraViewport({
   children,
   onWalk,
   onPortal,
+  movementMultiplier = 1,
 }: {
   manifest: RoomManifest;
+  movementMultiplier?: number;
   avatarPos: { x: number; y: number };
   avatarHeading: "left" | "right";
-  children: React.ReactNode;
+  children: ReactNode;
   onWalk: (x: number, y: number) => void;
   onPortal?: (targetRoomId: string, spawn: { x: number; y: number }) => void;
 }) {
   const viewportRef = useRef<HTMLDivElement>(null);
-  const [viewportWidth, setViewportWidth] = useState(0);
-
+  const [viewport, setViewport] = useState({ width: 0, height: 360 });
+  const lastPortal = useRef<string | null>(null);
   useEffect(() => {
     const element = viewportRef.current;
     if (!element) return;
-    const observer = new ResizeObserver(([entry]) => {
-      setViewportWidth(entry.contentRect.width);
-    });
+    const observer = new ResizeObserver(([entry]) =>
+      setViewport({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      }),
+    );
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
-
   useEffect(() => {
-    if (!onPortal) return;
-    for (const portal of manifest.portals) {
-      const { x1, y1, x2, y2 } = portal.triggerBounds;
-      if (
-        avatarPos.x >= x1 &&
-        avatarPos.x <= x2 &&
-        avatarPos.y >= y1 &&
-        avatarPos.y <= y2
-      ) {
-        onPortal(portal.targetRoomId, portal.targetSpawn);
-        return;
-      }
+    const portal = manifest.portals.find(
+      ({ triggerBounds: b }) =>
+        avatarPos.x >= b.x1 &&
+        avatarPos.x <= b.x2 &&
+        avatarPos.y >= b.y1 &&
+        avatarPos.y <= b.y2,
+    );
+    if (!portal) {
+      lastPortal.current = null;
+      return;
     }
-  }, [avatarPos, manifest.portals, onPortal]);
-
+    if (lastPortal.current === portal.targetRoomId) return;
+    lastPortal.current = portal.targetRoomId;
+    onPortal?.(portal.targetRoomId, portal.targetSpawn);
+  }, [avatarPos.x, avatarPos.y, manifest, onPortal]);
+  const scale = viewport.height / manifest.stageHeight;
   const cameraOffset = computeCameraOffset(
     avatarPos.x,
     manifest.stageWidth,
-    viewportWidth,
+    viewport.width / scale,
   );
-
   return (
     <div
       ref={viewportRef}
       className="camera-viewport"
       data-room-id={manifest.id}
+      data-camera-offset={cameraOffset}
     >
       <button
         type="button"
-        className="camera-viewport-ground"
-        aria-label={`Walk around ${manifest.name}. Click or tap to move.`}
-        onClick={(e) => {
-          const box = e.currentTarget.getBoundingClientRect();
-          onWalk(e.clientX - box.left + cameraOffset, e.clientY - box.top);
+        className="world-ground camera-viewport-ground"
+        aria-label={`Walk around ${manifest.name}. Use arrow keys or click the ground.`}
+        onClick={(event) => {
+          // Keyboard activation has no ground coordinates; arrows own walking.
+          if (event.detail === 0) return;
+          const box = event.currentTarget.getBoundingClientRect();
+          const point = pointerToStage(
+            event.clientX,
+            event.clientY,
+            box,
+            cameraOffset,
+            scale,
+          );
+          onWalk(point.x, point.y);
         }}
-        style={{
-          width: manifest.stageWidth,
-          height: manifest.stageHeight,
-          transform: `translateX(${-cameraOffset}px)`,
+        onKeyDown={(event) => {
+          const keys: Record<string, [number, number]> = {
+            ArrowLeft: [-45, 0],
+            ArrowRight: [45, 0],
+            ArrowUp: [0, -32],
+            ArrowDown: [0, 32],
+            a: [-45, 0],
+            d: [45, 0],
+            w: [0, -32],
+            s: [0, 32],
+          };
+          const delta = keys[event.key];
+          if (delta) {
+            event.preventDefault();
+            onWalk(
+              avatarPos.x + delta[0] * movementMultiplier,
+              avatarPos.y + delta[1] * movementMultiplier,
+            );
+          }
         }}
       />
       <div
@@ -78,7 +107,7 @@ export function CameraViewport({
         style={{
           width: manifest.stageWidth,
           height: manifest.stageHeight,
-          transform: `translateX(${-cameraOffset}px)`,
+          transform: `translateX(${-cameraOffset * scale}px) scale(${scale})`,
         }}
       >
         {children}

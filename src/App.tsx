@@ -14,7 +14,8 @@ import {
   claimReward,
   completeBeeStop,
   completeGame,
-  completeMangoRun,
+  completeDJBeatDrop,
+  completeSmoothieOrder,
   completePawSteps,
   completeFruitCatch,
   meetLion,
@@ -33,7 +34,9 @@ import { Dialog } from "./components/Dialog";
 import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
 import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
-import { GamesPanel } from "./components/GamesPanel";
+import { GamesPanel, type GameId } from "./components/GamesPanel";
+import { RoomScenery } from "./components/RoomScenery";
+import { ROOM_MANIFESTS } from "./rooms/registry";
 import { PlayerCard } from "./components/PlayerCard";
 import { CatalogModal } from "./components/CatalogModal";
 import { SalonModal } from "./components/SalonModal";
@@ -52,6 +55,8 @@ type Panel =
 export default function App() {
   const { player, setPlayer, saveError } = usePlayer();
   const [place, setPlace] = useState<PlaceId>("square");
+  const [spawn, setSpawn] = useState<{ x: number; y: number } | undefined>();
+  const [initialGame, setInitialGame] = useState<GameId | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
   const [toast, setToast] = useState("");
   useEffect(() => {
@@ -60,13 +65,18 @@ export default function App() {
     return () => window.clearTimeout(id);
   }, [toast]);
   const notify = (message: string) => setToast(message);
-  const openGames = () => {
+  const openGames = (game: GameId | null = null) => {
+    setInitialGame(game);
     setPanel("games");
   };
   const closePanel = () => {
     setPanel(null);
   };
-  const navigate = (destination: PlaceId) => {
+  const navigate = (
+    destination: PlaceId,
+    targetSpawn?: { x: number; y: number },
+  ) => {
+    setSpawn(targetSpawn);
     setPlace(destination);
     setPlayer((p) => visitPlace(p, destination));
     setPanel(null);
@@ -148,7 +158,7 @@ export default function App() {
             </button>
             <button
               className={panel === "games" ? "selected" : ""}
-              onClick={openGames}
+              onClick={() => openGames()}
             >
               Games
             </button>
@@ -220,12 +230,15 @@ export default function App() {
         )}
         <div className="game-layout">
           <World
+            key={place}
+            spawn={spawn}
             player={player}
             place={place}
             navigate={navigate}
             onMap={() => setPanel("map")}
             onShop={() => setPanel("shop")}
-            onGame={openGames}
+            onGame={() => openGames()}
+            onActivity={openGames}
             onGreet={(id) => setPlayer((p) => meetLion(p, id))}
             notify={notify}
             onOpenCard={() => setPanel("card")}
@@ -259,6 +272,9 @@ export default function App() {
                 <span
                   className={`destination-image scene ${destination.imageClass}`}
                 >
+                  {ROOM_MANIFESTS[destination.id] && (
+                    <RoomScenery place={destination.id} preview />
+                  )}
                   <span className="destination-caption">
                     {destination.subtitle}
                   </span>
@@ -380,7 +396,12 @@ export default function App() {
             title={titles[panel][0]}
             subtitle={titles[panel][1]}
             onClose={closePanel}
-            wide={panel === "shop" || panel === "map" || panel === "style"}
+            wide={
+              panel === "shop" ||
+              panel === "map" ||
+              panel === "style" ||
+              panel === "games"
+            }
           >
             {panel === "map" && (
               <WorldMap place={place} onNavigate={navigate} />
@@ -431,6 +452,13 @@ export default function App() {
             {panel === "games" && (
               <GamesPanel
                 player={player}
+                initialGame={initialGame}
+                onCompleteDJ={(score, combo) =>
+                  setPlayer((p) => completeDJBeatDrop(p, score, combo))
+                }
+                onCompleteSmoothie={(coins) =>
+                  setPlayer((p) => completeSmoothieOrder(p, coins))
+                }
                 onCompleteGame={(pairs) =>
                   setPlayer((p) => completeGame(p, pairs))
                 }

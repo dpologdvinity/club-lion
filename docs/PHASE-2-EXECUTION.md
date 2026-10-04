@@ -9,7 +9,7 @@ User authorized full orchestration, implementation, review, verification, integr
 - Task 2: complete, integrated as `f65cc9b`; worktree/branch retired. Source repair `541f450`. Fresh gate: 142/142 unit tests, strict types, Prettier, production build, and 88/88 desktop/mobile browser tests.
 - Task 3: complete, integrated as `76e757a` from `a778dda`. Reviewed bounded geometry repair and narrow DJ contrast fix. Fresh final gate: 154/154 unit tests, strict types, Prettier, build, 108/108 browser tests. Initial gate 107/108 identified DJ shared-stat CSS contrast; corrected before integration. Worktree/branch retired after merge.
 - Task 6: complete, integrated as `9bb700a` from rebased candidate `faeb19b6ac5c313c56dca5ae27f52654313fc5da`. Codex substituted after Claude OAuth expired. Source `b7b48d5`, reviewed repair `0f23762`. Fresh gate: 161/161 unit tests, strict types, Prettier, build and 118/118 browser tests. Worktree/branch retired after integration.
-- Task 7: Codex implementing in `.worktrees/phase-2-integration`, branch `feat/phase-2-integration`. Created from reviewed Task 6 candidate `faeb19b6ac5c313c56dca5ae27f52654313fc5da`. After Task 6 squash, replay ONLY Task 7 commits with `git rebase --onto master faeb19b6ac5c313c56dca5ae27f52654313fc5da` inside that worktree. Orchestrator owns tracker/ledger; worker owns remaining task-relevant source, scenes, tests and handoff. Brief copied from `/tmp/club-lion-task7-brief.md` to worktree PROMPT.md.
+- Task 7: complete, integrated by the final Phase 2 world squash from reviewed source `4853f99`. Fresh final gate: 165/165 unit tests, strict types, Prettier, production build, and 140/140 desktop/mobile browser tests. The initial 138/140 browser gate identified two stale mobile test assumptions, repaired with measured event coordinates, responsive hit-testing and synchronized portal movement. No product change was needed for those two failures. Full evidence: `docs/PHASE-2-COMPLETION.md`; independent review: `docs/PHASE-2-INTEGRATION-REVIEW.md`. Worktree/branch retirement follows this squash.
 
 ## Decisions and integration contracts
 
@@ -26,4 +26,4 @@ Root cause confirmed: native Node HTTP probes to both localhost and 127.0.0.1 on
 
 ## Merge queue
 
-Tasks 3 and 6 integrated. Task 7 remains. Rebase each candidate onto current master, resolve shared package/CSS changes, run the official full gate once for the resulting candidate, squash with attribution, update tracker, and retire its worktree/branch.
+All seven Phase 2 tasks are integrated. The merge queue is complete. The final candidate passed all official gates; no implementation or review handback remains.
