@@ -17,6 +17,12 @@
         "value": "pet-trot-bounce",
         "createdAt": "2026-10-03T10:45:01.256Z",
         "reason": "Codex reviewer: intentional literal pet trotting motion from Phase 1 commit af62b728; uses standard ease-in-out and a 4px vertical gait, not elastic UI easing."
+      },
+      {
+        "rule": "bounce-easing",
+        "value": "jukebox-eq-bounce",
+        "createdAt": "2026-10-04T10:20:54.063Z",
+        "reason": "Reviewer: src/styles.css uses ease-in-out for jukebox equalizer bars rising and falling; the animation name is not bounce or elastic easing. The same animation exists in the parent of 0626e73."
       }
     ]
   }

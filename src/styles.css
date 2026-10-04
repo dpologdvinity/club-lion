@@ -5259,3 +5259,232 @@ svg {
   justify-content: center;
   cursor: pointer;
 }
+
+/* --- Secret Scout Terminal: retro CRT amber/green phosphor UI --- */
+.spy-terminal {
+  position: relative;
+  background: #0b140d;
+  color: #58ff9e;
+  font-family: var(--font-mono, "Courier New", monospace);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: inset 0 0 40px #00ff6622;
+  overflow: hidden;
+}
+.spy-terminal-watermark {
+  position: absolute;
+  right: 10px;
+  top: 4px;
+  font-size: 80px;
+  opacity: 0.06;
+  pointer-events: none;
+}
+.spy-terminal-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+.spy-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #ffbf58;
+  text-shadow: 0 0 6px #ffbf5888;
+}
+.spy-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #1f4a2d;
+}
+.spy-tab {
+  background: none;
+  border: none;
+  color: #4fae73;
+  padding: 8px 14px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.spy-tab.is-active {
+  color: #58ff9e;
+  border-bottom: 2px solid #58ff9e;
+  text-shadow: 0 0 8px #58ff9e88;
+}
+.spy-hud {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: #ffbf58;
+}
+.spy-hud span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.spy-grid-board {
+  display: grid;
+  gap: 2px;
+  background: #06100a;
+  border: 1px solid #1f4a2d;
+  border-radius: 6px;
+  padding: 4px;
+  aspect-ratio: 1;
+  max-width: 420px;
+  margin: 0 auto;
+}
+.spy-grid-board:focus-visible {
+  outline: 2px solid #58ff9e;
+}
+.spy-grid-cell {
+  background: #0e1f14;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  position: relative;
+}
+.spy-cell-wall {
+  background: #27201a;
+}
+.spy-cell-goal {
+  background: #1a2f1f;
+  box-shadow: inset 0 0 0 2px #ffbf58;
+}
+.spy-cell-beam-warning {
+  background: #4a3a12;
+  animation: spy-pulse-warning 0.4s ease-in-out infinite;
+}
+.spy-cell-beam-active {
+  background: #5a1212;
+  box-shadow: inset 0 0 10px 2px #ff4444;
+}
+@keyframes spy-pulse-warning {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.spy-agent {
+  filter: drop-shadow(0 0 4px #58ff9e);
+}
+.spy-dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 40px);
+  grid-template-rows: repeat(2, 40px);
+  gap: 4px;
+  justify-content: center;
+  margin-top: 14px;
+}
+.spy-dpad button {
+  background: #10291a;
+  color: #58ff9e;
+  border: 1px solid #1f4a2d;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.spy-dpad-up {
+  grid-column: 2;
+  grid-row: 1;
+}
+.spy-dpad-left {
+  grid-column: 1;
+  grid-row: 2;
+}
+.spy-dpad-down {
+  grid-column: 2;
+  grid-row: 2;
+}
+.spy-dpad-right {
+  grid-column: 3;
+  grid-row: 2;
+}
+.spy-mission-result {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+}
+.spy-mission-result p {
+  margin-bottom: 10px;
+  color: #ffbf58;
+}
+.spy-cipher-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.spy-cipher-char-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.spy-cipher-char {
+  background: #10291a;
+  color: #58ff9e;
+  border: 1px solid #1f4a2d;
+  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.spy-cipher-char:disabled {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+.spy-cipher-char.is-selected {
+  border-color: #58ff9e;
+  box-shadow: 0 0 6px #58ff9e88;
+}
+.spy-cipher-char.is-revealed {
+  color: #ffbf58;
+}
+.spy-cipher-guess {
+  font-size: 11px;
+  color: #4fae73;
+  min-height: 13px;
+}
+.spy-letter-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.spy-letter-key {
+  background: #10291a;
+  color: #58ff9e;
+  border: 1px solid #1f4a2d;
+  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.spy-letter-key:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.spy-cipher-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 11px;
+  color: #4fae73;
+}
+.spy-debrief {
+  color: var(--text);
+}

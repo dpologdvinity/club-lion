@@ -8,6 +8,11 @@ import {
   DJ_MAX_SCORE,
 } from "./utils/rhythmEngine.ts";
 import { deserializeLayout, serializeLayout } from "./utils/condoGrid.ts";
+import {
+  calculateSpyRank,
+  SPY_PUZZLE_MAX_COINS,
+  SPY_RANKS,
+} from "./utils/spyPuzzles.ts";
 import type { AvatarLook, PetState } from "./types/world.ts";
 import {
   DEFAULT_AVATAR_LOOK,
@@ -32,7 +37,8 @@ export type PlaceId =
   | "club-pulse"
   | "splash-oasis-entry"
   | "splash-oasis-river"
-  | "penthouse-condo";
+  | "penthouse-condo"
+  | "secret-scout-base";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -57,6 +63,9 @@ export type PlayerBase = {
   fashionBestScore?: number;
   fashionShowsCompleted?: number;
   condoLayout?: string;
+  spyRank?: number;
+  spyPuzzlesSolved?: number;
+  spyBadges?: string[];
 };
 
 export type Player = PlayerBase & {
@@ -184,6 +193,12 @@ export const PLACES: {
     name: "Lazy River Oasis",
     subtitle: "Drift with your pride",
     imageClass: "scene-river",
+  },
+  {
+    id: "secret-scout-base",
+    name: "The Pride HQ - Secret Scout Command Center",
+    subtitle: "Shh… classified savanna business",
+    imageClass: "scene-scout-base",
   },
 ];
 
@@ -396,6 +411,33 @@ export function restorePlayer(raw: string | null): Player {
           ? { condoLayout: serializeLayout(layout) }
           : {};
       })(),
+      ...(p.spyPuzzlesSolved === undefined &&
+      p.spyRank === undefined &&
+      p.spyBadges === undefined
+        ? {}
+        : {
+            spyPuzzlesSolved:
+              Number.isSafeInteger(p.spyPuzzlesSolved) &&
+              p.spyPuzzlesSolved >= 0
+                ? (p.spyPuzzlesSolved as number)
+                : 0,
+            spyRank:
+              Number.isSafeInteger(p.spyRank) &&
+              SPY_RANKS.some((r) => r.rank === p.spyRank)
+                ? (p.spyRank as number)
+                : 0,
+            spyBadges: Array.isArray(p.spyBadges)
+              ? [
+                  ...new Set<string>(
+                    p.spyBadges.filter(
+                      (badge: unknown) =>
+                        typeof badge === "string" &&
+                        SPY_RANKS.some((r) => r.badge === badge),
+                    ),
+                  ),
+                ]
+              : [],
+          }),
     };
   } catch {
     return newPlayer();
@@ -664,6 +706,37 @@ export function completeSmoothieOrder<T extends PlayerBase>(
     ...player,
     coins: player.coins + coinsEarned,
     smoothiesServed: (player.smoothiesServed ?? 0) + 1,
+  } as T;
+}
+
+export function completeSpyPuzzle<T extends PlayerBase>(
+  player: T,
+  puzzleType: "laser_grid" | "cipher",
+  scoreOrStage: number,
+  coinsEarned: number,
+): T {
+  if (
+    (puzzleType !== "laser_grid" && puzzleType !== "cipher") ||
+    !Number.isSafeInteger(scoreOrStage) ||
+    scoreOrStage < 0 ||
+    !Number.isSafeInteger(coinsEarned) ||
+    coinsEarned < 0 ||
+    coinsEarned > SPY_PUZZLE_MAX_COINS ||
+    !Number.isSafeInteger(player.coins + coinsEarned) ||
+    !Number.isSafeInteger((player.spyPuzzlesSolved ?? 0) + 1)
+  )
+    return player;
+  const spyPuzzlesSolved = (player.spyPuzzlesSolved ?? 0) + 1;
+  const nextRank = calculateSpyRank(spyPuzzlesSolved);
+  const spyBadges = player.spyBadges?.includes(nextRank.badge)
+    ? player.spyBadges
+    : [...(player.spyBadges ?? []), nextRank.badge];
+  return {
+    ...player,
+    coins: player.coins + coinsEarned,
+    spyPuzzlesSolved,
+    spyRank: nextRank.rank,
+    spyBadges,
   } as T;
 }
 

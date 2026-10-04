@@ -15,12 +15,14 @@ import {
   completeDJBeatDrop,
   completeSmoothieOrder,
   completeFishingCatch,
+  completeSpyPuzzle,
   unlockSecretCatalogItem,
   unlockStamp,
   migratePlayerSave,
   SHOP_ITEMS,
   type Player,
 } from "./game.ts";
+import { SPY_PUZZLE_MAX_COINS } from "./utils/spyPuzzles.ts";
 import { DEFAULT_AVATAR_LOOK, DEFAULT_PET_STATE } from "./types/world.ts";
 import { serializeLayout, type PlacedFurniture } from "./utils/condoGrid.ts";
 
@@ -718,4 +720,70 @@ test("DJ combos award a stamp from the actual combo without inferring it from sc
     "dj_beat_combo",
   ]);
   assert.equal(completeDJBeatDrop(player, 500, 33), player);
+});
+
+test("completing a spy puzzle pays coins, counts a puzzle solved, and sets rank 1", () => {
+  const player = newPlayer();
+  const next = completeSpyPuzzle(player, "laser_grid", 1, 20);
+  assert.equal(next.coins, player.coins + 20);
+  assert.equal(next.spyPuzzlesSolved, 1);
+  assert.equal(next.spyRank, 1);
+  assert.deepEqual(next.spyBadges, ["🥉"]);
+});
+
+test("completing enough spy puzzles promotes spy rank and grants its badge once", () => {
+  let player = newPlayer();
+  for (let i = 0; i < 3; i++) {
+    player = completeSpyPuzzle(player, "cipher", 1, 10);
+  }
+  assert.equal(player.spyPuzzlesSolved, 3);
+  assert.equal(player.spyRank, 2);
+  assert.deepEqual(player.spyBadges, ["🥉", "🥈"]);
+});
+
+test("completeSpyPuzzle rejects negative, non-integer, or over-cap coin rewards", () => {
+  const player = newPlayer();
+  assert.equal(completeSpyPuzzle(player, "laser_grid", 1, -5), player);
+  assert.equal(completeSpyPuzzle(player, "laser_grid", 1, 1.5), player);
+  assert.equal(
+    completeSpyPuzzle(player, "laser_grid", 1, SPY_PUZZLE_MAX_COINS + 1),
+    player,
+  );
+});
+
+test("completeSpyPuzzle rejects an invalid puzzle type or non-integer stage", () => {
+  const player = newPlayer();
+  assert.equal(
+    completeSpyPuzzle(player, "not_a_puzzle" as never, 1, 10),
+    player,
+  );
+  assert.equal(completeSpyPuzzle(player, "laser_grid", -1, 10), player);
+  assert.equal(completeSpyPuzzle(player, "laser_grid", 1.5, 10), player);
+});
+
+test("spy progression survives a save round trip and rejects a corrupted save", () => {
+  let player = newPlayer();
+  player = completeSpyPuzzle(player, "laser_grid", 1, 15);
+  player = completeSpyPuzzle(player, "cipher", 1, 15);
+  const restored = restorePlayer(JSON.stringify(player));
+  assert.equal(restored.spyPuzzlesSolved, 2);
+  assert.equal(restored.spyRank, 1);
+  assert.deepEqual(restored.spyBadges, ["🥉"]);
+
+  const dirty = JSON.parse(JSON.stringify(player));
+  dirty.spyPuzzlesSolved = -3;
+  dirty.spyRank = 999;
+  dirty.spyBadges = ["🥉", "not-a-real-badge", 42];
+  const restoredDirty = restorePlayer(JSON.stringify(dirty));
+  assert.equal(restoredDirty.spyPuzzlesSolved, 0);
+  assert.equal(restoredDirty.spyRank, 0);
+  assert.deepEqual(restoredDirty.spyBadges, ["🥉"]);
+});
+
+test("a save from before spy progression existed restores without spy fields", () => {
+  const player = newPlayer();
+  const restored = restorePlayer(JSON.stringify(player));
+  assert.equal(restored.spyPuzzlesSolved, undefined);
+  assert.equal(restored.spyRank, undefined);
+  assert.equal(restored.spyBadges, undefined);
 });
