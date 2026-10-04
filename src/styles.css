@@ -73,6 +73,7 @@ button:not(:disabled):active {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
+select:focus-visible,
 .paw-pad:focus-visible {
   outline: 3px solid #467b61;
   outline-offset: 4px;
@@ -202,10 +203,14 @@ svg {
 }
 .main-nav {
   display: flex;
+  min-width: 0;
+  overflow-x: auto;
   gap: 16px;
   align-items: center;
 }
 .main-nav button {
+  flex-shrink: 0;
+  white-space: nowrap;
   background: none;
   font-size: 14px;
   font-weight: 750;
@@ -3059,6 +3064,15 @@ svg {
   }
   .header-actions {
     gap: 8px;
+    max-width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .header-actions .audio-controls {
+    max-width: 100%;
+  }
+  .header-actions .audio-controls-slider {
+    min-width: 0;
   }
   .player-menu {
     height: 37px;
@@ -6224,4 +6238,160 @@ svg {
   .sled-results {
     padding: 1rem;
   }
+}
+
+/* Local worlds use the shared dialog, palette and keyboard focus styles. */
+.server-list-modal {
+  display: grid;
+  gap: 16px;
+}
+.server-local-note,
+.server-card p,
+.active-server-info p,
+.server-host-form p,
+.server-feedback {
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+}
+.server-tabs,
+.server-actions,
+.server-card-heading,
+.server-card-footer,
+.server-active-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.server-tabs button,
+.server-list-modal button {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--green-soft);
+  font-weight: 800;
+}
+.server-tabs button[aria-selected="true"] {
+  background: var(--text);
+  color: var(--surface);
+}
+.server-list-modal button.server-primary {
+  background: var(--accent);
+  color: #59361b;
+}
+.server-list-modal button:disabled {
+  background: var(--background);
+  color: var(--muted);
+}
+.server-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 12px;
+}
+.server-card,
+.active-server-info {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.server-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.server-card h3,
+.active-server-info h3,
+.server-moderation h4 {
+  margin: 0;
+}
+.server-card-heading {
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+.server-lock {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.server-card-footer {
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 8px;
+}
+.server-occupant-badge {
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: var(--green-soft);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.active-server-info {
+  background: var(--accent-soft);
+}
+.server-active-heading > div {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+.host-crown {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  font-weight: 800;
+}
+.server-moderation {
+  margin-top: 16px;
+}
+.server-moderation ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+.server-moderation li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.server-moderation li > span {
+  flex: 1 1 100px;
+}
+.server-host-form,
+.server-password-form {
+  display: grid;
+  gap: 8px;
+}
+.server-password-form {
+  margin-top: 16px;
+}
+.server-host-form label,
+.server-password-form label {
+  font-weight: 800;
+}
+.server-host-form input,
+.server-host-form select,
+.server-password-form input {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.server-host-form > button {
+  justify-self: start;
+}
+.server-error {
+  color: var(--danger);
+  margin: 0;
+}
+.server-error:empty,
+.server-feedback:empty {
+  display: none;
 }

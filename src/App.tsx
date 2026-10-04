@@ -55,6 +55,8 @@ import { JukeboxModal } from "./components/JukeboxModal";
 import { Condo } from "./components/Condo";
 import { SpyTerminalModal } from "./components/SpyTerminal";
 import { AccountModal } from "./components/AccountModal";
+import { ServerListModal } from "./components/ServerListModal";
+import { LOCAL_PLAYER_ID, useCustomServers } from "./useCustomServers";
 
 type Panel =
   | "map"
@@ -73,11 +75,18 @@ type Panel =
   | "account"
   | "sled-run"
   | "river-surf"
+  | "servers"
   | null;
 
 export default function App() {
   const { player, setPlayer, saveError } = usePlayer();
-  const [place, setPlace] = useState<PlaceId>("square");
+  const serverSession = useCustomServers();
+  const [place, setPlace] = useState<PlaceId>(
+    () =>
+      PLACES.find(
+        (room) => room.id === serverSession.activeServer?.currentRoomId,
+      )?.id ?? "square",
+  );
   const [spawn, setSpawn] = useState<{ x: number; y: number } | undefined>();
   const [initialGame, setInitialGame] = useState<GameId | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
@@ -101,6 +110,7 @@ export default function App() {
   ) => {
     setSpawn(targetSpawn);
     setPlace(destination);
+    serverSession.moveToRoom(destination);
     setPlayer((p) => visitPlace(p, destination));
     setPanel(null);
   };
@@ -110,6 +120,7 @@ export default function App() {
       notify("Click Milo, Cleo, and Pip to say hello!");
     } else if (id === "game") {
       setPlace("arcade");
+      serverSession.moveToRoom("arcade");
       setPlayer((p) => visitPlace(p, "arcade"));
       openGames();
     } else navigate("den");
@@ -220,6 +231,12 @@ export default function App() {
               Friends
             </button>
             <button
+              className={panel === "servers" ? "selected" : ""}
+              onClick={() => setPanel("servers")}
+            >
+              Servers
+            </button>
+            <button
               className={panel === "jukebox" ? "selected" : ""}
               onClick={() => setPanel("jukebox")}
             >
@@ -280,9 +297,15 @@ export default function App() {
             progress may be lost when you leave.
           </p>
         )}
+        {serverSession.saveError && (
+          <p className="save-warning" role="alert">
+            Your browser couldn’t save this lounge. It will stay available until
+            you close this page.
+          </p>
+        )}
         <div className="game-layout">
           <World
-            key={place}
+            key={`${serverSession.activeServer?.id ?? "local"}:${place}`}
             spawn={spawn}
             player={player}
             place={place}
@@ -387,7 +410,7 @@ export default function App() {
       </div>
       {panel === "friends" && (
         <FriendsPanel
-          myId="local-player"
+          myId={LOCAL_PLAYER_ID}
           graph={{
             friends: player.friends ?? [],
             pendingIncoming: player.incomingFriendRequests ?? [],
@@ -408,6 +431,26 @@ export default function App() {
               recentVisitors: graph.recentVisitors,
             }))
           }
+          onClose={closePanel}
+        />
+      )}
+      {panel === "servers" && (
+        <ServerListModal
+          playerId={LOCAL_PLAYER_ID}
+          playerName={player.name}
+          servers={serverSession.servers}
+          activeServer={serverSession.activeServer}
+          onConnect={(server) => {
+            const room = PLACES.find(
+              (destination) => destination.id === server.currentRoomId,
+            );
+            if (!room) return;
+            serverSession.connect(server);
+            navigate(room.id);
+            notify(`Joined ${server.name}.`);
+          }}
+          onUpdateServer={serverSession.updateServer}
+          onLeave={serverSession.leave}
           onClose={closePanel}
         />
       )}
@@ -532,6 +575,7 @@ export default function App() {
         panel !== "condo" &&
         panel !== "spy" &&
         panel !== "account" &&
+        panel !== "servers" &&
         panel !== "river-surf" && (
           <Dialog
             title={titles[panel][0]}
