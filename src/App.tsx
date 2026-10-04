@@ -47,6 +47,11 @@ import { StampBook } from "./components/StampBook";
 import { SalonModal } from "./components/SalonModal";
 import { FriendsPanel } from "./components/FriendsPanel";
 import { AudioControls } from "./components/AudioControls";
+import { LightingControls } from "./components/LightingControls";
+import {
+  calculateTimeOfDayFromLocalTime,
+  type TimeOfDay,
+} from "./utils/environmentalLighting.ts";
 import { JukeboxModal } from "./components/JukeboxModal";
 import { Condo } from "./components/Condo";
 import { SpyTerminalModal } from "./components/SpyTerminal";
@@ -76,6 +81,28 @@ export default function App() {
   const [initialGame, setInitialGame] = useState<GameId | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
   const [toast, setToast] = useState("");
+  const [autoTime, setAutoTime] = useState(
+    () => localStorage.getItem("clubLion.autoTime") !== "false",
+  );
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(() => {
+    const saved = localStorage.getItem(
+      "clubLion.timeOfDay",
+    ) as TimeOfDay | null;
+    return saved ?? calculateTimeOfDayFromLocalTime();
+  });
+  useEffect(() => {
+    localStorage.setItem("clubLion.autoTime", String(autoTime));
+  }, [autoTime]);
+  useEffect(() => {
+    localStorage.setItem("clubLion.timeOfDay", timeOfDay);
+  }, [timeOfDay]);
+  useEffect(() => {
+    if (!autoTime) return;
+    const sync = () => setTimeOfDay(calculateTimeOfDayFromLocalTime());
+    sync();
+    const id = window.setInterval(sync, 60_000);
+    return () => window.clearInterval(id);
+  }, [autoTime]);
   useEffect(() => {
     if (!toast) return;
     const id = window.setTimeout(() => setToast(""), 4800);
@@ -223,6 +250,15 @@ export default function App() {
             </button>
           </nav>
           <div className="header-actions">
+            <LightingControls
+              timeOfDay={timeOfDay}
+              autoTime={autoTime}
+              onSelectTime={(time) => {
+                setAutoTime(false);
+                setTimeOfDay(time);
+              }}
+              onToggleAuto={() => setAutoTime((prev) => !prev)}
+            />
             <AudioControls />
             <button
               className="icon-button help-button"
@@ -276,6 +312,7 @@ export default function App() {
             spawn={spawn}
             player={player}
             place={place}
+            timeOfDay={timeOfDay}
             navigate={navigate}
             onMap={() => setPanel("map")}
             onShop={() => setPanel("shop")}

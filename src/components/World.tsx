@@ -40,6 +40,7 @@ import {
   type SparkleParticle,
 } from "../utils/particleTrail";
 import { SpyPinModal } from "./SpyPinModal.tsx";
+import type { TimeOfDay } from "../utils/environmentalLighting.ts";
 
 const BOARD_SPEED_MULTIPLIER = 1.5;
 const WALK_DURATION_MS = 850;
@@ -69,6 +70,7 @@ type WorldProps = {
   onOpenSpy?: () => void;
   onOpenJukebox?: () => void;
   onOpenCondo?: () => void;
+  timeOfDay?: TimeOfDay;
 };
 
 export function World({
@@ -88,6 +90,7 @@ export function World({
   onOpenSpy,
   onOpenJukebox,
   onOpenCondo,
+  timeOfDay = "day",
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
   const [position, setPosition] = useState(() =>
@@ -465,7 +468,7 @@ export function World({
         onPortal={portal}
         board={!!boardId}
       >
-        {manifest && <RoomScenery place={place} />}
+        {manifest && <RoomScenery place={place} timeOfDay={timeOfDay} />}
         {place === "club-pulse" && (
           <DanceFloor
             floorBounds={CLUB_PULSE_DANCE_FLOOR_BOUNDS}

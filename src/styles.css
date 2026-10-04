@@ -4417,6 +4417,26 @@ svg {
   pointer-events: none;
   font-family: var(--font-display, "Lilita One", sans-serif);
 }
+.environmental-lighting-overlay {
+  transition: opacity 0.8s ease;
+}
+.lighting-star-twinkle {
+  animation: lighting-star-twinkle 2.4s ease-in-out infinite;
+}
+@keyframes lighting-star-twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lighting-star-twinkle {
+    animation: none;
+  }
+}
 .room-hotspot {
   transform: translateX(-50%);
   font-size: 24px;
@@ -5086,6 +5106,39 @@ svg {
 .audio-controls-channel[aria-pressed="true"] {
   opacity: 1;
   color: var(--accent);
+}
+
+/* Global environmental lighting controls */
+.lighting-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.lighting-btn {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.lighting-btn[aria-pressed="true"] {
+  opacity: 1;
+  color: var(--accent);
+  background: #fdf1e2;
+}
+.lighting-btn-auto {
+  margin-left: 4px;
+  border-left: 1px solid var(--border);
+  border-radius: 0;
+  padding-left: 10px;
+}
+
+@media (max-width: 850px) {
+  .lighting-controls {
+    gap: 2px;
+    padding: 4px 6px;
+  }
 }
 
 /* Jukebox modal */
