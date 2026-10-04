@@ -138,6 +138,645 @@ function Tent({
   );
 }
 
+function CondoScenery({ seconds, width }: { seconds: number; width: number }) {
+  return (
+    <g className="condo-scenery">
+      <defs>
+        <linearGradient id="penthouse-twilight" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#0d0b1f" />
+          <stop offset="45%" stopColor="#1e183a" />
+          <stop offset="75%" stopColor="#432c4a" />
+          <stop offset="100%" stopColor="#964e56" />
+        </linearGradient>
+        <linearGradient id="penthouse-window-sheen" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.12" />
+          <stop offset="30%" stopColor="#ffffff" stopOpacity="0.02" />
+          <stop offset="60%" stopColor="#ffffff" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.0" />
+        </linearGradient>
+        <radialGradient id="chandelier-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#ffe89e" stopOpacity="0.45" />
+          <stop offset="60%" stopColor="#ffd269" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#ffd269" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      <rect
+        x="120"
+        y="40"
+        width="1680"
+        height="380"
+        rx="16"
+        fill="url(#penthouse-twilight)"
+      />
+
+      {[
+        { x: 180, y: 70, r: 2 },
+        { x: 320, y: 95, r: 1.5 },
+        { x: 450, y: 65, r: 2.2 },
+        { x: 620, y: 110, r: 1.8 },
+        { x: 790, y: 75, r: 2 },
+        { x: 1020, y: 85, r: 2.5 },
+        { x: 1200, y: 60, r: 1.5 },
+        { x: 1360, y: 105, r: 2 },
+        { x: 1540, y: 70, r: 1.8 },
+        { x: 1680, y: 90, r: 2.2 },
+        { x: 260, y: 140, r: 1.5 },
+        { x: 880, y: 135, r: 1.6 },
+        { x: 1440, y: 130, r: 2.2 },
+      ].map((star, i) => (
+        <circle
+          key={i}
+          cx={star.x}
+          cy={star.y}
+          r={star.r * (1 + Math.sin(seconds * 2 + i) * 0.25)}
+          fill="#fff5d0"
+          opacity={0.6 + Math.sin(seconds * 1.5 + i) * 0.3}
+        />
+      ))}
+
+      <g transform="translate(1580 90)">
+        <circle cx="0" cy="0" r="28" fill="#fff2b2" />
+        <circle cx="10" cy="-6" r="24" fill="#1e183a" />
+      </g>
+
+      <g opacity="0.85">
+        <rect x="180" y="240" width="90" height="180" fill="#141124" />
+        <rect x="290" y="200" width="110" height="220" fill="#19152b" />
+        <polygon points="345,160 330,200 360,200" fill="#19152b" />
+        <rect x="420" y="260" width="80" height="160" fill="#120e20" />
+        <rect x="520" y="180" width="130" height="240" fill="#1d1830" />
+        <polygon points="585,130 575,180 595,180" fill="#d4af37" />
+        <rect x="670" y="230" width="95" height="190" fill="#161226" />
+        <rect x="790" y="270" width="120" height="150" fill="#130f22" />
+        <rect x="930" y="195" width="140" height="225" fill="#1a152e" />
+        <rect x="1090" y="250" width="100" height="170" fill="#151124" />
+        <rect x="1210" y="170" width="115" height="250" fill="#1d1830" />
+        <polygon points="1267,120 1255,170 1280,170" fill="#1d1830" />
+        <rect x="1345" y="220" width="90" height="200" fill="#171329" />
+        <rect x="1455" y="260" width="120" height="160" fill="#130f22" />
+        <rect x="1595" y="210" width="110" height="210" fill="#1a152e" />
+        <polygon points="1650,170 1640,210 1660,210" fill="#d4af37" />
+
+        {[
+          [310, 220],
+          [330, 250],
+          [360, 230],
+          [350, 280],
+          [540, 200],
+          [570, 220],
+          [600, 200],
+          [550, 250],
+          [590, 270],
+          [610, 310],
+          [950, 220],
+          [980, 240],
+          [1020, 220],
+          [960, 270],
+          [1000, 290],
+          [1030, 270],
+          [1230, 190],
+          [1260, 210],
+          [1280, 240],
+          [1240, 270],
+          [1270, 290],
+          [1615, 230],
+          [1645, 250],
+          [1675, 230],
+          [1630, 280],
+        ].map(([wx, wy], idx) => (
+          <rect
+            key={idx}
+            x={wx}
+            y={wy}
+            width="8"
+            height="12"
+            rx="1"
+            fill={
+              idx % 3 === 0 ? "#ffd166" : idx % 3 === 1 ? "#70d6ff" : "#ff9770"
+            }
+            opacity={0.75 + Math.sin(seconds * 3 + idx) * 0.25}
+          />
+        ))}
+      </g>
+
+      <rect
+        x="120"
+        y="40"
+        width="1680"
+        height="380"
+        rx="16"
+        fill="url(#penthouse-window-sheen)"
+      />
+      <rect
+        x="120"
+        y="40"
+        width="1680"
+        height="380"
+        rx="16"
+        fill="none"
+        stroke="#2b2038"
+        strokeWidth="12"
+      />
+      {[400, 680, 960, 1240, 1520].map((x) => (
+        <line
+          key={x}
+          x1={x}
+          y1="40"
+          x2={x}
+          y2="420"
+          stroke="#2b2038"
+          strokeWidth="8"
+        />
+      ))}
+      <line
+        x1="120"
+        y1="230"
+        x2="1800"
+        y2="230"
+        stroke="#2b2038"
+        strokeWidth="6"
+      />
+
+      <line
+        x1="130"
+        y1="370"
+        x2="1790"
+        y2="370"
+        stroke="#9080a0"
+        strokeWidth="6"
+      />
+      {Array.from({ length: 30 }, (_, i) => (
+        <line
+          key={i}
+          x1={150 + i * 55}
+          y1="370"
+          x2={150 + i * 55}
+          y2="420"
+          stroke="#554466"
+          strokeWidth="3"
+        />
+      ))}
+
+      <circle cx="960" cy="150" r="180" fill="url(#chandelier-glow)" />
+      <line x1="960" y1="0" x2="960" y2="80" stroke="#c9a227" strokeWidth="6" />
+      <g transform="translate(960 90)">
+        <polygon
+          points="-80,0 80,0 60,30 -60,30"
+          fill="#d4af37"
+          stroke="#997715"
+          strokeWidth="2"
+        />
+        <polygon
+          points="-120,30 120,30 100,60 -100,60"
+          fill="#e6c65e"
+          stroke="#997715"
+          strokeWidth="2"
+        />
+        {[-90, -60, -30, 0, 30, 60, 90].map((cx, i) => (
+          <g key={i} transform={`translate(${cx} 60)`}>
+            <line
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="25"
+              stroke="#ffeaa7"
+              strokeWidth="2"
+            />
+            <polygon
+              points="-5,25 5,25 0,40"
+              fill="#fff9db"
+              stroke="#ffd43b"
+              strokeWidth="1"
+            />
+          </g>
+        ))}
+      </g>
+
+      {[
+        { x: 60, y: 220 },
+        { x: 1860, y: 220 },
+      ].map((sconce, i) => (
+        <g key={i} transform={`translate(${sconce.x} ${sconce.y})`}>
+          <path
+            d="M-20 -40 L20 -40 L10 20 L-10 20 Z"
+            fill="#d4af37"
+            stroke="#876800"
+            strokeWidth="2"
+          />
+          <polygon points="-35,-40 35,-40 0,-90" fill="#ffeaa7" opacity="0.4" />
+          <circle cx="0" cy="-35" r="14" fill="#fff9db" />
+        </g>
+      ))}
+
+      <g>
+        {Array.from({ length: 8 }, (_, i) => (
+          <line
+            key={i}
+            x1="0"
+            y1={420 + i * 40}
+            x2={width}
+            y2={420 + i * 40}
+            stroke="#3a2216"
+            strokeWidth="3"
+            opacity="0.8"
+          />
+        ))}
+        {Array.from({ length: 14 }, (_, i) => (
+          <line
+            key={i}
+            x1={i * 145}
+            y1="420"
+            x2={i * 145 + 50}
+            y2="720"
+            stroke="#2e190f"
+            strokeWidth="2"
+            opacity="0.5"
+          />
+        ))}
+      </g>
+
+      <g transform="translate(960 415)">
+        <rect
+          x="-190"
+          y="-18"
+          width="380"
+          height="36"
+          rx="8"
+          fill="#1d1527"
+          stroke="#d4af37"
+          strokeWidth="3"
+        />
+        <text
+          y="6"
+          textAnchor="middle"
+          fill="#f7d97b"
+          fontSize="17"
+          fontWeight="bold"
+          letterSpacing="4"
+        >
+          LUXURY PENTHOUSE DEN
+        </text>
+      </g>
+    </g>
+  );
+}
+
+function ScoutBaseScenery({
+  seconds,
+  width,
+}: {
+  seconds: number;
+  width: number;
+}) {
+  const radarAngle = (seconds * 80) % 360;
+  return (
+    <g className="scout-base-scenery">
+      <defs>
+        <linearGradient id="scout-metal-wall" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#10181b" />
+          <stop offset="50%" stopColor="#192428" />
+          <stop offset="100%" stopColor="#131b1d" />
+        </linearGradient>
+        <radialGradient id="radar-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#00f5d4" stopOpacity="0.25" />
+          <stop offset="70%" stopColor="#00bbf9" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#00bbf9" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="radar-sweep" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#00f5d4" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#00f5d4" stopOpacity="0" />
+        </linearGradient>
+        <pattern
+          id="hazard-tape"
+          width="40"
+          height="20"
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(45)"
+        >
+          <rect width="20" height="20" fill="#f39c12" />
+          <rect x="20" width="20" height="20" fill="#1c2321" />
+        </pattern>
+      </defs>
+
+      <rect
+        x="0"
+        y="30"
+        width={width}
+        height="480"
+        fill="url(#scout-metal-wall)"
+      />
+
+      {[0, 480, 960, 1440, 1900].map((x) => (
+        <g key={x}>
+          <rect
+            x={x - 20}
+            y="30"
+            width="40"
+            height="480"
+            fill="#1a2529"
+            stroke="#2c3e44"
+            strokeWidth="3"
+          />
+          {[60, 140, 220, 300, 380, 460].map((y) => (
+            <circle
+              key={y}
+              cx={x}
+              cy={y}
+              r="4"
+              fill="#3e525a"
+              stroke="#101618"
+              strokeWidth="1.5"
+            />
+          ))}
+        </g>
+      ))}
+
+      <path
+        d="M0 65 Q480 85 960 65 Q1440 85 1920 65"
+        fill="none"
+        stroke="#2d3748"
+        strokeWidth="12"
+      />
+      <path
+        d="M0 75 Q480 95 960 75 Q1440 95 1920 75"
+        fill="none"
+        stroke="#e67e22"
+        strokeWidth="4"
+      />
+      <path
+        d="M0 82 Q480 102 960 82 Q1440 102 1920 82"
+        fill="none"
+        stroke="#00bbf9"
+        strokeWidth="3"
+      />
+
+      <rect x="0" y="30" width={width} height="12" fill="url(#hazard-tape)" />
+      <rect x="0" y="490" width={width} height="14" fill="url(#hazard-tape)" />
+
+      <g transform="translate(960 270)">
+        <circle r="140" fill="#0d1f1f" stroke="#1f4040" strokeWidth="8" />
+        <circle r="140" fill="url(#radar-glow)" />
+        <circle
+          r="35"
+          fill="none"
+          stroke="#00f5d4"
+          strokeWidth="1.5"
+          opacity="0.4"
+        />
+        <circle
+          r="70"
+          fill="none"
+          stroke="#00f5d4"
+          strokeWidth="1.5"
+          opacity="0.4"
+        />
+        <circle
+          r="105"
+          fill="none"
+          stroke="#00f5d4"
+          strokeWidth="1.5"
+          opacity="0.4"
+        />
+        <circle
+          r="140"
+          fill="none"
+          stroke="#00f5d4"
+          strokeWidth="2"
+          opacity="0.6"
+        />
+        <line
+          x1="-140"
+          y1="0"
+          x2="140"
+          y2="0"
+          stroke="#00f5d4"
+          strokeWidth="1.5"
+          opacity="0.4"
+        />
+        <line
+          x1="0"
+          y1="-140"
+          x2="0"
+          y2="140"
+          stroke="#00f5d4"
+          strokeWidth="1.5"
+          opacity="0.4"
+        />
+        <g transform={`rotate(${radarAngle})`}>
+          <line
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="-140"
+            stroke="#00f5d4"
+            strokeWidth="3"
+          />
+          <path
+            d="M0 0 L-40 -140 A140 140 0 0 1 0 -140 Z"
+            fill="url(#radar-sweep)"
+          />
+        </g>
+        {[
+          { x: 45, y: -60, color: "#2ecc71" },
+          { x: -75, y: 35, color: "#e74c3c" },
+          { x: -30, y: -80, color: "#f39c12" },
+          { x: 80, y: 70, color: "#2ecc71" },
+        ].map((blip, i) => (
+          <circle
+            key={i}
+            cx={blip.x}
+            cy={blip.y}
+            r="4.5"
+            fill={blip.color}
+            opacity={0.4 + Math.sin(seconds * 4 + i * 1.5) * 0.6}
+          />
+        ))}
+        <circle r="16" fill="#143636" stroke="#00f5d4" strokeWidth="2" />
+        <text
+          y="5"
+          textAnchor="middle"
+          fill="#00f5d4"
+          fontSize="13"
+          fontWeight="bold"
+        >
+          HQ
+        </text>
+      </g>
+
+      <g transform="translate(560 240)">
+        <rect
+          x="-140"
+          y="-100"
+          width="280"
+          height="190"
+          rx="10"
+          fill="#0a1215"
+          stroke="#243b42"
+          strokeWidth="6"
+        />
+        <text
+          x="-120"
+          y="-75"
+          fill="#38d9a9"
+          fontSize="12"
+          fontWeight="bold"
+          letterSpacing="1"
+        >
+          GRID TELEMETRY // SECTOR 7
+        </text>
+        <path
+          d={`M -120 -20 ${Array.from({ length: 24 }, (_, i) => `L ${-120 + i * 10} ${-20 + Math.sin(seconds * 5 + i * 0.5) * 22}`).join(" ")}`}
+          fill="none"
+          stroke="#00f5d4"
+          strokeWidth="2.5"
+        />
+        {Array.from({ length: 4 }, (_, i) => (
+          <rect
+            key={i}
+            x="-120"
+            y={20 + i * 16}
+            width={80 + ((i * 37) % 120)}
+            height="8"
+            rx="2"
+            fill="#20c997"
+            opacity="0.6"
+          />
+        ))}
+      </g>
+
+      <g transform="translate(1360 240)">
+        <rect
+          x="-140"
+          y="-100"
+          width="280"
+          height="190"
+          rx="10"
+          fill="#0a1215"
+          stroke="#243b42"
+          strokeWidth="6"
+        />
+        <text
+          x="-120"
+          y="-75"
+          fill="#f39c12"
+          fontSize="12"
+          fontWeight="bold"
+          letterSpacing="1"
+        >
+          CIPHER CODE STREAM // ENC
+        </text>
+        {Array.from({ length: 5 }, (_, r) => (
+          <text
+            key={r}
+            x="-120"
+            y={-40 + r * 24}
+            fill="#a8dadc"
+            fontSize="11"
+            fontFamily="monospace"
+            opacity="0.85"
+          >
+            {`0x${((Math.floor(seconds * 10) + r * 1337) % 0xffff).toString(16).toUpperCase().padStart(4, "0")}  //  SIG-${104 + r}  //  OK`}
+          </text>
+        ))}
+      </g>
+
+      {[160, 1760].map((rx, bankIdx) => (
+        <g key={bankIdx} transform={`translate(${rx} 280)`}>
+          <rect
+            x="-70"
+            y="-150"
+            width="140"
+            height="230"
+            rx="8"
+            fill="#141c1f"
+            stroke="#2c3e44"
+            strokeWidth="5"
+          />
+          {Array.from({ length: 6 }, (_, unit) => (
+            <g key={unit} transform={`translate(0 ${-130 + unit * 36})`}>
+              <rect
+                x="-60"
+                y="0"
+                width="120"
+                height="30"
+                rx="4"
+                fill="#1b2528"
+                stroke="#364950"
+                strokeWidth="2"
+              />
+              {Array.from({ length: 6 }, (_, led) => {
+                const active =
+                  Math.floor(seconds * 4 + bankIdx * 3 + unit * 2 + led) % 3 !==
+                  0;
+                const ledColor =
+                  led === 0 ? "#e74c3c" : led % 2 === 0 ? "#2ecc71" : "#f1c40f";
+                return (
+                  <circle
+                    key={led}
+                    cx={-45 + led * 18}
+                    cy="15"
+                    r="4"
+                    fill={active ? ledColor : "#2c3e50"}
+                    opacity={active ? 1 : 0.3}
+                  />
+                );
+              })}
+            </g>
+          ))}
+        </g>
+      ))}
+
+      <g>
+        <line
+          x1="0"
+          y1="500"
+          x2={width}
+          y2="500"
+          stroke="#00f5d4"
+          strokeWidth="3"
+          opacity="0.4"
+        />
+        {Array.from({ length: 16 }, (_, i) => (
+          <line
+            key={i}
+            x1={i * 120}
+            y1="500"
+            x2={i * 120 + 30}
+            y2="720"
+            stroke="#1f2c30"
+            strokeWidth="3"
+            opacity="0.8"
+          />
+        ))}
+      </g>
+
+      <g transform="translate(960 495)">
+        <rect
+          x="-180"
+          y="-16"
+          width="360"
+          height="32"
+          rx="6"
+          fill="#10181b"
+          stroke="#e67e22"
+          strokeWidth="2.5"
+        />
+        <text
+          y="5"
+          textAnchor="middle"
+          fill="#f39c12"
+          fontSize="15"
+          fontWeight="bold"
+          letterSpacing="3"
+        >
+          TOP SECRET // PRIDE RECON BASE
+        </text>
+      </g>
+    </g>
+  );
+}
+
 /** Original vector scenery. Manifest asset names describe layers, never requests. */
 export function RoomScenery({
   place,
@@ -178,7 +817,9 @@ export function RoomScenery({
   const midway = place === "wonder-park-midway";
   const isSplashEntry = place === "splash-oasis-entry";
   const isSplashRiver = place === "splash-oasis-river";
-  const width = club ? 1920 : downtown ? 2400 : 2800;
+  const isCondo = place === "penthouse-condo";
+  const isScoutBase = place === "secret-scout-base";
+  const width = club || isCondo || isScoutBase ? 1920 : downtown ? 2400 : 2800;
   const cart = computeCoasterTrackPosition(seconds / 28);
   return (
     <svg
@@ -193,9 +834,13 @@ export function RoomScenery({
             stopColor={
               club
                 ? "#294050"
-                : isSplashEntry || isSplashRiver
-                  ? "#58b5be"
-                  : "#91cfc9"
+                : isCondo
+                  ? "#100d24"
+                  : isScoutBase
+                    ? "#0e1517"
+                    : isSplashEntry || isSplashRiver
+                      ? "#58b5be"
+                      : "#91cfc9"
             }
           />
           <stop
@@ -203,9 +848,13 @@ export function RoomScenery({
             stopColor={
               club
                 ? "#58687a"
-                : isSplashEntry || isSplashRiver
-                  ? "#e3f3db"
-                  : "#f7e4aa"
+                : isCondo
+                  ? "#2d1a38"
+                  : isScoutBase
+                    ? "#192529"
+                    : isSplashEntry || isSplashRiver
+                      ? "#e3f3db"
+                      : "#f7e4aa"
             }
           />
         </linearGradient>
@@ -218,14 +867,22 @@ export function RoomScenery({
           <path
             d="M0 0H130V48H0ZM65 0V48"
             fill="none"
-            stroke={club ? "#687985" : "#bd9d78"}
+            stroke={
+              club
+                ? "#687985"
+                : isCondo
+                  ? "#3e2723"
+                  : isScoutBase
+                    ? "#2c3e50"
+                    : "#bd9d78"
+            }
             strokeWidth="2"
-            opacity=".25"
+            opacity={isCondo || isScoutBase ? ".1" : ".25"}
           />
         </pattern>
       </defs>
       <rect width={width} height="720" fill={`url(#sky-${place})`} />
-      {!club && (
+      {!club && !isCondo && !isScoutBase && (
         <>
           <circle cx={width - 360} cy="100" r="57" fill="#ffedbb" />
           <g fill="#fff8df" opacity=".7">
@@ -244,26 +901,34 @@ export function RoomScenery({
         </>
       )}
       <rect
-        y={club ? 420 : 540}
+        y={club || isCondo ? 420 : isScoutBase ? 500 : 540}
         width={width}
         height="300"
         fill={
           club
             ? "#425566"
-            : isSplashEntry
-              ? "#dfca99"
-              : isSplashRiver
-                ? "#d6be8e"
-                : "#e7c794"
+            : isCondo
+              ? "#1e140f"
+              : isScoutBase
+                ? "#12181a"
+                : isSplashEntry
+                  ? "#dfca99"
+                  : isSplashRiver
+                    ? "#d6be8e"
+                    : "#e7c794"
         }
       />
       <rect
-        y={club ? 420 : 540}
+        y={club || isCondo ? 420 : isScoutBase ? 500 : 540}
         width={width}
         height="300"
         fill={`url(#pavers-${place})`}
       />
-      {isSplashEntry ? (
+      {isCondo ? (
+        <CondoScenery seconds={seconds} width={width} />
+      ) : isScoutBase ? (
+        <ScoutBaseScenery seconds={seconds} width={width} />
+      ) : isSplashEntry ? (
         <>
           <g transform="translate(900 500)">
             <ellipse rx="460" ry="110" fill="#2c818f" opacity="0.4" />
@@ -978,7 +1643,7 @@ export function RoomScenery({
           ))}
         </>
       )}
-      {!club && (
+      {!club && !isCondo && !isScoutBase && (
         <>
           <path d={`M0 690H${width}`} stroke="#d3ae7c" strokeWidth="4" />
           {Array.from({ length: Math.floor(width / 170) }, (_, i) => (
