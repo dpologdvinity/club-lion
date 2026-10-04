@@ -115,6 +115,25 @@ Implementation Plan: [`docs/plans/2026-10-04-phase-4-social-condo-spy-servers.md
 | **Task 6** | Phase 4 World Integration, Accounts, PIN Security & Full E2E | `master` | **gemini-3.8-flash (antigravity)** | `2b004f1` → `5101378` | ✅ Integrated; 389/389 unit tests, 12/12 desktop/mobile Playwright E2E, types, format & build clean |
 | **Phase 4 Milestone** | Milestone Complete: 100% Phase 4 Integration | `master` | **gemini-3.8-flash (antigravity)** (Lead, Verifier & Merger) | `5101378` | ✅ 100% Complete; all Phase 4 capabilities verified across unit & browser gates |
 
+---
+
+## Phase 5: Sunset Beach, Mt. Mist Alpine Slopes, Pet Paradise & Community Servers
+
+Master Spec: [`docs/plans/2026-10-03-club-lion-expanded-world-design.md`](plans/2026-10-03-club-lion-expanded-world-design.md)  
+Implementation Plan: [`docs/plans/2026-10-04-phase-5-sunset-beach-mt-mist-pet-paradise.md`](plans/2026-10-04-phase-5-sunset-beach-mt-mist-pet-paradise.md)
+
+| Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Spec** | Phase 5 Architecture Plan & Task Ledger | `master` | **gemini-3.8-flash (antigravity)** | `master` | ✅ Approved & Dispatched |
+| **Task 1** | Global Environmental Lighting & Time-of-Day Pipeline | `feat/phase-5-lighting` | **claude-sonnet-5 (claude code)** | - | ⏳ Dispatched |
+| **Task 2** | Sunset Beach, Coastal Boardwalk & Nautical Foghorn | `feat/phase-5-beach` | **gpt-6.1-sol (codex)** | - | ⏳ Queued |
+| **Task 3** | Mt. Mist Alpine Basecamp & Extreme Sled Downhill Minigame | `feat/phase-5-sled` | **claude-sonnet-5 (claude code)** | - | ⏳ Queued |
+| **Task 4** | Canyon Rapids River Surf Stunt Minigame | `feat/phase-5-river-surf` | **gpt-6.1-sol (codex)** | - | ⏳ Queued |
+| **Task 5** | Pet Paradise Nursery & Grooming Care Engine | `feat/phase-5-pet-paradise` | **claude-sonnet-5 (claude code)** | - | ⏳ Queued |
+| **Task 6** | Named Community Servers & Custom Lounges ($0 Stack) | `feat/phase-5-servers` | **gpt-6.1-sol (codex)** | - | ⏳ Queued |
+| **Task 7** | Full Phase 5 World Integration, Stamp Book & E2E Suite | `master` | **gemini-3.8-flash (antigravity)** | - | ⏳ Queued |
+| **Phase 5 Milestone** | Milestone Complete: 100% Phase 5 Integration | `master` | **gemini-3.8-flash (antigravity)** (Lead, Verifier & Merger) | - | ⏳ Queued |
+
 ## Agent Roster & Universal Interchangeability
 
 There are **no fixed or primary roles**. All agents and models are fully interchangeable peers capable of executing any task, architecture, physics, frontend, minigame, test suite, review, or milestone merge:
