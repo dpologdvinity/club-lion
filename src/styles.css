@@ -4502,3 +4502,53 @@ svg {
 .camera-viewport-stage .pet-companion {
   pointer-events: none;
 }
+
+.instrument-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.instrument-instruction {
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+.instrument-keyboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.instrument-key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 18px 8px;
+  border-radius: 14px;
+  border: 1px solid #deded0;
+  background: linear-gradient(180deg, #fff8ea, #e8d8b4);
+  color: #4a3a1f;
+  font-family: var(--font-display);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+  touch-action: manipulation;
+}
+.instrument-key:hover {
+  box-shadow: 0 6px 16px #14251720;
+}
+.instrument-key-active {
+  transform: translateY(2px) scale(0.96);
+  background: linear-gradient(180deg, #ffe9a8, #d8ad5c);
+  box-shadow: 0 0 18px 4px #ffd36688;
+}
+.instrument-key-number {
+  font-size: 12px;
+  opacity: 0.6;
+}
+.instrument-key-label {
+  font-size: 14px;
+}
