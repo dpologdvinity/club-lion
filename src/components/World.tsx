@@ -333,6 +333,16 @@ export function World({
       notify(
         "A little splash of sunshine! The lion fountain keeps the plaza cool.",
       );
+    else if (id === "tsunami-wave-pool")
+      notify(
+        "Catch the rolling swell! The tsunami wave pool laps against the shore.",
+      );
+    else if (id === "dump-bucket-fortress")
+      notify(
+        "Watch out below! 1,000 gallons of cool water splash down every 30 seconds!",
+      );
+    else if (id === "lazy-river-current")
+      notify("Drift along the gentle tropical current on your inner tube.");
     else
       notify(
         id === "giant-ferris-wheel"
@@ -352,6 +362,9 @@ export function World({
     "club-pulse-dj-booth": "DJ Booth · DJ Beat Drop",
     "club-pulse-dance-floor": "Step onto the dance floor",
     "marble-lion-fountain": "Visit the lion fountain",
+    "tsunami-wave-pool": "Tsunami Wave Pool",
+    "dump-bucket-fortress": "Dump Bucket Fortress",
+    "lazy-river-current": "Lazy River Current",
   };
   return (
     <section className="world-panel" aria-label="Lion world">

@@ -4363,6 +4363,12 @@ svg {
 .scene-pulse {
   background: #425566;
 }
+.scene-oasis {
+  background: #a5d8d3;
+}
+.scene-river {
+  background: #89c5cc;
+}
 .camera-world {
   aspect-ratio: auto;
 }

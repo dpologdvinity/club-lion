@@ -22,7 +22,7 @@ export const splashOasisRiverManifest: RoomManifest = {
   portals: [
     {
       targetRoomId: "splash-oasis-entry",
-      targetSpawn: { x: 2700, y: 560 },
+      targetSpawn: { x: 2500, y: 600 },
       triggerBounds: { x1: 0, y1: 520, x2: 120, y2: 650 },
       label: "Splash Oasis",
     },

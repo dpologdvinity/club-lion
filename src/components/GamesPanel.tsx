@@ -7,11 +7,23 @@ import { FruitCatch } from "./FruitCatch";
 import { DJBeatDrop } from "./DJBeatDrop";
 import { SmoothieKitchenContent } from "./SmoothieKitchen";
 import { RollerCoasterRide } from "./RollerCoasterRide";
+import { WaterholeAngler } from "./WaterholeAngler";
+import { TopModelsRunway } from "./TopModelsRunway";
+import { InstrumentContent } from "./InstrumentModal";
 import { PAW_STEPS_COINS_PER_ROUND } from "../game";
 import type { PlayerV2 } from "../game.ts";
 
 export type GameId =
-  "memory" | "bee" | "paw" | "fruit" | "dj-beat-drop" | "smoothie" | "coaster";
+  | "memory"
+  | "bee"
+  | "paw"
+  | "fruit"
+  | "dj-beat-drop"
+  | "smoothie"
+  | "coaster"
+  | "fishing"
+  | "runway"
+  | "instrument";
 
 export function GamesPanel({
   player,
@@ -25,6 +37,8 @@ export function GamesPanel({
   onSafariFinish,
   onPawStepsFinish,
   onFruitFinish,
+  onCompleteFishing,
+  onCompleteFashion,
   onClose,
 }: {
   player: PlayerV2;
@@ -38,6 +52,17 @@ export function GamesPanel({
   onSafariFinish?: (pairs: number) => void;
   onPawStepsFinish?: (rounds: number) => void;
   onFruitFinish?: (caught: number, hits: number, score: number) => void;
+  onCompleteFishing?: (result: {
+    speciesId: string;
+    weight: number;
+    coins: number;
+  }) => void;
+  onCompleteFashion?: (result: {
+    themeId: string;
+    score: number;
+    stars: number;
+    coins: number;
+  }) => void;
   onClose: () => void;
 }) {
   const [picked, setPicked] = useState<GameId | null>(initialGame);
@@ -75,7 +100,10 @@ export function GamesPanel({
       <>
         {(picked === "dj-beat-drop" ||
           picked === "smoothie" ||
-          picked === "coaster") && (
+          picked === "coaster" ||
+          picked === "fishing" ||
+          picked === "runway" ||
+          picked === "instrument") && (
           <button className="game-back" onClick={backToMenu}>
             <ArrowLeft size={14} /> All games
           </button>
@@ -99,6 +127,28 @@ export function GamesPanel({
             pet={player.pet}
             onClose={onClose}
           />
+        )}
+        {picked === "fishing" && (
+          <WaterholeAngler
+            onCatch={(res) => onCompleteFishing?.(res)}
+            onClose={onClose}
+          />
+        )}
+        {picked === "runway" && (
+          <TopModelsRunway
+            ownedItems={player.owned}
+            onComplete={(res) => onCompleteFashion?.(res)}
+            onClose={onClose}
+          />
+        )}
+        {picked === "instrument" && (
+          <div className="instrument-panel-container">
+            <div className="game-lead">
+              <h3>Upright Savanna Piano</h3>
+              <p>Play musical notes with your paws</p>
+            </div>
+            <InstrumentContent instrument="piano" onClose={onClose} />
+          </div>
         )}
         {picked === "memory" && (
           <MemorySafari
@@ -167,6 +217,30 @@ export function GamesPanel({
             art: "🎢 🦁 🎡",
             description: "Ride the loop and keep a local souvenir.",
             reward: "A scenic ride · no coin payout",
+            best: 0,
+          },
+          {
+            id: "fishing",
+            name: "Waterhole Angler",
+            art: "🎣 🐟 🌊",
+            description: "Cast your line, reel in exotic fish.",
+            reward: "Earn coins based on catch rarity",
+            best: player.fishCaughtCount ?? 0,
+          },
+          {
+            id: "runway",
+            name: "Top Models Runway",
+            art: "💃 📸 👑",
+            description: "30s styling challenge on the catwalk.",
+            reward: "Earn up to 60 coins for 3 stars",
+            best: player.fashionBestScore ?? 0,
+          },
+          {
+            id: "instrument",
+            name: "World Instruments",
+            art: "🎹 🥁 🎶",
+            description: "Play procedural piano, marimba, and drums.",
+            reward: "Harmonic jam mode · procedural audio",
             best: 0,
           },
         ] as const

@@ -4,11 +4,68 @@ import {
   computeCoasterTrackPosition,
   computeFerrisWheelCabin,
 } from "../utils/kineticRides.ts";
+import {
+  calculateWaveOffset,
+  calculateBucketCycle,
+  calculateRiverDrift,
+} from "../utils/waterparkPhysics.ts";
 
 const COASTER_LINE = Array.from({ length: 260 }, (_, i) => {
   const p = computeCoasterTrackPosition(i / 259);
   return `${i === 0 ? "M" : "L"}${p.x},${p.y}`;
 }).join(" ");
+
+function PalmTree({
+  x,
+  y,
+  scale = 1,
+}: {
+  x: number;
+  y: number;
+  scale?: number;
+}) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${scale})`}>
+      <path
+        d="M0 0Q15 -80 5 -160Q-5 -210 20 -260"
+        fill="none"
+        stroke="#8b6540"
+        strokeWidth="16"
+        strokeLinecap="round"
+      />
+      <g transform="translate(20 -260)">
+        <path d="M0 0Q-60 -40 -110 -15Q-60 10 0 0" fill="#4d9b62" />
+        <path d="M0 0Q60 -50 120 -25Q70 15 0 0" fill="#58ad6f" />
+        <path d="M0 0Q-40 -80 -70 -120Q-20 -60 0 0" fill="#3f8452" />
+        <path d="M0 0Q40 -85 75 -125Q30 -60 0 0" fill="#4d9b62" />
+        <path d="M0 0Q-10 -70 5 -135Q10 -65 0 0" fill="#5dbd76" />
+        <circle cx="-6" cy="-2" r="8" fill="#664627" />
+        <circle cx="8" cy="2" r="7" fill="#5a3d21" />
+      </g>
+    </g>
+  );
+}
+
+function InnerTube({
+  x,
+  y,
+  angle = 0,
+  color = "#ff725c",
+  scale = 1,
+}: {
+  x: number;
+  y: number;
+  angle?: number;
+  color?: string;
+  scale?: number;
+}) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${angle}) scale(${scale})`}>
+      <ellipse rx="36" ry="24" fill={color} stroke="#ffffff" strokeWidth="4" />
+      <ellipse rx="16" ry="10" fill="#36969e" opacity="0.8" />
+    </g>
+  );
+}
 
 function Tree({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
   return (
@@ -119,6 +176,8 @@ export function RoomScenery({
   const club = place === "club-pulse";
   const downtown = place === "downtown-plaza";
   const midway = place === "wonder-park-midway";
+  const isSplashEntry = place === "splash-oasis-entry";
+  const isSplashRiver = place === "splash-oasis-river";
   const width = club ? 1920 : downtown ? 2400 : 2800;
   const cart = computeCoasterTrackPosition(seconds / 28);
   return (
@@ -130,8 +189,25 @@ export function RoomScenery({
     >
       <defs>
         <linearGradient id={`sky-${place}`} x2="0" y2="1">
-          <stop stopColor={club ? "#294050" : "#91cfc9"} />
-          <stop offset="1" stopColor={club ? "#58687a" : "#f7e4aa"} />
+          <stop
+            stopColor={
+              club
+                ? "#294050"
+                : isSplashEntry || isSplashRiver
+                  ? "#58b5be"
+                  : "#91cfc9"
+            }
+          />
+          <stop
+            offset="1"
+            stopColor={
+              club
+                ? "#58687a"
+                : isSplashEntry || isSplashRiver
+                  ? "#e3f3db"
+                  : "#f7e4aa"
+            }
+          />
         </linearGradient>
         <pattern
           id={`pavers-${place}`}
@@ -171,7 +247,15 @@ export function RoomScenery({
         y={club ? 420 : 540}
         width={width}
         height="300"
-        fill={club ? "#425566" : "#e7c794"}
+        fill={
+          club
+            ? "#425566"
+            : isSplashEntry
+              ? "#dfca99"
+              : isSplashRiver
+                ? "#d6be8e"
+                : "#e7c794"
+        }
       />
       <rect
         y={club ? 420 : 540}
@@ -179,7 +263,251 @@ export function RoomScenery({
         height="300"
         fill={`url(#pavers-${place})`}
       />
-      {downtown ? (
+      {isSplashEntry ? (
+        <>
+          <g transform="translate(900 500)">
+            <ellipse rx="460" ry="110" fill="#2c818f" opacity="0.4" />
+            <path
+              d="M-440 0 C-300 -60, 300 -60, 440 0 C300 70, -300 70, -440 0 Z"
+              fill="#42a8b8"
+            />
+            {[-300, -150, 0, 150, 300].map((wx, i) => {
+              const waveY = calculateWaveOffset(seconds * 1000, 900 + wx);
+              return (
+                <path
+                  key={i}
+                  d={`M${wx - 60} ${waveY} Q${wx} ${waveY - 14} ${wx + 60} ${waveY}`}
+                  fill="none"
+                  stroke="#def8f8"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  opacity="0.8"
+                />
+              );
+            })}
+            <text
+              y="75"
+              textAnchor="middle"
+              fontSize="28"
+              fill="#1b4d54"
+              fontWeight="bold"
+            >
+              TSUNAMI WAVE POOL
+            </text>
+          </g>
+
+          {(() => {
+            const bucket = calculateBucketCycle(seconds * 1000);
+            return (
+              <g transform="translate(1900 480)">
+                <path
+                  d="M-80 60 L-50 -180 L50 -180 L80 60"
+                  stroke="#d48a37"
+                  strokeWidth="8"
+                  fill="none"
+                />
+                <path
+                  d="M-65 -40 L65 -40 M-60 -110 L60 -110"
+                  stroke="#d48a37"
+                  strokeWidth="6"
+                />
+                <g
+                  transform={`translate(0 -180) rotate(${bucket.tipAngleDeg})`}
+                >
+                  <path
+                    d="M-36 -45 L36 -45 L26 30 L-26 30 Z"
+                    fill="#ffb43b"
+                    stroke="#aa681a"
+                    strokeWidth="4"
+                  />
+                  <rect
+                    x="-22"
+                    y={30 - (bucket.fillPercent / 100) * 65}
+                    width="44"
+                    height={(bucket.fillPercent / 100) * 65}
+                    fill="#3dbbd4"
+                    opacity="0.85"
+                  />
+                  <ellipse
+                    cy="-45"
+                    rx="36"
+                    ry="10"
+                    fill="#ffd470"
+                    stroke="#aa681a"
+                    strokeWidth="3"
+                  />
+                </g>
+                {bucket.isDumping && (
+                  <g>
+                    <path
+                      d="M-20 -150 Q-30 0 -50 60 L50 60 Q30 0 20 -150 Z"
+                      fill="#72d8eb"
+                      opacity="0.75"
+                    />
+                    <ellipse
+                      cy="60"
+                      rx={bucket.splashRadius}
+                      ry={bucket.splashRadius * 0.35}
+                      fill="#baf0fa"
+                      opacity="0.7"
+                    />
+                  </g>
+                )}
+                <text
+                  y="90"
+                  textAnchor="middle"
+                  fontSize="28"
+                  fill="#3b4b52"
+                  fontWeight="bold"
+                >
+                  DUMP BUCKET FORTRESS
+                </text>
+              </g>
+            );
+          })()}
+
+          <g transform="translate(2400 520)">
+            <rect
+              x="-80"
+              y="-120"
+              width="160"
+              height="120"
+              rx="8"
+              fill="#ffeec9"
+              stroke="#9e724a"
+              strokeWidth="4"
+            />
+            <path d="M-100 -120 L0 -180 L100 -120 Z" fill="#52a882" />
+            <text y="-50" textAnchor="middle" fontSize="20" fill="#5a452d">
+              CABANA
+            </text>
+          </g>
+
+          {[160, 520, 1420, 2250, 2680].map((x, i) => (
+            <PalmTree key={x} x={x} y={530} scale={i % 2 === 0 ? 0.9 : 1.1} />
+          ))}
+
+          <text
+            x="80"
+            y="550"
+            textAnchor="middle"
+            fill="#54412c"
+            fontSize="26"
+            fontWeight="bold"
+          >
+            ← DOWNTOWN
+          </text>
+          <text
+            x="2720"
+            y="550"
+            textAnchor="middle"
+            fill="#54412c"
+            fontSize="26"
+            fontWeight="bold"
+          >
+            LAZY RIVER →
+          </text>
+        </>
+      ) : isSplashRiver ? (
+        <>
+          <g>
+            <path
+              d="M100 360 C 100 150, 2700 150, 2700 360 C 2700 570, 100 570, 100 360 Z"
+              fill="none"
+              stroke="#3caebd"
+              strokeWidth="90"
+              opacity="0.85"
+            />
+            <path
+              d="M100 360 C 100 150, 2700 150, 2700 360 C 2700 570, 100 570, 100 360 Z"
+              fill="none"
+              stroke="#96e7f2"
+              strokeWidth="10"
+              strokeDasharray="40 60"
+              opacity="0.6"
+            />
+            {[0, 0.2, 0.4, 0.6, 0.8].map((offset, i) => {
+              const drift = calculateRiverDrift((seconds / 25 + offset) % 1);
+              const colors = [
+                "#ff6053",
+                "#ffba3b",
+                "#4cdb83",
+                "#bb5fe6",
+                "#3bb8ff",
+              ];
+              return (
+                <InnerTube
+                  key={i}
+                  x={drift.x}
+                  y={drift.y}
+                  angle={drift.angle}
+                  color={colors[i]}
+                  scale={0.9}
+                />
+              );
+            })}
+          </g>
+
+          <path d="M0 540 H2800" stroke="#875d36" strokeWidth="8" />
+          {Array.from({ length: 29 }, (_, i) => (
+            <line
+              key={i}
+              x1={i * 100}
+              y1={540}
+              x2={i * 100}
+              y2={565}
+              stroke="#875d36"
+              strokeWidth="6"
+            />
+          ))}
+
+          <g transform="translate(1400 520)">
+            <rect
+              x="-100"
+              y="-120"
+              width="200"
+              height="120"
+              rx="10"
+              fill="#fcf0d4"
+              stroke="#9e724a"
+              strokeWidth="5"
+            />
+            <path d="M-115 -120 L0 -175 L115 -120 Z" fill="#e66847" />
+            <text
+              y="-55"
+              textAnchor="middle"
+              fontSize="22"
+              fill="#543c25"
+              fontWeight="bold"
+            >
+              TUBE RENTALS
+            </text>
+            <InnerTube
+              x={-60}
+              y={-10}
+              angle={-15}
+              color="#ffba3b"
+              scale={0.7}
+            />
+            <InnerTube x={60} y={-10} angle={15} color="#4cdb83" scale={0.7} />
+          </g>
+
+          {[200, 750, 1950, 2550].map((x, i) => (
+            <PalmTree key={x} x={x} y={535} scale={i % 2 === 0 ? 0.95 : 1.15} />
+          ))}
+
+          <text
+            x="80"
+            y="550"
+            textAnchor="middle"
+            fill="#54412c"
+            fontSize="26"
+            fontWeight="bold"
+          >
+            ← SPLASH OASIS
+          </text>
+        </>
+      ) : downtown ? (
         <>
           <g transform="translate(160 525)">
             <rect

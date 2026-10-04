@@ -23,7 +23,7 @@ export const splashOasisEntryManifest: RoomManifest = {
   portals: [
     {
       targetRoomId: "downtown-plaza",
-      targetSpawn: { x: 100, y: 560 },
+      targetSpawn: { x: 400, y: 600 },
       triggerBounds: { x1: 0, y1: 520, x2: 120, y2: 650 },
       label: "Downtown Plaza",
     },

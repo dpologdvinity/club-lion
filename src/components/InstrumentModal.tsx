@@ -24,11 +24,13 @@ const KEY_TO_NOTE: Record<string, number> = {
   "8": 7,
 };
 
-export function InstrumentModal({
+export function InstrumentContent({
   instrument,
-  instrumentName,
   onClose,
-}: InstrumentModalProps) {
+}: {
+  instrument: InstrumentType;
+  onClose?: () => void;
+}) {
   const [activeNote, setActiveNote] = useState<number | null>(null);
   const labels = instrument === "drums" ? DRUM_LABELS : NOTE_NAMES;
 
@@ -52,26 +54,34 @@ export function InstrumentModal({
   }, [instrument]);
 
   return (
-    <Dialog title={instrumentName} onClose={onClose}>
-      <div className="instrument-modal">
-        <p className="instrument-instruction">
-          Press 1–8 or click keys to play
-        </p>
-        <div className="instrument-keyboard">
-          {labels.map((label, noteIndex) => (
-            <button
-              key={label}
-              type="button"
-              className={`instrument-key ${activeNote === noteIndex ? "instrument-key-active" : ""}`}
-              onPointerDown={() => press(noteIndex)}
-              aria-label={label}
-            >
-              <span className="instrument-key-number">{noteIndex + 1}</span>
-              <span className="instrument-key-label">{label}</span>
-            </button>
-          ))}
-        </div>
+    <div className="instrument-modal">
+      <p className="instrument-instruction">Press 1–8 or click keys to play</p>
+      <div className="instrument-keyboard">
+        {labels.map((label, noteIndex) => (
+          <button
+            key={label}
+            type="button"
+            className={`instrument-key ${activeNote === noteIndex ? "instrument-key-active" : ""}`}
+            onPointerDown={() => press(noteIndex)}
+            aria-label={label}
+          >
+            <span className="instrument-key-number">{noteIndex + 1}</span>
+            <span className="instrument-key-label">{label}</span>
+          </button>
+        ))}
       </div>
+    </div>
+  );
+}
+
+export function InstrumentModal({
+  instrument,
+  instrumentName,
+  onClose,
+}: InstrumentModalProps) {
+  return (
+    <Dialog title={instrumentName} onClose={onClose}>
+      <InstrumentContent instrument={instrument} onClose={onClose} />
     </Dialog>
   );
 }

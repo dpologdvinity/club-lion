@@ -28,7 +28,9 @@ export type PlaceId =
   | "downtown-plaza"
   | "wonder-park-entrance"
   | "wonder-park-midway"
-  | "club-pulse";
+  | "club-pulse"
+  | "splash-oasis-entry"
+  | "splash-oasis-river";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -167,6 +169,18 @@ export const PLACES: {
     name: "Club Pulse",
     subtitle: "Follow your paws to the beat",
     imageClass: "scene-pulse",
+  },
+  {
+    id: "splash-oasis-entry",
+    name: "Splash Oasis",
+    subtitle: "Tsunami waves & tipping buckets",
+    imageClass: "scene-oasis",
+  },
+  {
+    id: "splash-oasis-river",
+    name: "Lazy River Oasis",
+    subtitle: "Drift with your pride",
+    imageClass: "scene-river",
   },
 ];
 

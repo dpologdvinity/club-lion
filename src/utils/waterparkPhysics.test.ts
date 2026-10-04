@@ -174,8 +174,8 @@ test("splashOasisEntryManifest is structurally valid", () => {
     (p) => p.targetRoomId === "downtown-plaza",
   );
   assert.ok(backPortal, "expected portal back to downtown-plaza");
-  assert.equal(backPortal!.targetSpawn.x, 100);
-  assert.equal(backPortal!.targetSpawn.y, 560);
+  assert.equal(backPortal!.targetSpawn.x, 400);
+  assert.equal(backPortal!.targetSpawn.y, 600);
 
   const forwardPortal = manifest.portals.find(
     (p) => p.targetRoomId === "splash-oasis-river",

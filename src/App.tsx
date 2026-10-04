@@ -18,6 +18,8 @@ import {
   completeSmoothieOrder,
   completePawSteps,
   completeFruitCatch,
+  completeFishingCatch,
+  recordFashionShowResult,
   meetLion,
   unlockSecretCatalogItem,
   unlockStamp,
@@ -484,6 +486,16 @@ export default function App() {
                     ),
                   )
                 }
+                onCompleteFishing={(res) => {
+                  setPlayer((p) => completeFishingCatch(p, res));
+                  notify(
+                    `Caught a ${res.speciesId.replace(/_/g, " ")}! +${res.coins} coins.`,
+                  );
+                }}
+                onCompleteFashion={(res) => {
+                  setPlayer((p) => recordFashionShowResult(p, res));
+                  notify(`Runway show complete! +${res.coins} coins.`);
+                }}
                 onSafariFinish={(pairs) =>
                   setPlayer((p) => completeGame(p, pairs))
                 }

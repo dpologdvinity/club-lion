@@ -50,6 +50,12 @@ export const downtownPlazaManifest: RoomManifest = {
       triggerBounds: { x1: 2180, y1: 520, x2: 2360, y2: 650 },
       label: "Canopy Café",
     },
+    {
+      targetRoomId: "splash-oasis-entry",
+      targetSpawn: { x: 300, y: 620 },
+      triggerBounds: { x1: 1350, y1: 560, x2: 1500, y2: 650 },
+      label: "Splash Oasis",
+    },
   ],
   interactives: [
     {
