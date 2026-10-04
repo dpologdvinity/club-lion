@@ -65,6 +65,9 @@ type WorldProps = {
   onOpenCard?: () => void;
   onOpenCatalog?: () => void;
   onOpenSalon?: () => void;
+  onOpenSpy?: () => void;
+  onOpenJukebox?: () => void;
+  onOpenCondo?: () => void;
 };
 
 export function World({
@@ -81,6 +84,9 @@ export function World({
   onOpenCard,
   onOpenCatalog,
   onOpenSalon,
+  onOpenSpy,
+  onOpenJukebox,
+  onOpenCondo,
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
   const [position, setPosition] = useState(() =>
@@ -355,6 +361,11 @@ export function World({
       );
     else if (id === "lazy-river-current")
       notify("Drift along the gentle tropical current on your inner tube.");
+    else if (id === "spy-terminal") onOpenSpy?.();
+    else if (id === "condo-furniture-editor") onOpenCondo?.();
+    else if (id === "condo-jukebox") onOpenJukebox?.();
+    else if (id === "surveillance-holo-map")
+      notify("The Pride Agency satellite grid is scanning the savanna.");
     else
       notify(
         id === "giant-ferris-wheel"
@@ -377,6 +388,10 @@ export function World({
     "tsunami-wave-pool": "Tsunami Wave Pool",
     "dump-bucket-fortress": "Dump Bucket Fortress",
     "lazy-river-current": "Lazy River Current",
+    "spy-terminal": "Launch Spy Terminal",
+    "condo-furniture-editor": "Customize Furniture Grid",
+    "condo-jukebox": "Grand Jukebox",
+    "surveillance-holo-map": "Surveillance Holo-Map",
   };
   return (
     <section className="world-panel" aria-label="Lion world">
@@ -527,6 +542,25 @@ export function World({
             onClick={() => onActivity("smoothie")}
           >
             <Coffee size={18} /> Blend smoothies
+          </button>
+        )}
+        {place === "penthouse-condo" && (
+          <>
+            <button className="room-action" onClick={onOpenCondo}>
+              <Home size={18} /> Edit Furniture Grid
+            </button>
+            <button
+              className="room-action"
+              onClick={onOpenJukebox}
+              style={{ top: "80px" }}
+            >
+              <Sparkles size={18} /> Grand Jukebox
+            </button>
+          </>
+        )}
+        {place === "secret-scout-base" && (
+          <button className="room-action" onClick={onOpenSpy}>
+            <Sparkles size={18} /> Spy Terminal
           </button>
         )}
         {player.decor.includes("plant") && place === "den" && (

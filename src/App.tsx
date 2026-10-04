@@ -20,6 +20,7 @@ import {
   completeFruitCatch,
   completeFishingCatch,
   recordFashionShowResult,
+  completeSpyPuzzle,
   meetLion,
   unlockSecretCatalogItem,
   unlockStamp,
@@ -45,6 +46,11 @@ import { CatalogModal } from "./components/CatalogModal";
 import { StampBook } from "./components/StampBook";
 import { SalonModal } from "./components/SalonModal";
 import { FriendsPanel } from "./components/FriendsPanel";
+import { AudioControls } from "./components/AudioControls";
+import { JukeboxModal } from "./components/JukeboxModal";
+import { Condo } from "./components/Condo";
+import { SpyTerminalModal } from "./components/SpyTerminal";
+import { AccountModal } from "./components/AccountModal";
 
 type Panel =
   | "map"
@@ -57,6 +63,10 @@ type Panel =
   | "stamps"
   | "salon"
   | "friends"
+  | "jukebox"
+  | "condo"
+  | "spy"
+  | "account"
   | null;
 
 export default function App() {
@@ -199,8 +209,21 @@ export default function App() {
             >
               Friends
             </button>
+            <button
+              className={panel === "jukebox" ? "selected" : ""}
+              onClick={() => setPanel("jukebox")}
+            >
+              Jukebox
+            </button>
+            <button
+              className={panel === "account" ? "selected" : ""}
+              onClick={() => setPanel("account")}
+            >
+              Account
+            </button>
           </nav>
           <div className="header-actions">
+            <AudioControls />
             <button
               className="icon-button help-button"
               aria-label="How to play"
@@ -263,6 +286,9 @@ export default function App() {
             onOpenCard={() => setPanel("card")}
             onOpenCatalog={() => setPanel("catalog")}
             onOpenSalon={() => setPanel("salon")}
+            onOpenSpy={() => setPanel("spy")}
+            onOpenJukebox={() => setPanel("jukebox")}
+            onOpenCondo={() => setPanel("condo")}
           />
           <Sidebar
             player={player}
@@ -432,12 +458,54 @@ export default function App() {
           }}
         />
       )}
+      {panel === "jukebox" && <JukeboxModal onClose={closePanel} />}
+      {panel === "condo" && (
+        <Dialog
+          title="Luxury Penthouse Condo"
+          subtitle="Customize your 16×16 isometric furniture grid"
+          onClose={closePanel}
+          wide
+        >
+          <Condo
+            condoLayout={player.condoLayout}
+            onSaveLayout={(layout) => {
+              setPlayer((p) => ({ ...p, condoLayout: layout }));
+              notify("Condo layout saved!");
+            }}
+            onClose={closePanel}
+          />
+        </Dialog>
+      )}
+      {panel === "spy" && (
+        <SpyTerminalModal
+          spyPuzzlesSolved={player.spyPuzzlesSolved ?? 0}
+          onCompletePuzzle={(puzzleType, scoreOrStage, coinsEarned) => {
+            setPlayer((p) =>
+              completeSpyPuzzle(p, puzzleType, scoreOrStage, coinsEarned),
+            );
+            notify(`Mission complete! Earned ${coinsEarned} coins.`);
+          }}
+          onClose={closePanel}
+        />
+      )}
+      {panel === "account" && (
+        <AccountModal
+          player={player}
+          onUpdatePlayer={setPlayer}
+          onClose={closePanel}
+          notify={notify}
+        />
+      )}
       {panel &&
         panel !== "card" &&
         panel !== "catalog" &&
         panel !== "salon" &&
         panel !== "stamps" &&
-        panel !== "friends" && (
+        panel !== "friends" &&
+        panel !== "jukebox" &&
+        panel !== "condo" &&
+        panel !== "spy" &&
+        panel !== "account" && (
           <Dialog
             title={titles[panel][0]}
             subtitle={titles[panel][1]}
