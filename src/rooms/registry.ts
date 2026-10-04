@@ -7,6 +7,7 @@ import { clubPulseManifest } from "./manifests/clubPulse.ts";
 
 import { splashOasisEntryManifest } from "./manifests/splashOasisEntry.ts";
 import { splashOasisRiverManifest } from "./manifests/splashOasisRiver.ts";
+import { penthouseCondoManifest } from "./manifests/penthouseCondo.ts";
 
 export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
   "downtown-plaza": downtownPlazaManifest,
@@ -15,4 +16,5 @@ export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
   "club-pulse": clubPulseManifest,
   "splash-oasis-entry": splashOasisEntryManifest,
   "splash-oasis-river": splashOasisRiverManifest,
+  "penthouse-condo": penthouseCondoManifest,
 };

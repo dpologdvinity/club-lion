@@ -22,6 +22,7 @@ import {
   type Player,
 } from "./game.ts";
 import { DEFAULT_AVATAR_LOOK, DEFAULT_PET_STATE } from "./types/world.ts";
+import { serializeLayout, type PlacedFurniture } from "./utils/condoGrid.ts";
 
 test("a corrupt save safely starts a fresh adventure", () => {
   assert.deepEqual(restorePlayer("broken json"), newPlayer());
@@ -44,6 +45,54 @@ test("smoothie orders pay bounded rewards and never overflow player progress", (
   assert.equal(completeSmoothieOrder(fullWallet, 30), fullWallet);
   const fullCounter = { ...player, smoothiesServed: Number.MAX_SAFE_INTEGER };
   assert.equal(completeSmoothieOrder(fullCounter, 0), fullCounter);
+});
+
+test("a valid condo layout round trips through v1 restoration and v2 migration", () => {
+  const layout: PlacedFurniture[] = [
+    { id: "rug", itemId: "woven-rug", col: 0, row: 0, orientation: "N" },
+    { id: "sofa", itemId: "velvet-sofa", col: 0, row: 0, orientation: "N" },
+  ];
+  const player = { ...newPlayer(), condoLayout: serializeLayout(layout) };
+  const restored = restorePlayer(JSON.stringify(player));
+  assert.equal(restored.condoLayout, serializeLayout(layout));
+  const migrated = migratePlayerSave(player);
+  assert.equal(migrated.condoLayout, serializeLayout(layout));
+  assert.deepEqual(
+    migratePlayerSave(JSON.parse(JSON.stringify(migrated))).condoLayout,
+    serializeLayout(layout),
+  );
+});
+
+test("invalid condo layout data is dropped without discarding the rest of the save", () => {
+  const overlapping = JSON.stringify([
+    {
+      id: "a",
+      itemId: "savanna-coffee-table",
+      col: 2,
+      row: 2,
+      orientation: "N",
+    },
+    { id: "b", itemId: "pet-lion-cushion", col: 3, row: 3, orientation: "N" },
+  ]);
+  const player = {
+    ...newPlayer(),
+    name: "Roary",
+    coins: 500,
+    condoLayout: overlapping,
+  };
+  const restored = restorePlayer(JSON.stringify(player));
+  assert.equal(restored.condoLayout, undefined);
+  assert.equal(restored.name, "Roary");
+  assert.equal(restored.coins, 500);
+  const migrated = migratePlayerSave(player);
+  assert.equal(migrated.condoLayout, undefined);
+  assert.equal(migrated.coins, 500);
+});
+
+test("absent condo layout data stays absent through restoration and migration", () => {
+  const player = newPlayer();
+  assert.equal(restorePlayer(JSON.stringify(player)).condoLayout, undefined);
+  assert.equal(migratePlayerSave(player).condoLayout, undefined);
 });
 
 test("smoothie and DJ progress round trips together through v1 and v2 saves", () => {

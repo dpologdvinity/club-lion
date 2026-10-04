@@ -5183,3 +5183,79 @@ svg {
     height: 100%;
   }
 }
+
+.condo-room {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+.condo-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.condo-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.condo-furniture-tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.condo-tray-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  background: #f4f1e8;
+  font-size: 13px;
+  cursor: pointer;
+}
+.condo-tray-item.selected {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.condo-grid {
+  width: 100%;
+  height: auto;
+  background: #e8eddf;
+  border-radius: 12px;
+}
+.condo-tile {
+  fill: #f4f1e8;
+  stroke: var(--border);
+  stroke-width: 1;
+  cursor: pointer;
+}
+.condo-tile:hover {
+  fill: #dfe8d4;
+}
+.condo-furniture rect {
+  fill: var(--accent);
+  stroke: #fff;
+  stroke-width: 1;
+  cursor: pointer;
+}
+.condo-furniture.is-rug rect {
+  fill: #c9b990;
+  opacity: 0.85;
+}
+.condo-furniture-controls {
+  display: flex;
+  gap: 4px;
+}
+.condo-furniture-controls button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

@@ -7,6 +7,7 @@ import {
   DJ_BEAT_COUNT,
   DJ_MAX_SCORE,
 } from "./utils/rhythmEngine.ts";
+import { deserializeLayout, serializeLayout } from "./utils/condoGrid.ts";
 import type { AvatarLook, PetState } from "./types/world.ts";
 import {
   DEFAULT_AVATAR_LOOK,
@@ -30,7 +31,8 @@ export type PlaceId =
   | "wonder-park-midway"
   | "club-pulse"
   | "splash-oasis-entry"
-  | "splash-oasis-river";
+  | "splash-oasis-river"
+  | "penthouse-condo";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -54,6 +56,7 @@ export type PlayerBase = {
   largestFishWeight?: number;
   fashionBestScore?: number;
   fashionShowsCompleted?: number;
+  condoLayout?: string;
 };
 
 export type Player = PlayerBase & {
@@ -384,6 +387,15 @@ export function restorePlayer(raw: string | null): Player {
             p.fashionShowsCompleted >= 0
           ? { fashionShowsCompleted: p.fashionShowsCompleted as number }
           : {}),
+      ...(() => {
+        const layout =
+          typeof p.condoLayout === "string"
+            ? deserializeLayout(p.condoLayout)
+            : [];
+        return layout.length > 0
+          ? { condoLayout: serializeLayout(layout) }
+          : {};
+      })(),
     };
   } catch {
     return newPlayer();
