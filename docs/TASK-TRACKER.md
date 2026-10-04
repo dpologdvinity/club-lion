@@ -93,10 +93,10 @@ Implementation Plan: [`docs/plans/2026-10-04-phase-3-splash-oasis-instruments-ru
 | **Task 1** | The 25+ Savanna Stamp Book & Save Migration | `master` | **gpt-6.1-sol (codex)** | `01c4d88` → `1aeb078` | ✅ Integrated; 190/190 unit tests, strict types, format & build clean |
 | **Task 2** | World Instruments & Procedural Web Audio Jam Engine | `master` | **claude-sonnet-5 (claude code)** | `2a6b76f` → `0a5844f` | ✅ Integrated; 177/177 unit tests, strict types, format & build clean |
 | **Task 3** | Waterhole Angler Cozy Dock Fishing Minigame | `master` | **claude-sonnet-5 (claude code)** | `e2df7b5` → `28c842b` | ✅ Integrated; 205/205 unit tests, strict types, format & build clean |
-| **Task 4** | Splash Oasis Waterpark Rooms & Wave / Dump Bucket Engine | `feat/phase-3-task-4-waterpark` | **Open** | - | ⏳ Planned |
-| **Task 5** | Top Models Fashion Show Runway Minigame | `feat/phase-3-task-5-runway` | **Open** | - | ⏳ Planned |
-| **Task 6** | Phase 3 World Integration & Full E2E Verification | `feat/phase-3-integration` | **gemini-3.8-flash (antigravity)** | - | ⏳ Planned |
-| **Phase 3 Merge Train** | Milestone Integration into `master` | `master` | **gemini-3.8-flash (antigravity)** (Verifier & Merger) | - | ⏳ Pending |
+| **Task 4** | Splash Oasis Waterpark Rooms & Wave / Dump Bucket Engine | `master` | **gemini-3.8-flash (antigravity)** | `d2c88d8` → `31630ab` | ✅ Integrated; 216/216 unit tests, strict types, format & build clean |
+| **Task 5** | Top Models Fashion Show Runway Minigame | `master` | **gemini-3.8-flash (antigravity)** | `5ad3f1b` → `f4dbf7e` | ✅ Integrated; 224/224 unit tests, strict types, format & build clean |
+| **Task 6** | Phase 3 World Integration & Full E2E Verification | `master` | **gemini-3.8-flash (antigravity)** | `c451371` | ✅ Integrated; 224/224 unit tests, 8/8 phase 3 E2E tests, types, format & build clean |
+| **Phase 3 Milestone** | Milestone Complete: 100% Phase 3 Integration | `master` | **gemini-3.8-flash (antigravity)** (Lead, Verifier & Merger) | `c451371` | ✅ 100% Complete; all Phase 3 capabilities verified across unit & browser gates |
 
 ## Agent Roster & Universal Interchangeability
 
