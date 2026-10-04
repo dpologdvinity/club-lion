@@ -15,7 +15,7 @@ All seven task outcomes are implemented. The live app has Downtown Plaza, Wonder
 
 ## Gate evidence
 
-Reviewed candidate: `4853f99eaf1afeee9d9f2e789aaede417e1b8d42`.
+Reviewed candidate: `4853f99eaf1afeee9d9f2e789aaede417e1b8d42`. Integrated as `9692c47`; product sources and tests exactly match the verified candidate. All task worktrees and branches are retired.
 
 | Check | Result |
 | --- | --- |

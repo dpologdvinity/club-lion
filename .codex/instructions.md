@@ -97,7 +97,7 @@ When implementing plans or multi-agent tasks:
 
 - Master Specification: [`docs/plans/2026-10-03-club-lion-expanded-world-design.md`](../docs/plans/2026-10-03-club-lion-expanded-world-design.md)
 - Phase 1 Plan (Completed): [`docs/plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.md`](../docs/plans/2026-10-03-phase-1-chibi-avatar-pet-downtown.md)
-- Phase 2 Plan (Ready to Execute): [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md`](../docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md)
+- Phase 2 Plan (Completed; see docs/PHASE-2-COMPLETION.md): [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md`](../docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightlife.md)
 - Task Tracker Ledger: [`docs/TASK-TRACKER.md`](../docs/TASK-TRACKER.md)
 
 ---

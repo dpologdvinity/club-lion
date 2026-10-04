@@ -68,8 +68,8 @@ Implementation Plan: [`docs/plans/2026-10-03-phase-2-savanna-wonder-park-nightli
 | **Task 4** | DJ Beat Drop Web Audio Rhythm Minigame | `feat/phase-2-task-4-dj-beat` | **claude-sonnet-5 (claude code)** | `dc18077` → `d5d0f78` | ✅ Completed, reviewed & verified; 107/107 unit tests, 82/82 E2E; types, format & build clean |
 | **Task 5** | Canopy Café Smoothie Kitchen Minigame | `feat/phase-2-task-5-smoothie` | **claude-sonnet-5 (claude code)** | `d627ec3` → `1487713` | ✅ Completed, reviewed & verified; 117/117 unit tests, 88/88 E2E; types, format & build clean |
 | **Task 6** | Savanna Screamer Roller Coaster Interactive Ride Mode | `master` | **gpt-6.1-sol (codex)** | `faeb19b` → `9bb700a` | ✅ Integrated; 161/161 unit tests, 118/118 E2E, types, format & build clean |
-| **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `master` | **gpt-6.1-sol (codex)** | `4853f99` → final world squash | ✅ Integrated; 165/165 unit tests, 140/140 desktop/mobile E2E, types, format & build clean |
-| **Phase 2 Merge Train** | Serial Rebase & Squash Integration | `master` | **gpt-6-luna (codex)** | Tasks 1–7 integrated | ✅ Complete; all worktrees and task branches retired after verified squashes |
+| **Task 7** | Full Phase 2 Integration, World Routing & Playwright E2E Suite | `master` | **gpt-6.1-sol (codex)** | `4853f99` → `9692c47` | ✅ Integrated; 165/165 unit tests, 140/140 desktop/mobile E2E, types, format & build clean |
+| **Phase 2 Merge Train** | Serial Rebase & Squash Integration | `master` | **gpt-6-luna (codex)** | `3c52baa` .. `9692c47` | ✅ Complete; all worktrees and task branches retired after verified squashes |
 
 ---
 
