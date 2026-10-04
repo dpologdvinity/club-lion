@@ -1,6 +1,7 @@
 import { STAMP_DEFINITIONS } from "./utils/stampDefinitions.ts";
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
 import { MAX_SMOOTHIE_COINS } from "./utils/smoothieRecipes.ts";
+import { FISH_SPECIES } from "./utils/fishingEngine.ts";
 import {
   coinsForScore,
   DJ_BEAT_COUNT,
@@ -47,6 +48,8 @@ export type PlayerBase = {
   djBeatDropBest?: number;
   smoothiesServed?: number;
   stamps?: string[];
+  fishCaughtCount?: number;
+  largestFishWeight?: number;
 };
 
 export type Player = PlayerBase & {
@@ -342,6 +345,18 @@ export function restorePlayer(raw: string | null): Player {
         : Number.isSafeInteger(p.smoothiesServed) && p.smoothiesServed >= 0
           ? { smoothiesServed: p.smoothiesServed as number }
           : {}),
+      ...(p.fishCaughtCount === undefined
+        ? {}
+        : Number.isSafeInteger(p.fishCaughtCount) && p.fishCaughtCount >= 0
+          ? { fishCaughtCount: p.fishCaughtCount as number }
+          : {}),
+      ...(p.largestFishWeight === undefined
+        ? {}
+        : typeof p.largestFishWeight === "number" &&
+            Number.isFinite(p.largestFishWeight) &&
+            p.largestFishWeight >= 0
+          ? { largestFishWeight: p.largestFishWeight as number }
+          : {}),
     };
   } catch {
     return newPlayer();
@@ -623,4 +638,29 @@ export function unlockStamp<T extends PlayerBase>(
   )
     return player;
   return { ...player, stamps: [...(player.stamps ?? []), stampId] };
+}
+
+export function completeFishingCatch<T extends PlayerBase>(
+  player: T,
+  catchResult: { speciesId: string; weight: number; coins: number },
+): T {
+  const { speciesId, weight, coins } = catchResult;
+  const species = FISH_SPECIES.find((s) => s.id === speciesId);
+  if (
+    !species ||
+    !Number.isFinite(weight) ||
+    weight < 0 ||
+    !Number.isSafeInteger(coins) ||
+    coins < 0 ||
+    !Number.isSafeInteger(player.coins + coins) ||
+    !Number.isSafeInteger((player.fishCaughtCount ?? 0) + 1)
+  )
+    return player;
+  return {
+    ...player,
+    coins: player.coins + coins,
+    gamesPlayed: player.gamesPlayed + 1,
+    fishCaughtCount: (player.fishCaughtCount ?? 0) + 1,
+    largestFishWeight: Math.max(player.largestFishWeight ?? 0, weight),
+  } as T;
 }

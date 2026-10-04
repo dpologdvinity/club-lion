@@ -14,6 +14,7 @@ import {
   completeFruitCatch,
   completeDJBeatDrop,
   completeSmoothieOrder,
+  completeFishingCatch,
   unlockSecretCatalogItem,
   unlockStamp,
   migratePlayerSave,
@@ -63,6 +64,90 @@ test("smoothie and DJ progress round trips together through v1 and v2 saves", ()
   assert.equal(
     restorePlayer(JSON.stringify({ ...player, smoothiesServed: -1 }))
       .smoothiesServed,
+    undefined,
+  );
+});
+
+test("fishing catches pay coins and track games played and fish caught", () => {
+  const player = newPlayer();
+  const caught = completeFishingCatch(player, {
+    speciesId: "golden_catfish",
+    weight: 8.4,
+    coins: 50,
+  });
+  assert.equal(caught.coins, 300);
+  assert.equal(caught.gamesPlayed, 1);
+  assert.equal(caught.fishCaughtCount, 1);
+  assert.equal(caught.largestFishWeight, 8.4);
+});
+
+test("fishing catches keep the largest fish weight seen so far", () => {
+  const player = completeFishingCatch(newPlayer(), {
+    speciesId: "golden_catfish",
+    weight: 8.4,
+    coins: 50,
+  });
+  const smaller = completeFishingCatch(player, {
+    speciesId: "river_minnow",
+    weight: 0.3,
+    coins: 3,
+  });
+  assert.equal(smaller.largestFishWeight, 8.4);
+  const bigger = completeFishingCatch(smaller, {
+    speciesId: "savanna_eel",
+    weight: 9.0,
+    coins: 80,
+  });
+  assert.equal(bigger.largestFishWeight, 9.0);
+  assert.equal(bigger.fishCaughtCount, 3);
+});
+
+test("fishing catches reject invalid inputs and never overflow player progress", () => {
+  const player = newPlayer();
+  const badCases = [
+    { speciesId: "golden_catfish", weight: -1, coins: 50 },
+    { speciesId: "golden_catfish", weight: NaN, coins: 50 },
+    { speciesId: "golden_catfish", weight: 8.4, coins: -5 },
+    { speciesId: "golden_catfish", weight: 8.4, coins: NaN },
+    { speciesId: "not_a_fish", weight: 8.4, coins: 50 },
+  ];
+  for (const catchResult of badCases) {
+    assert.equal(completeFishingCatch(player, catchResult), player);
+  }
+  const fullWallet = { ...player, coins: Number.MAX_SAFE_INTEGER };
+  assert.equal(
+    completeFishingCatch(fullWallet, {
+      speciesId: "golden_catfish",
+      weight: 8.4,
+      coins: 50,
+    }),
+    fullWallet,
+  );
+});
+
+test("fishing progress round trips through v1 saves and migrates to v2", () => {
+  const player = completeFishingCatch(newPlayer(), {
+    speciesId: "golden_catfish",
+    weight: 8.4,
+    coins: 50,
+  });
+  assert.deepEqual(restorePlayer(JSON.stringify(player)), player);
+  const migrated = migratePlayerSave(player);
+  assert.equal(migrated.fishCaughtCount, 1);
+  assert.equal(migrated.largestFishWeight, 8.4);
+  assert.deepEqual(
+    migratePlayerSave(JSON.parse(JSON.stringify(migrated))),
+    migrated,
+  );
+  assert.equal(migratePlayerSave(newPlayer()).fishCaughtCount, undefined);
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...player, fishCaughtCount: -1 }))
+      .fishCaughtCount,
+    undefined,
+  );
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...player, largestFishWeight: -1 }))
+      .largestFishWeight,
     undefined,
   );
 });
