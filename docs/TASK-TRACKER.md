@@ -98,6 +98,23 @@ Implementation Plan: [`docs/plans/2026-10-04-phase-3-splash-oasis-instruments-ru
 | **Task 6** | Phase 3 World Integration & Full E2E Verification | `master` | **gemini-3.8-flash (antigravity)** | `c451371` | ✅ Integrated; 224/224 unit tests, 8/8 phase 3 E2E tests, types, format & build clean |
 | **Phase 3 Milestone** | Milestone Complete: 100% Phase 3 Integration | `master` | **gemini-3.8-flash (antigravity)** (Lead, Verifier & Merger) | `c451371` | ✅ 100% Complete; all Phase 3 capabilities verified across unit & browser gates |
 
+---
+
+## Phase 4: Player Accounts, Cloud Sync, Friends, Condo, Jukebox & Spy Command Center
+
+Master Spec: [`docs/plans/2026-10-03-club-lion-expanded-world-design.md`](plans/2026-10-03-club-lion-expanded-world-design.md)  
+Implementation Plan: [`docs/plans/2026-10-04-phase-4-social-condo-spy-servers.md`](plans/2026-10-04-phase-4-social-condo-spy-servers.md)
+
+| Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Task 1** | Procedural Web Audio Jukebox & Persistent Audio Controls | `.worktrees/phase-4-task-1-jukebox` | **claude-sonnet-5 (claude code)** | - | ⏳ Starting |
+| **Task 2** | Isometric Condo Customization & 16×16 Furniture Grid Engine | `.worktrees/phase-4-task-2-condo` | **Open** | - | ⏳ Planned |
+| **Task 3** | Secret Scout Command Center & Laser Grid / Cipher Spy Puzzles | `.worktrees/phase-4-task-3-spy` | **Open** | - | ⏳ Planned |
+| **Task 4** | Local-First Entity Network Protocol & Multi-Room Server | `.worktrees/phase-4-task-4-network` | **Open** | - | ⏳ Planned |
+| **Task 5** | Friends System, Social Presence & Jump-to-Friend Travel | `.worktrees/phase-4-task-5-friends` | **Open** | - | ⏳ Planned |
+| **Task 6** | Phase 4 World Integration, Accounts & Full E2E Verification | `master` | **gemini-3.8-flash (antigravity)** | - | ⏳ Planned |
+| **Phase 4 Milestone** | Milestone Integration into `master` | `master` | **gemini-3.8-flash (antigravity)** (Lead, Verifier & Merger) | - | ⏳ Pending |
+
 ## Agent Roster & Universal Interchangeability
 
 There are **no fixed or primary roles**. All agents and models are fully interchangeable peers capable of executing any task, architecture, physics, frontend, minigame, test suite, review, or milestone merge:
