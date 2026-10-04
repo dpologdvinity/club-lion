@@ -371,6 +371,14 @@ export function calculateSpyRank(puzzlesSolved: number): SpyRank {
   return SPY_RANKS[index];
 }
 
+// --- Secret Scout Speakeasy Security PIN ---
+
+export const VALID_SPY_PINS: readonly string[] = ["7743", "5466", "0007"];
+
+export function verifySpyPin(candidate: string): boolean {
+  return VALID_SPY_PINS.includes(candidate.trim());
+}
+
 // --- Procedural spy SFX ---
 
 export type SpySoundType =

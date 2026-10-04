@@ -65,6 +65,8 @@ export function Condo({
     [items],
   );
 
+  const [placementError, setPlacementError] = useState<string | null>(null);
+
   function handleTilePlace(col: number, row: number) {
     if (!editMode || !selectedItemId) return;
     const candidate: PlacedFurniture = {
@@ -74,7 +76,14 @@ export function Condo({
       row,
       orientation: "N",
     };
-    if (!isValidPlacement(candidate, items)) return;
+    if (!isValidPlacement(candidate, items)) {
+      setPlacementError(
+        "Cannot place here: tile is occupied or out of bounds.",
+      );
+      setTimeout(() => setPlacementError(null), 2500);
+      return;
+    }
+    setPlacementError(null);
     setItems((current) => [...current, candidate]);
   }
 
@@ -87,7 +96,14 @@ export function Condo({
         orientation: NEXT_ORIENTATION[target.orientation],
       };
       const others = current.filter((item) => item.id !== id);
-      if (!isValidPlacement(rotated, others)) return current;
+      if (!isValidPlacement(rotated, others)) {
+        setPlacementError(
+          "Rotation blocked: item collides with another piece or wall!",
+        );
+        setTimeout(() => setPlacementError(null), 2500);
+        return current;
+      }
+      setPlacementError(null);
       return [...others, rotated];
     });
   }
@@ -146,6 +162,12 @@ export function Condo({
           )}
         </div>
       </header>
+
+      {placementError && (
+        <div className="condo-alert" role="status" aria-live="polite">
+          {placementError}
+        </div>
+      )}
 
       {editMode && (
         <div

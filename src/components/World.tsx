@@ -39,6 +39,7 @@ import {
   generateSparkleStep,
   type SparkleParticle,
 } from "../utils/particleTrail";
+import { SpyPinModal } from "./SpyPinModal.tsx";
 
 const BOARD_SPEED_MULTIPLIER = 1.5;
 const WALK_DURATION_MS = 850;
@@ -141,6 +142,11 @@ export function World({
   const [sound, setSound] = useState(false);
   const audio = useRef<AudioContext | null>(null);
   const currentPlace = PLACES.find((p) => p.id === place)!;
+  const [spyPinOpen, setSpyPinOpen] = useState(false);
+  const [pendingPortalSpawn, setPendingPortalSpawn] = useState<{
+    x: number;
+    y: number;
+  }>({ x: 250, y: 600 });
 
   useEffect(() => {
     if (manifest)
@@ -320,8 +326,19 @@ export function World({
       onOpenCatalog?.();
       return;
     }
+    if (target === "secret-scout-base" && place === "downtown-plaza") {
+      setPendingPortalSpawn(targetSpawn);
+      setSpyPinOpen(true);
+      return;
+    }
     const destination = PLACES.find((p) => p.id === target);
     if (destination) navigate(destination.id, targetSpawn);
+  };
+
+  const handleSpyPinUnlock = () => {
+    setSpyPinOpen(false);
+    navigate("secret-scout-base", pendingPortalSpawn);
+    notify("Clearance accepted. Welcome to Secret Scout HQ, Agent.");
   };
   const stageWalk = (x: number, y: number) => {
     if (!manifest) return;
@@ -563,6 +580,29 @@ export function World({
             <Sparkles size={18} /> Spy Terminal
           </button>
         )}
+        {place === "downtown-plaza" && (
+          <>
+            <button
+              className="room-action"
+              style={{ left: "21%", top: "72%" }}
+              onClick={() => navigate("penthouse-condo", { x: 960, y: 400 })}
+              aria-label="Penthouse Elevator"
+            >
+              <Home size={18} /> Penthouse Elevator
+            </button>
+            <button
+              className="room-action"
+              style={{ left: "80%", top: "72%" }}
+              onClick={() => {
+                setPendingPortalSpawn({ x: 250, y: 600 });
+                setSpyPinOpen(true);
+              }}
+              aria-label="Telephone Booth - Classified Entrance"
+            >
+              <Sparkles size={18} /> Telephone Booth
+            </button>
+          </>
+        )}
         {player.decor.includes("plant") && place === "den" && (
           <span
             className="den-decoration plant-decor"
@@ -797,6 +837,11 @@ export function World({
           }
         }}
         onPhrase={(text) => say(text)}
+      />
+      <SpyPinModal
+        isOpen={spyPinOpen}
+        onClose={() => setSpyPinOpen(false)}
+        onUnlock={handleSpyPinUnlock}
       />
     </section>
   );

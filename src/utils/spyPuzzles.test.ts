@@ -11,6 +11,8 @@ import {
   getCipherHint,
   calculateSpyRank,
   playSpySound,
+  VALID_SPY_PINS,
+  verifySpyPin,
   type LaserBeam,
   type GridState,
 } from "./spyPuzzles.ts";
@@ -393,4 +395,25 @@ test("spy SFX reuse the shared bus and disconnect completed voices", () => {
       Object.defineProperty(globalThis, "AudioContext", descriptor);
     else delete (globalThis as { AudioContext?: unknown }).AudioContext;
   }
+});
+
+// --- Secret Scout Speakeasy Security PIN ---
+
+test("VALID_SPY_PINS contains standard pride and agent access codes", () => {
+  assert.ok(VALID_SPY_PINS.includes("7743"), "7743 (PRID) must be valid");
+  assert.ok(VALID_SPY_PINS.includes("5466"), "5466 (LION) must be valid");
+  assert.ok(VALID_SPY_PINS.includes("0007"), "0007 must be valid");
+});
+
+test("verifySpyPin accepts valid pins and rejects incorrect ones", () => {
+  assert.equal(verifySpyPin("7743"), true);
+  assert.equal(verifySpyPin("5466"), true);
+  assert.equal(verifySpyPin("0007"), true);
+  assert.equal(verifySpyPin(" 7743 "), true);
+
+  assert.equal(verifySpyPin("1234"), false);
+  assert.equal(verifySpyPin("0000"), false);
+  assert.equal(verifySpyPin("9999"), false);
+  assert.equal(verifySpyPin(""), false);
+  assert.equal(verifySpyPin("774"), false);
 });

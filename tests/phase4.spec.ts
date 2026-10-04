@@ -136,12 +136,37 @@ test("secret scout base spy terminal launches and allows laser grid and cipher d
 
   await page.goto("/");
 
-  // Navigate to Secret Scout Base via World Map
+  // Navigate to Downtown Plaza via World Map
   await page.getByRole("button", { name: "Map", exact: true }).click();
   const mapDialog = page.getByRole("dialog");
   await expect(mapDialog).toBeVisible();
 
-  await mapDialog.getByRole("button", { name: /Secret Scout/ }).click();
+  await mapDialog.getByRole("button", { name: /^Downtown Plaza/ }).click();
+
+  await expect(
+    page.getByRole("heading", {
+      name: "Downtown Plaza",
+      exact: true,
+    }),
+  ).toBeVisible();
+
+  // Trigger Secret Scout HQ entrance via room navigation
+  const scoutPortalBtn = page
+    .locator(".room-navigation button")
+    .filter({ hasText: "Secret Scout HQ" });
+  await expect(scoutPortalBtn).toBeVisible();
+  await scoutPortalBtn.click();
+
+  // Verify Phone Booth PIN keypad modal appears
+  const pinDialog = page.getByRole("dialog");
+  await expect(pinDialog).toBeVisible();
+  await expect(pinDialog.getByText("Classified Telephone Booth")).toBeVisible();
+
+  // Dial PIN 7743 (PRID)
+  await pinDialog.getByRole("button", { name: /^Digit 7/ }).click();
+  await pinDialog.getByRole("button", { name: /^Digit 7/ }).click();
+  await pinDialog.getByRole("button", { name: /^Digit 4/ }).click();
+  await pinDialog.getByRole("button", { name: /^Digit 3/ }).click();
 
   await expect(
     page.getByRole("heading", {

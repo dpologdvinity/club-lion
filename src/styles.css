@@ -5201,6 +5201,27 @@ svg {
   align-items: center;
   gap: 8px;
 }
+.condo-alert {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #f87171;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  animation: condoAlertFade 0.2s ease;
+}
+@keyframes condoAlertFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .condo-furniture-tray {
   display: flex;
   flex-wrap: wrap;
@@ -5779,4 +5800,212 @@ svg {
 }
 .import-status.is-success {
   color: #15803d;
+}
+
+/* --- Classified Telephone Booth PIN Keypad Modal --- */
+.spy-pin-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 20px;
+  outline: none;
+}
+
+.spy-pin-terminal {
+  width: 100%;
+  max-width: 360px;
+  background: #0b140d;
+  border: 2px solid #1f4a2d;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.4),
+    inset 0 0 24px rgba(0, 255, 102, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: var(--font-mono, "Courier New", monospace);
+}
+
+.spy-pin-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffbf58;
+}
+
+.spy-pin-icon {
+  color: #ffbf58;
+  flex-shrink: 0;
+}
+
+.spy-pin-classification {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.spy-pin-display {
+  background: #040905;
+  border: 1.5px solid #183e24;
+  border-radius: 10px;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.spy-pin-slots {
+  display: flex;
+  gap: 14px;
+}
+
+.spy-pin-slot {
+  font-size: 26px;
+  font-weight: 800;
+  color: #2b5c3b;
+  width: 30px;
+  text-align: center;
+  border-bottom: 2px solid #1b4528;
+  transition: all 0.15s ease;
+}
+
+.spy-pin-slot.filled {
+  color: #58ff9e;
+  border-bottom-color: #58ff9e;
+  text-shadow: 0 0 8px rgba(88, 255, 158, 0.6);
+}
+
+.spy-pin-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.spy-pin-status.granted {
+  color: #58ff9e;
+  text-shadow: 0 0 8px rgba(88, 255, 158, 0.7);
+}
+
+.spy-pin-status.denied {
+  color: #ff4d4d;
+  text-shadow: 0 0 8px rgba(255, 77, 77, 0.7);
+  animation: spyPinShake 0.4s ease;
+}
+
+@keyframes spyPinShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.spy-pin-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.spy-pin-btn {
+  background: #102416;
+  border: 1px solid #235232;
+  border-radius: 10px;
+  padding: 10px 4px;
+  color: #d1fae5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  min-height: 52px;
+}
+
+.spy-pin-btn:hover:not(:disabled) {
+  background: #173822;
+  border-color: #3bb36a;
+  transform: translateY(-1px);
+}
+
+.spy-pin-btn:active:not(:disabled) {
+  background: #0d1e12;
+  transform: translateY(1px);
+}
+
+.spy-pin-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.spy-pin-btn.btn-clear {
+  background: #281212;
+  border-color: #522323;
+  color: #fca5a5;
+}
+
+.spy-pin-btn.btn-clear:hover:not(:disabled) {
+  background: #3d1b1b;
+  border-color: #ef4444;
+}
+
+.spy-pin-btn.btn-dial {
+  background: #12301c;
+  border-color: #2e7d47;
+  color: #86efac;
+}
+
+.spy-pin-btn.btn-dial:hover:not(:disabled) {
+  background: #1a4427;
+  border-color: #22c55e;
+}
+
+.btn-digit {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.btn-letters {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+  margin-top: 3px;
+}
+
+.btn-label-action {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.spy-pin-hint {
+  font-size: 11px;
+  color: #6ee7b7;
+  opacity: 0.85;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px dashed rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  line-height: 1.4;
+}
+
+.spy-pin-hint .hint-label {
+  font-weight: 800;
+  color: #ffbf58;
 }

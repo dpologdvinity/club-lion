@@ -11,7 +11,7 @@ export function AudioControls() {
   const controller = getSharedJukeboxController();
   const bus = getSharedAudioBus();
   const [volume, setVolume] = useState(() =>
-    Math.round(controller.getMusicVolume() * 100),
+    Math.round(bus.getMasterVolume() * 100),
   );
   const [masterMuted, setMasterMuted] = useState(() => bus.isMasterMuted());
   const [musicMuted, setMusicMuted] = useState(() => bus.isMusicMuted());
@@ -40,6 +40,7 @@ export function AudioControls() {
 
   const handleVolumeChange = (next: number) => {
     setVolume(next);
+    bus.setMasterVolume(next / 100);
     controller.setMusicVolume(next / 100);
   };
 
@@ -96,7 +97,7 @@ export function AudioControls() {
         step={1}
         value={volume}
         disabled={masterMuted}
-        aria-label="Music volume"
+        aria-label="Master volume"
         aria-valuetext={`${volume}%`}
         onChange={(e) => handleVolumeChange(Number(e.target.value))}
       />

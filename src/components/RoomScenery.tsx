@@ -138,6 +138,193 @@ function Tent({
   );
 }
 
+function PenthouseElevator({ x, y }: { x: number; y: number }) {
+  return (
+    <g
+      transform={`translate(${x} ${y})`}
+      className="penthouse-elevator-scenery"
+    >
+      <ellipse cx="0" cy="5" rx="60" ry="14" fill="#3a3028" opacity="0.35" />
+      <rect
+        x="-55"
+        y="-220"
+        width="110"
+        height="220"
+        rx="14"
+        fill="#e5e0d3"
+        stroke="#9a8c78"
+        strokeWidth="5"
+      />
+      <path
+        d="M-65 -220 Q 0 -255 65 -220 Z"
+        fill="#c99e52"
+        stroke="#846429"
+        strokeWidth="4"
+      />
+      <rect
+        x="-46"
+        y="-214"
+        width="92"
+        height="22"
+        rx="6"
+        fill="#294b3c"
+        stroke="#c99e52"
+        strokeWidth="2"
+      />
+      <text
+        y="-199"
+        textAnchor="middle"
+        fontSize="11"
+        fontWeight="bold"
+        fill="#ffeaaf"
+        letterSpacing="1"
+      >
+        PENTHOUSE
+      </text>
+      <rect
+        x="-42"
+        y="-185"
+        width="40"
+        height="185"
+        fill="#d4af37"
+        stroke="#997a22"
+        strokeWidth="3"
+      />
+      <rect
+        x="2"
+        y="-185"
+        width="40"
+        height="185"
+        fill="#d4af37"
+        stroke="#997a22"
+        strokeWidth="3"
+      />
+      <path
+        d="M-22 -140 L-2 -100 L-22 -60 L-42 -100 Z M22 -140 L42 -100 L22 -60 L2 -100 Z"
+        fill="none"
+        stroke="#b8932b"
+        strokeWidth="2"
+      />
+      <circle
+        cx="0"
+        cy="-172"
+        r="10"
+        fill="#294b3c"
+        stroke="#c99e52"
+        strokeWidth="2"
+      />
+      <path d="M0 -178 L-5 -168 L5 -168 Z" fill="#ffd700" />
+    </g>
+  );
+}
+
+function PhoneBoothEntrance({ x, y }: { x: number; y: number }) {
+  return (
+    <g transform={`translate(${x} ${y})`} className="phone-booth-scenery">
+      <ellipse cx="0" cy="5" rx="45" ry="12" fill="#3a3028" opacity="0.4" />
+      <rect
+        x="-40"
+        y="-220"
+        width="80"
+        height="220"
+        rx="12"
+        fill="#b83228"
+        stroke="#781d16"
+        strokeWidth="5"
+      />
+      <path
+        d="M-45 -220 Q 0 -255 45 -220 Z"
+        fill="#98251c"
+        stroke="#781d16"
+        strokeWidth="4"
+      />
+      <circle
+        cx="0"
+        cy="-232"
+        r="6"
+        fill="#ffd700"
+        stroke="#a68500"
+        strokeWidth="1.5"
+      />
+      <rect
+        x="-34"
+        y="-214"
+        width="68"
+        height="18"
+        rx="4"
+        fill="#ffffff"
+        stroke="#781d16"
+        strokeWidth="2"
+      />
+      <text
+        y="-201"
+        textAnchor="middle"
+        fontSize="9"
+        fontWeight="bold"
+        fill="#111111"
+        letterSpacing="1"
+      >
+        TELEPHONE
+      </text>
+      <rect
+        x="-32"
+        y="-190"
+        width="64"
+        height="180"
+        rx="4"
+        fill="#ffeab0"
+        opacity="0.85"
+      />
+      <line
+        x1="-32"
+        y1="-140"
+        x2="32"
+        y2="-140"
+        stroke="#781d16"
+        strokeWidth="3"
+      />
+      <line
+        x1="-32"
+        y1="-90"
+        x2="32"
+        y2="-90"
+        stroke="#781d16"
+        strokeWidth="3"
+      />
+      <line
+        x1="-32"
+        y1="-40"
+        x2="32"
+        y2="-40"
+        stroke="#781d16"
+        strokeWidth="3"
+      />
+      <line
+        x1="-11"
+        y1="-190"
+        x2="-11"
+        y2="-10"
+        stroke="#781d16"
+        strokeWidth="3"
+      />
+      <line
+        x1="11"
+        y1="-190"
+        x2="11"
+        y2="-10"
+        stroke="#781d16"
+        strokeWidth="3"
+      />
+      <rect x="-8" y="-135" width="16" height="24" rx="3" fill="#222222" />
+      <path
+        d="M-5 -138 Q 0 -144 5 -138 L4 -128 Q 0 -132 -4 -128 Z"
+        fill="#111111"
+      />
+      <circle cx="20" cy="-115" r="3" fill="#2ef060" />
+    </g>
+  );
+}
+
 function CondoScenery({ seconds, width }: { seconds: number; width: number }) {
   return (
     <g className="condo-scenery">
@@ -1266,12 +1453,14 @@ export function RoomScenery({
               DOWNTOWN PLAZA
             </text>
           </g>
+          <PenthouseElevator x={510} y={540} />
           <Tent x={680} y={540} color="#758c98" name="CLUB PULSE" />
           <Tent x={1780} y={540} color="#bd764f" name="WONDER PARK" />
-          {[380, 950, 1510, 2050].map((x, i) => (
+          <PhoneBoothEntrance x={1960} y={540} />
+          {[380, 950, 1510, 2080].map((x, i) => (
             <Tree key={x} x={x} y={530} scale={i % 2 ? 0.8 : 1} />
           ))}
-          {[460, 1450, 2000].map((x) => (
+          {[330, 1450, 2140].map((x) => (
             <g key={x} transform={`translate(${x} 530)`}>
               <path d="M0 0V-230M-28-230H28" stroke="#5b6755" strokeWidth="9" />
               <rect
