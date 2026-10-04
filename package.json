@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test --test-isolation=none src/game.test.ts src/components/mangoPattern.test.ts src/beeStop.test.ts src/types/world.test.ts src/components/avatarSvg.test.ts src/utils/petFollower.test.ts src/rooms/camera.test.ts src/utils/ballistics.test.ts src/utils/particleTrail.test.ts src/utils/rhythmEngine.test.ts src/utils/smoothieRecipes.test.ts src/utils/kineticRides.test.ts src/utils/danceFloorRhythm.test.ts src/utils/coasterPhysics.test.ts src/utils/instrumentSynths.test.ts src/utils/stampDefinitions.test.ts src/utils/fishingEngine.test.ts",
+    "test": "node --experimental-strip-types --test --test-isolation=none src/game.test.ts src/components/mangoPattern.test.ts src/beeStop.test.ts src/types/world.test.ts src/components/avatarSvg.test.ts src/utils/petFollower.test.ts src/rooms/camera.test.ts src/utils/ballistics.test.ts src/utils/particleTrail.test.ts src/utils/rhythmEngine.test.ts src/utils/smoothieRecipes.test.ts src/utils/kineticRides.test.ts src/utils/danceFloorRhythm.test.ts src/utils/coasterPhysics.test.ts src/utils/instrumentSynths.test.ts src/utils/stampDefinitions.test.ts src/utils/fishingEngine.test.ts src/utils/waterparkPhysics.test.ts",
     "format:check": "prettier --check src tests index.html vite.config.ts playwright.config.ts DESIGN.md UX-CONTRACT.md README.md",
     "format": "prettier --write src tests index.html vite.config.ts playwright.config.ts DESIGN.md UX-CONTRACT.md README.md",
     "test:e2e": "playwright test",
