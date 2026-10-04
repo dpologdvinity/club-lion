@@ -56,6 +56,18 @@ export const downtownPlazaManifest: RoomManifest = {
       triggerBounds: { x1: 1350, y1: 560, x2: 1500, y2: 650 },
       label: "Splash Oasis",
     },
+    {
+      targetRoomId: "penthouse-condo",
+      targetSpawn: { x: 960, y: 400 },
+      triggerBounds: { x1: 460, y1: 560, x2: 560, y2: 650 },
+      label: "Penthouse Condo",
+    },
+    {
+      targetRoomId: "secret-scout-base",
+      targetSpawn: { x: 250, y: 600 },
+      triggerBounds: { x1: 1910, y1: 560, x2: 2010, y2: 650 },
+      label: "Secret Scout HQ",
+    },
   ],
   interactives: [
     {

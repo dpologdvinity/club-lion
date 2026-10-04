@@ -200,6 +200,12 @@ export const PLACES: {
     imageClass: "scene-river",
   },
   {
+    id: "penthouse-condo",
+    name: "Luxury Penthouse Condo",
+    subtitle: "Custom isometric den with skyline views",
+    imageClass: "scene-condo",
+  },
+  {
     id: "secret-scout-base",
     name: "The Pride HQ - Secret Scout Command Center",
     subtitle: "Shh… classified savanna business",

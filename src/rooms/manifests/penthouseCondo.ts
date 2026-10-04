@@ -22,6 +22,19 @@ export const penthouseCondoManifest: RoomManifest = {
       label: "Downtown Plaza",
     },
   ],
-  interactives: [],
+  interactives: [
+    {
+      id: "condo-furniture-editor",
+      type: "game_launch",
+      position: { x: 1200, y: 350 },
+      actionData: { action: "edit_furniture" },
+    },
+    {
+      id: "condo-jukebox",
+      type: "secret_clickable",
+      position: { x: 800, y: 350 },
+      actionData: { action: "open_jukebox" },
+    },
+  ],
   ambientAudioPreset: "penthouse-lofi-chill",
 };
