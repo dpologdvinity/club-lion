@@ -15,8 +15,10 @@ import {
   completeDJBeatDrop,
   completeSmoothieOrder,
   unlockSecretCatalogItem,
+  unlockStamp,
   migratePlayerSave,
   SHOP_ITEMS,
+  type Player,
 } from "./game.ts";
 import { DEFAULT_AVATAR_LOOK, DEFAULT_PET_STATE } from "./types/world.ts";
 
@@ -493,4 +495,93 @@ test("Phase 2 destinations deduplicate visits and survive both save versions", (
       true,
     );
   }
+});
+
+test("new players and legacy saves start with an empty stamp collection", () => {
+  assert.deepEqual(newPlayer().stamps, []);
+  const { stamps: _stamps, ...legacy } = newPlayer();
+  assert.deepEqual(restorePlayer(JSON.stringify(legacy)).stamps, []);
+  assert.deepEqual(migratePlayerSave(legacy).stamps, []);
+});
+
+test("unlockStamp is immutable, preserves generic player fields, and grants no coins", () => {
+  const player = migratePlayerSave(newPlayer());
+  const before = structuredClone(player);
+  const unlocked = unlockStamp(player, "catalog_barista");
+  assert.notEqual(unlocked, player);
+  assert.deepEqual(player, before);
+  assert.deepEqual(unlocked, { ...player, stamps: ["catalog_barista"] });
+  assert.equal(unlockStamp(unlocked, "catalog_barista"), unlocked);
+  assert.equal(unlockStamp(player, "unknown"), player);
+  const { stamps: _stamps, ...legacy } = newPlayer();
+  assert.deepEqual(unlockStamp<Player>(legacy, "secret_den").stamps, [
+    "secret_den",
+  ]);
+});
+
+test("stamp restoration filters malformed and unknown IDs and removes duplicates", () => {
+  const player = { ...newPlayer(), coins: 430 };
+  const restored = restorePlayer(
+    JSON.stringify({
+      ...player,
+      stamps: [
+        "secret_den",
+        42,
+        null,
+        "unknown",
+        "secret_den",
+        "catalog_barista",
+        {},
+      ],
+    }),
+  );
+  assert.deepEqual(restored, {
+    ...player,
+    stamps: ["secret_den", "catalog_barista"],
+  });
+  for (const stamps of [null, "secret_den", {}, 42]) {
+    assert.deepEqual(
+      restorePlayer(JSON.stringify({ ...player, stamps })),
+      player,
+    );
+  }
+});
+
+test("stamps and secret catalog ownership survive v1 and v2 save round trips", () => {
+  const player = unlockStamp(
+    unlockSecretCatalogItem(newPlayer(), "barista_apron"),
+    "catalog_barista",
+  );
+  assert.deepEqual(restorePlayer(JSON.stringify(player)), player);
+  const migrated = migratePlayerSave(player);
+  assert.deepEqual(migrated.stamps, ["catalog_barista"]);
+  assert.deepEqual(migrated.owned, ["scarf", "barista_apron"]);
+  assert.deepEqual(
+    migratePlayerSave(JSON.parse(JSON.stringify(migrated))),
+    migrated,
+  );
+  assert.deepEqual(migratePlayerSave(JSON.stringify(player)), migrated);
+  const dirty = {
+    ...migrated,
+    stamps: ["secret_den", "bad", false, "secret_den"],
+  };
+  assert.deepEqual(migratePlayerSave(dirty).stamps, ["secret_den"]);
+});
+
+test("only a fully completed Memory Safari earns its mastery stamp", () => {
+  const player = newPlayer();
+  assert.deepEqual(completeGame(player, 5).stamps, []);
+  const mastered = completeGame(player, 6);
+  assert.deepEqual(mastered.stamps, ["memory_safari_master"]);
+  assert.deepEqual(completeGame(mastered, 6).stamps, ["memory_safari_master"]);
+  assert.equal(completeGame(player, 7), player);
+});
+
+test("DJ combos award a stamp from the actual combo without inferring it from score", () => {
+  const player = newPlayer();
+  assert.deepEqual(completeDJBeatDrop(player, 3200, 15).stamps, []);
+  assert.deepEqual(completeDJBeatDrop(player, 500, 16).stamps, [
+    "dj_beat_combo",
+  ]);
+  assert.equal(completeDJBeatDrop(player, 500, 33), player);
 });

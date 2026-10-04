@@ -1,3 +1,4 @@
+import { STAMP_DEFINITIONS } from "./utils/stampDefinitions.ts";
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
 import { MAX_SMOOTHIE_COINS } from "./utils/smoothieRecipes.ts";
 import {
@@ -45,6 +46,7 @@ export type PlayerBase = {
   mangoRunBest?: number;
   djBeatDropBest?: number;
   smoothiesServed?: number;
+  stamps?: string[];
 };
 
 export type Player = PlayerBase & {
@@ -209,6 +211,7 @@ export function newPlayer(): Player {
     fruitCatchBest: 0,
     claimed: [],
     decor: [],
+    stamps: [],
   };
 }
 
@@ -253,8 +256,10 @@ export function restorePlayer(raw: string | null): Player {
     if (pawStepsBest === null) return newPlayer();
     const owned = [
       ...new Set<string>(
-        p.owned.filter((id: unknown) =>
-          SHOP_ITEMS.some((item) => item.id === id),
+        p.owned.filter(
+          (id: unknown) =>
+            SHOP_ITEMS.some((item) => item.id === id) ||
+            CATALOG_ITEMS.some((item) => item.id === id),
         ),
       ),
     ];
@@ -284,6 +289,17 @@ export function restorePlayer(raw: string | null): Player {
           ),
         ),
       ],
+      stamps: Array.isArray(p.stamps)
+        ? [
+            ...new Set<string>(
+              p.stamps.filter(
+                (id: unknown) =>
+                  typeof id === "string" &&
+                  STAMP_DEFINITIONS.some((stamp) => stamp.id === id),
+              ),
+            ),
+          ]
+        : [],
       gamesPlayed: p.gamesPlayed,
       beeStopBest: restoreBeeStopBest(p.beeStopBest),
       pawStepsBest,
@@ -339,6 +355,8 @@ export type PlayerV2 = PlayerBase & {
   starRank: number;
   moodQuote: string;
 };
+
+export type PlayerSave = Player | PlayerV2;
 
 const DEFAULT_MOOD_QUOTE = "Vibing in the savanna";
 
@@ -458,11 +476,14 @@ export function completeGame<T extends PlayerBase>(
   pairs: number,
 ): T {
   if (!Number.isSafeInteger(pairs) || pairs < 0 || pairs > 6) return player;
-  return {
+  const completed = {
     ...player,
     coins: player.coins + pairs * 10,
     gamesPlayed: player.gamesPlayed + 1,
   } as T;
+  return pairs === 6
+    ? unlockStamp(completed, "memory_safari_master")
+    : completed;
 }
 
 export function completeMangoRun<T extends PlayerBase>(
@@ -564,12 +585,13 @@ export function completeDJBeatDrop<T extends PlayerBase>(
     !Number.isSafeInteger(player.gamesPlayed + 1)
   )
     return player;
-  return {
+  const completed = {
     ...player,
     coins: player.coins + coinsForScore(score),
     gamesPlayed: player.gamesPlayed + 1,
     djBeatDropBest: Math.max(player.djBeatDropBest ?? 0, score),
   } as T;
+  return combo >= 16 ? unlockStamp(completed, "dj_beat_combo") : completed;
 }
 
 export function completeSmoothieOrder<T extends PlayerBase>(
@@ -589,4 +611,16 @@ export function completeSmoothieOrder<T extends PlayerBase>(
     coins: player.coins + coinsEarned,
     smoothiesServed: (player.smoothiesServed ?? 0) + 1,
   } as T;
+}
+
+export function unlockStamp<T extends PlayerBase>(
+  player: T,
+  stampId: string,
+): T {
+  if (
+    !STAMP_DEFINITIONS.some((stamp) => stamp.id === stampId) ||
+    player.stamps?.includes(stampId)
+  )
+    return player;
+  return { ...player, stamps: [...(player.stamps ?? []), stampId] };
 }

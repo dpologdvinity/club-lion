@@ -4552,3 +4552,90 @@ svg {
 .instrument-key-label {
   font-size: 14px;
 }
+
+/* Perforated album slots share the savanna's ivory, sage, and warm gold. */
+.stamp-book {
+  display: grid;
+  gap: 20px;
+}
+.stamp-progress p {
+  margin: 0 0 10px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.stamp-progress progress {
+  display: block;
+  width: 100%;
+  height: 14px;
+  accent-color: var(--green);
+}
+.stamp-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.stamp-tabs button {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  font-weight: 800;
+}
+.stamp-tabs button[aria-selected="true"] {
+  color: var(--surface);
+  border-color: var(--text);
+  background: var(--text);
+}
+.stamp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 14px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.stamp-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 14px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  background: var(--background);
+  text-align: center;
+}
+.stamp-slot.is-unlocked {
+  border-color: var(--green);
+  background: var(--green-soft);
+}
+.stamp-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  color: var(--muted);
+  background: var(--border);
+  font-size: 34px;
+}
+.is-unlocked .stamp-icon {
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 5px var(--surface);
+}
+.stamp-slot h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.stamp-slot p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.stamp-badge {
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 800;
+}

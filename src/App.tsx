@@ -20,6 +20,7 @@ import {
   completeFruitCatch,
   meetLion,
   unlockSecretCatalogItem,
+  unlockStamp,
   PLACES,
   SHOP_ITEMS,
   visitPlace,
@@ -39,6 +40,7 @@ import { RoomScenery } from "./components/RoomScenery";
 import { ROOM_MANIFESTS } from "./rooms/registry";
 import { PlayerCard } from "./components/PlayerCard";
 import { CatalogModal } from "./components/CatalogModal";
+import { StampBook } from "./components/StampBook";
 import { SalonModal } from "./components/SalonModal";
 
 type Panel =
@@ -49,6 +51,7 @@ type Panel =
   | "help"
   | "card"
   | "catalog"
+  | "stamps"
   | "salon"
   | null;
 
@@ -179,6 +182,12 @@ export default function App() {
               onClick={() => setPanel("card")}
             >
               ID Card
+            </button>
+            <button
+              className={panel === "stamps" ? "selected" : ""}
+              onClick={() => setPanel("stamps")}
+            >
+              Stamp Book
             </button>
           </nav>
           <div className="header-actions">
@@ -326,6 +335,7 @@ export default function App() {
         </span>
         <span>{toast}</span>
       </div>
+      {panel === "stamps" && <StampBook player={player} onClose={closePanel} />}
       {panel === "card" && (
         <PlayerCard
           player={player}
@@ -374,15 +384,13 @@ export default function App() {
         <SalonModal
           look={player.look}
           onClose={closePanel}
-          onSave={(hairId, hairColor) => {
-            setPlayer((p) => ({
-              ...p,
-              look: {
-                ...p.look,
-                hairId,
-                hairColor,
-              },
-            }));
+          onSave={(hairId, hairColor, streakDye) => {
+            setPlayer((p) => {
+              const styled = { ...p, look: { ...p.look, hairId, hairColor } };
+              return streakDye !== "none"
+                ? unlockStamp(styled, "hair_highlight")
+                : styled;
+            });
             closePanel();
             notify("Looking fabulous! Fresh hairstyle saved.");
           }}
@@ -391,7 +399,8 @@ export default function App() {
       {panel &&
         panel !== "card" &&
         panel !== "catalog" &&
-        panel !== "salon" && (
+        panel !== "salon" &&
+        panel !== "stamps" && (
           <Dialog
             title={titles[panel][0]}
             subtitle={titles[panel][1]}

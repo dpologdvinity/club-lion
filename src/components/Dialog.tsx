@@ -42,6 +42,7 @@ export function Dialog({
     <dialog
       ref={ref}
       className={`dialog ${wide ? "dialog-wide" : ""}`}
+      aria-label={title}
       aria-labelledby="dialog-title"
       aria-describedby={subtitle ? "dialog-subtitle" : undefined}
       onCancel={onClose}
