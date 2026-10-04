@@ -128,9 +128,9 @@ Implementation Plan: [`docs/plans/2026-10-04-phase-5-sunset-beach-mt-mist-pet-pa
 | **Task 1** | Global Environmental Lighting & Time-of-Day Pipeline | `feat/phase-5-lighting` | **claude-sonnet-5 (claude code)** | - | ⏳ In Progress (Parallel) |
 | **Task 2** | Sunset Beach, Coastal Boardwalk & Nautical Foghorn | `feat/phase-5-beach` | **gpt-6.1-sol (codex)** | - | ⏳ In Progress (Parallel) |
 | **Task 3** | Mt. Mist Alpine Basecamp & Extreme Sled Downhill Minigame | `feat/phase-5-sled` | **gpt-6.1-sol (codex)** | - | ⏳ In Progress (Parallel) |
-| **Task 4** | Canyon Rapids River Surf Stunt Minigame | `feat/phase-5-river-surf` | **gpt-6.1-sol (codex)** | - | ⏳ Queued |
-| **Task 5** | Pet Paradise Nursery & Grooming Care Engine | `feat/phase-5-pet-paradise` | **claude-sonnet-5 (claude code)** | - | ⏳ Queued |
-| **Task 6** | Named Community Servers & Custom Lounges ($0 Stack) | `feat/phase-5-servers` | **gpt-6.1-sol (codex)** | - | ⏳ Queued |
+| **Task 4** | Canyon Rapids River Surf Stunt Minigame | `feat/phase-5-river-surf` | **claude-sonnet-5 (claude code)** | - | ⏳ In Progress (Parallel) |
+| **Task 5** | Pet Paradise Nursery & Grooming Care Engine | `feat/phase-5-pet-paradise` | **claude-sonnet-5 (claude code)** | - | ⏳ In Progress (Parallel) |
+| **Task 6** | Named Community Servers & Custom Lounges ($0 Stack) | `feat/phase-5-servers` | **gpt-6.1-sol (codex)** | - | ⏳ In Progress (Parallel) |
 | **Task 7** | Full Phase 5 World Integration, Stamp Book & E2E Suite | `master` | **gemini-3.8-flash (antigravity)** | - | ⏳ Queued |
 | **Phase 5 Milestone** | Milestone Complete: 100% Phase 5 Integration | `master` | **gemini-3.8-flash (antigravity)** (Lead, Verifier & Merger) | - | ⏳ Queued |
 
