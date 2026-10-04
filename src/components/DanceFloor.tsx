@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getSharedAudioBus } from "../utils/audioBus.ts";
 import {
   DEFAULT_BPM,
   FLOOR_COLUMNS,
@@ -22,16 +23,8 @@ const TILE_SCALE_HZ = [261.63, 293.66, 329.63, 392.0, 440.0];
 /** Idle brightness used when the player asked for reduced motion. */
 const STATIC_PULSE = 0.35;
 
-function getAudioContextClass(): typeof AudioContext | undefined {
-  return (
-    window.AudioContext ||
-    (window as unknown as { webkitAudioContext?: typeof AudioContext })
-      .webkitAudioContext
-  );
-}
-
 /** Synth chime: a triangle note with a soft pluck envelope, no audio assets. */
-function playTileChime(ctx: AudioContext, tile: number) {
+function playTileChime(ctx: AudioContext, dest: AudioNode, tile: number) {
   const coord = tileCoord(tile);
   if (!coord) return;
   const degree = TILE_SCALE_HZ[coord.column % TILE_SCALE_HZ.length];
@@ -44,7 +37,7 @@ function playTileChime(ctx: AudioContext, tile: number) {
   gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.01);
   gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(dest);
   osc.start();
   osc.stop(ctx.currentTime + 0.45);
 }
@@ -97,10 +90,11 @@ export type DanceFloorProps = {
  *   boundaries line up with `tileFromPosition`. Tile borders are drawn inside
  *   the cell (`box-sizing: border-box`), so they never shift the mapping.
  *
- * Audio limitation: the Web Audio context is only created on a direct tile
- * press, which browsers accept as an activation gesture. Footfalls driven by
- * `avatarPosition` light tiles silently until some allowed gesture has
- * initialized the context, so the first avatar step is not guaranteed to chime.
+ * Audio limitation: the shared Web Audio context is only acquired on a
+ * direct tile press, which browsers accept as an activation gesture.
+ * Footfalls driven by `avatarPosition` light tiles silently until some
+ * allowed gesture has acquired the context, so the first avatar step is not
+ * guaranteed to chime.
  */
 export function DanceFloor({
   bpm = DEFAULT_BPM,
@@ -154,15 +148,15 @@ export function DanceFloor({
       if (!muted) {
         try {
           // Only a direct press counts as an activation gesture, so footfalls
-          // stay silent until one press has created the context.
+          // stay silent until one press has initialized the shared context.
           if (!audioRef.current && fromGesture) {
-            const AudioContextClass = getAudioContextClass();
-            if (AudioContextClass) audioRef.current = new AudioContextClass();
+            audioRef.current = getSharedAudioBus().getContext();
           }
           const ctx = audioRef.current;
           if (ctx) {
             if (ctx.state === "suspended") void ctx.resume().catch(() => {});
-            playTileChime(ctx, tile);
+            const dest = getSharedAudioBus().getSfxDestination();
+            playTileChime(ctx, dest ?? ctx.destination, tile);
           }
         } catch {
           // Optional audio must not interrupt lighting or avatar movement.
@@ -198,14 +192,6 @@ export function DanceFloor({
     );
     return () => window.clearTimeout(timer);
   }, [footfalls]);
-
-  useEffect(
-    () => () => {
-      void audioRef.current?.close().catch(() => {});
-      audioRef.current = null;
-    },
-    [],
-  );
 
   const litTiles = new Map(footfalls.map((hit) => [hit.tile, hit.atMs]));
   const bounded = floorBounds ?? null;
