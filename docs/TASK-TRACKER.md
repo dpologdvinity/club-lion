@@ -83,6 +83,21 @@ Those minigames were first verified in standalone browser fixtures. Task 7 now c
 
 ---
 
+## Phase 3: Splash Oasis, World Instruments, Runway Showdown & Stamp Book
+
+Master Spec: [`docs/plans/2026-10-03-club-lion-expanded-world-design.md`](plans/2026-10-03-club-lion-expanded-world-design.md)  
+Implementation Plan: [`docs/plans/2026-10-04-phase-3-splash-oasis-instruments-runway.md`](plans/2026-10-04-phase-3-splash-oasis-instruments-runway.md)
+
+| Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Task 1** | The 25+ Savanna Stamp Book & Save Migration | `feat/phase-3-task-1-stamp-book` | **gpt-6.1-sol (codex)** / **gemini-3.8-flash (antigravity)** | - | ⏳ Planned |
+| **Task 2** | World Instruments & Procedural Web Audio Jam Engine | `feat/phase-3-task-2-instruments` | **Open** | - | ⏳ Planned |
+| **Task 3** | Waterhole Angler Cozy Dock Fishing Minigame | `feat/phase-3-task-3-fishing` | **Open** | - | ⏳ Planned |
+| **Task 4** | Splash Oasis Waterpark Rooms & Wave / Dump Bucket Engine | `feat/phase-3-task-4-waterpark` | **Open** | - | ⏳ Planned |
+| **Task 5** | Top Models Fashion Show Runway Minigame | `feat/phase-3-task-5-runway` | **Open** | - | ⏳ Planned |
+| **Task 6** | Phase 3 World Integration & Full E2E Verification | `feat/phase-3-integration` | **gemini-3.8-flash (antigravity)** | - | ⏳ Planned |
+| **Phase 3 Merge Train** | Milestone Integration into `master` | `master` | **gemini-3.8-flash (antigravity)** (Verifier & Merger) | - | ⏳ Pending |
+
 ## Agent Roster & Universal Interchangeability
 
 There are **no fixed or primary roles**. All agents and models are fully interchangeable peers capable of executing any task, architecture, physics, frontend, minigame, test suite, review, or milestone merge:
