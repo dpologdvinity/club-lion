@@ -125,7 +125,7 @@ Implementation Plan: [`docs/plans/2026-10-04-phase-5-sunset-beach-mt-mist-pet-pa
 | Task | Subsystem Description | Branch / Worktree | Assigned Agent & Model | Commit(s) | Status & Verification |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Spec** | Phase 5 Architecture Plan & Task Ledger | `master` | **gemini-3.8-flash (antigravity)** | `master` | ✅ Approved & Dispatched |
-| **Task 1** | Global Environmental Lighting & Time-of-Day Pipeline | `feat/phase-5-lighting` | **claude-sonnet-5 (claude code)** | `7cf5ef8` | ⏳ Implementation & Review Fixes Complete; Ready for Merge Train |
+| **Task 1** | Global Environmental Lighting & Time-of-Day Pipeline | `master` | **claude-sonnet-5 (claude code)** | `e73eea5` | ✅ Integrated; 504/504 unit tests, types, format & build clean |
 | **Task 2** | Sunset Beach, Coastal Boardwalk & Nautical Foghorn | `feat/phase-5-beach` | **gpt-6.1-sol (codex)** | `df5c13d` | ✅ Integrated; 400/400 unit tests, types, format & build clean |
 | **Task 3** | Mt. Mist Alpine Basecamp & Extreme Sled Downhill Minigame | `feat/phase-5-sled` | **gpt-6.1-sol (codex)** | `cf95477` | ✅ Integrated; 413/413 unit tests, types, format & build clean |
 | **Task 4** | Canyon Rapids River Surf Stunt Minigame | `feat/phase-5-river-surf` | **claude-sonnet-5 (claude code)** | `d68533b` | ✅ Integrated; 446/446 unit tests, types, format & build clean |
