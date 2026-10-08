@@ -21,12 +21,13 @@ function strands(paths: readonly string[], opacity = 0.2): string {
     .join("");
 }
 
-/** Glossy shine ribbon: a soft gradient band plus a crisp specular streak. */
+/** Glossy shine ribbon: a soft gradient band plus crisp specular streaks. */
 function shineRibbon(p: string, band: string, streak: string): string {
   return (
     `<g class="hair-highlight">` +
     `<path d="${band}" fill="url(#${p}-shine)" />` +
-    `<path d="${streak}" stroke="rgba(255,255,255,0.7)" stroke-width="0.9" stroke-linecap="round" fill="none" />` +
+    `<path d="${streak}" stroke="rgba(255,255,255,0.85)" stroke-width="1.1" stroke-linecap="round" fill="none" />` +
+    `<path d="${streak}" stroke="rgba(255,255,255,0.4)" stroke-width="2.2" stroke-linecap="round" fill="none" />` +
     `</g>`
   );
 }
@@ -43,8 +44,10 @@ function butterflyClip(
     `<ellipse cx="2.3" cy="-1.3" rx="2.5" ry="1.9" fill="${color}" transform="rotate(25 2.3 -1.3)" />` +
     `<ellipse cx="-1.7" cy="1.5" rx="1.6" ry="1.3" fill="${color}" opacity="0.85" />` +
     `<ellipse cx="1.7" cy="1.5" rx="1.6" ry="1.3" fill="${color}" opacity="0.85" />` +
-    `<ellipse cx="-2.6" cy="-1.8" rx="0.9" ry="0.5" fill="#ffffff" opacity="0.7" />` +
+    `<ellipse cx="-2.6" cy="-1.8" rx="0.9" ry="0.5" fill="#ffffff" opacity="0.85" />` +
+    `<ellipse cx="2.6" cy="-1.8" rx="0.9" ry="0.5" fill="#ffffff" opacity="0.85" />` +
     `<rect x="-0.45" y="-2.6" width="0.9" height="5" rx="0.45" fill="#3a2a4a" />` +
+    `<circle cx="0" cy="-1.0" r="0.45" fill="#ffffff" />` +
     `</g>`
   );
 }
@@ -690,6 +693,187 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
           ),
       };
     }
+    case "goddess_locs": {
+      const mass =
+        "M60 6 C83 6 95 22 94 42 C93 60 95 86 94 108 C89 112 84 110 80 106 L40 106 C36 110 31 112 26 108 C25 86 27 60 26 42 C25 22 37 6 60 6 Z";
+      const backLocs = [
+        ["M28 44 C26 72 30 94 28 114", "26.5 68", "27.5 96"],
+        ["M34 54 C32 78 35 98 34 114", "32.5 82", "33.5 106"],
+        ["M92 44 C94 72 90 94 92 114", "90.5 68", "91.5 96"],
+        ["M86 54 C88 78 85 98 86 114", "84.5 82", "85.5 106"],
+      ] as const;
+      return {
+        back:
+          `<path d="${mass}" fill="${c}" />` +
+          shade(mass, 0.25) +
+          backLocs
+            .map(([d, cuff1, cuff2]) => {
+              const [c1x, c1y] = cuff1.split(" ");
+              const [c2x, c2y] = cuff2.split(" ");
+              return (
+                `<path d="${d}" stroke="${c}" stroke-width="3" stroke-linecap="round" fill="none" />` +
+                `<path d="${d}" stroke="rgba(20,8,4,0.3)" stroke-width="3" stroke-dasharray="0.8 1.4" fill="none" />` +
+                `<rect x="${c1x}" y="${c1y}" width="3.2" height="2" rx="0.6" fill="#f4c542" />` +
+                `<rect x="${c2x}" y="${c2y}" width="3.2" height="2" rx="0.6" fill="#f4c542" />`
+              );
+            })
+            .join(""),
+        front:
+          `<path d="${MIDDLE_PART_CAP}" fill="${c}" />` +
+          `<path d="M34 40 C32 58 35 76 33 96" stroke="${c}" stroke-width="2.8" stroke-linecap="round" fill="none" />` +
+          `<path d="M34 40 C32 58 35 76 33 96" stroke="rgba(20,8,4,0.3)" stroke-width="2.8" stroke-dasharray="0.8 1.4" fill="none" />` +
+          `<path d="M86 40 C88 58 85 76 87 96" stroke="${c}" stroke-width="2.8" stroke-linecap="round" fill="none" />` +
+          `<path d="M86 40 C88 58 85 76 87 96" stroke="rgba(20,8,4,0.3)" stroke-width="2.8" stroke-dasharray="0.8 1.4" fill="none" />` +
+          `<rect x="32" y="62" width="3.4" height="2.2" rx="0.6" fill="#f4c542" />` +
+          `<rect x="84.6" y="62" width="3.4" height="2.2" rx="0.6" fill="#f4c542" />` +
+          `<path d="M33 96 Q37 102 33 108" stroke="${c}" stroke-width="1.6" stroke-linecap="round" fill="none" />` +
+          `<path d="M87 96 Q83 102 87 108" stroke="${c}" stroke-width="1.6" stroke-linecap="round" fill="none" />` +
+          shineRibbon(
+            p,
+            "M36 26 C44 14 76 14 84 26 C76 18 44 18 36 28 Z",
+            "M43 19 Q52 14 58 14",
+          ),
+      };
+    }
+    case "fulani_braids": {
+      const mass =
+        "M60 6 C83 6 95 22 94 42 C93 60 95 86 94 108 C89 112 84 110 80 106 L40 106 C36 110 31 112 26 108 C25 86 27 60 26 42 C25 22 37 6 60 6 Z";
+      return {
+        back:
+          `<path d="${mass}" fill="${c}" />` +
+          shade(mass, 0.28) +
+          [
+            ["M30 46 C28 72 30 92 28.6 110", "28.6 111"],
+            ["M90 46 C92 72 90 92 91.4 110", "91.4 110"],
+            ["M37 56 C35 78 37 96 36 110", "36 111"],
+            ["M83 56 C85 78 83 96 84 110", "84 111"],
+          ]
+            .map(([d, end], i) =>
+              braid(d, c, i % 2 ? "#f4c542" : "#ffffff", end),
+            )
+            .join(""),
+        front:
+          `<path d="${MIDDLE_PART_CAP}" fill="${c}" />` +
+          // Center-part cornrow braid down to the forehead with cowrie bead
+          `<line x1="60" y1="9" x2="60" y2="28" stroke="${c}" stroke-width="2.4" stroke-dasharray="0.8 1.1" />` +
+          `<circle cx="60" cy="29" r="1.6" fill="#f4c542" stroke="#ffffff" stroke-width="0.3" />` +
+          `<circle cx="59.5" cy="28.4" r="0.5" fill="#ffffff" />` +
+          // Side cornrow braids with beads
+          braid("M34 38 C32 54 34 72 32 88", c, "#f4c542", "32 89") +
+          braid("M86 38 C88 54 86 72 88 88", c, "#f4c542", "88 89") +
+          shineRibbon(
+            p,
+            "M37 25 C45 13 75 13 83 25 C75 18 45 18 37 27 Z",
+            "M44 18 Q52 13 58 13",
+          ),
+      };
+    }
+    case "afro_puff": {
+      const puff = fluffy(60, 8, 26, 18, 2.8);
+      const cap =
+        "M31 48 C28 24 42 12 60 12 C78 12 92 24 89 48 L85 48 C83 34 76 22 60 22 C44 22 37 34 35 48 Z";
+      return {
+        back:
+          `<path d="${puff}" fill="${c}" />` +
+          shade(puff, 0.22) +
+          `<circle cx="52" cy="6" r="1.2" fill="rgba(255,255,255,0.4)" />` +
+          `<circle cx="68" cy="8" r="1.4" fill="rgba(255,255,255,0.4)" />`,
+        front:
+          `<path d="${cap}" fill="${c}" />` +
+          // Hot pink satin puff scrunchie
+          `<ellipse cx="60" cy="20" rx="10" ry="3.8" fill="#ff3d9a" />` +
+          `<path d="M52 20 Q56 17 60 20 Q64 17 68 20" stroke="#ffb3d4" stroke-width="0.9" fill="none" />` +
+          // Swirled baby hair edges along hairline
+          `<path d="M42 27 Q46 29 44 33 Q41 34 43 37" stroke="${c}" stroke-width="1.2" stroke-linecap="round" fill="none" />` +
+          `<path d="M78 27 Q74 29 76 33 Q79 34 77 37" stroke="${c}" stroke-width="1.2" stroke-linecap="round" fill="none" />` +
+          shineRibbon(
+            p,
+            "M36 26 C44 14 76 14 84 26 C76 18 44 18 36 28 Z",
+            "M43 19 Q52 14 58 14",
+          ),
+      };
+    }
+    case "afro_halo": {
+      const halo = fluffy(60, 36, 40, 24, 3.4);
+      return {
+        back:
+          `<path d="${halo}" fill="${c}" />` +
+          shade(halo, 0.2) +
+          `<circle cx="36" cy="22" r="1.4" fill="rgba(255,255,255,0.35)" />` +
+          `<circle cx="84" cy="22" r="1.4" fill="rgba(255,255,255,0.35)" />` +
+          `<circle cx="60" cy="8" r="1.6" fill="rgba(255,255,255,0.38)" />`,
+        front:
+          `<path d="${fluffy(60, 22, 26, 14, 2.2)}" fill="${c}" />` +
+          // Edge baby hairs
+          `<path d="M44 26 Q47 28 45 32" stroke="${c}" stroke-width="1.3" stroke-linecap="round" fill="none" />` +
+          `<path d="M76 26 Q73 28 75 32" stroke="${c}" stroke-width="1.3" stroke-linecap="round" fill="none" />` +
+          shineRibbon(
+            p,
+            "M38 20 C46 10 74 10 82 20 C74 15 46 15 38 22 Z",
+            "M45 15 Q60 11 71 14",
+          ),
+      };
+    }
+    case "spiral_coils": {
+      const mass =
+        "M60 6 C84 6 97 22 96 44 C95 58 98 70 96 86 C94 98 97 108 94 116 C90 120 84 118 80 114 L40 114 C36 118 30 120 26 116 C23 108 26 98 24 86 C22 70 25 58 24 44 C23 22 36 6 60 6 Z";
+      const coilList: readonly Curl[] = [
+        [32, 54, 5.2],
+        [88, 54, 5.2],
+        [28, 72, 5.6],
+        [92, 72, 5.6],
+        [34, 90, 5.8],
+        [86, 90, 5.8],
+        [30, 108, 5.2],
+        [90, 108, 5.2],
+      ];
+      return {
+        back:
+          `<path d="${mass}" fill="${c}" />` +
+          shade(mass, 0.22) +
+          curls(coilList, c),
+        front:
+          `<path d="${SIDE_PART_CAP}" fill="${c}" />` +
+          curls(
+            [
+              [34, 42, 4.8],
+              [86, 42, 4.8],
+              [36, 62, 5.0],
+              [84, 62, 5.0],
+            ],
+            c,
+          ) +
+          shineRibbon(
+            p,
+            "M36 26 C44 13 76 13 84 26 C76 18.6 44 18.6 36 28 Z",
+            "M43 19.4 Q52 13.6 58 13.8",
+          ),
+      };
+    }
+    case "topknot": {
+      const bun =
+        "M60 -2 C68 -2 74 3 73 11 C72 17 67 21 60 21 C53 21 48 17 47 11 C46 3 52 -2 60 -2 Z";
+      const tendril = "M36.4 28 C33 38 37 48 34 58 C32 64 35 70 33 76";
+      return {
+        back:
+          `<path d="${bun}" fill="${c}" />` +
+          shade(bun, 0.25) +
+          `<path d="M53 6 C56 0 64 0 67 6" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" stroke-linecap="round" fill="none" />`,
+        front:
+          `<path d="${MIDDLE_PART_CAP}" fill="${c}" />` +
+          // Gold metallic bun cuff
+          `<ellipse cx="60" cy="18" rx="8" ry="3" fill="#f4c542" />` +
+          `<circle cx="60" cy="18" r="0.8" fill="#ffffff" />` +
+          // Two sleek face-framing tendrils
+          `<path d="${tendril}" stroke="${c}" stroke-width="2.0" stroke-linecap="round" fill="none" />` +
+          `<path d="${tendril}" ${MIRROR} stroke="${c}" stroke-width="2.0" stroke-linecap="round" fill="none" />` +
+          shineRibbon(
+            p,
+            "M38 24 C46 14 74 14 82 24 C74 18 46 18 38 26 Z",
+            "M45 18 Q60 13 71 17",
+          ),
+      };
+    }
     case "blowout":
     default: {
       const mass =
@@ -806,6 +990,47 @@ function renderHairStreak(style: HairStyle, streak?: string): string {
   return `<g class="hair-streak">` + left + `<g ${MIRROR}>${left}</g>` + `</g>`;
 }
 
+export function renderBangs(look: AvatarLook, c: string): string {
+  const bangs = look.bangsId ?? "none";
+  if (!bangs || bangs === "none") return "";
+  let art = "";
+  switch (bangs) {
+    case "curtain_bangs":
+      art =
+        `<path d="M48 24 Q53 32 50 42 C48 38 46 32 46 26 Z" fill="${c}" />` +
+        `<path d="M72 24 Q67 32 70 42 C72 38 74 32 74 26 Z" fill="${c}" />` +
+        `<path d="M49 26 Q52 33 49 40" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" fill="none" />` +
+        `<path d="M71 26 Q68 33 71 40" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" fill="none" />`;
+      break;
+    case "blunt_bangs":
+      art =
+        `<path d="M36 30 C46 32 74 32 84 30 L83 38 C74 40 46 40 37 38 Z" fill="${c}" />` +
+        `<path d="M40 32 L40 37 M50 33 L50 38 M60 33 L60 38 M70 33 L70 38 M80 32 L80 37" stroke="rgba(25,10,5,0.3)" stroke-width="0.7" />` +
+        `<path d="M42 34 Q60 36 78 34" stroke="rgba(255,255,255,0.4)" stroke-width="0.9" fill="none" />`;
+      break;
+    case "wispy_tendrils":
+      art =
+        `<path d="M37 30 C33 42 36 54 34 66" stroke="${c}" stroke-width="1.9" stroke-linecap="round" fill="none" />` +
+        `<path d="M83 30 C87 42 84 54 86 66" stroke="${c}" stroke-width="1.9" stroke-linecap="round" fill="none" />` +
+        `<path d="M37 32 C34 42 36 52 34 64" stroke="rgba(255,255,255,0.45)" stroke-width="0.7" stroke-linecap="round" fill="none" />` +
+        `<path d="M83 32 C86 42 84 52 86 64" stroke="rgba(255,255,255,0.45)" stroke-width="0.7" stroke-linecap="round" fill="none" />`;
+      break;
+    case "baby_edges":
+      art =
+        `<path d="M40 26 Q45 28 43 32 Q40 34 42 37" stroke="${c}" stroke-width="1.4" stroke-linecap="round" fill="none" />` +
+        `<path d="M80 26 Q75 28 77 32 Q80 34 78 37" stroke="${c}" stroke-width="1.4" stroke-linecap="round" fill="none" />` +
+        `<path d="M50 22 Q54 24 52 27" stroke="${c}" stroke-width="1.2" stroke-linecap="round" fill="none" />` +
+        `<path d="M70 22 Q66 24 68 27" stroke="${c}" stroke-width="1.2" stroke-linecap="round" fill="none" />`;
+      break;
+    case "side_sweep":
+      art =
+        `<path d="M33 26 C48 28 68 36 78 44 C68 36 48 31 33 29 Z" fill="${c}" />` +
+        `<path d="M38 28 C50 31 66 37 74 42" stroke="rgba(255,255,255,0.45)" stroke-width="0.8" fill="none" />`;
+      break;
+  }
+  return `<g class="avatar-bangs bangs-${bangs.replace(/_/g, "-")}">${art}</g>`;
+}
+
 /* -------------------------------------------------------------
  * Layer 6: Hair Front (Anchor_HeadCenter at 60, 38)
  * ------------------------------------------------------------- */
@@ -817,6 +1042,7 @@ export function renderLayer6HairFront(look: AvatarLook, p: string): string {
     `<g class="avatar-hair-front hair-${cls}">` +
     hairArt(style, hairColor, p).front +
     renderHairStreak(style, look.hairStreak) +
+    renderBangs(look, hairColor) +
     `</g>`
   );
 }

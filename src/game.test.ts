@@ -1117,6 +1117,19 @@ test("applySalonLook buys unowned premium options once and keeps free looks free
   );
 });
 
+test("premiumIdsForLook identifies premium piercing and jewelry options", async () => {
+  const { premiumIdsForLook, DEFAULT_AVATAR_LOOK } = await import("./game.ts");
+  const look = {
+    ...DEFAULT_AVATAR_LOOK,
+    piercingId: "septum_ring",
+    jewelryId: "butterfly_choker",
+  };
+  assert.deepEqual(premiumIdsForLook(look).sort(), [
+    "jewelry:butterfly_choker",
+    "piercing:septum_ring",
+  ]);
+});
+
 test("dressAvatar allows free, owned, or already-worn pieces only", async () => {
   const { dressAvatar, migratePlayerSave } = await import("./game.ts");
   const player = migratePlayerSave(newPlayer());

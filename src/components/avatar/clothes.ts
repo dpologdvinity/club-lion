@@ -42,11 +42,19 @@ function glitter(points: readonly (readonly [number, number])[]): string {
 }
 
 function platformSole(color: string, stripe?: string, height = 6.6): string {
+  const treads = [48, 51, 54, 57]
+    .map(
+      (tx) =>
+        `<rect x="${tx}" y="${n(139 + height - 1.2)}" width="1.6" height="1.2" rx="0.4" fill="rgba(0,0,0,0.35)" />`,
+    )
+    .join("");
   return (
-    `<rect x="46.6" y="139" width="14.8" height="${height}" rx="2.2" fill="${color}" stroke="rgba(60,30,50,0.18)" stroke-width="0.4" />` +
+    `<rect x="46.4" y="139" width="15.2" height="${height}" rx="2.2" fill="${color}" stroke="rgba(60,30,50,0.22)" stroke-width="0.4" />` +
+    `<path d="M47.2 140.2 L60.8 140.2" stroke="rgba(255,255,255,0.4)" stroke-width="0.6" stroke-linecap="round" />` +
     (stripe
-      ? `<rect x="46.8" y="${n(139 + height * 0.42)}" width="14.4" height="1.2" fill="${stripe}" />`
-      : "")
+      ? `<rect x="46.6" y="${n(139 + height * 0.42)}" width="14.8" height="1.2" fill="${stripe}" />`
+      : "") +
+    treads
   );
 }
 
@@ -181,7 +189,8 @@ function chainBelt(): string {
   return (
     `<path d="M49.4 100.2 Q60 103 70.6 100.2" stroke="#dfe6ee" stroke-width="1.1" stroke-dasharray="1.3 0.7" fill="none" />` +
     `<path d="M66 101.8 Q67 106 65.4 108.4" stroke="#dfe6ee" stroke-width="0.8" stroke-dasharray="1 0.6" fill="none" />` +
-    `<circle cx="65.3" cy="109" r="0.9" fill="#f4c542" />`
+    `<circle cx="65.3" cy="109" r="1.1" fill="#f4c542" />` +
+    `<circle cx="65.3" cy="109" r="0.4" fill="#ffffff" />`
   );
 }
 

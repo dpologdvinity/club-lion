@@ -37,18 +37,54 @@ export function isValidEquipSlot(slot: unknown): slot is EquipSlot {
   return typeof slot === "string" && EQUIP_SLOTS.includes(slot as EquipSlot);
 }
 
-export type SkinTone = "fair" | "tan" | "warm" | "espresso" | "bronze" | "deep";
+export type SkinTone =
+  | "porcelain"
+  | "ivory"
+  | "fair"
+  | "peach"
+  | "golden_fair"
+  | "almond"
+  | "warm"
+  | "olive"
+  | "tan"
+  | "honey"
+  | "bronze"
+  | "caramel"
+  | "terracotta"
+  | "chestnut"
+  | "espresso"
+  | "deep"
+  | "ebony"
+  | "midnight";
 
 export const SKIN_TONES: readonly SkinTone[] = [
+  "porcelain",
+  "ivory",
   "fair",
-  "tan",
+  "peach",
+  "golden_fair",
+  "almond",
   "warm",
-  "espresso",
+  "olive",
+  "tan",
+  "honey",
   "bronze",
+  "caramel",
+  "terracotta",
+  "chestnut",
+  "espresso",
   "deep",
+  "ebony",
+  "midnight",
 ] as const;
 
-export type { EyeStyle, HairStyle } from "./avatarOptions.ts";
+export type {
+  EyeStyle,
+  HairStyle,
+  BangsStyle,
+  PiercingStyle,
+  JewelryStyle,
+} from "./avatarOptions.ts";
 
 export const EYE_STYLES: readonly EyeStyle[] = EYE_LOOKS.map((o) => o.id);
 
@@ -97,6 +133,9 @@ export type AvatarLook = {
   eyeColorId?: string;
   blushId?: string;
   faceDetailId?: string;
+  bangsId?: string;
+  piercingId?: string;
+  jewelryId?: string;
   /** Streak dye color (hex); absent or empty means no streak. */
   hairStreak?: string;
   headwearId?: string;
@@ -142,6 +181,9 @@ export function validateAvatarLook(look: unknown): look is AvatarLook {
     hasOptionalString("eyeColorId") &&
     hasOptionalString("blushId") &&
     hasOptionalString("faceDetailId") &&
+    hasOptionalString("bangsId") &&
+    hasOptionalString("piercingId") &&
+    hasOptionalString("jewelryId") &&
     (candidate.hairStreak === undefined ||
       typeof candidate.hairStreak === "string") &&
     hasOptionalString("headwearId") &&

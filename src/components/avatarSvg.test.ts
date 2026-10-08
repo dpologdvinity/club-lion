@@ -11,6 +11,7 @@ import {
   HAIR_STYLES,
   type AvatarLook,
 } from "../types/world.ts";
+import { PIERCINGS, JEWELRY, BANGS_OPTIONS } from "../types/avatarOptions.ts";
 
 test("generateAvatarSvgString outputs stacked SVG layers in correct order", () => {
   const svg = generateAvatarSvgString(DEFAULT_AVATAR_LOOK, "idle");
@@ -368,4 +369,49 @@ test("hair color is XML-escaped", () => {
   assert.ok(!svg.includes("<script>"));
   assert.ok(!svg.includes('"><script'));
   assert.ok(svg.includes("&quot;&gt;&lt;script&gt;"));
+});
+
+test("renders all piercing options distinctly", () => {
+  for (const { id } of PIERCINGS) {
+    const svg = generateAvatarSvgString({
+      ...DEFAULT_AVATAR_LOOK,
+      piercingId: id,
+    });
+    if (id === "none") {
+      assert.ok(!svg.includes("avatar-piercing"));
+    } else {
+      const cls = `piercing-${id.replace(/_/g, "-")}`;
+      assert.ok(svg.includes(cls), `Should include ${cls}`);
+    }
+  }
+});
+
+test("renders all jewelry options distinctly", () => {
+  for (const { id } of JEWELRY) {
+    const svg = generateAvatarSvgString({
+      ...DEFAULT_AVATAR_LOOK,
+      jewelryId: id,
+    });
+    if (id === "none") {
+      assert.ok(!svg.includes("avatar-jewelry"));
+    } else {
+      const cls = `jewelry-${id.replace(/_/g, "-")}`;
+      assert.ok(svg.includes(cls), `Should include ${cls}`);
+    }
+  }
+});
+
+test("renders all bangs options distinctly", () => {
+  for (const { id } of BANGS_OPTIONS) {
+    const svg = generateAvatarSvgString({
+      ...DEFAULT_AVATAR_LOOK,
+      bangsId: id,
+    });
+    if (id === "none") {
+      assert.ok(!svg.includes("avatar-bangs"));
+    } else {
+      const cls = `bangs-${id.replace(/_/g, "-")}`;
+      assert.ok(svg.includes(cls), `Should include ${cls}`);
+    }
+  }
 });

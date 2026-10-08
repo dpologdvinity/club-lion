@@ -1,12 +1,24 @@
 import type { SkinTone } from "../../types/world.ts";
 
 export const SKIN_TONE_COLORS: Record<SkinTone, string> = {
+  porcelain: "#fff0ea",
+  ivory: "#fce8dc",
   fair: "#ffe3d1",
-  tan: "#dfa77b",
+  peach: "#ffd8c4",
+  golden_fair: "#f8dfc2",
+  almond: "#e8c49e",
   warm: "#e8b082",
-  espresso: "#784421",
+  olive: "#d6ab7a",
+  tan: "#dfa77b",
+  honey: "#cca068",
   bronze: "#ab7143",
+  caramel: "#9c6035",
+  terracotta: "#8c4f2b",
+  chestnut: "#6b3b1e",
+  espresso: "#784421",
   deep: "#5c3826",
+  ebony: "#422518",
+  midnight: "#2d160e",
 };
 
 export const ANCHORS = {
@@ -118,7 +130,9 @@ export function handMarkup(arm: ArmPose, skin: string): string {
   const [hx, hy] = arm.hand;
   return (
     `<ellipse cx="${n(hx)}" cy="${n(hy)}" rx="2.3" ry="3" fill="${skin}" transform="rotate(${arm.handAngle} ${n(hx)} ${n(hy)})" />` +
-    `<ellipse cx="${n(hx)}" cy="${n(hy + 2)}" rx="1.3" ry="0.8" fill="#ff5f9e" transform="rotate(${arm.handAngle} ${n(hx)} ${n(hy)})" />`
+    // Sculpted acrylic manicured nails with gloss highlight
+    `<ellipse cx="${n(hx)}" cy="${n(hy + 2.1)}" rx="1.4" ry="0.95" fill="#ff4f94" transform="rotate(${arm.handAngle} ${n(hx)} ${n(hy)})" />` +
+    `<ellipse cx="${n(hx - 0.3)}" cy="${n(hy + 1.9)}" rx="0.5" ry="0.3" fill="#ffffff" opacity="0.75" transform="rotate(${arm.handAngle} ${n(hx)} ${n(hy)})" />`
   );
 }
 

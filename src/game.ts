@@ -828,6 +828,10 @@ export function premiumIdsForLook(look: AvatarLook): string[] {
     ["iris", look.eyeColorId],
     ["face", look.faceDetailId],
     ["hair", resolveHairStyle(look.hairId)],
+    ["piercing", look.piercingId],
+    ["jewelry", look.jewelryId],
+    ["bangs", look.bangsId],
+    ["skin", look.skinTone],
   ];
   return picks.flatMap(([category, id]) => {
     if (!id) return [];

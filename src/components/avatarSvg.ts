@@ -126,6 +126,10 @@ function renderLayer2BodyBase(look: AvatarLook, action: string): string {
     // Slim torso with defined waist
     `<path d="M48 72.4 C52 70.6 68 70.6 72 72.4 C73.2 78 70.8 84 67.8 91 C68.2 95 70.6 98.6 70.8 102 L49.2 102 C49.4 98.6 51.8 95 52.2 91 C49.2 84 46.8 78 48 72.4 Z" fill="${skin}" />` +
     `<path d="M57.6 96.4 Q60 97.4 62.4 96.4" stroke="${contour}" stroke-width="0.5" fill="none" />` +
+    // Belly button with sparkling rhinestone navel gem
+    `<ellipse cx="60" cy="95.4" rx="0.55" ry="0.75" fill="rgba(90, 40, 20, 0.45)" />` +
+    `<circle cx="60" cy="94.6" r="0.65" fill="#f4c542" />` +
+    `<circle cx="60" cy="94.6" r="0.35" fill="#ffffff" />` +
     // Left arm, hand on hip (player's left, viewer's right)
     `<g class="avatar-left-arm">` +
     armMarkup(LEFT_ARM_HIP, skin) +
@@ -134,16 +138,15 @@ function renderLayer2BodyBase(look: AvatarLook, action: string): string {
     (isWaving
       ? ""
       : `<g class="avatar-right-arm">${armMarkup(RIGHT_ARM_DOWN, skin)}</g>`) +
-    // Graceful neck with chin shadow
-    `<path d="M56.6 58 L63.4 58 L63.8 73 L56.2 73 Z" fill="${skin}" />` +
-    `<path d="M56.4 63.4 Q60 68.6 63.6 63.4 L63.7 67.6 Q60 70.4 56.3 67.6 Z" fill="${contour}" />` +
-    `<path d="M53.4 73.4 Q56 74.6 58.2 74" stroke="${contour}" stroke-width="0.5" fill="none" />` +
-    `<path d="M66.6 73.4 Q64 74.6 61.8 74" stroke="${contour}" stroke-width="0.5" fill="none" />` +
-    // Ears with gold hoops
+    // Graceful slender neck with chin shadow and collarbones
+    `<path d="M56.4 58 L63.6 58 L64.0 73 L56.0 73 Z" fill="${skin}" />` +
+    `<path d="M56.2 63.4 Q60 68.6 63.8 63.4 L63.9 67.8 Q60 70.8 56.1 67.8 Z" fill="${contour}" />` +
+    `<path d="M53.4 73.4 Q56 74.6 58.2 74" stroke="${contour}" stroke-width="0.6" stroke-linecap="round" fill="none" />` +
+    `<path d="M66.6 73.4 Q64 74.6 61.8 74" stroke="${contour}" stroke-width="0.6" stroke-linecap="round" fill="none" />` +
+    `<path d="M53.6 73.0 Q56 74.2 58.0 73.6" stroke="rgba(255,255,255,0.32)" stroke-width="0.5" stroke-linecap="round" fill="none" />` +
+    // Ears
     `<ellipse cx="34.6" cy="45" rx="3" ry="4.4" fill="${skin}" />` +
     `<ellipse cx="85.4" cy="45" rx="3" ry="4.4" fill="${skin}" />` +
-    `<circle class="avatar-hoop" cx="34.4" cy="53" r="3.6" stroke="#f4c542" stroke-width="0.9" fill="none" />` +
-    `<circle class="avatar-hoop" cx="85.6" cy="53" r="3.6" stroke="#f4c542" stroke-width="0.9" fill="none" />` +
     // Sculpted head: wide cheekbones tapering to a graceful chin
     `<path d="${HEAD_PATH}" fill="${skin}" />` +
     `</g>`
@@ -241,6 +244,88 @@ function renderLayer7HeadwearAndEyewear(look: AvatarLook): string {
 }
 
 /* -------------------------------------------------------------
+ * Layer 7b: Jewelry (Earrings & Necklaces)
+ * ------------------------------------------------------------- */
+export function renderJewelry(look: AvatarLook): string {
+  const jewelry = look.jewelryId ?? "oversized_gold_hoops";
+  if (!jewelry || jewelry === "none") return "";
+  let art = "";
+  switch (jewelry) {
+    case "oversized_gold_hoops":
+      art =
+        `<g class="jewelry-hoops">` +
+        `<circle cx="34.4" cy="53" r="4.6" stroke="#f4c542" stroke-width="1.2" fill="none" />` +
+        `<circle cx="85.6" cy="53" r="4.6" stroke="#f4c542" stroke-width="1.2" fill="none" />` +
+        `<path d="M32 49.5 A4.6 4.6 0 0 1 36.8 49.5" stroke="#fff8d4" stroke-width="0.8" fill="none" />` +
+        `<path d="M83.2 49.5 A4.6 4.6 0 0 1 88 49.5" stroke="#fff8d4" stroke-width="0.8" fill="none" />` +
+        `<polygon points="34.4,57 35.1,57.9 34.4,58.8 33.7,57.9" fill="#ffffff" />` +
+        `<polygon points="85.6,57 86.3,57.9 85.6,58.8 84.9,57.9" fill="#ffffff" />` +
+        `</g>`;
+      break;
+    case "silver_bamboo_hoops":
+      art =
+        `<g class="jewelry-bamboo-hoops">` +
+        `<circle cx="34.4" cy="53" r="4.8" stroke="#d5dde8" stroke-width="1.4" fill="none" />` +
+        `<circle cx="85.6" cy="53" r="4.8" stroke="#d5dde8" stroke-width="1.4" fill="none" />` +
+        `<circle cx="34.4" cy="57.8" r="0.9" fill="#ffffff" stroke="#9aa8b8" stroke-width="0.3" />` +
+        `<circle cx="85.6" cy="57.8" r="0.9" fill="#ffffff" stroke="#9aa8b8" stroke-width="0.3" />` +
+        `<circle cx="29.6" cy="53" r="0.8" fill="#ffffff" stroke="#9aa8b8" stroke-width="0.3" />` +
+        `<circle cx="90.4" cy="53" r="0.8" fill="#ffffff" stroke="#9aa8b8" stroke-width="0.3" />` +
+        `</g>`;
+      break;
+    case "diamond_studs":
+      art =
+        `<g class="jewelry-studs">` +
+        `<circle cx="34.6" cy="48" r="1.3" fill="#ffffff" stroke="#b0c0d8" stroke-width="0.3" />` +
+        `<circle cx="85.4" cy="48" r="1.3" fill="#ffffff" stroke="#b0c0d8" stroke-width="0.3" />` +
+        `<polygon points="34.6,45.8 35.1,48 36.8,48 35.3,49 35.8,50.8 34.6,49.6 33.4,50.8 33.9,49 32.4,48 34.1,48" fill="#e8f4ff" />` +
+        `<polygon points="85.4,45.8 85.9,48 87.6,48 86.1,49 86.6,50.8 85.4,49.6 84.2,50.8 84.7,49 83.2,48 84.9,48" fill="#e8f4ff" />` +
+        `</g>`;
+      break;
+    case "pearl_drops":
+      art =
+        `<g class="jewelry-pearl-drops">` +
+        `<line x1="34.6" y1="46" x2="34.6" y2="52" stroke="#f4c542" stroke-width="0.6" />` +
+        `<line x1="85.4" y1="46" x2="85.4" y2="52" stroke="#f4c542" stroke-width="0.6" />` +
+        `<ellipse cx="34.6" cy="54.2" rx="1.6" ry="2.2" fill="#fff5ea" stroke="#e0d0c4" stroke-width="0.3" />` +
+        `<circle cx="34.2" cy="53.4" r="0.6" fill="#ffffff" />` +
+        `<ellipse cx="85.4" cy="54.2" rx="1.6" ry="2.2" fill="#fff5ea" stroke="#e0d0c4" stroke-width="0.3" />` +
+        `<circle cx="85.0" cy="53.4" r="0.6" fill="#ffffff" />` +
+        `</g>`;
+      break;
+    case "rhinestone_choker":
+      art =
+        `<g class="jewelry-rhinestone-choker">` +
+        `<path d="M56.2 68.4 Q60 70.4 63.8 68.4" stroke="#d0d8e4" stroke-width="1.6" stroke-dasharray="0.9 0.7" fill="none" />` +
+        `<path d="M56.2 68.4 Q60 70.4 63.8 68.4" stroke="#ffffff" stroke-width="0.8" fill="none" />` +
+        `<circle cx="60" cy="70.2" r="0.9" fill="#ffffff" stroke="#b0c0d8" stroke-width="0.3" />` +
+        `</g>`;
+      break;
+    case "layered_chains":
+      art =
+        `<g class="jewelry-layered-chains">` +
+        `<path d="M56.4 67.8 Q60 69.4 63.6 67.8" stroke="#f4c542" stroke-width="1.0" fill="none" />` +
+        `<path d="M55.8 70.4 Q60 73.2 64.2 70.4" stroke="#f4c542" stroke-width="1.1" fill="none" />` +
+        `<rect x="59.3" y="72.6" width="1.4" height="1.8" rx="0.3" fill="#f4c542" />` +
+        `<path d="M59.6 72.6 L59.6 71.8 Q60 71.3 60.4 71.8 L60.4 72.6" stroke="#f4c542" stroke-width="0.4" fill="none" />` +
+        `</g>`;
+      break;
+    case "butterfly_choker":
+      art =
+        `<g class="jewelry-butterfly-choker">` +
+        `<path d="M56.2 68.8 Q60 70.6 63.8 68.8" stroke="#1c1622" stroke-width="1.2" fill="none" />` +
+        `<path d="M58.8 69.4 C58.2 68.6 57.8 69.8 59.4 70.4 Z" fill="#ff70b0" />` +
+        `<path d="M61.2 69.4 C61.8 68.6 62.2 69.8 60.6 70.4 Z" fill="#ff70b0" />` +
+        `<ellipse cx="58.6" cy="71.0" rx="0.8" ry="0.6" fill="#7fe3ff" />` +
+        `<ellipse cx="61.4" cy="71.0" rx="0.8" ry="0.6" fill="#7fe3ff" />` +
+        `<circle cx="60" cy="70.2" r="0.5" fill="#ffffff" />` +
+        `</g>`;
+      break;
+  }
+  return `<g class="avatar-jewelry jewelry-${jewelry.replace(/_/g, "-")}">${art}</g>`;
+}
+
+/* -------------------------------------------------------------
  * Layer 8: Handheld Item (follows the right hand)
  * ------------------------------------------------------------- */
 function renderLayer8Handheld(look: AvatarLook, action: string): string {
@@ -310,6 +395,7 @@ export function generateAvatarLayersString(
     renderLayer5Outfit(look, act),
     renderLayer6HairFront(look, p),
     renderRaisedArm(look, act),
+    renderJewelry(look),
     renderLayer7HeadwearAndEyewear(look),
     renderLayer8Handheld(look, act),
   ]

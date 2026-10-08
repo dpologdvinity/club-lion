@@ -18,6 +18,27 @@ export type ColorOption = StyleOption & { hex: string };
 /* -------------------------------------------------------------
  * Makeup
  * ------------------------------------------------------------- */
+export const SKIN_TONE_OPTIONS = [
+  { id: "porcelain", label: "Porcelain Cool", hex: "#fff0ea" },
+  { id: "ivory", label: "Ivory Fair", hex: "#fce8dc" },
+  { id: "fair", label: "Fair Neutral", hex: "#ffe3d1" },
+  { id: "peach", label: "Peach Warm", hex: "#ffd8c4" },
+  { id: "golden_fair", label: "Golden Fair", hex: "#f8dfc2" },
+  { id: "almond", label: "Almond Light", hex: "#e8c49e" },
+  { id: "warm", label: "Warm Beige", hex: "#e8b082" },
+  { id: "olive", label: "Golden Olive", hex: "#d6ab7a" },
+  { id: "tan", label: "Sun Tan", hex: "#dfa77b" },
+  { id: "honey", label: "Golden Honey", hex: "#cca068" },
+  { id: "bronze", label: "Radiant Bronze", hex: "#ab7143" },
+  { id: "caramel", label: "Golden Caramel", hex: "#9c6035" },
+  { id: "terracotta", label: "Warm Terracotta", hex: "#8c4f2b" },
+  { id: "chestnut", label: "Rich Chestnut", hex: "#6b3b1e" },
+  { id: "espresso", label: "Deep Espresso", hex: "#784421" },
+  { id: "deep", label: "Deep Chocolate", hex: "#5c3826" },
+  { id: "ebony", label: "Rich Ebony", hex: "#422518" },
+  { id: "midnight", label: "Obsidian Midnight", hex: "#2d160e" },
+] as const satisfies readonly ColorOption[];
+
 export const EYE_LOOKS = [
   { id: "winged_glam", label: "Winged Glam" },
   { id: "smoky_cat", label: "Smoky Cat" },
@@ -29,6 +50,10 @@ export const EYE_LOOKS = [
   { id: "siren", label: "Siren Flick" },
   { id: "fierce", label: "Fierce" },
   { id: "dreamy", label: "Dreamy" },
+  { id: "fox_eye", label: "Fox Eye Lift" },
+  { id: "cut_crease", label: "Cut Crease Glam" },
+  { id: "double_wing", label: "Double Wing Rebel" },
+  { id: "kohl_sultry", label: "Kohl Waterline Sultry" },
   { id: "graphic_liner", label: "Graphic Liner", price: 150 },
   { id: "glitter_pop", label: "Glitter Pop", price: 150 },
 ] as const satisfies readonly StyleOption[];
@@ -44,13 +69,18 @@ export const EYESHADOWS = [
   { id: "peach", label: "Peach", hex: "#de8a62" },
   { id: "mauve", label: "Mauve", hex: "#a65d7a" },
   { id: "gold", label: "Gold", hex: "#c4823e" },
+  { id: "golden_goddess", label: "Golden Goddess", hex: "#e5a93b" },
   { id: "plum", label: "Plum", hex: "#6a2c5c" },
   { id: "teal", label: "Teal", hex: "#2a9d9a" },
   { id: "baby_blue", label: "Baby Blue", hex: "#8ec5f0" },
   { id: "hot_pink", label: "Hot Pink", hex: "#ff4fa0" },
   { id: "emerald", label: "Emerald", hex: "#1f8a5a" },
+  { id: "cyber_silver", label: "Cyber Silver", hex: "#d4d8e2" },
   { id: "silver", label: "Silver", hex: "#c9ced8" },
   { id: "charcoal", label: "Charcoal", hex: "#3a3540" },
+  { id: "noir_glam", label: "Smokey Noir", hex: "#221f24" },
+  { id: "latte_contour", label: "Latte Contour", hex: "#966848" },
+  { id: "lavender_frost", label: "Icy Lavender", hex: "#caaef8" },
   { id: "champagne", label: "Champagne", hex: "#f0d7a8" },
   {
     id: "holo_shimmer",
@@ -66,6 +96,13 @@ export const EYESHADOWS = [
     price: 120,
     special: "ombre",
   },
+  {
+    id: "mermaid_duo",
+    label: "Mermaid Duo",
+    hex: "#41e2ba",
+    price: 120,
+    special: "holo",
+  },
 ] as const satisfies readonly ShadowOption[];
 
 export type LipFinish = "gloss" | "matte" | "frost" | "glitter";
@@ -73,13 +110,28 @@ export type LipOption = ColorOption & { finish: LipFinish };
 
 export const LIP_COLORS = [
   { id: "nude", label: "Nude Gloss", hex: "#c48a7a", finish: "gloss" },
+  {
+    id: "brown_sugar",
+    label: "Brown Sugar Liner",
+    hex: "#8c4d2e",
+    finish: "gloss",
+  },
+  { id: "mocha_nude", label: "Mocha Nude", hex: "#9e6750", finish: "matte" },
   { id: "rose", label: "Rose Gloss", hex: "#c65a6b", finish: "gloss" },
   { id: "berry", label: "Berry", hex: "#9c2f55", finish: "gloss" },
+  {
+    id: "berry_stain",
+    label: "Juicy Berry Stain",
+    hex: "#b52b58",
+    finish: "gloss",
+  },
   { id: "cherry", label: "Cherry Red", hex: "#c8102e", finish: "gloss" },
   { id: "hot_pink", label: "Hot Pink", hex: "#ff2f86", finish: "gloss" },
   { id: "bubblegum", label: "Bubblegum", hex: "#ff8fc2", finish: "gloss" },
   { id: "coral", label: "Coral", hex: "#ff6f61", finish: "gloss" },
+  { id: "coral_punch", label: "Coral Punch", hex: "#f85353", finish: "gloss" },
   { id: "clear_gloss", label: "Clear Gloss", hex: "#d98c8c", finish: "gloss" },
+  { id: "spiced_chai", label: "Spiced Chai", hex: "#a45233", finish: "gloss" },
   { id: "plum", label: "Matte Plum", hex: "#6e2346", finish: "matte" },
   { id: "mauve", label: "Matte Mauve", hex: "#b06f80", finish: "matte" },
   { id: "chocolate", label: "Chocolate", hex: "#6b3a2e", finish: "matte" },
@@ -88,6 +140,13 @@ export const LIP_COLORS = [
     label: "Black Cherry",
     hex: "#4a0e1e",
     finish: "matte",
+  },
+  { id: "ruby_velvet", label: "Ruby Velvet", hex: "#940f26", finish: "matte" },
+  {
+    id: "golden_bronze",
+    label: "Bronze Glaze",
+    hex: "#bd7642",
+    finish: "frost",
   },
   {
     id: "frosted_lilac",
@@ -124,12 +183,32 @@ export type EyeColorOption = StyleOption & {
 
 export const EYE_COLORS = [
   { id: "brown", label: "Brown", iris: ["#c98e5c", "#7a4523", "#28140a"] },
+  {
+    id: "dark_onyx",
+    label: "Dark Onyx",
+    iris: ["#2a2422", "#191412", "#0c0a09"],
+  },
   { id: "hazel", label: "Hazel", iris: ["#d29a52", "#8c5626", "#2e1a0c"] },
   { id: "amber", label: "Amber", iris: ["#f2bb57", "#a5611b", "#3a2006"] },
   { id: "honey", label: "Honey", iris: ["#f5d27a", "#c08a2a", "#4a2c08"] },
+  {
+    id: "golden_tiger",
+    label: "Golden Tiger",
+    iris: ["#ffd068", "#b85d10", "#3a1a02"],
+  },
   { id: "green", label: "Green", iris: ["#9be08a", "#3f8a4f", "#14301b"] },
   { id: "emerald", label: "Emerald", iris: ["#6ff0b0", "#119a62", "#053420"] },
+  {
+    id: "jade_green",
+    label: "Jade Green",
+    iris: ["#9de7b0", "#2d8a55", "#0e3b20"],
+  },
   { id: "blue", label: "Blue", iris: ["#9cd4ff", "#2f74c8", "#0d2448"] },
+  {
+    id: "sapphire",
+    label: "Sapphire Blue",
+    iris: ["#6bb7ff", "#185ecc", "#081d58"],
+  },
   {
     id: "ice_blue",
     label: "Ice Blue",
@@ -154,21 +233,73 @@ export const EYE_COLORS = [
 export const BLUSHES = [
   { id: "rosy", label: "Rosy", hex: "#ff5f86" },
   { id: "peach", label: "Peach", hex: "#ff9a6a" },
+  { id: "soft_peach", label: "Soft Peach", hex: "#ffb08a" },
   { id: "berry", label: "Berry", hex: "#d0386e" },
+  { id: "dusk_berry", label: "Dusk Berry", hex: "#b83468" },
   { id: "bronze", label: "Bronzed", hex: "#c87a4a" },
+  { id: "sun_kissed", label: "Sun-Kissed", hex: "#d47842" },
   { id: "coral", label: "Coral", hex: "#ff6f61" },
+  { id: "sunset_coral", label: "Sunset Coral", hex: "#ff684a" },
+  { id: "terracotta", label: "Terracotta", hex: "#bf5b38" },
+  { id: "cherry_pop", label: "Cherry Pop", hex: "#ea225c" },
   { id: "none", label: "No Blush", hex: "transparent" },
 ] as const satisfies readonly ColorOption[];
 
 export const FACE_DETAILS = [
   { id: "none", label: "None" },
-  { id: "beauty_mark", label: "Beauty Mark" },
+  { id: "beauty_mark", label: "Beauty Mark Lip" },
+  { id: "beauty_mark_eye", label: "Beauty Mark Eye" },
   { id: "freckles", label: "Freckles" },
+  { id: "sun_freckles", label: "Sun Freckles" },
+  { id: "bridge_freckles", label: "Bridge Freckles" },
+  { id: "glitter_freckles", label: "Glitter Freckles", price: 100 },
   { id: "heart_decal", label: "Heart Decal", price: 80 },
   { id: "star_stickers", label: "Star Stickers", price: 80 },
   { id: "face_gems", label: "Face Gems", price: 120 },
   { id: "butterfly_gems", label: "Butterfly Gems", price: 120 },
 ] as const satisfies readonly StyleOption[];
+
+/* -------------------------------------------------------------
+ * Piercings & Jewelry
+ * ------------------------------------------------------------- */
+export const PIERCINGS = [
+  { id: "none", label: "None" },
+  { id: "diamond_nose_stud", label: "Diamond Nose Stud" },
+  { id: "gold_nose_hoop", label: "Gold Nose Hoop" },
+  { id: "septum_ring", label: "Septum Ring", price: 75 },
+  { id: "lip_ring", label: "Side Lip Ring", price: 75 },
+  { id: "eyebrow_piercing", label: "Eyebrow Barbell", price: 75 },
+  { id: "double_nostril", label: "Double Nose Studs", price: 100 },
+] as const satisfies readonly StyleOption[];
+
+export type PiercingStyle = (typeof PIERCINGS)[number]["id"];
+
+export const JEWELRY = [
+  { id: "none", label: "None" },
+  { id: "oversized_gold_hoops", label: "Oversized Gold Hoops" },
+  { id: "silver_bamboo_hoops", label: "Silver Bamboo Hoops" },
+  { id: "diamond_studs", label: "Diamond Studs" },
+  { id: "pearl_drops", label: "Pearl Drops" },
+  { id: "rhinestone_choker", label: "Tennis Choker", price: 90 },
+  { id: "layered_chains", label: "Layered Chains", price: 90 },
+  { id: "butterfly_choker", label: "Butterfly Choker", price: 110 },
+] as const satisfies readonly StyleOption[];
+
+export type JewelryStyle = (typeof JEWELRY)[number]["id"];
+
+/* -------------------------------------------------------------
+ * Bangs
+ * ------------------------------------------------------------- */
+export const BANGS_OPTIONS = [
+  { id: "none", label: "No Bangs" },
+  { id: "curtain_bangs", label: "Curtain Fringe" },
+  { id: "blunt_bangs", label: "Blunt Micro Bangs" },
+  { id: "wispy_tendrils", label: "Wispy Tendrils" },
+  { id: "baby_edges", label: "Swirled Baby Edges" },
+  { id: "side_sweep", label: "Side-Swept Fringe" },
+] as const satisfies readonly StyleOption[];
+
+export type BangsStyle = (typeof BANGS_OPTIONS)[number]["id"];
 
 /* -------------------------------------------------------------
  * Hair
@@ -178,13 +309,19 @@ export const HAIR_STYLE_OPTIONS = [
   { id: "high_pony", label: "Sleek High Pony" },
   { id: "butterfly_waves", label: "Butterfly Waves" },
   { id: "box_braids", label: "Beaded Box Braids" },
+  { id: "goddess_locs", label: "Goddess Faux Locs" },
+  { id: "fulani_braids", label: "Fulani Braids" },
+  { id: "afro_puff", label: "High Afro Puff" },
+  { id: "afro_halo", label: "Halo Cloud Afro" },
+  { id: "afro_puffs", label: "Twin Afro Puffs" },
   { id: "blunt_bob", label: "Glossy Blunt Bob" },
   { id: "space_buns", label: "Spiky Space Buns" },
   { id: "sleek_straight", label: "Sleek Straight" },
   { id: "big_curls", label: "Big Glam Curls" },
-  { id: "afro_puffs", label: "Afro Puffs" },
+  { id: "spiral_coils", label: "Spiral Ringlet Coils" },
   { id: "half_up", label: "Half-Up Flip" },
   { id: "pigtails", label: "Bubble Pigtails" },
+  { id: "topknot", label: "Topknot & Tendrils" },
   { id: "messy_bun", label: "Messy Claw-Clip Bun" },
   { id: "pixie_spikes", label: "Spiky Pixie" },
   { id: "side_swoop", label: "Side Swoop" },
@@ -309,7 +446,17 @@ export function findOption<T extends StyleOption>(
   return id === undefined ? undefined : options.find((o) => o.id === id);
 }
 
-export type SalonCategory = "eye" | "shadow" | "lip" | "iris" | "face" | "hair";
+export type SalonCategory =
+  | "eye"
+  | "shadow"
+  | "lip"
+  | "iris"
+  | "face"
+  | "hair"
+  | "piercing"
+  | "jewelry"
+  | "skin"
+  | "bangs";
 
 export const SALON_CATEGORY_OPTIONS: Readonly<
   Record<SalonCategory, readonly StyleOption[]>
@@ -320,6 +467,10 @@ export const SALON_CATEGORY_OPTIONS: Readonly<
   iris: EYE_COLORS,
   face: FACE_DETAILS,
   hair: HAIR_STYLE_OPTIONS,
+  piercing: PIERCINGS,
+  jewelry: JEWELRY,
+  skin: SKIN_TONE_OPTIONS,
+  bangs: BANGS_OPTIONS,
 };
 
 /**

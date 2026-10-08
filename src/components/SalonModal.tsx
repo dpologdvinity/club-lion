@@ -11,6 +11,7 @@ import {
 } from "../game";
 import { resolveHairStyle } from "../types/world.ts";
 import {
+  BANGS_OPTIONS,
   BLUSHES,
   EYE_COLORS,
   EYE_LOOKS,
@@ -19,13 +20,16 @@ import {
   HAIR_COLORS,
   HAIR_STREAKS,
   HAIR_STYLE_OPTIONS,
+  JEWELRY,
   LIP_COLORS,
+  PIERCINGS,
+  SKIN_TONE_OPTIONS,
   premiumId,
   type SalonCategory,
   type StyleOption,
 } from "../types/avatarOptions.ts";
 
-type Tab = "hair" | "makeup";
+type Tab = "hair" | "face" | "bling";
 
 type Swatch = StyleOption & { hex?: string; iris?: readonly string[] };
 
@@ -130,7 +134,7 @@ export function SalonModal({
   return (
     <Dialog
       title="Stella's Salon"
-      subtitle="Glam up your hair and makeup. Premium looks unlock with coins."
+      subtitle="Glam up your hair, makeup, piercings, and bling. Inclusive looks for everyone!"
       onClose={onClose}
       wide
     >
@@ -146,19 +150,27 @@ export function SalonModal({
               aria-pressed={tab === "hair"}
               onClick={() => setTab("hair")}
             >
-              Hair
+              Hair & Bangs
             </button>
             <button
               type="button"
-              className={tab === "makeup" ? "selected" : ""}
-              aria-pressed={tab === "makeup"}
-              onClick={() => setTab("makeup")}
+              className={tab === "face" ? "selected" : ""}
+              aria-pressed={tab === "face"}
+              onClick={() => setTab("face")}
             >
-              Makeup
+              Face & Makeup
+            </button>
+            <button
+              type="button"
+              className={tab === "bling" ? "selected" : ""}
+              aria-pressed={tab === "bling"}
+              onClick={() => setTab("bling")}
+            >
+              Bling & Piercings
             </button>
           </div>
 
-          {tab === "hair" ? (
+          {tab === "hair" && (
             <>
               {pills(
                 "Hairstyle",
@@ -166,6 +178,13 @@ export function SalonModal({
                 HAIR_STYLE_OPTIONS,
                 draft.hairId,
                 (hairId) => update({ hairId }),
+              )}
+              {pills(
+                "Bangs & Fringe",
+                "bangs",
+                BANGS_OPTIONS,
+                draft.bangsId ?? "none",
+                (bangsId) => update({ bangsId }),
               )}
               {swatches("Base color", null, HAIR_COLORS, hairColorId, (id) =>
                 update({
@@ -186,10 +205,23 @@ export function SalonModal({
                   }),
               )}
             </>
-          ) : (
+          )}
+
+          {tab === "face" && (
             <>
-              {pills("Eye look", "eye", EYE_LOOKS, draft.eyeStyle, (eyeStyle) =>
-                update({ eyeStyle }),
+              {swatches(
+                "Skin tone",
+                "skin",
+                SKIN_TONE_OPTIONS,
+                draft.skinTone,
+                (skinTone) => update({ skinTone }),
+              )}
+              {pills(
+                "Eye look & Eyeliner",
+                "eye",
+                EYE_LOOKS,
+                draft.eyeStyle,
+                (eyeStyle) => update({ eyeStyle }),
               )}
               {swatches(
                 "Eyeshadow",
@@ -205,18 +237,41 @@ export function SalonModal({
                 draft.eyeColorId,
                 (eyeColorId) => update({ eyeColorId }),
               )}
-              {swatches("Lips", "lip", LIP_COLORS, draft.lipId, (lipId) =>
-                update({ lipId }),
+              {swatches(
+                "Lips & Gloss",
+                "lip",
+                LIP_COLORS,
+                draft.lipId,
+                (lipId) => update({ lipId }),
               )}
               {swatches("Blush", null, BLUSHES, draft.blushId, (blushId) =>
                 update({ blushId }),
               )}
               {pills(
-                "Face sparkle",
+                "Freckles & Beauty Marks",
                 "face",
                 FACE_DETAILS,
                 draft.faceDetailId ?? "none",
                 (faceDetailId) => update({ faceDetailId }),
+              )}
+            </>
+          )}
+
+          {tab === "bling" && (
+            <>
+              {pills(
+                "Piercings",
+                "piercing",
+                PIERCINGS,
+                draft.piercingId ?? "none",
+                (piercingId) => update({ piercingId }),
+              )}
+              {pills(
+                "Jewelry & Earrings",
+                "jewelry",
+                JEWELRY,
+                draft.jewelryId ?? "oversized_gold_hoops",
+                (jewelryId) => update({ jewelryId }),
               )}
             </>
           )}

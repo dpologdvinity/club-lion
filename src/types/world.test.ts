@@ -83,8 +83,23 @@ test("validateAvatarLook rejects invalid or incomplete look objects", () => {
   const lookWithBoard: AvatarLook = {
     ...DEFAULT_AVATAR_LOOK,
     boardId: "hover_leaf",
+    bangsId: "curtain_bangs",
+    piercingId: "septum_ring",
+    jewelryId: "layered_chains",
   };
   assert.equal(validateAvatarLook(lookWithBoard), true);
+  assert.equal(
+    validateAvatarLook({ ...DEFAULT_AVATAR_LOOK, bangsId: 123 }),
+    false,
+  );
+  assert.equal(
+    validateAvatarLook({ ...DEFAULT_AVATAR_LOOK, piercingId: 456 }),
+    false,
+  );
+  assert.equal(
+    validateAvatarLook({ ...DEFAULT_AVATAR_LOOK, jewelryId: 789 }),
+    false,
+  );
 });
 
 test("PetState and WorldEntity schemas instantiate cleanly", () => {
