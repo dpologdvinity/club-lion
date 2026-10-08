@@ -5,6 +5,7 @@ import {
   ChevronDown,
   ChevronRight,
   CircleHelp,
+  Compass,
   Heart,
   PawPrint,
   Sun,
@@ -105,6 +106,7 @@ export default function App() {
   const [spawn, setSpawn] = useState<{ x: number; y: number } | undefined>();
   const [initialGame, setInitialGame] = useState<GameId | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [toast, setToast] = useState("");
   useEffect(() => {
     if (!toast) return;
@@ -276,6 +278,19 @@ export default function App() {
             />
             <AudioControls />
             <button
+              className={`icon-button sidebar-toggle ${sidebarOpen ? "is-active" : ""}`}
+              aria-label={
+                sidebarOpen
+                  ? "Hide adventures sidebar"
+                  : "Show adventures sidebar"
+              }
+              title="Adventures & Quests"
+              aria-expanded={sidebarOpen}
+              onClick={() => setSidebarOpen((prev) => !prev)}
+            >
+              <Compass size={21} />
+            </button>
+            <button
               className="icon-button help-button"
               aria-label="How to play"
               title="How to play"
@@ -353,15 +368,33 @@ export default function App() {
             onOpenRiverSurf={() => setPanel("river-surf")}
             onOpenPetCare={() => setPanel("pet-care")}
           />
-          <Sidebar
-            player={player}
-            onStyle={() => setPanel("style")}
-            onAdventure={adventure}
-            onClaim={(id) => {
-              setPlayer((p) => claimReward(p, id));
-              notify("Adventure complete! 50 happy little coins are yours.");
-            }}
-          />
+          <aside
+            className={`sidebar-drawer ${sidebarOpen ? "is-open" : "is-collapsed"}`}
+            aria-label="Adventures and profile"
+          >
+            <div className="sidebar-drawer-top">
+              <span className="sidebar-drawer-heading">
+                Adventures & Profile
+              </span>
+              <button
+                type="button"
+                className="icon-button sidebar-drawer-close"
+                aria-label="Close adventures sidebar"
+                onClick={() => setSidebarOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <Sidebar
+              player={player}
+              onStyle={() => setPanel("style")}
+              onAdventure={adventure}
+              onClaim={(id) => {
+                setPlayer((p) => claimReward(p, id));
+                notify("Adventure complete! 50 happy little coins are yours.");
+              }}
+            />
+          </aside>
         </div>
         <section className="destinations">
           <div className="section-heading">

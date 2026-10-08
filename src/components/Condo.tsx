@@ -14,6 +14,11 @@ import {
   type PlacedFurniture,
   type Orientation,
 } from "../utils/condoGrid.ts";
+import {
+  getPropInteraction,
+  playPropSound,
+  type PropType,
+} from "../utils/interactiveProps.ts";
 
 const ORIGIN_X = (GRID_SIZE * TILE_WIDTH) / 2;
 const ORIGIN_Y = 40;
@@ -57,6 +62,42 @@ export function Condo({
   const [activeFurnitureId, setActiveFurnitureId] = useState<string | null>(
     null,
   );
+  const [litLamps, setLitLamps] = useState<Record<string, boolean>>({});
+  const [interactionToast, setInteractionToast] = useState<{
+    id: string;
+    message: string;
+  } | null>(null);
+
+  function handleInteractFurniture(placed: PlacedFurniture) {
+    let propType: PropType = "table";
+    if (placed.itemId === "velvet-sofa") propType = "chair";
+    else if (placed.itemId === "pet-lion-cushion") propType = "bed";
+    else if (placed.itemId === "neon-lion-crest") propType = "lamp";
+    else if (placed.itemId === "baobab-bonsai") propType = "plant";
+    else if (placed.itemId === "grand-jukebox") propType = "arcade_cabinet";
+    else if (placed.itemId === "savanna-coffee-table") propType = "table";
+    else if (placed.itemId === "woven-rug") propType = "chair";
+
+    const isLit = !!litLamps[placed.id];
+    const result = getPropInteraction(propType, isLit);
+    playPropSound(result.sound);
+
+    if (propType === "lamp") {
+      setLitLamps((prev) => ({
+        ...prev,
+        [placed.id]: result.nextActiveState,
+      }));
+    }
+
+    setInteractionToast({ id: placed.id, message: result.message });
+  }
+
+  useEffect(() => {
+    if (!interactionToast) return;
+    const timer = window.setTimeout(() => setInteractionToast(null), 3000);
+    return () => window.clearTimeout(timer);
+  }, [interactionToast]);
+
   const sortedItems = useMemo(
     () =>
       [...items].sort(
@@ -233,27 +274,40 @@ export function Condo({
           return (
             <g
               key={placed.id}
-              className={`condo-furniture ${catalogItem?.isRug ? "is-rug" : ""}`}
+              className={`condo-furniture ${catalogItem?.isRug ? "is-rug" : ""} ${litLamps[placed.id] ? "is-lit" : ""}`}
               transform={`translate(${x}, ${y})`}
               role="button"
-              tabIndex={editMode ? 0 : -1}
+              tabIndex={0}
               aria-label={`${catalogItem?.name ?? placed.itemId}, facing ${placed.orientation}`}
-              onClick={() =>
-                editMode &&
-                setActiveFurnitureId((current) =>
-                  current === placed.id ? null : placed.id,
-                )
-              }
-              onKeyDown={(event) => {
-                if (!editMode) return;
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
+              onClick={() => {
+                if (editMode) {
                   setActiveFurnitureId((current) =>
                     current === placed.id ? null : placed.id,
                   );
+                } else {
+                  handleInteractFurniture(placed);
+                }
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  if (editMode) {
+                    setActiveFurnitureId((current) =>
+                      current === placed.id ? null : placed.id,
+                    );
+                  } else {
+                    handleInteractFurniture(placed);
+                  }
                 }
               }}
             >
+              {litLamps[placed.id] && (
+                <circle
+                  r={50}
+                  fill="rgba(255, 235, 120, 0.45)"
+                  className="lamp-aura-pulse"
+                />
+              )}
               <rect
                 x={-(width * TILE_WIDTH) / 4}
                 y={-(depth * TILE_HEIGHT) / 4}
@@ -262,6 +316,13 @@ export function Condo({
                 rx={6}
               />
               <title>{catalogItem?.name ?? placed.itemId}</title>
+              {interactionToast?.id === placed.id && !editMode && (
+                <foreignObject x={-80} y={-66} width={160} height={48}>
+                  <div className="condo-interaction-bubble" role="status">
+                    {interactionToast.message}
+                  </div>
+                </foreignObject>
+              )}
               {isActive && editMode && (
                 <foreignObject x={-40} y={-50} width={80} height={32}>
                   <div className="condo-furniture-controls">

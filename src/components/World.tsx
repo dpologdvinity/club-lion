@@ -48,6 +48,7 @@ import {
 } from "../utils/nauticalAudio.ts";
 import { SpyPinModal } from "./SpyPinModal.tsx";
 import type { TimeOfDay } from "../utils/environmentalLighting.ts";
+import { playPropSound } from "../utils/interactiveProps.ts";
 
 const BOARD_SPEED_MULTIPLIER = 1.5;
 const WALK_DURATION_MS = 850;
@@ -587,7 +588,39 @@ export function World({
             <button className="building-label shop-label" onClick={onShop}>
               <Shirt size={13} /> Paw & style <ArrowUpRight size={12} />
             </button>
+            <button
+              type="button"
+              className="room-interactive-prop square-fountain"
+              aria-label="Savanna fountain"
+              title="Plaza fountain"
+              style={{ left: "50%", top: "44%" }}
+              onClick={() => {
+                playPropSound("splash", sound ? undefined : null);
+                notify(
+                  "A sparkling splash of savanna sunshine from the fountain! ⛲✨",
+                );
+              }}
+            >
+              ⛲
+            </button>
           </>
+        )}
+        {place === "water" && (
+          <button
+            type="button"
+            className="room-interactive-prop water-ripples"
+            aria-label="Watering hole ripples"
+            title="Splash water"
+            style={{ left: "50%", top: "68%" }}
+            onClick={() => {
+              playPropSound("splash", sound ? undefined : null);
+              notify(
+                "Splash! Cool savanna water ripples gently under your paws! 💦",
+              );
+            }}
+          >
+            💧
+          </button>
         )}
         {place === "mt-mist" && (
           <button
@@ -598,9 +631,26 @@ export function World({
           </button>
         )}
         {place === "arcade" && (
-          <button className="room-action" onClick={onGame}>
-            <Gamepad2 size={19} /> Choose a game <ArrowUpRight size={17} />
-          </button>
+          <>
+            <button className="room-action" onClick={onGame}>
+              <Gamepad2 size={19} /> Choose a game <ArrowUpRight size={17} />
+            </button>
+            <button
+              type="button"
+              className="room-interactive-prop arcade-cabinet-prop"
+              aria-label="Retro arcade cabinet"
+              title="Retro arcade cabinet"
+              style={{ left: "30%", top: "42%" }}
+              onClick={() => {
+                playPropSound("chime", sound ? undefined : null);
+                notify(
+                  "BEEP BOOP! The retro arcade cabinet flashes with high scores! 🕹️",
+                );
+              }}
+            >
+              🕹️
+            </button>
+          </>
         )}
         {place === "den" && (
           <button className="room-action" onClick={onShop}>
@@ -608,12 +658,29 @@ export function World({
           </button>
         )}
         {place === "cafe" && (
-          <button
-            className="room-action"
-            onClick={() => onActivity("smoothie")}
-          >
-            <Coffee size={18} /> Blend smoothies
-          </button>
+          <>
+            <button
+              className="room-action"
+              onClick={() => onActivity("smoothie")}
+            >
+              <Coffee size={18} /> Blend smoothies
+            </button>
+            <button
+              type="button"
+              className="room-interactive-prop cafe-blender"
+              aria-label="Smoothie blender"
+              title="Whirl blender"
+              style={{ left: "75%", top: "45%" }}
+              onClick={() => {
+                playPropSound("blender", sound ? undefined : null);
+                notify(
+                  "Whirrrr! Fresh mango smoothie blends to creamy perfection! 🥭🥤",
+                );
+              }}
+            >
+              🍹
+            </button>
+          </>
         )}
         {place === "canyon-rapids" && (
           <button className="room-action" onClick={() => onOpenRiverSurf?.()}>
@@ -695,20 +762,51 @@ export function World({
           </>
         )}
         {player.decor.includes("plant") && place === "den" && (
-          <span
-            className="den-decoration plant-decor"
+          <button
+            type="button"
+            className="den-decoration plant-decor interactive-prop"
             aria-label="Your happy houseplant"
+            title="Rustle houseplant"
+            onClick={() => {
+              playPropSound("rustle", sound ? undefined : null);
+              notify(
+                "You gave the leafy houseplant a gentle pat. Leaves rustle happily! 🌿",
+              );
+            }}
           >
             🪴
-          </span>
+          </button>
         )}
         {player.decor.includes("cushion") && place === "den" && (
-          <span
-            className="den-decoration cushion-decor"
+          <button
+            type="button"
+            className="den-decoration cushion-decor interactive-prop"
             aria-label="Your sunny cushion"
+            title="Sit on cushion"
+            onClick={() => {
+              playPropSound("sit", sound ? undefined : null);
+              notify("You sank into the sunny cushion. Purr-fectly cozy! 🛋️✨");
+            }}
           >
             🛋️
-          </span>
+          </button>
+        )}
+        {place === "den" && (
+          <button
+            type="button"
+            className="room-interactive-prop den-fireplace"
+            aria-label="Cozy fireplace"
+            title="Warm paws by fireplace"
+            style={{ left: "50%", top: "42%" }}
+            onClick={() => {
+              playPropSound("crackle", sound ? undefined : null);
+              notify(
+                "Crackling savanna pine logs warm your paws! Ahh, toasty! 🔥",
+              );
+            }}
+          >
+            🔥
+          </button>
         )}
         {visibleNeighbors.map((n) => (
           <button
