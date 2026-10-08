@@ -38,22 +38,68 @@ export const SKIN_TONES: readonly SkinTone[] = [
   "deep",
 ] as const;
 
-export type EyeStyle = "sparkle" | "wink" | "sleepy" | "smirk";
+export type EyeStyle =
+  "winged_glam" | "smoky_cat" | "sparkle" | "wink" | "sleepy" | "smirk";
 
 export const EYE_STYLES: readonly EyeStyle[] = [
+  "winged_glam",
+  "smoky_cat",
   "sparkle",
   "wink",
   "sleepy",
   "smirk",
 ] as const;
 
+export type HairStyle =
+  | "blowout"
+  | "high_pony"
+  | "butterfly_waves"
+  | "box_braids"
+  | "blunt_bob"
+  | "space_buns";
+
+export const HAIR_STYLES: readonly HairStyle[] = [
+  "blowout",
+  "high_pony",
+  "butterfly_waves",
+  "box_braids",
+  "blunt_bob",
+  "space_buns",
+] as const;
+
+/** Hair IDs saved before the glam redesign, mapped to their closest new cut. */
+export const LEGACY_HAIR_STYLES: Readonly<Record<string, HairStyle>> = {
+  classic_shag: "blowout",
+  long_waves: "butterfly_waves",
+  beach_wave_bangs: "butterfly_waves",
+  spiky_blaze: "space_buns",
+  retro_bob: "blunt_bob",
+};
+
+/** Resolves any saved hair ID (current, legacy, or unknown) to a renderable style. */
+export function resolveHairStyle(hairId?: string): HairStyle {
+  if (hairId && (HAIR_STYLES as readonly string[]).includes(hairId)) {
+    return hairId as HairStyle;
+  }
+  return (hairId && LEGACY_HAIR_STYLES[hairId]) || "blowout";
+}
+
+export type OutfitStyle =
+  | "denim_jacket"
+  | "striped_tee"
+  | "cargo_pants"
+  | "barista_apron"
+  | "cropped_puffer";
+
+export type ShoeStyle = "canvas_sneakers" | "platform_boots";
+
 export type AvatarLook = {
   skinTone: SkinTone | string;
   eyeStyle: EyeStyle | string;
-  hairId: string;
+  hairId: HairStyle | string;
   hairColor: string;
-  outfitId: string;
-  shoesId: string;
+  outfitId: OutfitStyle | string;
+  shoesId: ShoeStyle | string;
   headwearId?: string;
   eyewearId?: string;
   boardId?: string;
@@ -62,8 +108,8 @@ export type AvatarLook = {
 
 export const DEFAULT_AVATAR_LOOK: AvatarLook = {
   skinTone: "warm",
-  eyeStyle: "sparkle",
-  hairId: "classic_shag",
+  eyeStyle: "winged_glam",
+  hairId: "blowout",
   hairColor: "#4a3728",
   outfitId: "denim_jacket",
   shoesId: "canvas_sneakers",
@@ -156,24 +202,24 @@ export const CATALOG_ITEMS: readonly CatalogItem[] = [
   // Standard catalog items
   {
     id: "classic_shag",
-    name: "Classic Shag",
+    name: "Y2K Blowout",
     price: 100,
     slot: "hair_front",
-    description: "Effortless messy layers.",
+    description: "Big glossy volume with flipped ends.",
   },
   {
     id: "long_waves",
-    name: "Long Waves",
+    name: "Butterfly Waves",
     price: 140,
     slot: "hair_back",
-    description: "Flowing savanna breeze waves.",
+    description: "Middle-part waves pinned with butterfly clips.",
   },
   {
     id: "spiky_blaze",
-    name: "Spiky Blaze",
+    name: "Spiky Space Buns",
     price: 120,
     slot: "hair_front",
-    description: "Sharp anime-styled spikes.",
+    description: "Twin buns with flyaway spikes and frosted pieces.",
   },
   {
     id: "explorer_fedora",
@@ -187,35 +233,35 @@ export const CATALOG_ITEMS: readonly CatalogItem[] = [
     name: "Sunshine Shades",
     price: 110,
     slot: "eyewear",
-    description: "Block the rays with effortless cool.",
+    description: "Oversized pink-tinted shades with gold rims.",
   },
   {
     id: "striped_tee",
     name: "Striped Tee",
     price: 80,
     slot: "top_inner",
-    description: "A comfortable nautical stripe.",
+    description: "Cropped baby tee with a pleated lilac mini.",
   },
   {
     id: "denim_jacket",
     name: "Denim Jacket",
     price: 160,
     slot: "top_outer",
-    description: "Classic blue jean wash with bronze buttons.",
+    description: "Cropped light-wash jacket, crop tank, and flares.",
   },
   {
     id: "cargo_pants",
     name: "Cargo Pants",
     price: 130,
     slot: "bottom",
-    description: "Pockets for every savanna discovery.",
+    description: "Low-rise cargos with a halter crop and chain belt.",
   },
   {
     id: "canvas_sneakers",
-    name: "Canvas Sneakers",
+    name: "Platform Sneakers",
     price: 95,
     slot: "shoes",
-    description: "Low-profile lightweight everyday kicks.",
+    description: "Chunky white platforms with bubblegum trim.",
   },
   {
     id: "hover_leaf",
@@ -230,6 +276,20 @@ export const CATALOG_ITEMS: readonly CatalogItem[] = [
     price: 50,
     slot: "handheld",
     description: "Chilled tropical goodness in a cup.",
+  },
+  {
+    id: "cropped_puffer",
+    name: "Cropped Puffer",
+    price: 220,
+    slot: "top_outer",
+    description: "Bubblegum puffer with faux-fur trim and flares.",
+  },
+  {
+    id: "platform_boots",
+    name: "Platform Boots",
+    price: 180,
+    slot: "shoes",
+    description: "Glossy patent boots with chunky snap-on soles.",
   },
   // Secret catalog items
   {

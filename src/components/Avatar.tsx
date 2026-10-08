@@ -10,8 +10,8 @@ export interface AvatarProps extends React.SVGProps<SVGSVGElement> {
 }
 
 /**
- * Renders a crisp vector chibi avatar paper-doll SVG with layered clothing,
- * anime face expressions, hairstyles, accessories, and action animations.
+ * Renders a vector Y2K fashion-doll avatar SVG with layered clothing,
+ * glam makeup looks, hairstyles, accessories, and action animations.
  *
  * Canvas coordinates: universal 120×160 coordinate space.
  */
@@ -31,9 +31,11 @@ export function Avatar({
       ? Math.round((Number(size) * 160) / 120)
       : (height ?? 160);
 
+  // Gradient and clip IDs must be unique per instance on the page
+  const idPrefix = `av${React.useId()}`;
   const innerLayers = React.useMemo(() => {
-    return generateAvatarLayersString(look, action);
-  }, [look, action]);
+    return generateAvatarLayersString(look, action, idPrefix);
+  }, [look, action, idPrefix]);
 
   return (
     <svg

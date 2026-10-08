@@ -1,5 +1,9 @@
 import type { Player, PlayerV2 } from "../game.ts";
-import { CATALOG_ITEMS, DEFAULT_AVATAR_LOOK } from "../types/world.ts";
+import {
+  CATALOG_ITEMS,
+  DEFAULT_AVATAR_LOOK,
+  resolveHairStyle,
+} from "../types/world.ts";
 
 export type StampCategory =
   | "world_secrets"
@@ -328,7 +332,10 @@ export function evaluateStampUnlocks(player: Player | PlayerV2): string[] {
     catalog_pirate: player.owned.includes("eyepatch_cutlass"),
     secret_den: player.visited.includes("den"),
     salon_makeover:
-      !!look && (look.hairId !== DEFAULT_AVATAR_LOOK.hairId || customHairColor),
+      !!look &&
+      (resolveHairStyle(look.hairId) !==
+        resolveHairStyle(DEFAULT_AVATAR_LOOK.hairId) ||
+        customHairColor),
     board_equipped: !!look?.boardId,
     wardrobe_five: wardrobeSize >= 5,
     wardrobe_ten: wardrobeSize >= 10,

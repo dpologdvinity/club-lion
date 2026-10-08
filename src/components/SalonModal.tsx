@@ -2,13 +2,15 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import { Dialog } from "./Dialog";
 import type { AvatarLook } from "../game";
+import { resolveHairStyle } from "../types/world.ts";
 
 const HAIR_STYLES = [
-  { id: "classic_shag", label: "Classic Shag" },
-  { id: "long_waves", label: "Long Waves" },
-  { id: "spiky_blaze", label: "Spiky Blaze" },
-  { id: "beach_wave_bangs", label: "Beach Wave Bangs" },
-  { id: "retro_bob", label: "Retro Bob" },
+  { id: "blowout", label: "Y2K Blowout" },
+  { id: "high_pony", label: "Sleek High Pony" },
+  { id: "butterfly_waves", label: "Butterfly Waves" },
+  { id: "box_braids", label: "Beaded Box Braids" },
+  { id: "blunt_bob", label: "Glossy Blunt Bob" },
+  { id: "space_buns", label: "Spiky Space Buns" },
 ];
 
 const HAIR_COLORS = [
@@ -35,7 +37,7 @@ export function SalonModal({
   onClose: () => void;
   onSave: (hairId: string, hairColor: string, streakDye: string) => void;
 }) {
-  const [hairId, setHairId] = useState(look.hairId);
+  const [hairId, setHairId] = useState<string>(resolveHairStyle(look.hairId));
   const [hairColor, setHairColor] = useState(
     HAIR_COLORS.find((c) => c.hex === look.hairColor)?.id ?? "espresso",
   );

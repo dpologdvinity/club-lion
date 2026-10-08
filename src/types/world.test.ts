@@ -7,6 +7,9 @@ import {
   EQUIP_SLOTS,
   isValidEquipSlot,
   DEFAULT_PET_STATE,
+  EYE_STYLES,
+  HAIR_STYLES,
+  resolveHairStyle,
   type AvatarLook,
   type EquipSlot,
   type PetState,
@@ -141,4 +144,33 @@ test("RoomManifest structure matches declarative room specifications", () => {
   };
   assert.equal(manifest.district, "downtown");
   assert.equal(manifest.stageWidth, 2400);
+});
+
+test("resolveHairStyle maps current, legacy, and unknown hair IDs", () => {
+  for (const style of HAIR_STYLES) {
+    assert.equal(resolveHairStyle(style), style);
+  }
+  assert.equal(resolveHairStyle("classic_shag"), "blowout");
+  assert.equal(resolveHairStyle("long_waves"), "butterfly_waves");
+  assert.equal(resolveHairStyle("beach_wave_bangs"), "butterfly_waves");
+  assert.equal(resolveHairStyle("spiky_blaze"), "space_buns");
+  assert.equal(resolveHairStyle("retro_bob"), "blunt_bob");
+  assert.equal(resolveHairStyle("mohawk_supreme"), "blowout");
+  assert.equal(resolveHairStyle(""), "blowout");
+  assert.equal(resolveHairStyle(undefined), "blowout");
+});
+
+test("DEFAULT_AVATAR_LOOK uses the glam eye style and blowout hair", () => {
+  assert.equal(DEFAULT_AVATAR_LOOK.eyeStyle, "winged_glam");
+  assert.equal(DEFAULT_AVATAR_LOOK.hairId, "blowout");
+  assert.ok((EYE_STYLES as readonly string[]).includes("winged_glam"));
+  assert.ok((HAIR_STYLES as readonly string[]).includes("blowout"));
+});
+
+test("CATALOG_ITEMS sells the cropped puffer and platform boots", () => {
+  const puffer = CATALOG_ITEMS.find((i) => i.id === "cropped_puffer");
+  const boots = CATALOG_ITEMS.find((i) => i.id === "platform_boots");
+  assert.equal(puffer?.slot, "top_outer");
+  assert.equal(boots?.slot, "shoes");
+  assert.ok(!puffer?.isSecret && !boots?.isSecret);
 });

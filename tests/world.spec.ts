@@ -707,7 +707,7 @@ test("Phase 1 Stella's salon allows styling hair, colors, and streak highlights"
     page.getByRole("dialog", { name: "Stella's Salon" }),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "Beach Wave Bangs" }).click();
+  await page.getByRole("button", { name: "Butterfly Waves" }).click();
   await page.getByRole("button", { name: "Rose Pink" }).click();
   await page.getByRole("button", { name: "Neon Blue" }).click();
   await page.getByRole("button", { name: "Confirm new look" }).click();
