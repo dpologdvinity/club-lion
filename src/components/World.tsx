@@ -13,11 +13,13 @@ import {
   Home,
   Map,
   MapPin,
+  Music,
   PawPrint,
   Send,
   Shirt,
   Smile,
   Sparkles,
+  Trophy,
   Volume2,
   VolumeX,
   Waves,
@@ -81,6 +83,8 @@ type WorldProps = {
   onUnlockStamp?: (stampId: string) => void;
   onOpenRiverSurf?: () => void;
   onOpenPetCare?: () => void;
+  onOpenLeaderboard?: () => void;
+  onOpenRooftop?: () => void;
   timeOfDay?: TimeOfDay;
 };
 
@@ -104,6 +108,8 @@ export function World({
   onUnlockStamp,
   onOpenRiverSurf,
   onOpenPetCare,
+  onOpenLeaderboard,
+  onOpenRooftop,
   timeOfDay = "day",
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
@@ -636,6 +642,13 @@ export function World({
               <Gamepad2 size={19} /> Choose a game <ArrowUpRight size={17} />
             </button>
             <button
+              className="room-action"
+              onClick={onOpenLeaderboard}
+              style={{ top: "80px" }}
+            >
+              <Trophy size={18} /> Arcade Leaderboard
+            </button>
+            <button
               type="button"
               className="room-interactive-prop arcade-cabinet-prop"
               aria-label="Retro arcade cabinet"
@@ -643,9 +656,13 @@ export function World({
               style={{ left: "30%", top: "42%" }}
               onClick={() => {
                 playPropSound("chime", sound ? undefined : null);
-                notify(
-                  "BEEP BOOP! The retro arcade cabinet flashes with high scores! 🕹️",
-                );
+                if (onOpenLeaderboard) {
+                  onOpenLeaderboard();
+                } else {
+                  notify(
+                    "BEEP BOOP! The retro arcade cabinet flashes with high scores! 🕹️",
+                  );
+                }
               }}
             >
               🕹️
@@ -698,6 +715,13 @@ export function World({
               style={{ top: "80px" }}
             >
               <Sparkles size={18} /> Grand Jukebox
+            </button>
+            <button
+              className="room-action"
+              onClick={onOpenRooftop}
+              style={{ top: "140px" }}
+            >
+              <Music size={18} /> Skydeck VIP Lounge
             </button>
           </>
         )}

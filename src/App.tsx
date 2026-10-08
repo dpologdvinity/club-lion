@@ -64,6 +64,8 @@ import { ServerListModal } from "./components/ServerListModal";
 import { LOCAL_PLAYER_ID, useCustomServers } from "./useCustomServers";
 import { PetCareModal } from "./components/PetCareModal";
 import { performPetCare } from "./utils/petCare";
+import { LeaderboardModal } from "./components/LeaderboardModal";
+import { RooftopLounge } from "./components/RooftopLounge";
 
 type Panel =
   | "map"
@@ -84,6 +86,8 @@ type Panel =
   | "river-surf"
   | "servers"
   | "pet-care"
+  | "leaderboard"
+  | "rooftop"
   | null;
 
 export default function App() {
@@ -260,6 +264,18 @@ export default function App() {
               Jukebox
             </button>
             <button
+              className={panel === "leaderboard" ? "selected" : ""}
+              onClick={() => setPanel("leaderboard")}
+            >
+              Leaderboard
+            </button>
+            <button
+              className={panel === "rooftop" ? "selected" : ""}
+              onClick={() => setPanel("rooftop")}
+            >
+              VIP Lounge
+            </button>
+            <button
               className={panel === "account" ? "selected" : ""}
               onClick={() => setPanel("account")}
             >
@@ -367,6 +383,8 @@ export default function App() {
             }
             onOpenRiverSurf={() => setPanel("river-surf")}
             onOpenPetCare={() => setPanel("pet-care")}
+            onOpenLeaderboard={() => setPanel("leaderboard")}
+            onOpenRooftop={() => setPanel("rooftop")}
           />
           <aside
             className={`sidebar-drawer ${sidebarOpen ? "is-open" : "is-collapsed"}`}
@@ -655,6 +673,10 @@ export default function App() {
           onClose={closePanel}
         />
       )}
+      {panel === "leaderboard" && (
+        <LeaderboardModal player={player} onClose={closePanel} />
+      )}
+      {panel === "rooftop" && <RooftopLounge onClose={closePanel} />}
       {panel &&
         panel !== "card" &&
         panel !== "catalog" &&
@@ -667,7 +689,9 @@ export default function App() {
         panel !== "account" &&
         panel !== "servers" &&
         panel !== "river-surf" &&
-        panel !== "pet-care" && (
+        panel !== "pet-care" &&
+        panel !== "leaderboard" &&
+        panel !== "rooftop" && (
           <Dialog
             title={titles[panel][0]}
             subtitle={titles[panel][1]}
