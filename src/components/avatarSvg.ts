@@ -1,50 +1,45 @@
-import type {
-  AvatarLook,
-  SkinTone,
-  EyeStyle,
-  EntityAction,
-} from "../types/world.ts";
+import type { AvatarLook, EntityAction } from "../types/world.ts";
 import { DEFAULT_AVATAR_LOOK } from "../types/world.ts";
+import {
+  MIRROR,
+  RIGHT_ARM_DOWN,
+  RIGHT_ARM_WAVE,
+  LEFT_ARM_HIP,
+  armMarkup,
+  n,
+  resolveSkinTone,
+  rightArmFor,
+  sleeve,
+} from "./avatar/shared.ts";
+import { makeupDefs, renderLayer3GlamFace } from "./avatar/makeup.ts";
+import {
+  hairDefs,
+  renderLayer1HairBack,
+  renderLayer6HairFront,
+} from "./avatar/hair.ts";
+import {
+  renderLayer4Footwear,
+  renderLayer5Outfit,
+  sleeveSpecFor,
+} from "./avatar/clothes.ts";
 
-export const SKIN_TONE_COLORS: Record<SkinTone, string> = {
-  fair: "#ffe3d1",
-  tan: "#dfa77b",
-  warm: "#e8b082",
-  espresso: "#784421",
-  bronze: "#ab7143",
-  deep: "#5c3826",
-};
+export { SKIN_TONE_COLORS, ANCHORS, resolveSkinTone } from "./avatar/shared.ts";
 
-export const ANCHORS = {
-  HeadCenter: { x: 60, y: 38 },
-  Neck: { x: 60, y: 68 },
-  Waist: { x: 60, y: 98 },
-  HandRight: { x: 32, y: 92 },
-  HandLeft: { x: 88, y: 92 },
-  Feet: { x: 60, y: 142 },
-} as const;
-
-export function resolveSkinTone(tone?: string): string {
-  if (!tone) return SKIN_TONE_COLORS.warm;
-  if (tone in SKIN_TONE_COLORS) {
-    return SKIN_TONE_COLORS[tone as SkinTone];
+/* -------------------------------------------------------------
+ * Shared gradients & clip paths (IDs are prefixed per avatar)
+ * ------------------------------------------------------------- */
+function hashLook(look: AvatarLook): string {
+  const source = JSON.stringify(look);
+  let hash = 5381;
+  for (let i = 0; i < source.length; i++) {
+    hash = ((hash << 5) + hash + source.charCodeAt(i)) >>> 0;
   }
-  if (tone.startsWith("#") || tone.startsWith("rgb")) {
-    return tone;
-  }
-  return SKIN_TONE_COLORS.warm;
+  return hash.toString(36);
 }
 
-/**
- * Escapes characters for safe inclusion in SVG attributes/text.
- */
-function escapeXml(unsafe: string): string {
-  return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
+function sanitizeIdPrefix(prefix: string): string {
+  const clean = prefix.replace(/[^A-Za-z0-9_-]/g, "");
+  return /^[A-Za-z]/.test(clean) ? clean : `av${clean}`;
 }
 
 /* -------------------------------------------------------------
@@ -56,7 +51,7 @@ function renderLayer0ShadowAndBoard(look: AvatarLook, action: string): string {
   // Ground shadow
   parts.push(
     `<g class="avatar-shadow">` +
-      `<ellipse cx="60" cy="148" rx="28" ry="7" fill="rgba(41, 75, 60, 0.2)" />` +
+      `<ellipse cx="60" cy="147" rx="24" ry="5.5" fill="rgba(41, 75, 60, 0.22)" />` +
       `</g>`,
   );
 
@@ -106,360 +101,69 @@ function renderLayer0ShadowAndBoard(look: AvatarLook, action: string): string {
 }
 
 /* -------------------------------------------------------------
- * Layer 1: Hair Back
- * ------------------------------------------------------------- */
-function renderLayer1HairBack(look: AvatarLook): string {
-  const hairColor = escapeXml(look.hairColor || "#4a3728");
-  const hairId = look.hairId || "classic_shag";
-
-  if (hairId === "long_waves") {
-    return (
-      `<g class="avatar-hair-back hair-long-waves">` +
-      // Lush long flowing hair behind head and shoulders down past waist
-      `<path d="M34 38 C24 55 22 80 25 106 C28 114 36 112 40 102 C44 92 42 76 45 68 ` +
-      `L75 68 C78 76 76 92 80 102 C84 112 92 114 95 106 C98 80 96 55 86 38 Z" ` +
-      `fill="${hairColor}" />` +
-      `<path d="M26 95 Q32 108 38 98" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" fill="none" />` +
-      `<path d="M82 98 Q88 108 94 95" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" fill="none" />` +
-      `</g>`
-    );
-  }
-
-  if (hairId === "spiky_blaze") {
-    return (
-      `<g class="avatar-hair-back hair-spiky-blaze">` +
-      `<path d="M30 38 L22 28 L32 30 L36 18 L46 25 L60 14 L74 25 L84 18 L88 30 L98 28 L90 38 Z" ` +
-      `fill="${hairColor}" />` +
-      `</g>`
-    );
-  }
-
-  // classic_shag and default back tufts
-  return (
-    `<g class="avatar-hair-back hair-classic-shag">` +
-    `<path d="M32 36 C28 46 26 58 32 66 C36 71 42 68 45 62 L75 62 C78 68 84 71 88 66 C94 58 92 46 88 36 Z" ` +
-    `fill="${hairColor}" />` +
-    `</g>`
-  );
-}
-
-/* -------------------------------------------------------------
  * Layer 2: Body Base (Skin tones, head, neck, torso, arms, legs)
  * ------------------------------------------------------------- */
+const HEAD_PATH =
+  "M60 13 C76.4 13 86.4 23 86.2 38.4 C86 46.4 83.6 52 79.2 57 C74 62.6 66.4 67.2 60 67.2 C53.6 67.2 46 62.6 40.8 57 C36.4 52 34 46.4 33.8 38.4 C33.6 23 43.6 13 60 13 Z";
+
+const LEG_PATH =
+  "M49.4 99 L59 99 C59.2 108 58.2 118 56.6 131 L51.8 131 C50.8 118 49.2 108 49.4 99 Z";
+
 function renderLayer2BodyBase(look: AvatarLook, action: string): string {
   const skin = resolveSkinTone(look.skinTone);
   const isWaving = action === "wave";
-  const isSitting = action === "sit";
-
-  const legYOffset = isSitting ? -6 : 0;
-  const legRightX = isSitting ? 70 : 66;
-  const legLeftX = isSitting ? 50 : 54;
+  const contour = "rgba(110, 50, 30, 0.16)";
 
   return (
     `<g class="avatar-body">` +
-    // Legs / Base feet skin
+    // Long slender legs
     `<g class="avatar-legs">` +
-    `<rect x="${legLeftX - 4}" y="${102 + legYOffset}" width="8" height="${36 - legYOffset}" rx="4" fill="${skin}" />` +
-    `<rect x="${legRightX - 4}" y="${102 + legYOffset}" width="8" height="${36 - legYOffset}" rx="4" fill="${skin}" />` +
+    `<path d="${LEG_PATH}" fill="${skin}" />` +
+    `<path d="${LEG_PATH}" ${MIRROR} fill="${skin}" />` +
+    `<path d="M52.4 116 Q54 117 55.8 116" stroke="${contour}" stroke-width="0.6" fill="none" />` +
+    `<path d="M64.2 116 Q66 117 67.6 116" stroke="${contour}" stroke-width="0.6" fill="none" />` +
     `</g>` +
-    // Torso base
-    `<path d="M46 72 Q60 70 74 72 L71 104 Q60 106 49 104 Z" fill="${skin}" />` +
-    // Left Arm (player's left, viewer's right)
+    // Slim torso with defined waist
+    `<path d="M48 72.4 C52 70.6 68 70.6 72 72.4 C73.2 78 70.8 84 67.8 91 C68.2 95 70.6 98.6 70.8 102 L49.2 102 C49.4 98.6 51.8 95 52.2 91 C49.2 84 46.8 78 48 72.4 Z" fill="${skin}" />` +
+    `<path d="M57.6 96.4 Q60 97.4 62.4 96.4" stroke="${contour}" stroke-width="0.5" fill="none" />` +
+    // Left arm, hand on hip (player's left, viewer's right)
     `<g class="avatar-left-arm">` +
-    `<path d="M72 73 Q85 82 86 92" stroke="${skin}" stroke-width="7" stroke-linecap="round" fill="none" />` +
-    `<circle cx="87" cy="93" r="4.5" fill="${skin}" />` +
+    armMarkup(LEFT_ARM_HIP, skin) +
     `</g>` +
-    // Right Arm (player's right, viewer's left: Anchor_HandRight is 32, 92)
-    `<g class="avatar-right-arm ${isWaving ? "arm-wave" : ""}">` +
+    // Right arm (player's right, viewer's left)
     (isWaving
-      ? // Arm waving up near head
-        `<path d="M48 73 Q36 60 32 48" stroke="${skin}" stroke-width="7" stroke-linecap="round" fill="none" />` +
-        `<circle cx="31" cy="46" r="4.5" fill="${skin}" />`
-      : // Normal arm at side
-        `<path d="M48 73 Q35 82 34 92" stroke="${skin}" stroke-width="7" stroke-linecap="round" fill="none" />` +
-        `<circle cx="33" cy="93" r="4.5" fill="${skin}" />`) +
+      ? ""
+      : `<g class="avatar-right-arm">${armMarkup(RIGHT_ARM_DOWN, skin)}</g>`) +
+    // Graceful neck with chin shadow
+    `<path d="M56.6 58 L63.4 58 L63.8 73 L56.2 73 Z" fill="${skin}" />` +
+    `<path d="M56.4 63.4 Q60 68.6 63.6 63.4 L63.7 67.6 Q60 70.4 56.3 67.6 Z" fill="${contour}" />` +
+    `<path d="M53.4 73.4 Q56 74.6 58.2 74" stroke="${contour}" stroke-width="0.5" fill="none" />` +
+    `<path d="M66.6 73.4 Q64 74.6 61.8 74" stroke="${contour}" stroke-width="0.5" fill="none" />` +
+    // Ears with gold hoops
+    `<ellipse cx="34.6" cy="45" rx="3" ry="4.4" fill="${skin}" />` +
+    `<ellipse cx="85.4" cy="45" rx="3" ry="4.4" fill="${skin}" />` +
+    `<circle class="avatar-hoop" cx="34.4" cy="53" r="3.6" stroke="#f4c542" stroke-width="0.9" fill="none" />` +
+    `<circle class="avatar-hoop" cx="85.6" cy="53" r="3.6" stroke="#f4c542" stroke-width="0.9" fill="none" />` +
+    // Sculpted head: wide cheekbones tapering to a graceful chin
+    `<path d="${HEAD_PATH}" fill="${skin}" />` +
+    `</g>`
+  );
+}
+
+/* -------------------------------------------------------------
+ * Layer 6b: Raised waving arm, drawn over the hair so the hand shows
+ * ------------------------------------------------------------- */
+function renderRaisedArm(look: AvatarLook, action: string): string {
+  if (action !== "wave") return "";
+  const spec = sleeveSpecFor(look);
+  return (
+    `<g class="avatar-raised-arm">` +
+    `<g class="avatar-right-arm arm-wave">` +
+    armMarkup(RIGHT_ARM_WAVE, resolveSkinTone(look.skinTone)) +
     `</g>` +
-    // Neck
-    `<rect x="56" y="60" width="8" height="12" rx="3" fill="${skin}" />` +
-    // Ears
-    `<circle cx="33" cy="42" r="5" fill="${skin}" />` +
-    `<circle cx="33" cy="42" r="3" fill="rgba(0,0,0,0.06)" />` +
-    `<circle cx="87" cy="42" r="5" fill="${skin}" />` +
-    `<circle cx="87" cy="42" r="3" fill="rgba(0,0,0,0.06)" />` +
-    // Chibi Head Base (Anchor_HeadCenter is 60, 38)
-    `<path d="M35 40 C33 22 45 16 60 16 C75 16 87 22 85 40 C85 54 75 66 60 66 C45 66 35 54 35 40 Z" fill="${skin}" />` +
-    // Cute Anime Cheek Blush
-    `<ellipse cx="43" cy="48" rx="4.5" ry="2.5" fill="#ff6b81" opacity="0.4" />` +
-    `<ellipse cx="77" cy="48" rx="4.5" ry="2.5" fill="#ff6b81" opacity="0.4" />` +
-    `</g>`
-  );
-}
-
-/* -------------------------------------------------------------
- * Layer 3: Expressive Anime Face (Eyes, eyebrows, mouth)
- * ------------------------------------------------------------- */
-function renderLayer3AnimeFace(look: AvatarLook): string {
-  const eyeStyle = (look.eyeStyle || "sparkle") as EyeStyle;
-
-  let eyesMarkup = "";
-  let eyebrowsMarkup = "";
-  let mouthMarkup = "";
-
-  if (eyeStyle === "wink") {
-    // Left eye open sparkle, right eye winking
-    eyesMarkup =
-      `<g class="avatar-eyes eye-wink">` +
-      // Left Eye (open anime sparkle)
-      `<ellipse cx="48" cy="42" rx="5.5" ry="7" fill="#1b263b" />` +
-      `<circle cx="46.5" cy="39" r="2.2" fill="#ffffff" />` +
-      `<circle cx="49.5" cy="44.5" r="1.1" fill="#ffffff" />` +
-      `<path d="M42 36 Q48 33 54 37" stroke="#0f172a" stroke-width="2" stroke-linecap="round" fill="none" />` +
-      // Right Eye (winking cute arc)
-      `<path d="M66 42 Q72 47 78 41" stroke="#0f172a" stroke-width="2.6" stroke-linecap="round" fill="none" />` +
-      `<path d="M78 41 L80 43" stroke="#0f172a" stroke-width="2" stroke-linecap="round" />` +
-      `</g>`;
-    eyebrowsMarkup =
-      `<path d="M43 32 Q48 30 53 33" stroke="#2c3e50" stroke-width="1.6" stroke-linecap="round" fill="none" />` +
-      `<path d="M67 33 Q72 31 77 34" stroke="#2c3e50" stroke-width="1.6" stroke-linecap="round" fill="none" />`;
-    mouthMarkup = `<path d="M57 54 Q60 58 63 54" stroke="#d63031" stroke-width="1.8" stroke-linecap="round" fill="none" />`;
-  } else if (eyeStyle === "sleepy") {
-    // Relaxed, sleepy droopy lids
-    eyesMarkup =
-      `<g class="avatar-eyes eye-sleepy">` +
-      `<path d="M42 43 Q48 40 54 44" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" fill="none" />` +
-      `<path d="M44 44 Q48 47 52 44" stroke="#2c3e50" stroke-width="1.2" fill="#2c3e50" />` +
-      `<path d="M66 43 Q72 40 78 44" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" fill="none" />` +
-      `<path d="M68 44 Q72 47 76 44" stroke="#2c3e50" stroke-width="1.2" fill="#2c3e50" />` +
-      `</g>`;
-    eyebrowsMarkup =
-      `<path d="M43 34 Q48 35 53 36" stroke="#2c3e50" stroke-width="1.5" stroke-linecap="round" fill="none" />` +
-      `<path d="M67 36 Q72 35 77 34" stroke="#2c3e50" stroke-width="1.5" stroke-linecap="round" fill="none" />`;
-    mouthMarkup = `<ellipse cx="60" cy="54" rx="2" ry="1.5" fill="#e17055" />`;
-  } else if (eyeStyle === "smirk") {
-    // Confident, half-lidded smirk
-    eyesMarkup =
-      `<g class="avatar-eyes eye-smirk">` +
-      `<path d="M43 38 Q48 35 53 39" stroke="#0f172a" stroke-width="2.4" stroke-linecap="round" fill="none" />` +
-      `<ellipse cx="48" cy="41" rx="4.5" ry="4.5" fill="#1b263b" />` +
-      `<circle cx="47" cy="39" r="1.5" fill="#ffffff" />` +
-      `<path d="M67 39 Q72 35 77 38" stroke="#0f172a" stroke-width="2.4" stroke-linecap="round" fill="none" />` +
-      `<ellipse cx="72" cy="41" rx="4.5" ry="4.5" fill="#1b263b" />` +
-      `<circle cx="71" cy="39" r="1.5" fill="#ffffff" />` +
-      `</g>`;
-    eyebrowsMarkup =
-      `<path d="M43 30 Q48 29 53 33" stroke="#2c3e50" stroke-width="1.8" stroke-linecap="round" fill="none" />` +
-      `<path d="M67 33 Q72 29 77 30" stroke="#2c3e50" stroke-width="1.8" stroke-linecap="round" fill="none" />`;
-    mouthMarkup = `<path d="M57 53 Q62 55 64 51" stroke="#d63031" stroke-width="1.8" stroke-linecap="round" fill="none" />`;
-  } else {
-    // Default: "sparkle" - Classic Fantage big glossy anime eyes
-    eyesMarkup =
-      `<g class="avatar-eyes eye-sparkle">` +
-      // Left eye
-      `<ellipse cx="48" cy="42" rx="5.8" ry="7.2" fill="#1b263b" />` +
-      `<circle cx="46" cy="39" r="2.4" fill="#ffffff" />` +
-      `<circle cx="50" cy="44.5" r="1.2" fill="#ffffff" />` +
-      `<path d="M42 36 Q48 33 54 37" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round" fill="none" />` +
-      // Right eye
-      `<ellipse cx="72" cy="42" rx="5.8" ry="7.2" fill="#1b263b" />` +
-      `<circle cx="70" cy="39" r="2.4" fill="#ffffff" />` +
-      `<circle cx="74" cy="44.5" r="1.2" fill="#ffffff" />` +
-      `<path d="M66 37 Q72 33 78 36" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round" fill="none" />` +
-      `</g>`;
-    eyebrowsMarkup =
-      `<path d="M43 31 Q48 29 53 32" stroke="#2c3e50" stroke-width="1.6" stroke-linecap="round" fill="none" />` +
-      `<path d="M67 32 Q72 29 77 31" stroke="#2c3e50" stroke-width="1.6" stroke-linecap="round" fill="none" />`;
-    mouthMarkup = `<path d="M57 53 Q60 57 63 53" stroke="#d63031" stroke-width="1.8" stroke-linecap="round" fill="none" />`;
-  }
-
-  return (
-    `<g class="avatar-face">` +
-    eyebrowsMarkup +
-    eyesMarkup +
-    // Delicate anime nose dot
-    `<circle cx="60" cy="48" r="0.8" fill="rgba(0,0,0,0.25)" />` +
-    mouthMarkup +
-    `</g>`
-  );
-}
-
-/* -------------------------------------------------------------
- * Layer 4: Footwear (Anchor_Feet at 60, 142)
- * ------------------------------------------------------------- */
-function renderLayer4Footwear(look: AvatarLook): string {
-  const shoesId = look.shoesId || "canvas_sneakers";
-
-  if (shoesId === "canvas_sneakers") {
-    return (
-      `<g class="avatar-footwear footwear-canvas-sneakers">` +
-      // Left shoe (viewer's left: 45 to 58)
-      `<g class="shoe-left">` +
-      `<path d="M46 135 L56 135 L56 144 L44 144 Q44 138 46 135 Z" fill="#e74c3c" />` +
-      `<path d="M44 140 Q44 144 47 144 L56 144 L56 146 L43 146 Q42 144 44 140 Z" fill="#ffffff" />` +
-      `<line x1="47" y1="137" x2="52" y2="137" stroke="#ffffff" stroke-width="1" />` +
-      `</g>` +
-      // Right shoe (viewer's right: 62 to 75)
-      `<g class="shoe-right">` +
-      `<path d="M64 135 L74 135 Q76 138 76 144 L64 144 Z" fill="#e74c3c" />` +
-      `<path d="M64 144 L73 144 Q76 144 76 140 Q78 144 77 146 L64 146 Z" fill="#ffffff" />` +
-      `<line x1="68" y1="137" x2="73" y2="137" stroke="#ffffff" stroke-width="1" />` +
-      `</g>` +
-      `</g>`
-    );
-  }
-
-  // Generic shoes / boots fallback
-  return (
-    `<g class="avatar-footwear footwear-generic">` +
-    `<rect x="44" y="136" width="12" height="9" rx="3" fill="#2c3e50" />` +
-    `<rect x="64" y="136" width="12" height="9" rx="3" fill="#2c3e50" />` +
-    `<rect x="43" y="143" width="14" height="3" rx="1.5" fill="#bdc3c7" />` +
-    `<rect x="63" y="143" width="14" height="3" rx="1.5" fill="#bdc3c7" />` +
-    `</g>`
-  );
-}
-
-/* -------------------------------------------------------------
- * Layer 5: Outfit (Waist at 60, 98, Neck at 60, 68)
- * ------------------------------------------------------------- */
-function renderLayer5Outfit(look: AvatarLook, action: string = "idle"): string {
-  const outfitId = look.outfitId || "denim_jacket";
-  const isWaving = action === "wave";
-
-  if (outfitId === "striped_tee") {
-    const rightSleeve = isWaving
-      ? `<path class="avatar-right-sleeve" d="M48 72 Q38 63 35 55" stroke="#ffffff" stroke-width="7" stroke-linecap="round" fill="none" />`
-      : `<path class="avatar-right-sleeve" d="M46 70 L40 78 L44 82 L48 74 Z" fill="#ffffff" />`;
-
-    return (
-      `<g class="avatar-outfit outfit-striped-tee">` +
-      // Pants
-      `<path d="M48 96 L72 96 L71 135 L64 135 L60 108 L56 135 L49 135 Z" fill="#2c3e50" />` +
-      // Striped Tee body
-      `<path d="M46 70 L74 70 L73 98 L47 98 Z" fill="#ffffff" />` +
-      `<rect x="47" y="74" width="26" height="3" fill="#2980b9" />` +
-      `<rect x="47" y="81" width="26" height="3" fill="#2980b9" />` +
-      `<rect x="47" y="88" width="26" height="3" fill="#2980b9" />` +
-      `<rect x="47" y="95" width="26" height="3" fill="#2980b9" />` +
-      // Sleeves
-      rightSleeve +
-      `<path d="M74 70 L80 78 L76 82 L72 74 Z" fill="#ffffff" />` +
-      `</g>`
-    );
-  }
-
-  if (outfitId === "barista_apron") {
-    return (
-      `<g class="avatar-outfit outfit-barista-apron">` +
-      // Pants
-      `<path d="M48 96 L72 96 L71 135 L64 135 L60 108 L56 135 L49 135 Z" fill="#34495e" />` +
-      // Inner white shirt
-      `<path d="M46 70 L74 70 L73 98 L47 98 Z" fill="#f8f9fa" />` +
-      // Barista Green Apron
-      `<path d="M52 74 L68 74 L71 114 L49 114 Z" fill="#27ae60" />` +
-      // Apron straps & neck loop
-      `<path d="M52 74 L57 66 L63 66 L68 74" stroke="#1e824c" stroke-width="1.8" fill="none" />` +
-      // Apron pocket
-      `<rect x="54" y="92" width="12" height="10" rx="1.5" fill="#1e824c" />` +
-      // Mini coffee cup patch
-      `<circle cx="60" cy="84" r="2.5" fill="#f1c40f" />` +
-      `</g>`
-    );
-  }
-
-  if (outfitId === "cargo_pants") {
-    return (
-      `<g class="avatar-outfit outfit-cargo-pants">` +
-      // Cargo Pants with pockets
-      `<path d="M47 94 L73 94 L72 135 L64 135 L60 106 L56 135 L48 135 Z" fill="#7f8c8d" />` +
-      `<rect x="46" y="106" width="5" height="8" rx="1" fill="#636e72" />` +
-      `<rect x="69" y="106" width="5" height="8" rx="1" fill="#636e72" />` +
-      // Basic tee
-      `<path d="M46 70 L74 70 L73 96 L47 96 Z" fill="#e67e22" />` +
-      `</g>`
-    );
-  }
-
-  // Default: denim_jacket
-  const rightJacketSleeve = isWaving
-    ? `<path class="avatar-right-sleeve" d="M48 72 Q38 63 35 55" stroke="#2980b9" stroke-width="8" stroke-linecap="round" fill="none" />`
-    : `<path class="avatar-right-sleeve" d="M46 70 L38 84 L43 86 L49 75 Z" fill="#2980b9" />`;
-
-  return (
-    `<g class="avatar-outfit outfit-denim-jacket">` +
-    // Pants (under jacket)
-    `<path d="M48 96 L72 96 L71 135 L64 135 L60 108 L56 135 L49 135 Z" fill="#34495e" />` +
-    // Inner shirt
-    `<path d="M52 70 L68 70 L68 96 L52 96 Z" fill="#ecf0f1" />` +
-    // Denim Jacket Body
-    `<path d="M46 70 L74 70 L73 98 L47 98 Z" fill="#2980b9" />` +
-    // Jacket center placket & bronze buttons
-    `<line x1="60" y1="74" x2="60" y2="98" stroke="#1f618d" stroke-width="2" />` +
-    `<circle cx="60" cy="78" r="1.2" fill="#f39c12" />` +
-    `<circle cx="60" cy="85" r="1.2" fill="#f39c12" />` +
-    `<circle cx="60" cy="92" r="1.2" fill="#f39c12" />` +
-    // Denim collar lapels
-    `<path d="M50 68 L56 75 L60 69 L64 75 L70 68 Z" fill="#1f618d" />` +
-    // Sleeves
-    rightJacketSleeve +
-    `<path d="M74 70 L82 84 L77 86 L71 75 Z" fill="#2980b9" />` +
-    `</g>`
-  );
-}
-
-/* -------------------------------------------------------------
- * Layer 6: Hair Front (Anchor_HeadCenter at 60, 38)
- * ------------------------------------------------------------- */
-function renderLayer6HairFront(look: AvatarLook): string {
-  const hairColor = escapeXml(look.hairColor || "#4a3728");
-  const hairId = look.hairId || "classic_shag";
-
-  // Stylized anime highlight sheen / streaks
-  const highlightMarkup =
-    `<g class="hair-highlight">` +
-    `<path d="M42 24 Q52 19 68 21" stroke="rgba(255,255,255,0.55)" stroke-width="2.5" stroke-linecap="round" fill="none" />` +
-    `<circle cx="72" cy="22" r="1.2" fill="rgba(255,255,255,0.7)" />` +
-    `<circle cx="38" cy="26" r="1" fill="rgba(255,255,255,0.6)" />` +
-    `</g>`;
-
-  if (hairId === "spiky_blaze") {
-    return (
-      `<g class="avatar-hair-front hair-spiky-blaze">` +
-      // Dynamic anime spikes over forehead and crown
-      `<path d="M30 36 L34 22 L40 30 L48 16 L54 28 L62 14 L70 28 L78 18 L82 32 L88 24 L90 38 ` +
-      `C88 42 85 48 84 52 L80 44 L75 48 L70 38 L65 46 L60 38 L54 46 L48 38 L42 46 L38 42 Z" ` +
-      `fill="${hairColor}" />` +
-      highlightMarkup +
-      `</g>`
-    );
-  }
-
-  if (hairId === "long_waves") {
-    return (
-      `<g class="avatar-hair-front hair-long-waves">` +
-      // Side bangs and face framing curls
-      `<path d="M32 38 C32 20 46 14 60 14 C74 14 88 20 88 38 ` +
-      `C87 48 83 60 81 64 C78 56 78 44 76 40 ` +
-      `C72 40 68 44 64 42 ` +
-      `C58 40 52 45 46 43 ` +
-      `C42 45 40 56 39 64 C37 60 33 48 32 38 Z" ` +
-      `fill="${hairColor}" />` +
-      highlightMarkup +
-      `</g>`
-    );
-  }
-
-  // Default: classic_shag
-  return (
-    `<g class="avatar-hair-front hair-classic-shag">` +
-    // Layered messy bangs sweeping across forehead
-    `<path d="M32 36 C32 20 45 15 60 15 C75 15 88 20 88 36 ` +
-    `C86 46 84 55 83 58 C80 50 80 42 76 38 ` +
-    `C72 43 68 45 64 38 ` +
-    `C60 44 55 45 51 39 ` +
-    `C47 44 42 44 40 38 ` +
-    `C38 45 37 54 35 58 C34 52 33 44 32 36 Z" ` +
-    `fill="${hairColor}" />` +
-    highlightMarkup +
+    (spec
+      ? `<g class="avatar-right-sleeve">${sleeve(RIGHT_ARM_WAVE, spec)}</g>`
+      : "") +
     `</g>`
   );
 }
@@ -470,68 +174,64 @@ function renderLayer6HairFront(look: AvatarLook): string {
 function renderLayer7HeadwearAndEyewear(look: AvatarLook): string {
   const parts: string[] = [];
 
-  // Eyewear (Anchor_HeadCenter at 60, 38)
+  // Eyewear (eyes centered at 48 / 72, y 45)
   if (look.eyewearId) {
     if (look.eyewearId === "sunshine_shades") {
       parts.push(
         `<g class="avatar-eyewear eyewear-sunshine-shades">` +
-          // Cool black sunglasses frames with glare reflection
-          `<path d="M40 37 L55 37 L53 47 L42 47 Z" fill="#1e272e" />` +
-          `<path d="M65 37 L80 37 L78 47 L67 47 Z" fill="#1e272e" />` +
-          `<line x1="55" y1="39" x2="65" y2="39" stroke="#1e272e" stroke-width="2.5" />` +
-          // White diagonal glare cuts
-          `<line x1="43" y1="45" x2="48" y2="39" stroke="#ffffff" stroke-width="1.2" opacity="0.8" />` +
-          `<line x1="68" y1="45" x2="73" y2="39" stroke="#ffffff" stroke-width="1.2" opacity="0.8" />` +
+          // Oversized Y2K tinted shades with gold rims
+          `<path d="M35.6 38.6 C40 36.8 52 37 56.4 39.4 C56.6 45 54 51.6 47.4 51.6 C40.6 51.6 36 46.6 35.6 38.6 Z" fill="rgba(255, 95, 162, 0.72)" stroke="#f4c542" stroke-width="0.8" />` +
+          `<path d="M84.4 38.6 C80 36.8 68 37 63.6 39.4 C63.4 45 66 51.6 72.6 51.6 C79.4 51.6 84 46.6 84.4 38.6 Z" fill="rgba(255, 95, 162, 0.72)" stroke="#f4c542" stroke-width="0.8" />` +
+          `<path d="M56.4 40.6 Q60 38.6 63.6 40.6" stroke="#f4c542" stroke-width="1" fill="none" />` +
+          `<path d="M38.6 41 L44.4 39.8 M66 41.4 L70.8 40" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" opacity="0.75" />` +
+          `<path d="M40 46 L48 40.2" stroke="#ffffff" stroke-width="0.6" stroke-linecap="round" opacity="0.5" />` +
           `</g>`,
       );
     } else {
       parts.push(
         `<g class="avatar-eyewear eyewear-generic">` +
-          `<circle cx="48" cy="42" r="7" stroke="#2c3e50" stroke-width="1.5" fill="none" />` +
-          `<circle cx="72" cy="42" r="7" stroke="#2c3e50" stroke-width="1.5" fill="none" />` +
-          `<line x1="55" y1="42" x2="65" y2="42" stroke="#2c3e50" stroke-width="1.5" />` +
+          `<circle cx="48" cy="45" r="7.4" stroke="#2c3e50" stroke-width="1.2" fill="rgba(255,255,255,0.08)" />` +
+          `<circle cx="72" cy="45" r="7.4" stroke="#2c3e50" stroke-width="1.2" fill="rgba(255,255,255,0.08)" />` +
+          `<line x1="55.4" y1="44" x2="64.6" y2="44" stroke="#2c3e50" stroke-width="1.2" />` +
           `</g>`,
       );
     }
   }
 
-  // Headwear (Anchor_HeadCenter at 60, 38)
+  // Headwear sits on top of the voluminous hair
   if (look.headwearId) {
     if (look.headwearId === "explorer_fedora") {
       parts.push(
         `<g class="avatar-headwear headwear-explorer-fedora">` +
-          // Safari / Explorer Fedora
-          `<ellipse cx="60" cy="27" rx="36" ry="7" fill="#d35400" />` +
-          `<path d="M38 26 C40 10 50 8 60 8 C70 8 80 10 82 26 Z" fill="#e67e22" />` +
-          `<path d="M39 25 Q60 27 81 25" stroke="#784212" stroke-width="3" fill="none" />` +
-          `<circle cx="48" cy="26" r="1.8" fill="#f1c40f" />` +
+          `<ellipse cx="60" cy="17" rx="38" ry="6.4" fill="#c56a2c" />` +
+          `<path d="M39 16 C41 0 50 -2 60 -2 C70 -2 79 0 81 16 Z" fill="#e08a46" />` +
+          `<path d="M39.6 14 Q60 17.4 80.4 14" stroke="#5a2f12" stroke-width="3" fill="none" />` +
+          `<circle cx="47" cy="14.6" r="1.8" fill="#f4c542" />` +
           `</g>`,
       );
     } else if (look.headwearId === "retro_neon_visor") {
       parts.push(
         `<g class="avatar-headwear headwear-retro-neon-visor">` +
-          // 90s neon arcade visor
-          `<path d="M30 30 Q60 36 90 30 L86 25 Q60 30 34 25 Z" fill="#ff007f" />` +
-          `<path d="M26 31 Q60 39 94 31 L88 36 Q60 45 32 36 Z" fill="rgba(0, 240, 255, 0.75)" stroke="#00f0ff" stroke-width="1" />` +
+          `<path d="M30 25 Q60 30 90 25 L86 19.6 Q60 24.4 34 19.6 Z" fill="#ff007f" />` +
+          `<path d="M26 26 Q60 33 94 26 L88 31 Q60 39 32 31 Z" fill="rgba(0, 240, 255, 0.75)" stroke="#00f0ff" stroke-width="1" />` +
           `</g>`,
       );
     } else if (look.headwearId === "golden_mane_wreath") {
       parts.push(
         `<g class="avatar-headwear headwear-golden-mane-wreath">` +
-          // Golden baobab leaf wreath crown
-          `<path d="M32 32 Q60 26 88 32" stroke="#f39c12" stroke-width="2" fill="none" />` +
-          `<circle cx="42" cy="29" r="2.5" fill="#f1c40f" />` +
-          `<circle cx="51" cy="27" r="2.5" fill="#f1c40f" />` +
-          `<circle cx="60" cy="26" r="3" fill="#f1c40f" />` +
-          `<circle cx="69" cy="27" r="2.5" fill="#f1c40f" />` +
-          `<circle cx="78" cy="29" r="2.5" fill="#f1c40f" />` +
+          `<path d="M30 22 Q60 12 90 22" stroke="#f39c12" stroke-width="2" fill="none" />` +
+          `<circle cx="38" cy="18.6" r="2.6" fill="#f1c40f" />` +
+          `<circle cx="48.4" cy="15.4" r="2.6" fill="#f1c40f" />` +
+          `<circle cx="60" cy="14" r="3.1" fill="#f1c40f" />` +
+          `<circle cx="71.6" cy="15.4" r="2.6" fill="#f1c40f" />` +
+          `<circle cx="82" cy="18.6" r="2.6" fill="#f1c40f" />` +
           `</g>`,
       );
     } else {
       parts.push(
         `<g class="avatar-headwear headwear-generic">` +
-          `<ellipse cx="60" cy="24" rx="32" ry="8" fill="#e74c3c" />` +
-          `<path d="M38 23 C42 12 50 10 60 10 C70 10 78 12 82 23 Z" fill="#c0392b" />` +
+          `<ellipse cx="60" cy="15" rx="34" ry="7" fill="#e74c3c" />` +
+          `<path d="M38 14 C42 2 50 0 60 0 C70 0 78 2 82 14 Z" fill="#c0392b" />` +
           `</g>`,
       );
     }
@@ -541,20 +241,17 @@ function renderLayer7HeadwearAndEyewear(look: AvatarLook): string {
 }
 
 /* -------------------------------------------------------------
- * Layer 8: Handheld Item (Anchor_HandRight at 32, 92)
+ * Layer 8: Handheld Item (follows the right hand)
  * ------------------------------------------------------------- */
 function renderLayer8Handheld(look: AvatarLook, action: string): string {
   if (!look.handheldId) return "";
 
-  const isWaving = action === "wave";
-  // Handheld location follows right hand (32, 92) or raised (30, 48) if waving
-  const originX = isWaving ? 30 : 32;
-  const originY = isWaving ? 44 : 92;
+  const [originX, originY] = rightArmFor(action).hand;
 
   let content = "";
   if (look.handheldId === "mango_smoothie_cup") {
     content =
-      `<g class="avatar-handheld handheld-mango-smoothie" transform="translate(${originX - 7}, ${originY - 14})">` +
+      `<g class="avatar-handheld handheld-mango-smoothie"><g transform="translate(${n(originX - 9)}, ${n(originY - 16)})">` +
       // Clear plastic smoothie cup
       `<path d="M3 8 L5 24 L13 24 L15 8 Z" fill="rgba(255,255,255,0.3)" stroke="#dfe6e9" stroke-width="0.8" />` +
       // Mango smoothie fill
@@ -564,21 +261,21 @@ function renderLayer8Handheld(look: AvatarLook, action: string): string {
       // Mango slice on rim
       `<circle cx="5" cy="8" r="3" fill="#f1c40f" />` +
       `<circle cx="5" cy="8" r="1.5" fill="#e67e22" />` +
-      `</g>`;
+      `</g></g>`;
   } else if (look.handheldId === "eyepatch_cutlass") {
     content =
-      `<g class="avatar-handheld handheld-cutlass" transform="translate(${originX - 12}, ${originY - 20})">` +
+      `<g class="avatar-handheld handheld-cutlass"><g transform="translate(${n(originX - 12)}, ${n(originY - 22)})">` +
       // Swashbuckler cutlass
       `<path d="M12 18 C14 10 20 4 26 2 C22 8 18 16 14 22 Z" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="0.8" />` +
       `<line x1="8" y1="20" x2="16" y2="20" stroke="#f1c40f" stroke-width="2" />` +
       `<rect x="11" y="20" width="2" height="6" fill="#8e44ad" />` +
-      `</g>`;
+      `</g></g>`;
   } else {
     // Generic handheld accessory
     content =
-      `<g class="avatar-handheld handheld-generic" transform="translate(${originX - 6}, ${originY - 8})">` +
+      `<g class="avatar-handheld handheld-generic"><g transform="translate(${n(originX - 6)}, ${n(originY - 8)})">` +
       `<circle cx="6" cy="6" r="5" fill="#f39c12" />` +
-      `</g>`;
+      `</g></g>`;
   }
 
   return content;
@@ -588,6 +285,8 @@ export interface AvatarSvgOptions {
   width?: number;
   height?: number;
   className?: string;
+  /** Unique prefix for gradient/clip IDs when several avatars share a page. */
+  idPrefix?: string;
 }
 
 /**
@@ -596,30 +295,23 @@ export interface AvatarSvgOptions {
 export function generateAvatarLayersString(
   look: AvatarLook = DEFAULT_AVATAR_LOOK,
   action: EntityAction | string = "idle",
+  idPrefix?: string,
 ): string {
-  const layer0 = renderLayer0ShadowAndBoard(look, action);
-  const layer1 = renderLayer1HairBack(look);
-  const layer2 = renderLayer2BodyBase(look, action);
-  const layer3 = renderLayer3AnimeFace(look);
-  const layer4 = renderLayer4Footwear(look);
-  const layer5 = renderLayer5Outfit(
-    look,
-    typeof action === "string" ? action : "idle",
-  );
-  const layer6 = renderLayer6HairFront(look);
-  const layer7 = renderLayer7HeadwearAndEyewear(look);
-  const layer8 = renderLayer8Handheld(look, action);
+  const act = typeof action === "string" ? action : "idle";
+  const p = sanitizeIdPrefix(idPrefix ?? `av${hashLook(look)}`);
 
   return [
-    layer0,
-    layer1,
-    layer2,
-    layer3,
-    layer4,
-    layer5,
-    layer6,
-    layer7,
-    layer8,
+    `<defs>${makeupDefs(p, look)}${hairDefs(p)}</defs>`,
+    renderLayer0ShadowAndBoard(look, act),
+    renderLayer1HairBack(look, p),
+    renderLayer2BodyBase(look, act),
+    renderLayer3GlamFace(look, p),
+    renderLayer4Footwear(look),
+    renderLayer5Outfit(look, act),
+    renderLayer6HairFront(look, p),
+    renderRaisedArm(look, act),
+    renderLayer7HeadwearAndEyewear(look),
+    renderLayer8Handheld(look, act),
   ]
     .filter((layer) => layer.length > 0)
     .join("\n");
@@ -638,7 +330,11 @@ export function generateAvatarSvgString(
   const customClass = options?.className ? ` ${options.className}` : "";
   const actionClass = action ? ` action-${action}` : "";
 
-  const innerLayers = generateAvatarLayersString(look, action);
+  const innerLayers = generateAvatarLayersString(
+    look,
+    action,
+    options?.idPrefix,
+  );
 
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" ` +

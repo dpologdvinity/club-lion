@@ -55,9 +55,11 @@ export function CatalogModal({
     onUnlockSecret(secretId);
   };
 
+  const inTab = (itemSlot: EquipSlot) =>
+    itemSlot === slot || (slot === "top_outer" && itemSlot === "top_inner");
   const items = CATALOG_ITEMS.filter(
     (item) =>
-      item.slot === slot && (!item.isSecret || player.owned.includes(item.id)),
+      inTab(item.slot) && (!item.isSecret || player.owned.includes(item.id)),
   );
 
   return (

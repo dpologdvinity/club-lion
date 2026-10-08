@@ -1040,3 +1040,137 @@ test("pet care grants Pampered Pride atomically and once without coin rewards", 
     replay.stamps,
   );
 });
+
+test("buyCatalogItem charges once for shop pieces and refuses secrets or short funds", async () => {
+  const { buyCatalogItem } = await import("./game.ts");
+  const rich = { ...newPlayer(), coins: 500 };
+  const bought = buyCatalogItem(rich, "cropped_puffer");
+  assert.equal(bought.coins, 280);
+  assert.ok(bought.owned.includes("cropped_puffer"));
+  assert.equal(buyCatalogItem(bought, "cropped_puffer"), bought);
+  assert.equal(buyCatalogItem(rich, "barista_apron"), rich);
+  assert.equal(buyCatalogItem(rich, "nope"), rich);
+  const poor = { ...newPlayer(), coins: 10 };
+  assert.equal(buyCatalogItem(poor, "cropped_puffer"), poor);
+});
+
+test("equipCatalogItem writes owned items to the look field for their slot", async () => {
+  const { equipCatalogItem, migratePlayerSave } = await import("./game.ts");
+  const player = {
+    ...migratePlayerSave(newPlayer()),
+    owned: ["long_waves", "sunshine_shades", "cargo_pants", "platform_boots"],
+  };
+  let dressed = equipCatalogItem(player, "long_waves");
+  dressed = equipCatalogItem(dressed, "sunshine_shades");
+  dressed = equipCatalogItem(dressed, "cargo_pants");
+  dressed = equipCatalogItem(dressed, "platform_boots");
+  assert.equal(dressed.look.hairId, "long_waves");
+  assert.equal(dressed.look.eyewearId, "sunshine_shades");
+  assert.equal(dressed.look.bottomId, "cargo_pants");
+  assert.equal(dressed.look.shoesId, "platform_boots");
+  assert.equal(dressed.look.outfitId, DEFAULT_AVATAR_LOOK.outfitId);
+  assert.equal(equipCatalogItem(player, "cropped_puffer"), player);
+});
+
+test("applySalonLook buys unowned premium options once and keeps free looks free", async () => {
+  const {
+    applySalonLook,
+    salonLookCost,
+    premiumIdsForLook,
+    migratePlayerSave,
+  } = await import("./game.ts");
+  const player = { ...migratePlayerSave(newPlayer()), coins: 400 };
+  const glam = {
+    ...player.look,
+    eyeStyle: "glitter_pop",
+    lipId: "glitter_gloss",
+    hairId: "mermaid_waves",
+    eyeshadowId: "bronze",
+  };
+  assert.deepEqual(premiumIdsForLook(glam).sort(), [
+    "eye:glitter_pop",
+    "hair:mermaid_waves",
+    "lip:glitter_gloss",
+  ]);
+  assert.equal(salonLookCost(player, glam), 450);
+  assert.equal(applySalonLook(player, glam), player, "unaffordable is a no-op");
+
+  const funded = { ...player, coins: 500 };
+  const styled = applySalonLook(funded, glam);
+  assert.equal(styled.coins, 50);
+  assert.equal(styled.look.hairId, "mermaid_waves");
+  assert.equal(salonLookCost(styled, glam), 0);
+  assert.equal(applySalonLook(styled, { ...glam, lipId: "rose" }).coins, 50);
+
+  const free = applySalonLook(player, {
+    ...player.look,
+    eyeStyle: "siren",
+    hairId: "big_curls",
+    hairStreak: "#00f0ff",
+  });
+  assert.equal(free.coins, 400);
+  assert.equal(free.look.hairStreak, "#00f0ff");
+  assert.equal(
+    applySalonLook(player, { ...player.look, hairId: "" }),
+    player,
+    "invalid looks are rejected",
+  );
+});
+
+test("dressAvatar allows free, owned, or already-worn pieces only", async () => {
+  const { dressAvatar, migratePlayerSave } = await import("./game.ts");
+  const player = migratePlayerSave(newPlayer());
+  const free = dressAvatar(player, {
+    topId: "star_baby_tee",
+    bottomId: "denim_mini",
+    shoesId: "jelly_sandals",
+  });
+  assert.equal(free.look.topId, "star_baby_tee");
+  assert.equal(free.look.bottomId, "denim_mini");
+  assert.equal(free.look.shoesId, "jelly_sandals");
+
+  const worn = dressAvatar(player, {
+    topId: "denim_jacket",
+    bottomId: "flares_indigo",
+    shoesId: "canvas_sneakers",
+  });
+  assert.equal(
+    worn.look.topId,
+    "denim_jacket",
+    "default outfit stays wearable",
+  );
+
+  const locked = {
+    topId: "moto_jacket",
+    bottomId: "denim_mini",
+    shoesId: "jelly_sandals",
+  };
+  assert.equal(dressAvatar(player, locked), player);
+  const owner = { ...player, owned: [...player.owned, "moto_jacket"] };
+  assert.equal(dressAvatar(owner, locked).look.topId, "moto_jacket");
+  assert.equal(
+    dressAvatar(player, { ...locked, topId: "unknown_top" }),
+    player,
+  );
+});
+
+test("saves keep premium salon unlocks and the new look fields", async () => {
+  const { migratePlayerSave } = await import("./game.ts");
+  const save = {
+    ...migratePlayerSave(newPlayer()),
+    owned: ["scarf", "eye:glitter_pop", "bogus:item"],
+    look: {
+      ...DEFAULT_AVATAR_LOOK,
+      topId: "star_baby_tee",
+      bottomId: "denim_mini",
+      lipId: "cherry",
+      faceDetailId: "freckles",
+      hairStreak: "#ff3d9a",
+    },
+  };
+  const restored = migratePlayerSave(JSON.parse(JSON.stringify(save)));
+  assert.deepEqual(restored.owned, ["scarf", "eye:glitter_pop"]);
+  assert.equal(restored.look.topId, "star_baby_tee");
+  assert.equal(restored.look.lipId, "cherry");
+  assert.equal(restored.look.hairStreak, "#ff3d9a");
+});

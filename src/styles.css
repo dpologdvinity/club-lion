@@ -3768,31 +3768,32 @@ svg {
   }
 }
 
-/* Chibi Avatar Vector Paper-Doll Styles */
+/* Y2K Fashion-Doll Avatar Styles */
 .chibi-avatar {
   display: inline-block;
   overflow: visible;
   user-select: none;
   vertical-align: middle;
+  transform-origin: 50% 92%;
 }
 
 .chibi-avatar.action-idle {
-  animation: avatar-breathe 2.6s ease-in-out infinite;
+  animation: avatar-hip-sway 3.2s ease-in-out infinite;
 }
 
 .chibi-avatar.action-walk {
-  animation: avatar-walk-bob 0.45s ease-in-out infinite alternate;
+  animation: avatar-strut 0.45s ease-in-out infinite alternate;
 }
 
 .chibi-avatar.action-wave .avatar-right-arm,
 .chibi-avatar.action-wave .avatar-right-sleeve,
 .chibi-avatar.action-wave .avatar-handheld {
-  transform-origin: 48px 73px;
-  animation: avatar-arm-wave 0.75s ease-in-out infinite alternate;
+  transform-origin: 49px 74px;
+  animation: avatar-arm-wave 0.6s ease-in-out infinite alternate;
 }
 
 .chibi-avatar.action-dance {
-  animation: avatar-dance-hop 0.5s ease-in-out infinite alternate;
+  animation: avatar-dance-shimmy 0.5s ease-in-out infinite alternate;
 }
 
 .chibi-avatar.action-sit {
@@ -3800,7 +3801,18 @@ svg {
 }
 
 .chibi-avatar.action-jam {
-  animation: avatar-jam-rock 0.55s ease-in-out infinite alternate;
+  animation: avatar-jam-groove 0.55s ease-in-out infinite alternate;
+}
+
+.chibi-avatar .avatar-hair-back {
+  transform-origin: 60px 24px;
+  animation: avatar-hair-swish 3.2s ease-in-out infinite;
+}
+
+.chibi-avatar .eye-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: avatar-blink 5.2s ease-in-out infinite;
 }
 
 .chibi-avatar .sparkle-trail path,
@@ -3808,52 +3820,73 @@ svg {
   animation: avatar-sparkle-pulse 0.9s ease-in-out infinite alternate;
 }
 
-@keyframes avatar-breathe {
+@keyframes avatar-hip-sway {
   0%,
   100% {
-    transform: translateY(0) scale(1);
+    transform: translateY(0) rotate(-0.8deg);
   }
   50% {
-    transform: translateY(-2px) scale(1.008);
+    transform: translateY(-1px) rotate(0.8deg);
   }
 }
 
-@keyframes avatar-walk-bob {
+@keyframes avatar-strut {
   0% {
-    transform: translateY(0) rotate(-1.5deg);
+    transform: translate(-0.6px, 0) rotate(-2.2deg);
   }
   100% {
-    transform: translateY(-3.5px) rotate(1.5deg);
+    transform: translate(0.6px, -3px) rotate(2.2deg);
   }
 }
 
 @keyframes avatar-arm-wave {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(4deg);
   }
   100% {
-    transform: rotate(-22deg);
+    transform: rotate(-12deg);
   }
 }
 
-@keyframes avatar-dance-hop {
+@keyframes avatar-dance-shimmy {
   0% {
-    transform: translateY(0) rotate(-4deg);
+    transform: translateX(-2px) rotate(-5deg);
   }
   50% {
-    transform: translateY(-6px) scaleY(1.03);
+    transform: translateY(-4px) rotate(0deg);
   }
   100% {
-    transform: translateY(0) rotate(4deg);
+    transform: translateX(2px) rotate(5deg);
   }
 }
 
-@keyframes avatar-jam-rock {
+@keyframes avatar-jam-groove {
   0% {
-    transform: rotate(-3deg) translateY(0);
+    transform: rotate(-2.5deg) translateY(0);
   }
   100% {
-    transform: rotate(3deg) translateY(-2.5px);
+    transform: rotate(2.5deg) translateY(-2px);
+  }
+}
+
+@keyframes avatar-hair-swish {
+  0%,
+  100% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(1deg);
+  }
+}
+
+@keyframes avatar-blink {
+  0%,
+  94%,
+  100% {
+    transform: scaleY(1);
+  }
+  96.5% {
+    transform: scaleY(0.1);
   }
 }
 
@@ -4092,11 +4125,70 @@ svg {
   font-weight: 600;
 }
 
-/* Salon Modal */
+/* Salon & Closet Modals: sticky live preview beside the options */
 .salon {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.salon-preview {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  padding: 14px 8px 6px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffe6f4, #efe6ff);
+}
+
+.salon-controls {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  min-width: 0;
+}
+
+.salon-price {
+  margin-left: 4px;
+  font-size: 0.8em;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.salon-swatches .color-option {
+  width: 62px;
+}
+
+.salon-swatches .color-option small {
+  line-height: 1.15;
+}
+
+.salon-cost {
+  margin: 0;
+  font-weight: 600;
+}
+
+.closet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.salon-options button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .salon {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .salon-preview {
+    position: static;
+  }
 }
 
 .salon fieldset {
