@@ -1,3 +1,13 @@
+import {
+  EYE_LOOKS,
+  HAIR_STYLE_OPTIONS,
+  type EyeStyle,
+  type HairStyle,
+  type TopId,
+  type BottomId,
+  type ShoeId,
+} from "./avatarOptions.ts";
+
 export type EquipSlot =
   | "hair_back"
   | "hair_front"
@@ -38,34 +48,13 @@ export const SKIN_TONES: readonly SkinTone[] = [
   "deep",
 ] as const;
 
-export type EyeStyle =
-  "winged_glam" | "smoky_cat" | "sparkle" | "wink" | "sleepy" | "smirk";
+export type { EyeStyle, HairStyle } from "./avatarOptions.ts";
 
-export const EYE_STYLES: readonly EyeStyle[] = [
-  "winged_glam",
-  "smoky_cat",
-  "sparkle",
-  "wink",
-  "sleepy",
-  "smirk",
-] as const;
+export const EYE_STYLES: readonly EyeStyle[] = EYE_LOOKS.map((o) => o.id);
 
-export type HairStyle =
-  | "blowout"
-  | "high_pony"
-  | "butterfly_waves"
-  | "box_braids"
-  | "blunt_bob"
-  | "space_buns";
-
-export const HAIR_STYLES: readonly HairStyle[] = [
-  "blowout",
-  "high_pony",
-  "butterfly_waves",
-  "box_braids",
-  "blunt_bob",
-  "space_buns",
-] as const;
+export const HAIR_STYLES: readonly HairStyle[] = HAIR_STYLE_OPTIONS.map(
+  (o) => o.id,
+);
 
 /** Hair IDs saved before the glam redesign, mapped to their closest new cut. */
 export const LEGACY_HAIR_STYLES: Readonly<Record<string, HairStyle>> = {
@@ -91,15 +80,25 @@ export type OutfitStyle =
   | "barista_apron"
   | "cropped_puffer";
 
-export type ShoeStyle = "canvas_sneakers" | "platform_boots";
+export type ShoeStyle = ShoeId;
 
 export type AvatarLook = {
   skinTone: SkinTone | string;
   eyeStyle: EyeStyle | string;
   hairId: HairStyle | string;
   hairColor: string;
+  /** Legacy whole outfit; `topId` / `bottomId` override its pieces. */
   outfitId: OutfitStyle | string;
   shoesId: ShoeStyle | string;
+  topId?: TopId | string;
+  bottomId?: BottomId | string;
+  eyeshadowId?: string;
+  lipId?: string;
+  eyeColorId?: string;
+  blushId?: string;
+  faceDetailId?: string;
+  /** Streak dye color (hex); absent or empty means no streak. */
+  hairStreak?: string;
   headwearId?: string;
   eyewearId?: string;
   boardId?: string;
@@ -136,6 +135,15 @@ export function validateAvatarLook(look: unknown): look is AvatarLook {
     hasValidString("hairColor") &&
     hasValidString("outfitId") &&
     hasValidString("shoesId") &&
+    hasOptionalString("topId") &&
+    hasOptionalString("bottomId") &&
+    hasOptionalString("eyeshadowId") &&
+    hasOptionalString("lipId") &&
+    hasOptionalString("eyeColorId") &&
+    hasOptionalString("blushId") &&
+    hasOptionalString("faceDetailId") &&
+    (candidate.hairStreak === undefined ||
+      typeof candidate.hairStreak === "string") &&
     hasOptionalString("headwearId") &&
     hasOptionalString("eyewearId") &&
     hasOptionalString("boardId") &&
