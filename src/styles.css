@@ -3407,11 +3407,19 @@ svg {
     border-radius: 0;
   }
   .sidebar-drawer {
-    top: 72px;
-    right: 8px;
-    bottom: 74px;
-    width: calc(100vw - 16px);
-    max-width: 320px;
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    max-width: none;
+    z-index: 10;
+    margin: 16px 0;
+    box-shadow: none;
+    border-radius: var(--radius);
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
   .sidebar {
     display: flex;
@@ -4852,9 +4860,9 @@ svg {
 .room-navigation {
   position: absolute;
   bottom: 72px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 40;
+  left: 16px;
+  transform: none;
+  z-index: 95;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -4866,7 +4874,7 @@ svg {
   border: 1px solid rgba(233, 229, 218, 0.85);
   border-radius: 9999px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
-  max-width: min(900px, calc(100vw - 32px));
+  max-width: calc(100vw - 360px);
   overflow-x: auto;
   scrollbar-width: none;
   pointer-events: auto;
@@ -4915,7 +4923,11 @@ svg {
     height: 100%;
   }
   .room-navigation {
+    position: absolute;
     bottom: 64px;
+    left: 8px;
+    transform: none;
+    z-index: 95;
     padding: 6px 10px;
     gap: 6px;
     max-width: calc(100vw - 16px);
