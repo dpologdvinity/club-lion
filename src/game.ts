@@ -31,13 +31,27 @@ import {
   SPY_PUZZLE_MAX_COINS,
   SPY_RANKS,
 } from "./utils/spyPuzzles.ts";
-import type { AvatarLook, PetState } from "./types/world.ts";
+import type { AvatarLook, EquipSlot, PetState } from "./types/world.ts";
 import {
   DEFAULT_AVATAR_LOOK,
   DEFAULT_PET_STATE,
   validateAvatarLook,
+  resolveHairStyle,
   CATALOG_ITEMS,
 } from "./types/world.ts";
+import {
+  BOTTOMS,
+  PREMIUM_SALON_OPTIONS,
+  SHOES,
+  TOPS,
+  findOption,
+  premiumId,
+  resolveBottomId,
+  resolveShoeId,
+  resolveTopId,
+  type ClothingOption,
+  type SalonCategory,
+} from "./types/avatarOptions.ts";
 import type { PetCareState, CareAction } from "./utils/petCare.ts";
 import { DEFAULT_PET_CARE_STATE, performPetCare } from "./utils/petCare.ts";
 
@@ -393,7 +407,8 @@ export function restorePlayer(raw: string | null): Player {
         p.owned.filter(
           (id: unknown) =>
             SHOP_ITEMS.some((item) => item.id === id) ||
-            CATALOG_ITEMS.some((item) => item.id === id),
+            CATALOG_ITEMS.some((item) => item.id === id) ||
+            PREMIUM_SALON_OPTIONS.some((option) => option.id === id),
         ),
       ),
     ];
@@ -765,6 +780,138 @@ export function unlockSecretCatalogItem<T extends PlayerBase>(
   );
   if (!item || player.owned.includes(item.id)) return player;
   return { ...player, owned: [...player.owned, item.id] } as T;
+}
+
+/** Buys a non-secret Le Shop catalog item once, if the player can afford it. */
+export function buyCatalogItem<T extends PlayerBase>(player: T, id: string): T {
+  const item = CATALOG_ITEMS.find((item) => item.id === id && !item.isSecret);
+  if (!item || player.owned.includes(id) || player.coins < item.price)
+    return player;
+  return {
+    ...player,
+    coins: player.coins - item.price,
+    owned: [...player.owned, id],
+  } as T;
+}
+
+const LOOK_FIELD_FOR_SLOT: Partial<Record<EquipSlot, keyof AvatarLook>> = {
+  hair_back: "hairId",
+  hair_front: "hairId",
+  headwear: "headwearId",
+  eyewear: "eyewearId",
+  top_inner: "topId",
+  top_outer: "topId",
+  bottom: "bottomId",
+  shoes: "shoesId",
+  handheld: "handheldId",
+  board: "boardId",
+};
+
+/** Puts an owned catalog item on the avatar in the field matching its slot. */
+export function equipCatalogItem<T extends PlayerBase & { look?: AvatarLook }>(
+  player: T,
+  id: string,
+): T {
+  const item = CATALOG_ITEMS.find((item) => item.id === id);
+  const field = item && LOOK_FIELD_FOR_SLOT[item.slot];
+  if (!item || !field || !player.owned.includes(id)) return player;
+  const look = player.look ?? DEFAULT_AVATAR_LOOK;
+  return { ...player, look: { ...look, [field]: id } } as T;
+}
+
+/** Premium salon unlocks a look uses, as namespaced owned-list IDs. */
+export function premiumIdsForLook(look: AvatarLook): string[] {
+  const picks: [SalonCategory, string | undefined][] = [
+    ["eye", look.eyeStyle],
+    ["shadow", look.eyeshadowId],
+    ["lip", look.lipId],
+    ["iris", look.eyeColorId],
+    ["face", look.faceDetailId],
+    ["hair", resolveHairStyle(look.hairId)],
+  ];
+  return picks.flatMap(([category, id]) => {
+    if (!id) return [];
+    const key = premiumId(category, id);
+    return PREMIUM_SALON_OPTIONS.some((option) => option.id === key)
+      ? [key]
+      : [];
+  });
+}
+
+/** Coins still owed for premium salon options in a look the player does not own. */
+export function salonLookCost(player: PlayerBase, look: AvatarLook): number {
+  return premiumIdsForLook(look)
+    .filter((id) => !player.owned.includes(id))
+    .reduce(
+      (total, id) =>
+        total +
+        (PREMIUM_SALON_OPTIONS.find((option) => option.id === id)?.price ?? 0),
+      0,
+    );
+}
+
+/**
+ * Saves a salon makeover, buying any premium options it uses that the player
+ * does not own yet. Unaffordable or invalid looks leave the player unchanged.
+ */
+export function applySalonLook<T extends PlayerBase>(
+  player: T,
+  look: AvatarLook,
+): T {
+  if (!validateAvatarLook(look)) return player;
+  const cost = salonLookCost(player, look);
+  if (player.coins < cost) return player;
+  const unlocked = premiumIdsForLook(look).filter(
+    (id) => !player.owned.includes(id),
+  );
+  return {
+    ...player,
+    coins: player.coins - cost,
+    owned: [...player.owned, ...unlocked],
+    look,
+  } as T;
+}
+
+/** Whether a clothing piece is in the closet: free basics or owned shop items. */
+export function canWearClothing(
+  player: PlayerBase,
+  option: ClothingOption,
+): boolean {
+  return option.free === true || player.owned.includes(option.id);
+}
+
+/**
+ * Dresses the avatar from the closet. Each piece must be free, owned, or
+ * already worn; otherwise the player is returned unchanged.
+ */
+export function dressAvatar<T extends PlayerBase & { look?: AvatarLook }>(
+  player: T,
+  outfit: { topId: string; bottomId: string; shoesId: string },
+): T {
+  const look = player.look ?? DEFAULT_AVATAR_LOOK;
+  const allowed = (
+    options: readonly ClothingOption[],
+    id: string,
+    worn: string,
+  ) => {
+    const option = findOption(options, id);
+    return !!option && (id === worn || canWearClothing(player, option));
+  };
+  if (
+    !allowed(TOPS, outfit.topId, resolveTopId(look)) ||
+    !allowed(BOTTOMS, outfit.bottomId, resolveBottomId(look)) ||
+    !allowed(SHOES, outfit.shoesId, resolveShoeId(look))
+  )
+    return player;
+  return {
+    ...player,
+    look: {
+      ...look,
+      topId: outfit.topId,
+      bottomId: outfit.bottomId,
+      shoesId: outfit.shoesId,
+    },
+  } as T;
 }
 
 export function completeFruitCatch<T extends PlayerBase>(

@@ -1,124 +1,245 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { Dialog } from "./Dialog";
-import type { AvatarLook } from "../game";
+import { Avatar } from "./Avatar";
+import { Coin } from "./Lion";
+import {
+  premiumIdsForLook,
+  salonLookCost,
+  type AvatarLook,
+  type PlayerBase,
+} from "../game";
 import { resolveHairStyle } from "../types/world.ts";
+import {
+  BLUSHES,
+  EYE_COLORS,
+  EYE_LOOKS,
+  EYESHADOWS,
+  FACE_DETAILS,
+  HAIR_COLORS,
+  HAIR_STREAKS,
+  HAIR_STYLE_OPTIONS,
+  LIP_COLORS,
+  premiumId,
+  type SalonCategory,
+  type StyleOption,
+} from "../types/avatarOptions.ts";
 
-const HAIR_STYLES = [
-  { id: "blowout", label: "Y2K Blowout" },
-  { id: "high_pony", label: "Sleek High Pony" },
-  { id: "butterfly_waves", label: "Butterfly Waves" },
-  { id: "box_braids", label: "Beaded Box Braids" },
-  { id: "blunt_bob", label: "Glossy Blunt Bob" },
-  { id: "space_buns", label: "Spiky Space Buns" },
-];
+type Tab = "hair" | "makeup";
 
-const HAIR_COLORS = [
-  { id: "espresso", label: "Espresso", hex: "#4a3728" },
-  { id: "blonde", label: "Blonde", hex: "#e67e22" },
-  { id: "rose_pink", label: "Rose Pink", hex: "#ff7675" },
-  { id: "lavender", label: "Lavender", hex: "#a29bfe" },
-  { id: "chestnut", label: "Chestnut", hex: "#784421" },
-];
-
-const STREAK_DYES = [
-  { id: "neon_blue", label: "Neon Blue", hex: "#00f0ff" },
-  { id: "sunset_orange", label: "Sunset Orange", hex: "#ff7675" },
-  { id: "mint_green", label: "Mint Green", hex: "#2ecc71" },
-  { id: "none", label: "None", hex: "" },
-];
+type Swatch = StyleOption & { hex?: string; iris?: readonly string[] };
 
 export function SalonModal({
-  look,
+  player,
   onClose,
   onSave,
 }: {
-  look: AvatarLook;
+  player: PlayerBase & { look: AvatarLook };
   onClose: () => void;
-  onSave: (hairId: string, hairColor: string, streakDye: string) => void;
+  onSave: (look: AvatarLook) => void;
 }) {
-  const [hairId, setHairId] = useState<string>(resolveHairStyle(look.hairId));
-  const [hairColor, setHairColor] = useState(
-    HAIR_COLORS.find((c) => c.hex === look.hairColor)?.id ?? "espresso",
+  const [tab, setTab] = useState<Tab>("hair");
+  const [draft, setDraft] = useState<AvatarLook>({
+    ...player.look,
+    hairId: resolveHairStyle(player.look.hairId),
+  });
+  const cost = salonLookCost(player, draft);
+  const affordable = player.coins >= cost;
+  const newUnlocks = premiumIdsForLook(draft).filter(
+    (id) => !player.owned.includes(id),
+  ).length;
+
+  const update = (patch: Partial<AvatarLook>) =>
+    setDraft((current) => ({ ...current, ...patch }));
+
+  const priceTag = (category: SalonCategory, option: StyleOption) =>
+    option.price !== undefined &&
+    !player.owned.includes(premiumId(category, option.id)) ? (
+      <span className="salon-price">
+        <span className="sr-only"> premium, </span>✦{option.price}
+        <span className="sr-only"> coins</span>
+      </span>
+    ) : null;
+
+  const pills = (
+    legend: string,
+    category: SalonCategory | null,
+    options: readonly StyleOption[],
+    selected: string | undefined,
+    pick: (id: string) => void,
+  ) => (
+    <fieldset>
+      <legend>{legend}</legend>
+      <div className="salon-options">
+        {options.map((option) => (
+          <button
+            type="button"
+            key={option.id}
+            className={selected === option.id ? "selected" : ""}
+            aria-pressed={selected === option.id}
+            onClick={() => pick(option.id)}
+          >
+            {selected === option.id && <Check size={15} />} {option.label}
+            {category && priceTag(category, option)}
+          </button>
+        ))}
+      </div>
+    </fieldset>
   );
-  const [streakDye, setStreakDye] = useState("none");
+
+  const swatches = (
+    legend: string,
+    category: SalonCategory | null,
+    options: readonly Swatch[],
+    selected: string | undefined,
+    pick: (id: string) => void,
+  ) => (
+    <fieldset>
+      <legend>{legend}</legend>
+      <div className="color-options salon-swatches">
+        {options.map((option) => {
+          const fill = option.iris
+            ? `radial-gradient(circle, ${option.iris[0]}, ${option.iris[1]} 55%, ${option.iris[2]})`
+            : option.hex || "transparent";
+          return (
+            <button
+              type="button"
+              key={option.id}
+              className={`color-option ${selected === option.id ? "selected" : ""}`}
+              aria-pressed={selected === option.id}
+              onClick={() => pick(option.id)}
+            >
+              <span style={{ background: fill }}>
+                {selected === option.id && <Check size={17} />}
+              </span>
+              <small>{option.label}</small>
+              {category && priceTag(category, option)}
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+
+  const hairColorId = HAIR_COLORS.find(
+    (c) => c.hex.toLowerCase() === draft.hairColor.toLowerCase(),
+  )?.id;
+  const streakId =
+    HAIR_STREAKS.find((s) => s.hex && s.hex === draft.hairStreak)?.id ?? "none";
 
   return (
     <Dialog
       title="Stella's Salon"
-      subtitle="Pick a style, a color, and a streak."
+      subtitle="Glam up your hair and makeup. Premium looks unlock with coins."
       onClose={onClose}
+      wide
     >
       <div className="salon">
-        <fieldset>
-          <legend>Hairstyle</legend>
-          <div className="salon-options">
-            {HAIR_STYLES.map((style) => (
-              <button
-                type="button"
-                key={style.id}
-                className={hairId === style.id ? "selected" : ""}
-                aria-pressed={hairId === style.id}
-                onClick={() => setHairId(style.id)}
-              >
-                {hairId === style.id && <Check size={15} />} {style.label}
-              </button>
-            ))}
+        <div className="salon-preview" aria-hidden="true">
+          <Avatar look={draft} size={132} />
+        </div>
+        <div className="salon-controls">
+          <div className="catalog-tabs" role="group" aria-label="Salon menu">
+            <button
+              type="button"
+              className={tab === "hair" ? "selected" : ""}
+              aria-pressed={tab === "hair"}
+              onClick={() => setTab("hair")}
+            >
+              Hair
+            </button>
+            <button
+              type="button"
+              className={tab === "makeup" ? "selected" : ""}
+              aria-pressed={tab === "makeup"}
+              onClick={() => setTab("makeup")}
+            >
+              Makeup
+            </button>
           </div>
-        </fieldset>
 
-        <fieldset>
-          <legend>Base color</legend>
-          <div className="color-options">
-            {HAIR_COLORS.map((c) => (
-              <button
-                type="button"
-                key={c.id}
-                className={`color-option ${hairColor === c.id ? "selected" : ""}`}
-                aria-pressed={hairColor === c.id}
-                onClick={() => setHairColor(c.id)}
-              >
-                <span style={{ background: c.hex }}>
-                  {hairColor === c.id && <Check size={17} />}
-                </span>
-                <small>{c.label}</small>
-              </button>
-            ))}
-          </div>
-        </fieldset>
+          {tab === "hair" ? (
+            <>
+              {pills(
+                "Hairstyle",
+                "hair",
+                HAIR_STYLE_OPTIONS,
+                draft.hairId,
+                (hairId) => update({ hairId }),
+              )}
+              {swatches("Base color", null, HAIR_COLORS, hairColorId, (id) =>
+                update({
+                  hairColor:
+                    HAIR_COLORS.find((c) => c.id === id)?.hex ??
+                    draft.hairColor,
+                }),
+              )}
+              {swatches(
+                "Highlight streak",
+                null,
+                HAIR_STREAKS,
+                streakId,
+                (id) =>
+                  update({
+                    hairStreak:
+                      HAIR_STREAKS.find((s) => s.id === id)?.hex || undefined,
+                  }),
+              )}
+            </>
+          ) : (
+            <>
+              {pills("Eye look", "eye", EYE_LOOKS, draft.eyeStyle, (eyeStyle) =>
+                update({ eyeStyle }),
+              )}
+              {swatches(
+                "Eyeshadow",
+                "shadow",
+                EYESHADOWS,
+                draft.eyeshadowId,
+                (eyeshadowId) => update({ eyeshadowId }),
+              )}
+              {swatches(
+                "Eye color",
+                "iris",
+                EYE_COLORS,
+                draft.eyeColorId,
+                (eyeColorId) => update({ eyeColorId }),
+              )}
+              {swatches("Lips", "lip", LIP_COLORS, draft.lipId, (lipId) =>
+                update({ lipId }),
+              )}
+              {swatches("Blush", null, BLUSHES, draft.blushId, (blushId) =>
+                update({ blushId }),
+              )}
+              {pills(
+                "Face sparkle",
+                "face",
+                FACE_DETAILS,
+                draft.faceDetailId ?? "none",
+                (faceDetailId) => update({ faceDetailId }),
+              )}
+            </>
+          )}
 
-        <fieldset>
-          <legend>Highlight streak</legend>
-          <div className="color-options">
-            {STREAK_DYES.map((d) => (
-              <button
-                type="button"
-                key={d.id}
-                className={`color-option ${streakDye === d.id ? "selected" : ""}`}
-                aria-pressed={streakDye === d.id}
-                onClick={() => setStreakDye(d.id)}
-              >
-                <span style={{ background: d.hex || "transparent" }}>
-                  {streakDye === d.id && <Check size={17} />}
-                </span>
-                <small>{d.label}</small>
-              </button>
-            ))}
-          </div>
-        </fieldset>
+          {cost > 0 && (
+            <p className="salon-cost" role="status">
+              {newUnlocks === 1
+                ? "1 premium look"
+                : `${newUnlocks} premium looks`}{" "}
+              to unlock: <Coin amount={cost} />
+              {!affordable && " (not enough coins yet)"}
+            </p>
+          )}
 
-        <button
-          type="button"
-          className="button button-primary"
-          onClick={() => {
-            const hex =
-              HAIR_COLORS.find((c) => c.id === hairColor)?.hex ??
-              look.hairColor;
-            onSave(hairId, hex, streakDye);
-          }}
-        >
-          <Check size={17} /> Confirm new look
-        </button>
+          <button
+            type="button"
+            className="button button-primary"
+            disabled={!affordable}
+            onClick={() => onSave(draft)}
+          >
+            <Check size={17} /> Confirm new look
+          </button>
+        </div>
       </div>
     </Dialog>
   );

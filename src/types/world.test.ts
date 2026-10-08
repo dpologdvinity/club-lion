@@ -174,3 +174,24 @@ test("CATALOG_ITEMS sells the cropped puffer and platform boots", () => {
   assert.equal(boots?.slot, "shoes");
   assert.ok(!puffer?.isSecret && !boots?.isSecret);
 });
+
+test("every closet piece that is not a free basic is sold in Le Shop", async () => {
+  const { TOPS, BOTTOMS, SHOES } = await import("./avatarOptions.ts");
+  const slots: Record<string, string[]> = {
+    top: ["top_inner", "top_outer"],
+    bottom: ["bottom"],
+    shoes: ["shoes"],
+  };
+  for (const [kind, options] of [
+    ["top", TOPS],
+    ["bottom", BOTTOMS],
+    ["shoes", SHOES],
+  ] as const) {
+    for (const option of options) {
+      if ("free" in option && option.free) continue;
+      const item = CATALOG_ITEMS.find((i) => i.id === option.id);
+      assert.ok(item, `${option.id} should be sold in Le Shop`);
+      assert.ok(slots[kind].includes(item.slot), `${option.id} slot`);
+    }
+  }
+});

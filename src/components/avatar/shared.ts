@@ -133,14 +133,12 @@ export function rightArmFor(action: string): ArmPose {
   return action === "wave" ? RIGHT_ARM_WAVE : RIGHT_ARM_DOWN;
 }
 
-
 export type SleeveSpec = {
   color: string;
   width: number;
   upperOnly: boolean;
   detail?: string;
 };
-
 
 /** Sleeve following an arm pose; cap sleeves cover only the upper arm. */
 export function sleeve(arm: ArmPose, spec: SleeveSpec): string {
@@ -152,4 +150,3 @@ export function sleeve(arm: ArmPose, spec: SleeveSpec): string {
       : "")
   );
 }
-

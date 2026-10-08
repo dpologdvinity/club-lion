@@ -23,11 +23,7 @@ import {
   sleeveSpecFor,
 } from "./avatar/clothes.ts";
 
-export {
-  SKIN_TONE_COLORS,
-  ANCHORS,
-  resolveSkinTone,
-} from "./avatar/shared.ts";
+export { SKIN_TONE_COLORS, ANCHORS, resolveSkinTone } from "./avatar/shared.ts";
 
 /* -------------------------------------------------------------
  * Shared gradients & clip paths (IDs are prefixed per avatar)
@@ -45,7 +41,6 @@ function sanitizeIdPrefix(prefix: string): string {
   const clean = prefix.replace(/[^A-Za-z0-9_-]/g, "");
   return /^[A-Za-z]/.test(clean) ? clean : `av${clean}`;
 }
-
 
 /* -------------------------------------------------------------
  * Layer 0: Shadow & Board / Sparkle Trails
@@ -105,7 +100,6 @@ function renderLayer0ShadowAndBoard(look: AvatarLook, action: string): string {
   return parts.join("\n");
 }
 
-
 /* -------------------------------------------------------------
  * Layer 2: Body Base (Skin tones, head, neck, torso, arms, legs)
  * ------------------------------------------------------------- */
@@ -156,13 +150,12 @@ function renderLayer2BodyBase(look: AvatarLook, action: string): string {
   );
 }
 
-
 /* -------------------------------------------------------------
  * Layer 6b: Raised waving arm, drawn over the hair so the hand shows
  * ------------------------------------------------------------- */
 function renderRaisedArm(look: AvatarLook, action: string): string {
   if (action !== "wave") return "";
-  const spec = sleeveSpecFor(look.outfitId);
+  const spec = sleeveSpecFor(look);
   return (
     `<g class="avatar-raised-arm">` +
     `<g class="avatar-right-arm arm-wave">` +
@@ -174,7 +167,6 @@ function renderRaisedArm(look: AvatarLook, action: string): string {
     `</g>`
   );
 }
-
 
 /* -------------------------------------------------------------
  * Layer 7: Headwear & Eyewear Accessories

@@ -4125,11 +4125,70 @@ svg {
   font-weight: 600;
 }
 
-/* Salon Modal */
+/* Salon & Closet Modals: sticky live preview beside the options */
 .salon {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.salon-preview {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  padding: 14px 8px 6px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffe6f4, #efe6ff);
+}
+
+.salon-controls {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  min-width: 0;
+}
+
+.salon-price {
+  margin-left: 4px;
+  font-size: 0.8em;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.salon-swatches .color-option {
+  width: 62px;
+}
+
+.salon-swatches .color-option small {
+  line-height: 1.15;
+}
+
+.salon-cost {
+  margin: 0;
+  font-weight: 600;
+}
+
+.closet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.salon-options button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .salon {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .salon-preview {
+    position: static;
+  }
 }
 
 .salon fieldset {

@@ -83,9 +83,24 @@ export const LIP_COLORS = [
   { id: "plum", label: "Matte Plum", hex: "#6e2346", finish: "matte" },
   { id: "mauve", label: "Matte Mauve", hex: "#b06f80", finish: "matte" },
   { id: "chocolate", label: "Chocolate", hex: "#6b3a2e", finish: "matte" },
-  { id: "black_cherry", label: "Black Cherry", hex: "#4a0e1e", finish: "matte" },
-  { id: "frosted_lilac", label: "Frosted Lilac", hex: "#c7a6e6", finish: "frost" },
-  { id: "frosted_pink", label: "Frosted Pink", hex: "#f7b6d2", finish: "frost" },
+  {
+    id: "black_cherry",
+    label: "Black Cherry",
+    hex: "#4a0e1e",
+    finish: "matte",
+  },
+  {
+    id: "frosted_lilac",
+    label: "Frosted Lilac",
+    hex: "#c7a6e6",
+    finish: "frost",
+  },
+  {
+    id: "frosted_pink",
+    label: "Frosted Pink",
+    hex: "#f7b6d2",
+    finish: "frost",
+  },
   {
     id: "glitter_gloss",
     label: "Glitter Gloss",
@@ -115,7 +130,11 @@ export const EYE_COLORS = [
   { id: "green", label: "Green", iris: ["#9be08a", "#3f8a4f", "#14301b"] },
   { id: "emerald", label: "Emerald", iris: ["#6ff0b0", "#119a62", "#053420"] },
   { id: "blue", label: "Blue", iris: ["#9cd4ff", "#2f74c8", "#0d2448"] },
-  { id: "ice_blue", label: "Ice Blue", iris: ["#e2f6ff", "#86c4e8", "#2a5878"] },
+  {
+    id: "ice_blue",
+    label: "Ice Blue",
+    iris: ["#e2f6ff", "#86c4e8", "#2a5878"],
+  },
   { id: "grey", label: "Grey", iris: ["#e0e4ea", "#8a94a4", "#2e343e"] },
   { id: "violet", label: "Violet", iris: ["#c4a8ff", "#6a49b4", "#24143f"] },
   {
@@ -317,7 +336,10 @@ export const PREMIUM_SALON_OPTIONS: readonly {
   label: string;
   price: number;
 }[] = (
-  Object.entries(SALON_CATEGORY_OPTIONS) as [SalonCategory, readonly StyleOption[]][]
+  Object.entries(SALON_CATEGORY_OPTIONS) as [
+    SalonCategory,
+    readonly StyleOption[],
+  ][]
 ).flatMap(([category, options]) =>
   options.flatMap((o) =>
     typeof o.price === "number"
@@ -325,3 +347,36 @@ export const PREMIUM_SALON_OPTIONS: readonly {
       : [],
   ),
 );
+
+/* -------------------------------------------------------------
+ * Clothing resolution (shared by the renderer and the closet)
+ * ------------------------------------------------------------- */
+type ClothingFields = {
+  outfitId?: string;
+  topId?: string;
+  bottomId?: string;
+  shoesId?: string;
+};
+
+/** Worn top: explicit `topId`, else the legacy outfit's top, else the default. */
+export function resolveTopId(look: ClothingFields): TopId {
+  return (
+    findOption(TOPS, look.topId)?.id ??
+    (look.outfitId ? OUTFIT_PRESETS[look.outfitId]?.top : undefined) ??
+    "denim_jacket"
+  );
+}
+
+/** Worn bottom: explicit `bottomId`, else the legacy outfit's bottom, else the default. */
+export function resolveBottomId(look: ClothingFields): BottomId {
+  return (
+    findOption(BOTTOMS, look.bottomId)?.id ??
+    (look.outfitId ? OUTFIT_PRESETS[look.outfitId]?.bottom : undefined) ??
+    "flares_indigo"
+  );
+}
+
+/** Worn shoes; unknown IDs fall back to platform sneakers. */
+export function resolveShoeId(look: ClothingFields): ShoeId {
+  return findOption(SHOES, look.shoesId)?.id ?? "canvas_sneakers";
+}

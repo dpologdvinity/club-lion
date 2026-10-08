@@ -11,7 +11,11 @@ import {
   Sun,
 } from "lucide-react";
 import {
+  applySalonLook,
+  buyCatalogItem,
   buyItem,
+  dressAvatar,
+  equipCatalogItem,
   claimReward,
   completeBeeStop,
   completeSledRun,
@@ -53,6 +57,7 @@ import { PlayerCard } from "./components/PlayerCard";
 import { CatalogModal } from "./components/CatalogModal";
 import { StampBook } from "./components/StampBook";
 import { SalonModal } from "./components/SalonModal";
+import { ClosetModal } from "./components/ClosetModal";
 import { FriendsPanel } from "./components/FriendsPanel";
 import { AudioControls } from "./components/AudioControls";
 import { LightingControls } from "./components/LightingControls";
@@ -75,6 +80,7 @@ type Panel =
   | "catalog"
   | "stamps"
   | "salon"
+  | "closet"
   | "friends"
   | "jukebox"
   | "condo"
@@ -210,6 +216,12 @@ export default function App() {
               onClick={() => setPanel("salon")}
             >
               Salon
+            </button>
+            <button
+              className={panel === "closet" ? "selected" : ""}
+              onClick={() => setPanel("closet")}
+            >
+              Closet
             </button>
             <button
               className={panel === "games" ? "selected" : ""}
@@ -534,27 +546,17 @@ export default function App() {
           player={player}
           onClose={closePanel}
           onBuy={(id) => {
-            setPlayer((p) => buyItem(p, id));
-            notify("Purchased! Added to your collection.");
+            const before = player.coins;
+            const bought = buyCatalogItem(player, id);
+            if (bought.coins === before) {
+              notify("Not enough coins for that piece yet.");
+              return;
+            }
+            setPlayer(bought);
+            notify("Purchased! Added to your closet.");
           }}
-          onEquip={(id, slot: EquipSlot) => {
-            setPlayer((p) => ({
-              ...p,
-              look: {
-                ...p.look,
-                ...(slot === "top_outer"
-                  ? { outfitId: id }
-                  : slot === "shoes"
-                    ? { shoesId: id }
-                    : slot === "board"
-                      ? { boardId: id }
-                      : slot === "handheld"
-                        ? { handheldId: id }
-                        : slot === "headwear"
-                          ? { headwearId: id }
-                          : { outfitId: id }),
-              },
-            }));
+          onEquip={(id) => {
+            setPlayer((p) => equipCatalogItem(p, id));
             notify("Equipped!");
           }}
           onUnlockSecret={(secretId) => {
@@ -565,17 +567,29 @@ export default function App() {
       )}
       {panel === "salon" && (
         <SalonModal
-          look={player.look}
+          player={player}
           onClose={closePanel}
-          onSave={(hairId, hairColor, streakDye) => {
+          onSave={(look) => {
             setPlayer((p) => {
-              const styled = { ...p, look: { ...p.look, hairId, hairColor } };
-              return streakDye !== "none"
+              const styled = applySalonLook(p, look);
+              return look.hairStreak
                 ? unlockStamp(styled, "hair_highlight")
                 : styled;
             });
             closePanel();
-            notify("Looking fabulous! Fresh hairstyle saved.");
+            notify("Looking fabulous! Fresh look saved.");
+          }}
+        />
+      )}
+      {panel === "closet" && (
+        <ClosetModal
+          player={player}
+          onClose={closePanel}
+          onShop={() => setPanel("catalog")}
+          onSave={(outfit) => {
+            setPlayer((p) => dressAvatar(p, outfit));
+            closePanel();
+            notify("Outfit on! Serving looks.");
           }}
         />
       )}
@@ -659,6 +673,7 @@ export default function App() {
         panel !== "card" &&
         panel !== "catalog" &&
         panel !== "salon" &&
+        panel !== "closet" &&
         panel !== "stamps" &&
         panel !== "friends" &&
         panel !== "jukebox" &&

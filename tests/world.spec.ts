@@ -842,3 +842,49 @@ test("coastal travel and the lighthouse foghorn award a persistent stamp once", 
   await expect(page.locator(".wallet")).toHaveText("✦290");
   expect(errors).toEqual([]);
 });
+
+test("closet mixes free tops, bottoms, and shoes onto the avatar and locks shop pieces", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Closet", exact: true }).click();
+  const closet = page.getByRole("dialog", { name: "My Closet" });
+  await expect(closet).toBeVisible();
+  await expect(
+    closet.getByRole("button", { name: /Moto Jacket/ }),
+  ).toBeDisabled();
+  await closet.getByRole("button", { name: "Star Baby Tee" }).click();
+  await closet.getByRole("button", { name: "Bottoms", exact: true }).click();
+  await closet.getByRole("button", { name: "Denim Mini" }).click();
+  await closet.getByRole("button", { name: "Shoes", exact: true }).click();
+  await closet.getByRole("button", { name: "Jelly Sandals" }).click();
+  await closet.getByRole("button", { name: "Wear this look" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  const outfit = page.locator(".your-character .chibi-avatar .avatar-outfit");
+  await expect(outfit).toHaveClass(/top-star-baby-tee/);
+  await expect(outfit).toHaveClass(/bottom-denim-mini/);
+  await page.reload();
+  await expect(
+    page.locator(".your-character .chibi-avatar .avatar-outfit"),
+  ).toHaveClass(/bottom-denim-mini/);
+});
+
+test("salon makeup tab previews free looks and prices premium ones", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Salon", exact: true }).click();
+  const salon = page.getByRole("dialog", { name: "Stella's Salon" });
+  await salon.getByRole("button", { name: "Makeup", exact: true }).click();
+  await salon.getByRole("button", { name: /Siren Flick/ }).click();
+  await salon.getByRole("button", { name: /Cherry Red/ }).click();
+  await expect(salon.locator(".salon-cost")).toHaveCount(0);
+  await salon.getByRole("button", { name: /Glitter Pop/ }).click();
+  await expect(salon.locator(".salon-cost")).toContainText("premium look");
+  await salon.getByRole("button", { name: /Siren Flick/ }).click();
+  await salon.getByRole("button", { name: "Confirm new look" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(
+    page.locator(".your-character .chibi-avatar .avatar-eyes"),
+  ).toHaveClass(/eye-siren/);
+});
