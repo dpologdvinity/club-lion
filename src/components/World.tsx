@@ -28,6 +28,7 @@ import type { RoomManifest } from "../rooms/types";
 import { clampToWalkable } from "../rooms/camera";
 import { CameraViewport } from "./CameraViewport";
 import { RoomScenery } from "./RoomScenery";
+import { GlobalLightingOverlay } from "./GlobalLightingOverlay";
 import { DanceFloor } from "./DanceFloor";
 import { CLUB_PULSE_DANCE_FLOOR_BOUNDS } from "../rooms/manifests/clubPulse";
 import type { GameId } from "./GamesPanel";
@@ -46,6 +47,7 @@ import {
   stopOceanSurf,
 } from "../utils/nauticalAudio.ts";
 import { SpyPinModal } from "./SpyPinModal.tsx";
+import type { TimeOfDay } from "../utils/environmentalLighting.ts";
 
 const BOARD_SPEED_MULTIPLIER = 1.5;
 const WALK_DURATION_MS = 850;
@@ -78,6 +80,7 @@ type WorldProps = {
   onUnlockStamp?: (stampId: string) => void;
   onOpenRiverSurf?: () => void;
   onOpenPetCare?: () => void;
+  timeOfDay?: TimeOfDay;
 };
 
 export function World({
@@ -100,6 +103,7 @@ export function World({
   onUnlockStamp,
   onOpenRiverSurf,
   onOpenPetCare,
+  timeOfDay = "day",
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
   const [position, setPosition] = useState(() =>
@@ -496,6 +500,8 @@ export function World({
         onWalk={stageWalk}
         onPortal={portal}
         board={!!boardId}
+        timeOfDay={timeOfDay}
+        reducedMotion={reducedMotion}
       >
         {manifest && <RoomScenery place={place} />}
         {place === "club-pulse" && (
@@ -916,6 +922,8 @@ function WorldStage({
   onWalk,
   onPortal,
   board,
+  timeOfDay,
+  reducedMotion,
   children,
 }: {
   manifest?: RoomManifest;
@@ -925,12 +933,18 @@ function WorldStage({
   onWalk: (x: number, y: number) => void;
   onPortal: (target: string, spawn: { x: number; y: number }) => void;
   board: boolean;
+  timeOfDay: TimeOfDay;
+  reducedMotion: boolean;
   children: ReactNode;
 }) {
   return (
     <div
       className={`world-stage scene ${imageClass}${manifest ? " camera-world" : ""}`}
     >
+      <GlobalLightingOverlay
+        timeOfDay={timeOfDay}
+        reducedMotion={reducedMotion}
+      />
       {manifest ? (
         <CameraViewport
           manifest={manifest}

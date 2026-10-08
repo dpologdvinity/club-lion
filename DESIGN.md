@@ -66,7 +66,7 @@ The desktop shell is bounded at 1464px with 40px gutters. A wide game canvas sit
 
 ## Elevation & Depth
 
-Panel borders and very soft shadows separate the UI from the cream page. Stronger shadows are reserved for speech bubbles, dialogs, and the shared status notification. The artwork is never tinted; a small lower-edge shadow only makes the scene's controls readable.
+Panel borders and very soft shadows separate the UI from the cream page. Stronger shadows are reserved for speech bubbles, dialogs, and the shared status notification. The world stage is the one exception: a global environmental lighting layer grades the background with a time-of-day tint, ambient dimming, stars, fireflies, and a sun/moon glow. It never covers controls, the avatar, neighbors, or portals, and freezes under reduced motion. A small lower-edge shadow also makes the scene's controls readable.
 
 ## Shapes
 

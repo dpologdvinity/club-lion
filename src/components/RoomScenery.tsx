@@ -1680,6 +1680,7 @@ export function RoomScenery({
   preview?: boolean;
 }) {
   const [seconds, setSeconds] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
   useEffect(() => {
     if (preview) return;
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -1697,6 +1698,7 @@ export function RoomScenery({
       cancelAnimationFrame(frame);
       setSeconds(0);
       start = performance.now();
+      setReducedMotion(query.matches);
       if (!query.matches) frame = requestAnimationFrame(tick);
     };
     update();

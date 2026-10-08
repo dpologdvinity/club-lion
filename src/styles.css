@@ -207,6 +207,11 @@ svg {
   overflow-x: auto;
   gap: 16px;
   align-items: center;
+  min-width: 0;
+  overflow-x: auto;
+}
+.main-nav button {
+  flex-shrink: 0;
 }
 .main-nav button {
   flex-shrink: 0;
@@ -230,6 +235,7 @@ svg {
   display: flex;
   align-items: center;
   gap: 21px;
+  flex-shrink: 0;
 }
 .icon-button {
   display: inline-flex;
@@ -3063,6 +3069,11 @@ svg {
     top: -13px;
   }
   .header-actions {
+    order: 2;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-left: 0;
     gap: 8px;
     max-width: 100%;
     flex-wrap: wrap;
@@ -4538,6 +4549,76 @@ svg {
   pointer-events: none;
   font-family: var(--font-display, "Lilita One", sans-serif);
 }
+.global-lighting-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 0.8s ease;
+}
+.global-lighting-dim,
+.global-lighting-tint {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.8s ease;
+}
+.global-lighting-dim {
+  background: #000;
+}
+.global-lighting-sun-glow {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffedbb80, transparent 70%);
+}
+.global-lighting-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: translate(-50%, -50%);
+}
+.global-lighting-firefly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #d9f564;
+  box-shadow: 0 0 6px 2px #d9f56499;
+  transform: translate(-50%, -50%);
+}
+.lighting-star-twinkle {
+  animation: lighting-star-twinkle 2.4s ease-in-out infinite;
+}
+@keyframes lighting-star-twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.lighting-firefly-drift {
+  animation: lighting-firefly-drift 5s ease-in-out infinite;
+}
+@keyframes lighting-firefly-drift {
+  0%,
+  100% {
+    transform: translate(-50%, -50%);
+  }
+  50% {
+    transform: translate(calc(-50% + 10px), calc(-50% - 14px));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lighting-star-twinkle,
+  .lighting-firefly-drift {
+    animation: none;
+  }
+}
 .room-hotspot {
   transform: translateX(-50%);
   font-size: 24px;
@@ -5207,6 +5288,47 @@ svg {
 .audio-controls-channel[aria-pressed="true"] {
   opacity: 1;
   color: var(--accent);
+}
+
+/* Global environmental lighting controls */
+.lighting-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.lighting-btn {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.lighting-btn[aria-pressed="true"] {
+  opacity: 1;
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-dark);
+}
+@media (forced-colors: active) {
+  .lighting-btn[aria-pressed="true"] {
+    background: Highlight;
+    color: HighlightText;
+    border-color: ButtonText;
+  }
+}
+.lighting-btn-auto {
+  margin-left: 4px;
+  border-left: 1px solid var(--border);
+  border-radius: 0;
+  padding-left: 10px;
+}
+
+@media (max-width: 850px) {
+  .lighting-controls {
+    gap: 2px;
+    padding: 4px 6px;
+  }
 }
 
 /* Jukebox modal */

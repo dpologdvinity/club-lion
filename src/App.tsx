@@ -36,6 +36,7 @@ import {
   type PlaceId,
 } from "./game";
 import { usePlayer } from "./usePlayer";
+import { useLightingPrefs } from "./useLightingPrefs";
 import { Coin, Lion } from "./components/Lion";
 import { Dialog } from "./components/Dialog";
 import { SledRun } from "./components/SledRun";
@@ -52,6 +53,7 @@ import { StampBook } from "./components/StampBook";
 import { SalonModal } from "./components/SalonModal";
 import { FriendsPanel } from "./components/FriendsPanel";
 import { AudioControls } from "./components/AudioControls";
+import { LightingControls } from "./components/LightingControls";
 import { JukeboxModal } from "./components/JukeboxModal";
 import { Condo } from "./components/Condo";
 import { SpyTerminalModal } from "./components/SpyTerminal";
@@ -83,7 +85,15 @@ type Panel =
   | null;
 
 export default function App() {
-  const { player, setPlayer, saveError } = usePlayer();
+  const { player, setPlayer, saveError: playerSaveError } = usePlayer();
+  const {
+    autoTime,
+    setAutoTime,
+    timeOfDay,
+    setTimeOfDay,
+    saveError: lightingSaveError,
+  } = useLightingPrefs();
+  const saveError = playerSaveError || lightingSaveError;
   const serverSession = useCustomServers();
   const [place, setPlace] = useState<PlaceId>(
     () =>
@@ -254,6 +264,15 @@ export default function App() {
             </button>
           </nav>
           <div className="header-actions">
+            <LightingControls
+              timeOfDay={timeOfDay}
+              autoTime={autoTime}
+              onSelectTime={(time) => {
+                setAutoTime(false);
+                setTimeOfDay(time);
+              }}
+              onToggleAuto={() => setAutoTime((prev) => !prev)}
+            />
             <AudioControls />
             <button
               className="icon-button help-button"
@@ -313,6 +332,7 @@ export default function App() {
             spawn={spawn}
             player={player}
             place={place}
+            timeOfDay={timeOfDay}
             navigate={navigate}
             onMap={() => setPanel("map")}
             onShop={() => setPanel("shop")}
