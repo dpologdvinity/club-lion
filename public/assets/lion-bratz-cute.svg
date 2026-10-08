@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="400" height="400">
+  <defs>
+    <!-- Bratz Cute Gradients -->
+    <radialGradient id="bc-fur" cx="45%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffe399" />
+      <stop offset="60%" stop-color="#f8be52" />
+      <stop offset="100%" stop-color="#dc931a" />
+    </radialGradient>
+    <radialGradient id="bc-cream" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#fff0d0" />
+    </radialGradient>
+    <radialGradient id="bc-mane" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#fca93e" />
+      <stop offset="65%" stop-color="#e07a14" />
+      <stop offset="100%" stop-color="#b05202" />
+    </radialGradient>
+    <!-- Doll Iris: Amber-Hazel with Violet Shimmer -->
+    <radialGradient id="bc-iris" cx="40%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#ffeb99" />
+      <stop offset="35%" stop-color="#9fe080" />
+      <stop offset="70%" stop-color="#38984a" />
+      <stop offset="90%" stop-color="#144d22" />
+      <stop offset="100%" stop-color="#082610" />
+    </radialGradient>
+    <!-- Gold Bling -->
+    <linearGradient id="bc-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe785" />
+      <stop offset="50%" stop-color="#f5b82e" />
+      <stop offset="100%" stop-color="#bf8008" />
+    </linearGradient>
+    <filter id="bc-shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feGaussianBlur stdDeviation="3" />
+    </filter>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="100" cy="184" rx="66" ry="11" fill="rgba(60,25,10,0.2)" filter="url(#bc-shadow)" />
+
+  <!-- Playful Tail with Curled Tip -->
+  <g class="tail">
+    <path d="M136 146 C164 144 184 130 180 102 C178 86 164 84 160 92 C156 100 168 112 163 124 C158 134 146 140 134 143" 
+          stroke="url(#bc-fur)" stroke-width="7" stroke-linecap="round" fill="none" />
+    <!-- Fluffy Tuft with Sparkle Streak -->
+    <path d="M180 96 C189 89 196 76 190 68 C183 60 172 64 168 70 C163 62 153 66 153 74 C151 84 162 96 174 98 Z" 
+          fill="url(#bc-mane)" />
+    <path d="M178 78 Q182 72 186 74" stroke="#fff4cc" stroke-width="1.8" stroke-linecap="round" fill="none" />
+  </g>
+
+  <!-- Back Paws with Pretty Claws -->
+  <g class="back-paws">
+    <ellipse cx="60" cy="168" rx="16" ry="10" fill="url(#bc-fur)" />
+    <ellipse cx="140" cy="168" rx="16" ry="10" fill="url(#bc-fur)" />
+    <!-- Cream Toe Puffs -->
+    <circle cx="54" cy="169" r="3.4" fill="url(#bc-cream)" />
+    <circle cx="60" cy="170" r="3.4" fill="url(#bc-cream)" />
+    <circle cx="66" cy="169" r="3.4" fill="url(#bc-cream)" />
+    <circle cx="134" cy="169" r="3.4" fill="url(#bc-cream)" />
+    <circle cx="140" cy="170" r="3.4" fill="url(#bc-cream)" />
+    <circle cx="146" cy="169" r="3.4" fill="url(#bc-cream)" />
+  </g>
+
+  <!-- Slender Cute Body with Defined Waist -->
+  <g class="body">
+    <path d="M74 116 C60 128 58 156 68 168 C80 178 120 178 132 168 C142 156 140 128 126 116 Z" fill="url(#bc-fur)" />
+    <!-- Pearlescent Cream Chest and Belly -->
+    <path d="M86 122 C78 132 78 156 86 166 C94 172 106 172 114 166 C122 156 122 132 114 122 C106 116 94 116 86 122 Z" fill="url(#bc-cream)" />
+  </g>
+
+  <!-- Cute Front Paws -->
+  <g class="front-paws">
+    <path d="M82 144 C82 156 79 170 82 175 C85 178 94 178 97 175 C99 170 98 154 96 144 Z" fill="url(#bc-fur)" />
+    <circle cx="85" cy="174" r="2.8" fill="url(#bc-cream)" />
+    <circle cx="90" cy="175" r="2.8" fill="url(#bc-cream)" />
+    <circle cx="95" cy="174" r="2.8" fill="url(#bc-cream)" />
+    <path d="M118 144 C118 156 121 170 118 175 C115 178 106 178 103 175 C101 170 102 154 104 144 Z" fill="url(#bc-fur)" />
+    <circle cx="105" cy="174" r="2.8" fill="url(#bc-cream)" />
+    <circle cx="110" cy="175" r="2.8" fill="url(#bc-cream)" />
+    <circle cx="115" cy="174" r="2.8" fill="url(#bc-cream)" />
+  </g>
+
+  <!-- Voluminous Fluffy Bratz Mane (Layered Clouds) -->
+  <g class="mane">
+    <path d="M100 20 
+             C128 18 152 28 164 48 
+             C176 66 180 92 170 116 
+             C160 136 140 148 120 150 
+             C112 151 88 151 80 150 
+             C60 148 40 136 30 116 
+             C20 92 24 66 36 48 
+             C48 28 72 18 100 20 Z" 
+          fill="url(#bc-mane)" />
+    <!-- Styled Swirl Fluffs -->
+    <circle cx="54" cy="38" r="18" fill="url(#bc-mane)" />
+    <circle cx="100" cy="26" r="20" fill="url(#bc-mane)" />
+    <circle cx="146" cy="38" r="18" fill="url(#bc-mane)" />
+    <circle cx="168" cy="70" r="18" fill="url(#bc-mane)" />
+    <circle cx="164" cy="106" r="17" fill="url(#bc-mane)" />
+    <circle cx="138" cy="138" r="16" fill="url(#bc-mane)" />
+    <circle cx="62" cy="138" r="16" fill="url(#bc-mane)" />
+    <circle cx="36" cy="106" r="17" fill="url(#bc-mane)" />
+    <circle cx="32" cy="70" r="18" fill="url(#bc-mane)" />
+    <!-- Glossy Specular Ribbons -->
+    <path d="M64 36 Q100 22 136 36" stroke="#ffe596" stroke-width="3.5" stroke-linecap="round" fill="none" opacity="0.85" />
+    <path d="M76 42 Q100 32 124 42" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.75" />
+  </g>
+
+  <!-- Gold Star Choker Collar (Layered over mane, under chin) -->
+  <g class="collar">
+    <path d="M78 128 Q100 138 122 128" stroke="url(#bc-gold)" stroke-width="4.2" stroke-linecap="round" fill="none" />
+    <path d="M80 127 Q100 137 120 127" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7" />
+    <!-- Dangling 5-Point Gold Star Charm -->
+    <g transform="translate(100, 142)">
+      <circle cx="0" cy="-4" r="2" fill="url(#bc-gold)" />
+      <!-- Star -->
+      <polygon points="0,-7 2,-2 7,-2 3,1 5,6 0,3 -5,6 -3,1 -7,-2 -2,-2" fill="url(#bc-gold)" stroke="#ffffff" stroke-width="0.5" />
+      <circle cx="0" cy="-0.5" r="1.1" fill="#ffffff" />
+    </g>
+  </g>
+
+  <!-- Head Base -->
+  <g class="head">
+    <ellipse cx="100" cy="86" rx="46" ry="40" fill="url(#bc-fur)" />
+
+    <!-- Rounded Ears with Pink Fluff -->
+    <g class="ears">
+      <circle cx="56" cy="50" r="14" fill="url(#bc-fur)" />
+      <circle cx="56" cy="50" r="9" fill="#ff9cb0" opacity="0.85" />
+      <circle cx="144" cy="50" r="14" fill="url(#bc-fur)" />
+      <circle cx="144" cy="50" r="9" fill="#ff9cb0" opacity="0.85" />
+      <!-- Pretty Y2K Butterfly Clip in Left Ear -->
+      <g transform="translate(48, 42) rotate(-15)">
+        <ellipse cx="-2.5" cy="-1.5" rx="3" ry="2.2" fill="#ff5fa2" transform="rotate(-25 -2.5 -1.5)" />
+        <ellipse cx="2.5" cy="-1.5" rx="3" ry="2.2" fill="#ff5fa2" transform="rotate(25 2.5 -1.5)" />
+        <ellipse cx="-1.8" cy="1.8" rx="2" ry="1.5" fill="#7fe3ff" />
+        <ellipse cx="1.8" cy="1.8" rx="2" ry="1.5" fill="#7fe3ff" />
+        <circle cx="0" cy="0" r="0.8" fill="#ffffff" />
+      </g>
+    </g>
+
+    <!-- Blushing Strobed Cheeks -->
+    <ellipse cx="64" cy="98" rx="10" ry="5.5" fill="#ff5f86" opacity="0.38" />
+    <ellipse cx="136" cy="98" rx="10" ry="5.5" fill="#ff5f86" opacity="0.38" />
+    <!-- Cheekbone Glow Dot -->
+    <circle cx="63" cy="96" r="1.4" fill="#ffffff" opacity="0.75" />
+    <circle cx="137" cy="96" r="1.4" fill="#ffffff" opacity="0.75" />
+
+    <!-- Iconic Bratz Doll Almond Eyes -->
+    <g class="bratz-eyes">
+      <!-- Left Eye -->
+      <!-- Sclera -->
+      <path d="M58 82 C62 70 82 70 88 82 C84 94 62 94 58 82 Z" fill="#ffffff" />
+      <!-- Almond Iris -->
+      <ellipse cx="73" cy="82" rx="11" ry="13" fill="url(#bc-iris)" />
+      <!-- Deep Limbal Ring & Pupil -->
+      <ellipse cx="73" cy="82" rx="6.5" ry="8.5" fill="#081e0e" />
+      <!-- Starburst / Glint Catchlights -->
+      <ellipse cx="70" cy="76" rx="4.5" ry="5.5" fill="#ffffff" />
+      <polygon points="76,87 77.2,88.5 76,90 74.8,88.5" fill="#ffffff" />
+      <circle cx="67" cy="86" r="1.2" fill="#ffffff" opacity="0.9" />
+      <!-- Upper Winged Eyeliner & Feathered Doll Lashes -->
+      <path d="M56 83 C62 67 84 67 92 78" stroke="#1c0b02" stroke-width="3.2" stroke-linecap="round" fill="none" />
+      <path d="M88 74 L95 68" stroke="#1c0b02" stroke-width="2.2" stroke-linecap="round" />
+      <path d="M85 70 L90 63" stroke="#1c0b02" stroke-width="1.8" stroke-linecap="round" />
+      <!-- Lower Spidery Lashes -->
+      <path d="M64 91 L63 94 M72 92 L72 95.5 M80 91 L82 94" stroke="#1c0b02" stroke-width="1.4" stroke-linecap="round" />
+
+      <!-- Right Eye -->
+      <!-- Sclera -->
+      <path d="M142 82 C138 70 118 70 112 82 C116 94 138 94 142 82 Z" fill="#ffffff" />
+      <!-- Almond Iris -->
+      <ellipse cx="127" cy="82" rx="11" ry="13" fill="url(#bc-iris)" />
+      <!-- Deep Limbal Ring & Pupil -->
+      <ellipse cx="127" cy="82" rx="6.5" ry="8.5" fill="#081e0e" />
+      <!-- Starburst / Glint Catchlights -->
+      <ellipse cx="124" cy="76" rx="4.5" ry="5.5" fill="#ffffff" />
+      <polygon points="130,87 131.2,88.5 130,90 128.8,88.5" fill="#ffffff" />
+      <circle cx="121" cy="86" r="1.2" fill="#ffffff" opacity="0.9" />
+      <!-- Upper Winged Eyeliner & Feathered Doll Lashes -->
+      <path d="M144 83 C138 67 116 67 108 78" stroke="#1c0b02" stroke-width="3.2" stroke-linecap="round" fill="none" />
+      <path d="M112 74 L105 68" stroke="#1c0b02" stroke-width="2.2" stroke-linecap="round" />
+      <path d="M115 70 L110 63" stroke="#1c0b02" stroke-width="1.8" stroke-linecap="round" />
+      <!-- Lower Spidery Lashes -->
+      <path d="M136 91 L137 94 M128 92 L128 95.5 M120 91 L118 94" stroke="#1c0b02" stroke-width="1.4" stroke-linecap="round" />
+    </g>
+
+    <!-- Muzzle & Glossy Pout -->
+    <g class="muzzle">
+      <ellipse cx="94" cy="98" rx="8.5" ry="6.5" fill="url(#bc-cream)" />
+      <ellipse cx="106" cy="98" rx="8.5" ry="6.5" fill="url(#bc-cream)" />
+      <!-- Glossy Button Nose with Specular Highlight -->
+      <path d="M96 92 C96 89.5 104 89.5 104 92 C104 95 101 97.5 100 98.5 C99 97.5 96 95 96 92 Z" fill="#ff4d79" />
+      <ellipse cx="98.5" cy="91.5" rx="1.2" ry="0.8" fill="#ffffff" />
+      <!-- Sweet Plump Doll Pout -->
+      <path d="M96 100 Q100 102 104 100" stroke="#702c03" stroke-width="1.8" stroke-linecap="round" fill="none" />
+      <!-- Gloss sheen on lower lip -->
+      <ellipse cx="100" cy="103" rx="3.2" ry="1.6" fill="#ff85a1" opacity="0.6" />
+      <circle cx="99.5" cy="103" r="0.6" fill="#ffffff" />
+    </g>
+
+    <!-- Cute Whisker Beauty Mark -->
+    <circle cx="89" cy="99" r="0.9" fill="#5c2404" />
+    <circle cx="111" cy="99" r="0.9" fill="#5c2404" />
+  </g>
+</svg>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Club Lion - Vector SVG Lion Cub Showcase</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #120d18;
+      color: #fff;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffd768, #ff6fa2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+    }
+    p.subtitle {
+      color: #bfaec9;
+      font-size: 1rem;
+      max-width: 600px;
+      text-align: center;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+      width: 100%;
+      max-width: 1100px;
+    }
+    .card {
+      background: #1f1629;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 111, 162, 0.4);
+    }
+    .art-container {
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 280px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .art-container.chibi {
+      background: radial-gradient(circle at 50% 40%, #fff6e0, #fae2b0);
+    }
+    .art-container.cute {
+      background: radial-gradient(circle at 50% 40%, #ffeaf3, #edd4f8);
+    }
+    .art-container.sassy {
+      background: radial-gradient(circle at 50% 40%, #fcedd8, #e5bee3);
+    }
+    .art-container img {
+      width: 90%;
+      height: 90%;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+    }
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+    .tag.chibi-tag { background: rgba(245, 184, 66, 0.2); color: #f5b842; }
+    .tag.cute-tag { background: rgba(255, 95, 162, 0.2); color: #ff5fa2; }
+    .tag.sassy-tag { background: rgba(0, 240, 255, 0.2); color: #00f0ff; }
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    p.desc {
+      font-size: 0.88rem;
+      color: #9f91ab;
+      text-align: center;
+      line-height: 1.45;
+    }
+    .features {
+      margin-top: 14px;
+      list-style: none;
+      width: 100%;
+      font-size: 0.82rem;
+      color: #ded1e8;
+    }
+    .features li {
+      padding: 4px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .features li::before {
+      content: "✦";
+      color: #ffd768;
+    }
+  </style>
+</head>
+<body>
+  <h1>Club Lion - Vector SVG Lion Cubs</h1>
+  <p class="subtitle">
+    Pure vector SVG illustrations rendered directly in code ($0 cost, infinite resolution, zero stitches/seams). Authentic feline anatomy tailored for both cute and cunty aesthetics.
+  </p>
+
+  <div class="grid">
+    <!-- Option 1: Stitchless Living Chibi Cub -->
+    <div class="card">
+      <span class="tag chibi-tag">Living Cub Fix</span>
+      <div class="art-container chibi">
+        <img src="/assets/lion-chibi-living.svg" alt="Stitchless Living Chibi Lion Cub" />
+      </div>
+      <h2>Stitchless Living Chibi</h2>
+      <p class="desc">The plushie favorite with all stitches, seams, and patchwork eliminated. An authentic living baby cub.</p>
+      <ul class="features">
+        <li>Warm amber anime/chibi eyes with dual star catchlights</li>
+        <li>Bouncy rounded cloud-fluff golden mane</li>
+        <li>Soft pink button nose and cream toe bean pads</li>
+        <li>100% organic fur gradients, zero toy seams</li>
+      </ul>
+    </div>
+
+    <!-- Option 2: Cute Bratz Petz Cub -->
+    <div class="card">
+      <span class="tag cute-tag">Sweet Doll Glam</span>
+      <div class="art-container cute">
+        <img src="/assets/lion-bratz-cute.svg" alt="Cute Bratz Petz Lion Cub" />
+      </div>
+      <h2>Cute Bratz Petz Cub</h2>
+      <p class="desc">Iconic 2000s Bratz Petz aesthetic on all four paws. Sweet, fashionable, and doe-eyed.</p>
+      <ul class="features">
+        <li>Almond doll eyes with hazel-green iris & fluttery lashes</li>
+        <li>Glossy plump lower lip cushion and button nose</li>
+        <li>Y2K pearlescent butterfly ear clip</li>
+        <li>Gold choker collar with dangling 5-point star charm</li>
+      </ul>
+    </div>
+
+    <!-- Option 3: Sassy / Cunty Bratz Cub -->
+    <div class="card">
+      <span class="tag sassy-tag">Feline Diva Attitude</span>
+      <div class="art-container sassy">
+        <img src="/assets/lion-bratz-sassy.svg" alt="Sassy Cunty Bratz Lion Cub" />
+      </div>
+      <h2>Sassy / Cunty Bratz Cub</h2>
+      <p class="desc">Unapologetic feline attitude on all fours. High-fashion glamour for players with fierce avatars.</p>
+      <ul class="features">
+        <li>Fierce winged cat-eye liner and sculpted high brows</li>
+        <li>Side-eye gaze with confident asymmetrical smirk</li>
+        <li>Sculpted mane with sharp flicks and hot-pink streaks</li>
+        <li>Chunky gold Cuban curb chain with diamond medallion</li>
+        <li>Double gold ear piercings & cheek beauty mark</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

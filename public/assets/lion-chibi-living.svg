@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="400" height="400">
+  <defs>
+    <!-- Fur Gradients -->
+    <radialGradient id="chibi-body" cx="45%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#fed679" />
+      <stop offset="65%" stop-color="#f5b842" />
+      <stop offset="100%" stop-color="#df9a24" />
+    </radialGradient>
+    <radialGradient id="chibi-belly" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#fff8e7" />
+      <stop offset="100%" stop-color="#fde8bb" />
+    </radialGradient>
+    <radialGradient id="chibi-mane" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#f6a93b" />
+      <stop offset="70%" stop-color="#de7e18" />
+      <stop offset="100%" stop-color="#ba5d05" />
+    </radialGradient>
+    <!-- Eye Gradient -->
+    <radialGradient id="chibi-iris" cx="45%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffd56b" />
+      <stop offset="45%" stop-color="#e6911c" />
+      <stop offset="85%" stop-color="#934304" />
+      <stop offset="100%" stop-color="#4e2000" />
+    </radialGradient>
+    <filter id="chibi-shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feGaussianBlur stdDeviation="3" />
+    </filter>
+  </defs>
+
+  <!-- Ground Soft Shadow -->
+  <ellipse cx="100" cy="182" rx="65" ry="12" fill="rgba(60,30,10,0.18)" filter="url(#chibi-shadow)" />
+
+  <!-- Tail with Fluffy Tuft -->
+  <g class="tail">
+    <path d="M140 148 C165 146 182 135 178 108 C175 92 162 90 158 98 C155 106 166 116 162 128 C158 136 148 142 138 144" 
+          stroke="url(#chibi-body)" stroke-width="8" stroke-linecap="round" fill="none" />
+    <!-- Fluffy Mane Tuft -->
+    <path d="M178 102 C186 96 192 84 186 76 C180 68 170 72 166 78 C162 70 152 74 152 82 C150 92 160 102 172 104 Z" 
+          fill="url(#chibi-mane)" />
+    <path d="M174 86 Q178 80 182 82" stroke="#ffe299" stroke-width="1.8" stroke-linecap="round" fill="none" />
+  </g>
+
+  <!-- Back Paws (Sitting/Standing Pose) -->
+  <g class="back-paws">
+    <ellipse cx="62" cy="166" rx="16" ry="11" fill="url(#chibi-body)" />
+    <ellipse cx="138" cy="166" rx="16" ry="11" fill="url(#chibi-body)" />
+    <!-- Toe beans / separators -->
+    <circle cx="56" cy="168" r="3.2" fill="#fff1cc" />
+    <circle cx="62" cy="169" r="3.2" fill="#fff1cc" />
+    <circle cx="68" cy="168" r="3.2" fill="#fff1cc" />
+    <circle cx="132" cy="168" r="3.2" fill="#fff1cc" />
+    <circle cx="138" cy="169" r="3.2" fill="#fff1cc" />
+    <circle cx="144" cy="168" r="3.2" fill="#fff1cc" />
+  </g>
+
+  <!-- Chubby Body -->
+  <g class="body">
+    <path d="M72 115 C58 128 56 156 68 168 C80 178 120 178 132 168 C144 156 142 128 128 115 Z" fill="url(#chibi-body)" />
+    <!-- Soft Cream Belly -->
+    <path d="M84 124 C76 134 76 156 86 165 C94 172 106 172 114 165 C124 156 124 134 116 124 C108 118 92 118 84 124 Z" fill="url(#chibi-belly)" />
+  </g>
+
+  <!-- Front Paws -->
+  <g class="front-paws">
+    <!-- Left Paw -->
+    <path d="M82 142 C82 154 80 168 83 174 C85 178 94 178 97 174 C99 168 98 152 96 142 Z" fill="url(#chibi-body)" />
+    <circle cx="85" cy="173" r="2.6" fill="#fff1cc" />
+    <circle cx="90" cy="174" r="2.6" fill="#fff1cc" />
+    <circle cx="95" cy="173" r="2.6" fill="#fff1cc" />
+    <!-- Right Paw -->
+    <path d="M118 142 C118 154 120 168 117 174 C115 178 106 178 103 174 C101 168 102 152 104 142 Z" fill="url(#chibi-body)" />
+    <circle cx="105" cy="173" r="2.6" fill="#fff1cc" />
+    <circle cx="110" cy="174" r="2.6" fill="#fff1cc" />
+    <circle cx="115" cy="173" r="2.6" fill="#fff1cc" />
+  </g>
+
+  <!-- Fluffy Cloud Lion Mane (Back Layer) -->
+  <g class="mane">
+    <path d="M100 24 
+             C124 22 146 32 156 50 
+             C168 68 174 94 164 116 
+             C156 134 138 146 120 148 
+             C112 150 88 150 80 148 
+             C62 146 44 134 36 116 
+             C26 94 32 68 44 50 
+             C54 32 76 22 100 24 Z" 
+          fill="url(#chibi-mane)" />
+    <!-- Bouncy Fluff Scallops -->
+    <circle cx="58" cy="42" r="18" fill="url(#chibi-mane)" />
+    <circle cx="100" cy="30" r="19" fill="url(#chibi-mane)" />
+    <circle cx="142" cy="42" r="18" fill="url(#chibi-mane)" />
+    <circle cx="162" cy="74" r="18" fill="url(#chibi-mane)" />
+    <circle cx="158" cy="108" r="17" fill="url(#chibi-mane)" />
+    <circle cx="134" cy="136" r="16" fill="url(#chibi-mane)" />
+    <circle cx="66" cy="136" r="16" fill="url(#chibi-mane)" />
+    <circle cx="42" cy="108" r="17" fill="url(#chibi-mane)" />
+    <circle cx="38" cy="74" r="18" fill="url(#chibi-mane)" />
+    <!-- Mane Inner Highlights -->
+    <path d="M68 40 Q100 26 132 40" stroke="#fec568" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.85" />
+    <path d="M46 72 Q36 94 48 116" stroke="#fec568" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.6" />
+    <path d="M154 72 Q164 94 152 116" stroke="#fec568" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.6" />
+  </g>
+
+  <!-- Head Base -->
+  <g class="head">
+    <!-- Big Rounded Cub Head -->
+    <ellipse cx="100" cy="88" rx="48" ry="42" fill="url(#chibi-body)" />
+
+    <!-- Rounded Cub Ears -->
+    <g class="ears">
+      <!-- Left Ear -->
+      <circle cx="58" cy="52" r="15" fill="url(#chibi-body)" />
+      <circle cx="58" cy="52" r="9.5" fill="#fca89b" opacity="0.85" />
+      <path d="M54 50 Q58 46 62 50" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.6" />
+      <!-- Right Ear -->
+      <circle cx="142" cy="52" r="15" fill="url(#chibi-body)" />
+      <circle cx="142" cy="52" r="9.5" fill="#fca89b" opacity="0.85" />
+      <path d="M138 50 Q142 46 146 50" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.6" />
+    </g>
+
+    <!-- Rosy Airbrushed Cheeks -->
+    <ellipse cx="64" cy="98" rx="10" ry="6" fill="#ff7a90" opacity="0.32" />
+    <ellipse cx="136" cy="98" rx="10" ry="6" fill="#ff7a90" opacity="0.32" />
+
+    <!-- Huge Sparkling Chibi Eyes -->
+    <g class="eyes">
+      <!-- Left Eye -->
+      <ellipse cx="74" cy="82" rx="16" ry="19" fill="#180c05" />
+      <ellipse cx="74" cy="83" rx="14.5" ry="17" fill="url(#chibi-iris)" />
+      <!-- Deep Pupil -->
+      <ellipse cx="74.5" cy="83.5" rx="9" ry="11.5" fill="#0c0502" />
+      <!-- Radial star catchlights -->
+      <ellipse cx="70" cy="74" rx="6" ry="7.5" fill="#ffffff" />
+      <circle cx="79" cy="91" r="3.2" fill="#ffffff" />
+      <circle cx="68" cy="89" r="1.6" fill="#ffffff" opacity="0.8" />
+      <!-- Eyelash flicks (sweet baby cub) -->
+      <path d="M60 70 Q70 63 86 67" stroke="#361704" stroke-width="2.6" stroke-linecap="round" fill="none" />
+      <path d="M84 66 L89 62" stroke="#361704" stroke-width="2" stroke-linecap="round" />
+
+      <!-- Right Eye -->
+      <ellipse cx="126" cy="82" rx="16" ry="19" fill="#180c05" />
+      <ellipse cx="126" cy="83" rx="14.5" ry="17" fill="url(#chibi-iris)" />
+      <!-- Deep Pupil -->
+      <ellipse cx="125.5" cy="83.5" rx="9" ry="11.5" fill="#0c0502" />
+      <!-- Radial star catchlights -->
+      <ellipse cx="122" cy="74" rx="6" ry="7.5" fill="#ffffff" />
+      <circle cx="131" cy="91" r="3.2" fill="#ffffff" />
+      <circle cx="120" cy="89" r="1.6" fill="#ffffff" opacity="0.8" />
+      <!-- Eyelash flicks -->
+      <path d="M140 70 Q130 63 114 67" stroke="#361704" stroke-width="2.6" stroke-linecap="round" fill="none" />
+      <path d="M116 66 L111 62" stroke="#361704" stroke-width="2" stroke-linecap="round" />
+    </g>
+
+    <!-- Sweet Cream Muzzle & Whiskers -->
+    <g class="muzzle">
+      <ellipse cx="93" cy="99" rx="9.5" ry="7" fill="url(#chibi-belly)" />
+      <ellipse cx="107" cy="99" rx="9.5" ry="7" fill="url(#chibi-belly)" />
+      <!-- Soft Pink Heart Button Nose -->
+      <path d="M96 92 C96 89 104 89 104 92 C104 95 101 98 100 99 C99 98 96 95 96 92 Z" fill="#ff6b8b" />
+      <circle cx="98.5" cy="92" r="1" fill="#ffffff" opacity="0.85" />
+      <!-- Smiling Kitty Mouth -->
+      <path d="M94 100 Q100 105 100 99 Q100 105 106 100" stroke="#743308" stroke-width="1.8" stroke-linecap="round" fill="none" />
+      <!-- Whisker freckle dots -->
+      <circle cx="89" cy="98" r="0.8" fill="#c47822" />
+      <circle cx="87" cy="101" r="0.8" fill="#c47822" />
+      <circle cx="111" cy="98" r="0.8" fill="#c47822" />
+      <circle cx="113" cy="101" r="0.8" fill="#c47822" />
+    </g>
+
+    <!-- Forehead Tuft -->
+    <path d="M96 52 C98 42 102 42 104 52" stroke="#f59a1e" stroke-width="2" stroke-linecap="round" fill="none" />
+  </g>
+</svg>
