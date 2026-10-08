@@ -27,6 +27,7 @@ import {
   meetLion,
   unlockSecretCatalogItem,
   unlockStamp,
+  evaluateStampUnlocks,
   PLACES,
   SHOP_ITEMS,
   visitPlace,
@@ -472,7 +473,12 @@ export default function App() {
             if (!room) return;
             serverSession.connect(server);
             navigate(room.id);
-            notify(`Joined ${server.name}.`);
+            if (server.hostId === LOCAL_PLAYER_ID) {
+              setPlayer((p) => unlockStamp(p, "server_host"));
+              notify(`Lounge Host! Joined ${server.name}.`);
+            } else {
+              notify(`Joined ${server.name}.`);
+            }
           }}
           onUpdateServer={serverSession.updateServer}
           onLeave={serverSession.leave}
@@ -583,7 +589,16 @@ export default function App() {
           <RiverSurf
             best={player.riverSurfBest ?? 0}
             onComplete={(coins) => {
-              setPlayer((p) => completeRiverSurf(p, { score: coins, coins }));
+              setPlayer((p) => {
+                let updated = completeRiverSurf(p, { score: coins, coins });
+                const eligible = evaluateStampUnlocks(updated);
+                for (const id of eligible) {
+                  updated = unlockStamp(updated, id);
+                }
+                return coins >= 30
+                  ? unlockStamp(updated, "river_surf_pro")
+                  : updated;
+              });
               notify(`Gnarly run! +${coins} coins.`);
             }}
             onClose={closePanel}
@@ -683,7 +698,16 @@ export default function App() {
                 look={player.look}
                 best={player.sledRunBest}
                 onComplete={(coins, result) => {
-                  setPlayer((p) => completeSledRun(p, result));
+                  setPlayer((p) => {
+                    let updated = completeSledRun(p, result);
+                    const eligible = evaluateStampUnlocks(updated);
+                    for (const id of eligible) {
+                      updated = unlockStamp(updated, id);
+                    }
+                    return result.tricksCompleted >= 3 || coins >= 50
+                      ? unlockStamp(updated, "sled_champion")
+                      : updated;
+                  });
                   navigate("mt-mist", { x: 1800, y: 600 });
                   notify(`Sled run complete! +${coins} coins.`);
                 }}

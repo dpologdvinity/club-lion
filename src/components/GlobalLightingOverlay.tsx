@@ -18,7 +18,11 @@ export function GlobalLightingOverlay({
   const profile = getLightingProfile(timeOfDay);
   const dimOpacity = 1 - profile.ambientBrightness;
   return (
-    <div className="global-lighting-overlay" aria-hidden="true">
+    <div
+      className="global-lighting-overlay"
+      aria-hidden="true"
+      data-time-of-day={timeOfDay}
+    >
       {dimOpacity > 0 && (
         <div className="global-lighting-dim" style={{ opacity: dimOpacity }} />
       )}

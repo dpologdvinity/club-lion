@@ -225,3 +225,32 @@ test("Foghorn Mariner is a secret event stamp with a 40 coin reward", () => {
     }).includes(stamp.id),
   );
 });
+
+test("Phase 5 stamp definitions include Alpine Sledder, Rapids Surfer, and Lounge Host", () => {
+  const sled = STAMP_DEFINITIONS.find((s) => s.id === "sled_champion");
+  assert.ok(sled);
+  assert.equal(sled.name, "Alpine Sledder");
+  assert.equal(sled.category, "arcade_mastery");
+  assert.equal(sled.rewardCoins, 50);
+
+  const surf = STAMP_DEFINITIONS.find((s) => s.id === "river_surf_pro");
+  assert.ok(surf);
+  assert.equal(surf.name, "Rapids Surfer");
+  assert.equal(surf.category, "arcade_mastery");
+  assert.equal(surf.rewardCoins, 35);
+
+  const server = STAMP_DEFINITIONS.find((s) => s.id === "server_host");
+  assert.ok(server);
+  assert.equal(server.name, "Lounge Host");
+  assert.equal(server.category, "secrets");
+  assert.equal(server.rewardCoins, 30);
+
+  const base = newPlayer();
+  assert.deepEqual(evaluateStampUnlocks(base), []);
+
+  const eligibleSled = evaluateStampUnlocks({ ...base, sledRunBest: 50 });
+  assert.deepEqual(eligibleSled, ["sled_champion"]);
+
+  const eligibleSurf = evaluateStampUnlocks({ ...base, riverSurfBest: 30 });
+  assert.deepEqual(eligibleSurf, ["river_surf_pro"]);
+});

@@ -263,6 +263,36 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     icon: "🐾",
     unlockHint: "Max out your pet's happiness at the Pet Paradise Nursery.",
   },
+  {
+    id: "sled_champion",
+    name: "Alpine Sledder",
+    title: "Alpine Sledder",
+    category: "arcade_mastery",
+    description: "Mastered the Mt. Mist downhill sled run with extreme stunts.",
+    icon: "🛷",
+    rewardCoins: 50,
+    unlockHint: "Score 50 or more coins on a Mt. Mist downhill sled run.",
+  },
+  {
+    id: "river_surf_pro",
+    name: "Rapids Surfer",
+    title: "Rapids Surfer",
+    category: "arcade_mastery",
+    description: "Conquered the Canyon Rapids river surf stunt run.",
+    icon: "🏄",
+    rewardCoins: 35,
+    unlockHint: "Score 30 or more in Canyon Rapids river surfing.",
+  },
+  {
+    id: "server_host",
+    name: "Lounge Host",
+    title: "Lounge Host",
+    category: "secrets",
+    description: "Created and hosted a custom community server lounge.",
+    icon: "🌐",
+    rewardCoins: 30,
+    unlockHint: "Host a custom server in the community server browser.",
+  },
 ];
 
 export function isStampUnlocked(
@@ -312,6 +342,8 @@ export function evaluateStampUnlocks(player: Player | PlayerV2): string[] {
     bee_stop_perfect: player.beeStopBest === 1000,
     paw_steps_expert: player.pawStepsBest >= 10,
     smoothie_chef: (player.smoothiesServed ?? 0) >= 5,
+    sled_champion: (player.sledRunBest ?? 0) >= 50,
+    river_surf_pro: (player.riverSurfBest ?? 0) >= 30,
   };
   return STAMP_DEFINITIONS.filter(
     (stamp) => eligible[stamp.id] && !isStampUnlocked(player, stamp.id),

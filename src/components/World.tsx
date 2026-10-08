@@ -642,6 +642,30 @@ export function World({
             <Volume2 size={18} /> Sound Foghorn
           </button>
         )}
+        {place === "mt-mist" && (
+          <button
+            className="room-action"
+            onClick={() => hotspot("sled-run-gate")}
+          >
+            <Sparkles size={18} /> Sled Run
+          </button>
+        )}
+        {place === "canyon-rapids" && (
+          <button
+            className="room-action"
+            onClick={() => hotspot("river-surf-dock")}
+          >
+            <Sparkles size={18} /> River Surf
+          </button>
+        )}
+        {place === "pet-paradise" && (
+          <button
+            className="room-action"
+            onClick={() => hotspot("pet-grooming-station")}
+          >
+            <Sparkles size={18} /> Grooming Spa
+          </button>
+        )}
         {place === "secret-scout-base" && (
           <button className="room-action" onClick={onOpenSpy}>
             <Sparkles size={18} /> Spy Terminal

@@ -7,7 +7,16 @@ import {
   type SledState,
 } from "./utils/sledPhysics.ts";
 import { sanitizeSocialGraph } from "./utils/socialGraph.ts";
-import { STAMP_DEFINITIONS } from "./utils/stampDefinitions.ts";
+import {
+  STAMP_DEFINITIONS,
+  evaluateStampUnlocks,
+  isStampUnlocked,
+} from "./utils/stampDefinitions.ts";
+export {
+  STAMP_DEFINITIONS,
+  evaluateStampUnlocks,
+  isStampUnlocked,
+} from "./utils/stampDefinitions.ts";
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
 import { MAX_SMOOTHIE_COINS } from "./utils/smoothieRecipes.ts";
 import { FISH_SPECIES } from "./utils/fishingEngine.ts";
