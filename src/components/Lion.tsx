@@ -3,9 +3,9 @@ import type { LionColor } from "../game";
 export type LionVariant = "chibi" | "bratz_cute" | "bratz_sassy";
 
 const LION_SRC_MAP: Record<LionVariant, string> = {
-  chibi: "/assets/lion-chibi-living.svg",
-  bratz_cute: "/assets/lion-bratz-cute.svg",
-  bratz_sassy: "/assets/lion-bratz-sassy.svg",
+  chibi: "/assets/lion-chibi-living-cub.jpg",
+  bratz_cute: "/assets/lion-bratz-cute-cub.jpg",
+  bratz_sassy: "/assets/lion-bratz-sassy-cub.jpg",
 };
 
 export function Lion({
@@ -21,14 +21,11 @@ export function Lion({
 }) {
   const src = LION_SRC_MAP[variant] || LION_SRC_MAP.chibi;
   return (
-    <span className={`lion lion-${color} lion-variant-${variant} ${className}`} aria-hidden="true">
-      <img
-        src={src}
-        alt=""
-        draggable={false}
-        width="200"
-        height="200"
-      />
+    <span
+      className={`lion lion-${color} lion-variant-${variant} ${className}`}
+      aria-hidden="true"
+    >
+      <img src={src} alt="" draggable={false} width="200" height="200" />
       {accessory !== "none" && (
         <span className={`lion-accessory accessory-${accessory}`}>
           {accessory === "flower" ? (
