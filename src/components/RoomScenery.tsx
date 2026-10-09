@@ -1,21 +1,14 @@
 import { useEffect, useId, useState } from "react";
 import type { PlaceId } from "../game.ts";
 import {
-  computeCoasterTrackPosition,
-  computeFerrisWheelCabin,
-} from "../utils/kineticRides.ts";
-import {
   calculateWaveOffset,
   calculateBucketCycle,
   calculateRiverDrift,
 } from "../utils/waterparkPhysics.ts";
 import { DowntownPlazaScenery } from "./DowntownPlazaScenery.tsx";
 import { ClubPulseScenery } from "./ClubPulseScenery.tsx";
-
-const COASTER_LINE = Array.from({ length: 260 }, (_, i) => {
-  const p = computeCoasterTrackPosition(i / 259);
-  return `${i === 0 ? "M" : "L"}${p.x},${p.y}`;
-}).join(" ");
+import { WonderParkEntranceScenery } from "./WonderParkEntranceScenery.tsx";
+import { WonderParkMidwayScenery } from "./WonderParkMidwayScenery.tsx";
 
 function PalmTree({
   x,
@@ -1750,8 +1743,31 @@ export function RoomScenery({
       </svg>
     );
   }
+  if (place === "wonder-park-entrance") {
+    return (
+      <svg
+        className="room-scenery"
+        viewBox="0 0 2800 720"
+        preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
+        aria-hidden="true"
+      >
+        <WonderParkEntranceScenery seconds={seconds} />
+      </svg>
+    );
+  }
+  if (place === "wonder-park-midway") {
+    return (
+      <svg
+        className="room-scenery"
+        viewBox="0 0 2800 720"
+        preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
+        aria-hidden="true"
+      >
+        <WonderParkMidwayScenery seconds={seconds} />
+      </svg>
+    );
+  }
   const club = false;
-  const midway = place === "wonder-park-midway";
   const isSplashEntry = place === "splash-oasis-entry";
   const isSplashRiver = place === "splash-oasis-river";
   const isCondo = place === "penthouse-condo";
@@ -1765,7 +1781,6 @@ export function RoomScenery({
       : isMtMist || isCanyonRapids || isPetParadise
         ? 2400
         : 2800;
-  const cart = computeCoasterTrackPosition(seconds / 28);
   return (
     <svg
       className="room-scenery"
@@ -2133,259 +2148,7 @@ export function RoomScenery({
             ← SPLASH OASIS
           </text>
         </>
-      ) : midway ? (
-        <>
-          <path
-            d="M0 100Q1400 350 2800 100"
-            stroke="#735e48"
-            strokeWidth="4"
-            fill="none"
-          />
-          {Array.from({ length: 23 }, (_, i) => (
-            <g
-              key={i}
-              transform={`translate(${i * 125} ${100 + Math.sin((i / 22) * Math.PI) * 120})`}
-            >
-              <path d="M0 0L22 42L44 0" fill={i % 2 ? "#e9a53e" : "#c57567"} />
-            </g>
-          ))}
-          <g transform="translate(700 465)">
-            <ellipse cy="65" rx="260" ry="50" fill="#b59473" />
-            <ellipse
-              cy="48"
-              rx="250"
-              ry="45"
-              fill="#f1d29b"
-              stroke="#ad7653"
-              strokeWidth="8"
-            />
-            {[0, 1, 2, 3, 4].map((i) => (
-              <g
-                key={i}
-                transform={`translate(${Math.cos(seconds * 0.28 + i * 1.256) * 185} ${Math.sin(seconds * 0.28 + i * 1.256) * 28})`}
-              >
-                <ellipse
-                  cy="-15"
-                  rx="56"
-                  ry="17"
-                  fill="#fff4ce"
-                  stroke="#a97b53"
-                  strokeWidth="5"
-                />
-                <path
-                  d="M-55-15Q-55 65 0 55Q55 65 55-15"
-                  fill={i % 2 ? "#da9b49" : "#b77e69"}
-                />
-                <path
-                  d="M55 0Q90-5 78 25Q72 40 55 25"
-                  fill="none"
-                  stroke="#ffe6b8"
-                  strokeWidth="8"
-                />
-              </g>
-            ))}
-            <text y="125" textAnchor="middle" fill="#65492d" fontSize="29">
-              MANGO TEACUPS
-            </text>
-          </g>
-          <g transform="translate(1500 475)">
-            <ellipse cy="60" rx="245" ry="42" fill="#bd8c61" />
-            <ellipse cy="45" rx="235" ry="38" fill="#eed59d" />
-            <path d="M-260-230L0-385L260-230Z" fill="#b98062" />
-            <path d="M-140-230L0-385L140-230" fill="#efd593" />
-            <rect
-              x="-265"
-              y="-235"
-              width="530"
-              height="42"
-              rx="12"
-              fill="#e2ba77"
-            />
-            {[-180, -90, 0, 90, 180].map((x, i) => (
-              <g
-                key={x}
-                transform={`translate(${x} ${Math.sin(seconds * 1.4 + i) * 12})`}
-              >
-                <path d="M0-195V30" stroke="#c5a25e" strokeWidth="10" />
-                <path
-                  d="M-32-65Q-75-135-35-135Q0-130 15-100L45-105L32-60Z"
-                  fill="#fff0cb"
-                  stroke="#a4754c"
-                  strokeWidth="5"
-                />
-              </g>
-            ))}
-            <text y="123" textAnchor="middle" fill="#65492d" fontSize="29">
-              GOLDEN CAROUSEL
-            </text>
-          </g>
-          <Tent x={2200} y={555} color="#91a476" name="FRUIT CATCH" />
-          <Tent x={420} y={490} color="#c48761" name="HONEY & MANGO" />
-          {[100, 1100, 2500].map((x) => (
-            <Tree key={x} x={x} y={550} scale={0.7} />
-          ))}
-        </>
-      ) : (
-        <>
-          <g transform="translate(60 90) scale(.55)">
-            <path
-              d={COASTER_LINE}
-              fill="none"
-              stroke="#82714c"
-              strokeWidth="16"
-            />
-            <path
-              d={COASTER_LINE}
-              fill="none"
-              stroke="#e6c581"
-              strokeWidth="6"
-            />
-            {[320, 650, 980, 1260, 1500, 1740, 2100, 2440].map((x) => (
-              <path
-                key={x}
-                d={`M${x} 650V260`}
-                stroke="#866b47"
-                strokeWidth="8"
-                opacity=".55"
-              />
-            ))}
-            <g
-              transform={`translate(${cart.x} ${cart.y}) rotate(${cart.angle})`}
-            >
-              <rect
-                x="-45"
-                y="-38"
-                width="90"
-                height="35"
-                rx="10"
-                fill="#d27c55"
-                stroke="#573e2c"
-                strokeWidth="6"
-              />
-              <circle cx="-25" cy="0" r="9" fill="#4b5144" />
-              <circle cx="25" cy="0" r="9" fill="#4b5144" />
-            </g>
-          </g>
-          <g transform="translate(1700 310)">
-            <path
-              d="M-130 235L0 0L130 235"
-              fill="none"
-              stroke="#a8744e"
-              strokeWidth="20"
-            />
-            <circle
-              r="215"
-              fill="#dce5bd"
-              fillOpacity=".2"
-              stroke="#eaca87"
-              strokeWidth="16"
-            />
-            {Array.from({ length: 12 }, (_, i) => {
-              const p = computeFerrisWheelCabin(seconds * 5 + i * 30, 215, {
-                x: 0,
-                y: 0,
-              });
-              return (
-                <g key={i}>
-                  <path
-                    d={`M0 0L${p.x} ${p.y}`}
-                    stroke="#b69b65"
-                    strokeWidth="5"
-                  />
-                  <g transform={`translate(${p.x} ${p.y})`}>
-                    <rect
-                      x="-27"
-                      y="-12"
-                      width="54"
-                      height="55"
-                      rx="12"
-                      fill={i % 2 ? "#c77d59" : "#82a287"}
-                      stroke="#fff0c3"
-                      strokeWidth="5"
-                    />
-                    <path d="M-18 5H18" stroke="#fff0c3" strokeWidth="17" />
-                  </g>
-                </g>
-              );
-            })}
-            <circle r="28" fill="#ebca81" />
-          </g>
-          <g transform="translate(2350 455)">
-            <path
-              d="M-160-240H-70L35-20H190"
-              fill="none"
-              stroke="#977b51"
-              strokeWidth="48"
-            />
-            <path
-              d="M-160-240H-70L35-20H190"
-              fill="none"
-              stroke="#9ccdc4"
-              strokeWidth="30"
-            />
-            <ellipse cx="125" cy="55" rx="175" ry="40" fill="#76bcb4" />
-            <path
-              d="M35 40Q95-20 125 30Q170-10 190 50"
-              fill="none"
-              stroke="#e0f0db"
-              strokeWidth="9"
-            />
-            <rect
-              x={10 + Math.sin(seconds) * 15}
-              y="-8"
-              width="60"
-              height="25"
-              rx="8"
-              fill="#b78355"
-            />
-            <text
-              x="80"
-              y="128"
-              textAnchor="middle"
-              fill="#674e38"
-              fontSize="29"
-            >
-              SUNSHINE FLUME
-            </text>
-          </g>
-          <Tent x={900} y={555} color="#bd7a52" name="SAVANNA SCREAMER" />
-          <g transform="translate(1400 555)">
-            <rect
-              x="-70"
-              y="-100"
-              width="140"
-              height="110"
-              rx="12"
-              fill="#f2deb5"
-              stroke="#977751"
-              strokeWidth="6"
-            />
-            <path d="M-70-110L0-155L70-110" fill="#75997a" />
-            <path
-              d="M-35-70L10-45L-20-20L35-5"
-              fill="none"
-              stroke="#91b294"
-              strokeWidth="7"
-            />
-          </g>
-          {[220, 1950, 2600].map((x) => (
-            <Tree key={x} x={x} y={550} scale={0.7} />
-          ))}
-          <path
-            d="M300 60Q1300 155 2700 60"
-            stroke="#806549"
-            fill="none"
-            strokeWidth="4"
-          />
-          {Array.from({ length: 20 }, (_, i) => (
-            <path
-              key={i}
-              d={`M${300 + i * 120} ${60 + Math.sin((i / 19) * Math.PI) * 48}l30 50 30-50`}
-              fill={i % 2 ? "#d29454" : "#91ac7a"}
-            />
-          ))}
-        </>
-      )}
+      ) : null}
       {!club && !isCondo && !isScoutBase && !isMtMist && (
         <>
           <path d={`M0 690H${width}`} stroke="#d3ae7c" strokeWidth="4" />
