@@ -231,7 +231,7 @@
     <div class="viewport-card">
       <!-- High Glam 2D Base Doll Template (Blank Face: Modular Brows & Lips) -->
       <img id="layer-hair-back" class="avatar-layer" style="z-index: 5; display: none;" />
-      <img id="layer-template-doll" class="avatar-layer" style="z-index: 10;" src="./template-bratz-blank-base.png" alt="Official Bratz Blank Base Doll" />
+      <img id="layer-template-doll" class="avatar-layer" style="z-index: 10;" src="./template-bratz-2d-golden.png" alt="Official 2D Bratz Blank Base Doll" />
 
       <!-- Mannequin Fallback (hidden by default) -->
       <div id="base-neck" class="base-neck" style="display: none;"></div>
@@ -287,6 +287,7 @@
 
   <script>
     const SKIN_TONES = [
+      { id: "base-golden-2d", name: "✨ 2D Bratz Golden (Verified)", hex: "#f8c584", src: "./template-bratz-2d-golden.png" },
       { id: "base-porcelain", name: "Porcelain", hex: "#f8e2d4", src: "./bases/base-porcelain.png" },
       { id: "base-warm-ivory", name: "Warm Ivory", hex: "#eed0bc", src: "./bases/base-warm-ivory.png" },
       { id: "base-golden-honey", name: "Golden Honey", hex: "#dfa882", src: "./bases/base-golden-honey.png" },
@@ -300,56 +301,61 @@
     const TRAITS_DATA = {
       hair: [
         { 
+          id: "shiny-wavy-butterflies-v3", 
+          name: "✨ Shiny Butterfly Waves (Aligned)", 
+          src: "./modular/hair-wavy-butterflies-v3.png" 
+        },
+        { 
           id: "shiny-wavy-butterflies", 
-          name: "✨ Butterfly Waves", 
+          name: "Butterfly Waves (Original)", 
           src: "./traits/transparent/hair/shiny-wavy-butterflies-front.png",
           backSrc: "./traits/transparent/hair/shiny-wavy-butterflies-back.png" 
         },
         { 
           id: "fulani-braids-gold", 
-          name: "✨ Fulani Braids (Gold)", 
+          name: "Fulani Braids (Gold)", 
           src: "./traits/transparent/hair/fulani-braids-gold-front.png",
           backSrc: "./traits/transparent/hair/fulani-braids-gold-back.png" 
         },
         { 
           id: "box-braids-espresso", 
-          name: "✨ Box Braids (Espresso)", 
+          name: "Box Braids (Espresso)", 
           src: "./traits/transparent/hair/box-braids-espresso-front.png",
           backSrc: "./traits/transparent/hair/box-braids-espresso-back.png" 
         },
         { 
           id: "afro-puffs-black", 
-          name: "✨ 4C Afro Puffs (Jet)", 
+          name: "4C Afro Puffs (Jet)", 
           src: "./traits/transparent/hair/afro-puffs-black-front.png",
           backSrc: "./traits/transparent/hair/afro-puffs-black-back.png" 
         },
         { 
           id: "blowout-90s-caramel", 
-          name: "✨ 90s Blowout (Caramel)", 
+          name: "90s Blowout (Caramel)", 
           src: "./traits/transparent/hair/blowout-90s-caramel-front.png",
           backSrc: "./traits/transparent/hair/blowout-90s-caramel-back.png" 
         },
         { 
           id: "snatched-high-pony", 
-          name: "✨ Snatched High Pony", 
+          name: "Snatched High Pony", 
           src: "./traits/transparent/hair/snatched-high-pony-front.png",
           backSrc: "./traits/transparent/hair/snatched-high-pony-back.png" 
         },
         { 
           id: "space-buns-pink", 
-          name: "✨ Y2K Space Buns (Pink)", 
+          name: "Y2K Space Buns (Pink)", 
           src: "./traits/transparent/hair/space-buns-pink-front.png",
           backSrc: "./traits/transparent/hair/space-buns-pink-back.png" 
         },
         { 
           id: "sleek-blunt-bob", 
-          name: "✨ Blunt Glass Bob", 
+          name: "Blunt Glass Bob", 
           src: "./traits/transparent/hair/sleek-blunt-bob-front.png",
           backSrc: "./traits/transparent/hair/sleek-blunt-bob-back.png" 
         },
         { 
           id: "goddess-locs-bronze", 
-          name: "✨ Goddess Locs (Bronze)", 
+          name: "Goddess Locs (Bronze)", 
           src: "./traits/transparent/hair/goddess-locs-bronze-front.png",
           backSrc: "./traits/transparent/hair/goddess-locs-bronze-back.png" 
         },
@@ -358,6 +364,10 @@
         { id: "afro-tapered-fade", name: "Tapered Afro Fade", src: "./traits/transparent/hair/afro-tapered-fade.png" }
       ],
       brows: [
+        { id: "full-brows-sculpted-espresso", name: "✨ Sculpted Espresso (Aligned)", src: "./modular/full-brows-sculpted-espresso.png" },
+        { id: "full-brows-feathered-honey", name: "✨ Feathered Honey (Aligned)", src: "./modular/full-brows-feathered-honey.png" },
+        { id: "full-brows-fox-snatched", name: "✨ Snatched Fox-Eye (Aligned)", src: "./modular/full-brows-fox-snatched.png" },
+        { id: "full-brows-y2k-thin", name: "✨ Thin 90s Pencil (Aligned)", src: "./modular/full-brows-y2k-thin.png" },
         { id: "bratz-brows-arched-dark-brown", name: "Snatched Dark Brow", src: "./traits/transparent/eyebrows/bratz-brows-arched-dark-brown.png" },
         { id: "bratz-brows-arched-jet-black", name: "Jet Black Arch", src: "./traits/transparent/eyebrows/bratz-brows-arched-jet-black.png" },
         { id: "bratz-brows-thin-90s-pencil", name: "Thin 90s Pencil Brow", src: "./traits/transparent/eyebrows/bratz-brows-thin-90s-pencil.png" },
@@ -387,6 +397,10 @@
         { id: "sunset-gold-glitter", name: "Sunset Gold Glitter", src: "./traits/transparent/eyeshadow/sunset-gold-glitter.png" }
       ],
       lips: [
+        { id: "full-lips-hot-pink-glam", name: "✨ Hot Pink Diva Gloss (Aligned)", src: "./modular/full-lips-hot-pink-glam.png" },
+        { id: "full-lips-90s-caramel-ombre", name: "✨ 90s Caramel Ombré (Aligned)", src: "./modular/full-lips-90s-caramel-ombre.png" },
+        { id: "full-lips-burgundy-cherry", name: "✨ Burgundy Cherry Lacquer (Aligned)", src: "./modular/full-lips-burgundy-cherry.png" },
+        { id: "full-lips-nude-pink-gloss", name: "✨ Glassy Nude-Pink (Aligned)", src: "./modular/full-lips-nude-pink-gloss.png" },
         { id: "bratz-lips-chocolate-gloss", name: "🍫 Chocolate Ombre Gloss", src: "./traits/transparent/lips/bratz-lips-chocolate-gloss.png" },
         { id: "bratz-lips-hot-pink-gloss", name: "💖 Hot Pink Diva Gloss", src: "./traits/transparent/lips/bratz-lips-hot-pink-gloss.png" },
         { id: "bratz-lips-cherry-red-gloss", name: "🍒 Cherry Red Siren Gloss", src: "./traits/transparent/lips/bratz-lips-cherry-red-gloss.png" },
@@ -408,9 +422,10 @@
         { id: "septum-horseshoe-gold", name: "Gold Septum Ring", src: "./traits/transparent/piercings/septum-horseshoe-gold.png" }
       ],
       clothes: [
-        { id: "butterfly-halter-pink", name: "✨ Metallic Butterfly Halter", src: "./traits/transparent/clothes/butterfly-halter-pink.png" },
-        { id: "black-lace-corset", name: "✨ Black Lace Corset", src: "./traits/transparent/clothes/black-lace-corset.png" },
-        { id: "fur-trim-jacket-pink", name: "✨ Pink Faux Fur Jacket", src: "./traits/transparent/clothes/fur-trim-jacket-pink.png" },
+        { id: "full-outfit-pink-fur-jacket", name: "✨ Pink Faux Fur & Cross Chain (Aligned)", src: "./modular/full-outfit-pink-fur-jacket.png" },
+        { id: "butterfly-halter-pink", name: "Metallic Butterfly Halter", src: "./traits/transparent/clothes/butterfly-halter-pink.png" },
+        { id: "black-lace-corset", name: "Black Lace Corset", src: "./traits/transparent/clothes/black-lace-corset.png" },
+        { id: "fur-trim-jacket-pink", name: "Pink Faux Fur Jacket", src: "./traits/transparent/clothes/fur-trim-jacket-pink.png" },
         { id: "fur-trim-jacket-denim", name: "Fur Trim Denim Jacket", src: "./traits/transparent/clothes/fur-trim-jacket-denim.png" },
         { id: "baby-tee-angel-graphic", name: "Angel Baby Tee", src: "./traits/transparent/clothes/baby-tee-angel-graphic.png" },
         { id: "bandeau-tube-top-white", name: "White Tube Top", src: "./traits/transparent/clothes/bandeau-tube-top-white.png" },
@@ -555,11 +570,11 @@
       };
     });
 
-    // Initialize with modular traits
+    // Initialize with verified modular traits
     toggleTrait("hair", TRAITS_DATA.hair[0]);
     toggleTrait("brows", TRAITS_DATA.brows[0]);
     toggleTrait("lips", TRAITS_DATA.lips[0]);
-    toggleTrait("piercings", TRAITS_DATA.piercings[0]);
+    toggleTrait("clothes", TRAITS_DATA.clothes[0]);
     renderTab();
   </script>
 </body>
