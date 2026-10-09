@@ -9,6 +9,7 @@ import {
   calculateBucketCycle,
   calculateRiverDrift,
 } from "../utils/waterparkPhysics.ts";
+import { DowntownPlazaScenery } from "./DowntownPlazaScenery.tsx";
 
 const COASTER_LINE = Array.from({ length: 260 }, (_, i) => {
   const p = computeCoasterTrackPosition(i / 259);
@@ -1724,8 +1725,19 @@ export function RoomScenery({
       </svg>
     );
   }
+  if (place === "downtown-plaza") {
+    return (
+      <svg
+        className="room-scenery"
+        viewBox="0 0 2400 720"
+        preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
+        aria-hidden="true"
+      >
+        <DowntownPlazaScenery seconds={seconds} />
+      </svg>
+    );
+  }
   const club = place === "club-pulse";
-  const downtown = place === "downtown-plaza";
   const midway = place === "wonder-park-midway";
   const isSplashEntry = place === "splash-oasis-entry";
   const isSplashRiver = place === "splash-oasis-river";
@@ -1737,7 +1749,7 @@ export function RoomScenery({
   const width =
     club || isCondo || isScoutBase
       ? 1920
-      : downtown || isMtMist || isCanyonRapids || isPetParadise
+      : isMtMist || isCanyonRapids || isPetParadise
         ? 2400
         : 2800;
   const cart = computeCoasterTrackPosition(seconds / 28);
@@ -2107,123 +2119,6 @@ export function RoomScenery({
           >
             ← SPLASH OASIS
           </text>
-        </>
-      ) : downtown ? (
-        <>
-          <g transform="translate(160 525)">
-            <rect
-              x="-110"
-              y="-345"
-              width="270"
-              height="345"
-              rx="20"
-              fill="#eec38b"
-              stroke="#986849"
-              strokeWidth="6"
-            />
-            <path d="M-145-330L25-415L190-330" fill="#8c725c" />
-            <rect
-              x="-55"
-              y="-200"
-              width="160"
-              height="160"
-              rx="15"
-              fill="#527360"
-            />
-            <path d="M-105-220H155L175-140H-125Z" fill="#7ba889" />
-            <text
-              x="25"
-              y="-250"
-              textAnchor="middle"
-              fontSize="37"
-              fill="#4b5137"
-            >
-              LE SHOP
-            </text>
-          </g>
-          <g transform="translate(2290 530)">
-            <rect
-              x="-170"
-              y="-330"
-              width="300"
-              height="330"
-              rx="22"
-              fill="#f4dba5"
-              stroke="#a2744f"
-              strokeWidth="6"
-            />
-            <path d="M-210-310L-20-420L180-310" fill="#c17b55" />
-            <path d="M-160-215H120L160-135H-200Z" fill="#729b6d" />
-            <rect
-              x="-100"
-              y="-125"
-              width="155"
-              height="125"
-              rx="15"
-              fill="#48695d"
-            />
-            <text
-              x="-20"
-              y="-250"
-              textAnchor="middle"
-              fontSize="31"
-              fill="#594c34"
-            >
-              CANOPY CAFÉ
-            </text>
-          </g>
-          <g transform="translate(1200 515)">
-            <ellipse cy="32" rx="185" ry="42" fill="#a77d57" />
-            <ellipse
-              rx="170"
-              ry="36"
-              fill="#8bd0ce"
-              stroke="#efdbb8"
-              strokeWidth="16"
-            />
-            <path d="M-15 0L-30-110H30L15 0" fill="#efd7b0" />
-            <ellipse
-              cy="-110"
-              rx="85"
-              ry="18"
-              fill="#acdad3"
-              stroke="#efd7b0"
-              strokeWidth="10"
-            />
-            <path
-              d="M0-115Q-60-220-30-250M0-115Q60-220 30-250"
-              stroke="#bdece3"
-              fill="none"
-              strokeWidth="9"
-            />
-            <circle cy="-200" r="32" fill="#e4bf81" />
-            <circle cy="-203" r="19" fill="#f5d9a4" />
-            <text y="100" textAnchor="middle" fontSize="30" fill="#674e38">
-              DOWNTOWN PLAZA
-            </text>
-          </g>
-          <PenthouseElevator x={510} y={540} />
-          <Tent x={680} y={540} color="#758c98" name="CLUB PULSE" />
-          <Tent x={1780} y={540} color="#bd764f" name="WONDER PARK" />
-          <PhoneBoothEntrance x={1960} y={540} />
-          {[380, 950, 1510, 2080].map((x, i) => (
-            <Tree key={x} x={x} y={530} scale={i % 2 ? 0.8 : 1} />
-          ))}
-          {[330, 1450, 2140].map((x) => (
-            <g key={x} transform={`translate(${x} 530)`}>
-              <path d="M0 0V-230M-28-230H28" stroke="#5b6755" strokeWidth="9" />
-              <rect
-                x="-21"
-                y="-274"
-                width="42"
-                height="45"
-                rx="12"
-                fill="#ffe3a2"
-                stroke="#5b6755"
-                strokeWidth="6"
-              />
-            </g>
-          ))}
         </>
       ) : club ? (
         <>
