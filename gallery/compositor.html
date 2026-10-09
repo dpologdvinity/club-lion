@@ -252,16 +252,16 @@
       <img id="layer-freckles" class="avatar-layer" style="z-index: 17; display: none;" />
       <!-- Layer 6: Lips (Modular) -->
       <img id="layer-lips" class="avatar-layer" style="z-index: 18; display: none;" />
-      <!-- Layer 7: Piercings / Bling -->
-      <img id="layer-piercings" class="avatar-layer" style="z-index: 20; display: none;" />
       <!-- Layer 8: Clothes -->
       <img id="layer-clothes" class="avatar-layer" style="z-index: 22; display: none;" />
       <!-- Layer 9: Jewelry -->
       <img id="layer-jewelry" class="avatar-layer" style="z-index: 24; display: none;" />
       <!-- Layer 10: Hair Front -->
       <img id="layer-hair" class="avatar-layer" style="z-index: 30; display: none;" />
+      <!-- Layer 10.5: Piercings / Earrings / Bling (On top of hair) -->
+      <img id="layer-piercings" class="avatar-layer" style="z-index: 32; display: none;" />
       <!-- Layer 11: Bangs -->
-      <img id="layer-bangs" class="avatar-layer" style="z-index: 32; display: none;" />
+      <img id="layer-bangs" class="avatar-layer" style="z-index: 34; display: none;" />
     </div>
   </div>
 
@@ -304,6 +304,11 @@
           id: "shiny-wavy-butterflies-v3", 
           name: "✨ Shiny Butterfly Waves (Aligned)", 
           src: "./modular/hair-wavy-butterflies-v3.png" 
+        },
+        { 
+          id: "full-hair-topknot-braids", 
+          name: "✨ Royal Topknot Micro-Braids (Aligned)", 
+          src: "./modular/full-hair-topknot-braids.png" 
         },
         { 
           id: "shiny-wavy-butterflies", 
@@ -415,7 +420,8 @@
         { id: "natural-nose-freckles", name: "Natural Nose Freckles", src: "./traits/transparent/freckles/natural-nose-freckles.png" }
       ],
       piercings: [
-        { id: "bamboo-hoops-gold-official", name: "✨ Fitted Bamboo Hoops", src: "./traits/transparent/jewelry/bamboo-hoops-gold-official.png" },
+        { id: "full-jewelry-bamboo-hoops-gold", name: "✨ Fitted Chunky Bamboo Hoops (Aligned)", src: "./modular/full-jewelry-bamboo-hoops-gold.png" },
+        { id: "bamboo-hoops-gold-official", name: "Fitted Bamboo Hoops (Classic)", src: "./traits/transparent/jewelry/bamboo-hoops-gold-official.png" },
         { id: "layered-cuban-chains", name: "Layered Cuban Chains", src: "./traits/transparent/jewelry/layered-cuban-chains.png" },
         { id: "diamond-tennis-choker", name: "Diamond Tennis Choker", src: "./traits/transparent/jewelry/diamond-tennis-choker.png" },
         { id: "gold-nose-stud-double", name: "Double Nose Stud", src: "./traits/transparent/piercings/gold-nose-stud-double.png" },
@@ -423,6 +429,7 @@
       ],
       clothes: [
         { id: "full-outfit-pink-fur-jacket", name: "✨ Pink Faux Fur & Cross Chain (Aligned)", src: "./modular/full-outfit-pink-fur-jacket.png" },
+        { id: "full-outfit-gold-royal-choker", name: "✨ Royal Gold Halter & Choker (Aligned)", src: "./modular/full-outfit-gold-royal-choker.png" },
         { id: "butterfly-halter-pink", name: "Metallic Butterfly Halter", src: "./traits/transparent/clothes/butterfly-halter-pink.png" },
         { id: "black-lace-corset", name: "Black Lace Corset", src: "./traits/transparent/clothes/black-lace-corset.png" },
         { id: "fur-trim-jacket-pink", name: "Pink Faux Fur Jacket", src: "./traits/transparent/clothes/fur-trim-jacket-pink.png" },
@@ -435,12 +442,7 @@
     };
 
     let activeTab = "hair";
-    const selectedTraits = {
-      hair: TRAITS_DATA.hair[0],
-      brows: TRAITS_DATA.brows[0],
-      lips: TRAITS_DATA.lips[0],
-      piercings: TRAITS_DATA.piercings[0]
-    };
+    const selectedTraits = {};
 
     function updateSkin(tone) {
       document.getElementById("layer-template-doll").src = tone.src;
@@ -575,6 +577,7 @@
     toggleTrait("brows", TRAITS_DATA.brows[0]);
     toggleTrait("lips", TRAITS_DATA.lips[0]);
     toggleTrait("clothes", TRAITS_DATA.clothes[0]);
+    toggleTrait("piercings", TRAITS_DATA.piercings[0]);
     renderTab();
   </script>
 </body>
