@@ -10,6 +10,7 @@ import {
   calculateRiverDrift,
 } from "../utils/waterparkPhysics.ts";
 import { DowntownPlazaScenery } from "./DowntownPlazaScenery.tsx";
+import { ClubPulseScenery } from "./ClubPulseScenery.tsx";
 
 const COASTER_LINE = Array.from({ length: 260 }, (_, i) => {
   const p = computeCoasterTrackPosition(i / 259);
@@ -1737,7 +1738,19 @@ export function RoomScenery({
       </svg>
     );
   }
-  const club = place === "club-pulse";
+  if (place === "club-pulse") {
+    return (
+      <svg
+        className="room-scenery"
+        viewBox="0 0 1920 720"
+        preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
+        aria-hidden="true"
+      >
+        <ClubPulseScenery seconds={seconds} />
+      </svg>
+    );
+  }
+  const club = false;
   const midway = place === "wonder-park-midway";
   const isSplashEntry = place === "splash-oasis-entry";
   const isSplashRiver = place === "splash-oasis-river";
@@ -1747,7 +1760,7 @@ export function RoomScenery({
   const isCanyonRapids = place === "canyon-rapids";
   const isPetParadise = place === "pet-paradise";
   const width =
-    club || isCondo || isScoutBase
+    isCondo || isScoutBase
       ? 1920
       : isMtMist || isCanyonRapids || isPetParadise
         ? 2400
@@ -2118,109 +2131,6 @@ export function RoomScenery({
             fontWeight="bold"
           >
             ← SPLASH OASIS
-          </text>
-        </>
-      ) : club ? (
-        <>
-          <rect x="0" y="50" width="1920" height="340" fill="#354959" />
-          <path d="M0 165H1920M0 280H1920" stroke="#798174" strokeWidth="8" />
-          {[160, 460, 1460, 1760].map((x) => (
-            <g key={x}>
-              <rect
-                x={x - 70}
-                y="80"
-                width="140"
-                height="250"
-                rx="65"
-                fill="#83a29c"
-                opacity=".23"
-              />
-              <path
-                d={`M${x - 80} 100L${x - 190} 430H${x + 180}L${x + 80} 100Z`}
-                fill="#e0ca88"
-                opacity=".08"
-              />
-            </g>
-          ))}
-          <g transform="translate(960 350)">
-            <rect
-              x="-370"
-              y="-160"
-              width="740"
-              height="170"
-              rx="28"
-              fill="#9ab0a2"
-              stroke="#d9d6ac"
-              strokeWidth="8"
-            />
-            <rect
-              x="-280"
-              y="-135"
-              width="560"
-              height="115"
-              rx="15"
-              fill="#314e55"
-            />
-            <text y="-61" textAnchor="middle" fontSize="64" fill="#f6d992">
-              CLUB PULSE
-            </text>
-            <rect
-              x="-235"
-              y="10"
-              width="470"
-              height="65"
-              rx="13"
-              fill="#c29467"
-            />
-            <circle cx="-120" cy="40" r="21" fill="#455c60" />
-            <circle cx="120" cy="40" r="21" fill="#455c60" />
-            <path d="M-60 35H60M-40 45H40" stroke="#f7d797" strokeWidth="5" />
-          </g>
-          {[250, 1670].map((x) => (
-            <g key={x} transform={`translate(${x} 405)`}>
-              <rect
-                x="-65"
-                y="-190"
-                width="130"
-                height="190"
-                rx="15"
-                fill="#2e424d"
-                stroke="#a09c7b"
-                strokeWidth="6"
-              />
-              <circle
-                cy="-125"
-                r="37"
-                fill="#5c7379"
-                stroke="#8ea2a3"
-                strokeWidth="6"
-              />
-              <circle
-                cy="-50"
-                r="37"
-                fill="#5c7379"
-                stroke="#8ea2a3"
-                strokeWidth="6"
-              />
-            </g>
-          ))}
-          <g fill="#d6bc89">
-            <circle cx="420" cy="360" r="12" />
-            <circle cx="1490" cy="360" r="12" />
-          </g>
-          <path
-            d="M0 400H270M1650 400H1920"
-            stroke="#be9b76"
-            strokeWidth="25"
-          />
-          <text
-            x="125"
-            y="545"
-            textAnchor="middle"
-            fill="#efe0bd"
-            fontSize="28"
-          >
-            PLAZA ←
           </text>
         </>
       ) : midway ? (
