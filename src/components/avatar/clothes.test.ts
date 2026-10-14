@@ -155,3 +155,31 @@ test("waving raises the matching sleeve for sleeved tops only", () => {
     );
   }
 });
+
+test("every top, bottom, and shoe is drawn with the doll ink outline", () => {
+  const ink = 'stroke="#2a1610"';
+  for (const { id } of TOPS) {
+    const look = { ...DEFAULT_AVATAR_LOOK, topId: id };
+    assert.ok(renderLayer5Outfit(look).includes(ink), id);
+  }
+  for (const { id } of BOTTOMS) {
+    const look = { ...DEFAULT_AVATAR_LOOK, bottomId: id };
+    assert.ok(renderLayer5Outfit(look).includes(ink), id);
+  }
+  for (const { id } of SHOES) {
+    const look = { ...DEFAULT_AVATAR_LOOK, shoesId: id };
+    assert.ok(renderLayer4Footwear(look).includes(ink), id);
+  }
+});
+
+test("legs and footwear share the long-leg rig so platforms land on the ground", () => {
+  const footwear = renderLayer4Footwear(DEFAULT_AVATAR_LOOK);
+  const outfit = renderLayer5Outfit(DEFAULT_AVATAR_LOOK);
+  const legsRig = /<g transform="(matrix\(0\.86 0 0 1\.32 [^"]+\))">/;
+  const shoeRig = footwear.match(legsRig)?.[1];
+  assert.ok(shoeRig, "footwear placed on the legs rig");
+  assert.ok(outfit.includes(shoeRig), "bottoms use the same rig");
+  // The 6.6-unit platform sole stretches to a chunky 8.7 units on screen
+  const [, , , scaleY] = shoeRig.slice(7, -1).split(" ").map(Number);
+  assert.ok(6.6 * scaleY > 8.5);
+});

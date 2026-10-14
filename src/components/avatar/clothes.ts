@@ -106,8 +106,8 @@ const SHOE_ART: Record<ShoeId, (skin: string) => string> = {
     const fluff = [117, 121, 125, 129, 133, 137]
       .map(
         (y, i) =>
-          `<circle cx="${n(47.8 - i * 0.12)}" cy="${y}" r="1.2" fill="#fff5fb" />` +
-          `<circle cx="${n(59.8 + i * 0.12)}" cy="${y}" r="1.2" fill="#fff5fb" />`,
+          `<circle cx="${n(47.8 - i * 0.12)}" cy="${y}" r="1.2" fill="#fff5fb" stroke="none" />` +
+          `<circle cx="${n(59.8 + i * 0.12)}" cy="${y}" r="1.2" fill="#fff5fb" stroke="none" />`,
       )
       .join("");
     return (
@@ -496,7 +496,7 @@ const TOP_ART: Record<TopId, TopArt> = {
           [74, 77, 80, 83, 86, 89, 92]
             .map(
               (y) =>
-                `<circle cx="${n(56.4 - (y - 72.6) * 0.03)}" cy="${y}" r="1.5" fill="#fffaf5" />`,
+                `<circle cx="${n(56.4 - (y - 72.6) * 0.03)}" cy="${y}" r="1.5" fill="#fffaf5" stroke="none" />`,
             )
             .join("") +
           `<path d="M48.4 91 C51 92.2 53.6 92.6 55.8 92.2" stroke="#fffaf5" stroke-width="1.6" stroke-linecap="round" fill="none" />` +
