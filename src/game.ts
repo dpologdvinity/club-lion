@@ -77,7 +77,8 @@ export type PlaceId =
   | "coastal-pier"
   | "mt-mist"
   | "canyon-rapids"
-  | "pet-paradise";
+  | "pet-paradise"
+  | "lion-speedway";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -281,6 +282,12 @@ export const PLACES: {
     name: "Pet Paradise Nursery",
     subtitle: "Pamper your pride with care",
     imageClass: "scene-petparadise",
+  },
+  {
+    id: "lion-speedway",
+    name: "Lion Speedway",
+    subtitle: "Start your engines & race the pride",
+    imageClass: "scene-speedway",
   },
 ];
 

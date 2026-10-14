@@ -4702,6 +4702,9 @@ svg {
 .scene-canyon {
   background: #c1824f;
 }
+.scene-speedway {
+  background: #7cc46a;
+}
 .camera-world {
   aspect-ratio: auto;
   width: 100%;

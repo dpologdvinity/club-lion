@@ -85,6 +85,7 @@ type WorldProps = {
   onOpenPetCare?: () => void;
   onOpenLeaderboard?: () => void;
   onOpenRooftop?: () => void;
+  onOpenKartRace?: () => void;
   timeOfDay?: TimeOfDay;
 };
 
@@ -110,6 +111,7 @@ export function World({
   onOpenPetCare,
   onOpenLeaderboard,
   onOpenRooftop,
+  onOpenKartRace,
   timeOfDay = "day",
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
@@ -418,7 +420,18 @@ export function World({
     else if (id === "pet-grooming-station") onOpenPetCare?.();
     else if (id === "spy-terminal") onOpenSpy?.();
     else if (id === "river-surf-dock") onOpenRiverSurf?.();
-    else if (id === "condo-furniture-editor") onOpenCondo?.();
+    else if (id === "kart-race-gate") onOpenKartRace?.();
+    else if (id === "winner-podium" && manifest) {
+      walk(
+        (2020 / manifest.stageWidth) * 100,
+        (600 / manifest.stageHeight) * 100,
+      );
+      setBubble({ id: "you", text: "🏆📸" });
+      playPropSound("chime", sound ? undefined : null);
+      notify(
+        "Say cheese! 📸 You strike a champion pose on the winner's podium!",
+      );
+    } else if (id === "condo-furniture-editor") onOpenCondo?.();
     else if (id === "condo-jukebox") onOpenJukebox?.();
     else if (id === "surveillance-holo-map")
       notify("The Pride Agency satellite grid is scanning the savanna.");
@@ -452,6 +465,8 @@ export function World({
     "condo-jukebox": "Grand Jukebox",
     "surveillance-holo-map": "Surveillance Holo-Map",
     "river-surf-dock": "River Surf Rapids",
+    "kart-race-gate": "Race karts",
+    "winner-podium": "Podium",
   };
   return (
     <section className="world-panel" aria-label="Lion world">

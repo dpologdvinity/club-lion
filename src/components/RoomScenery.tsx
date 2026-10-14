@@ -14,6 +14,7 @@ import { PenthouseCondoScenery } from "./PenthouseCondoScenery.tsx";
 import { ScoutBaseScenery } from "./ScoutBaseScenery.tsx";
 import { SplashOasisEntryScenery } from "./SplashOasisEntryScenery.tsx";
 import { SplashOasisRiverScenery } from "./SplashOasisRiverScenery.tsx";
+import { LionSpeedwayScenery } from "./LionSpeedwayScenery.tsx";
 
 type Scene = {
   width: number;
@@ -37,6 +38,7 @@ const ROOM_SCENERY: Partial<Record<PlaceId, Scene>> = {
   "mt-mist": { width: 2400, Scenery: MtMistScenery },
   "canyon-rapids": { width: 2400, Scenery: CanyonRapidsScenery },
   "pet-paradise": { width: 2400, Scenery: PetParadiseScenery },
+  "lion-speedway": { width: 2400, Scenery: LionSpeedwayScenery },
   "penthouse-condo": { width: 1920, Scenery: PenthouseCondoScenery },
   "secret-scout-base": { width: 1920, Scenery: ScoutBaseScenery, clock: true },
   "splash-oasis-entry": {
