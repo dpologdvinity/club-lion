@@ -9,6 +9,7 @@ import { DowntownPlazaScenery } from "./DowntownPlazaScenery.tsx";
 import { ClubPulseScenery } from "./ClubPulseScenery.tsx";
 import { WonderParkEntranceScenery } from "./WonderParkEntranceScenery.tsx";
 import { WonderParkMidwayScenery } from "./WonderParkMidwayScenery.tsx";
+import { SunsetBeachScenery } from "./SunsetBeachScenery.tsx";
 
 function PalmTree({
   x,
@@ -1133,100 +1134,6 @@ function CoastalOcean({ seconds }: { seconds: number }) {
         strokeLinecap="round"
       />
     </>
-  );
-}
-
-function SunsetBeachScenery({ seconds }: { seconds: number }) {
-  return (
-    <g>
-      <CoastalOcean seconds={seconds} />
-      <path
-        d="M0 515Q430 450 870 515T1670 515T2400 495V720H0Z"
-        fill="#e8ba78"
-      />
-      <path
-        d="M0 553Q440 505 940 556T1800 550T2400 544V720H0Z"
-        fill="#f3d298"
-      />
-      <path
-        d="M0 519Q430 454 870 519T1670 519T2400 499"
-        fill="none"
-        stroke="#fff3d2"
-        strokeWidth="9"
-      />
-      <path
-        d="M0 670Q350 594 780 644T1450 667T2400 637V720H0Z"
-        fill="#eac28a"
-      />
-      {[230, 430, 2140, 2290].map((x, i) => (
-        <PalmTree key={x} x={x} y={550} scale={i % 2 ? 0.85 : 1.15} />
-      ))}
-      <g transform="translate(930 540)">
-        <ellipse cy="15" rx="250" ry="36" fill="#bd8f59" opacity=".35" />
-        <path d="M-175 0V-125M175 0V-125" stroke="#916741" strokeWidth="13" />
-        <path
-          d="M-230-120Q-140-200 0-240Q140-200 230-120Z"
-          fill="#b48a4b"
-          stroke="#8e693d"
-          strokeWidth="5"
-        />
-        {[-180, -120, -60, 0, 60, 120, 180].map((x) => (
-          <path
-            key={x}
-            d={`M0-240L${x}-120l-15 28`}
-            fill="none"
-            stroke="#e1bd72"
-            strokeWidth="12"
-          />
-        ))}
-        <rect
-          x="-170"
-          y="-40"
-          width="340"
-          height="55"
-          rx="16"
-          fill="#ffecd0"
-          stroke="#a8794b"
-          strokeWidth="5"
-        />
-        <rect x="-156" y="-29" width="140" height="24" rx="8" fill="#d77f61" />
-        <rect x="16" y="-29" width="140" height="24" rx="8" fill="#76a99a" />
-        <text y="-92" textAnchor="middle" fontSize="25" fill="#634c32">
-          SUNSET CABANA
-        </text>
-      </g>
-      <g transform="translate(1590 570)">
-        <path d="M0 0V-175" stroke="#8e6845" strokeWidth="8" />
-        <path
-          d="M-140-165Q-60-255 0-245Q60-255 140-165Z"
-          fill="#de8a64"
-          stroke="#aa604c"
-          strokeWidth="4"
-        />
-        <path d="M0-245Q-40-205-50-165H50Q40-205 0-245" fill="#fff0c8" />
-        <path
-          d="M-90 15L-30-45H65L35 15Z"
-          fill="#fff0c8"
-          stroke="#a68059"
-          strokeWidth="5"
-        />
-      </g>
-      {[550, 1320, 1850].map((x) => (
-        <g key={x} transform={`translate(${x} 654)`}>
-          <path
-            d="M-16 0Q0-30 16 0Z"
-            fill="#ffe7cb"
-            stroke="#c18d60"
-            strokeWidth="3"
-          />
-          <path
-            d="M0-13V0M-7-9L-4 0M7-9L4 0"
-            stroke="#d8ae88"
-            strokeWidth="2"
-          />
-        </g>
-      ))}
-    </g>
   );
 }
 
