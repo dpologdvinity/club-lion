@@ -107,3 +107,29 @@ test("hair defs define the shine and mermaid shimmer gradients", () => {
     render({ hairId: "mermaid_waves" }).back.includes("url(#t-mermaid)"),
   );
 });
+
+test("every hairstyle mass carries the doll ink outline", () => {
+  for (const { id } of HAIR_STYLE_OPTIONS) {
+    const { back, front } = render({ hairId: id, hairColor: "#4a3728" });
+    assert.ok(
+      `${back}${front}`.includes(`fill="#4a3728" stroke="#2a1610"`),
+      `${id} outlined`,
+    );
+  }
+});
+
+test("streak dye pieces stay unlined so they read as highlights", () => {
+  const { front } = render({ hairId: "blowout", hairStreak: "#f2cf6b" });
+  assert.ok(front.includes('fill="#f2cf6b"'));
+  assert.ok(!front.includes('fill="#f2cf6b" stroke='));
+});
+
+test("wavy cuts get glossy glints on the wave crests", () => {
+  for (const id of ["butterfly_waves", "blowout"]) {
+    assert.ok(
+      render({ hairId: id }).front.includes("hair-glints") ||
+        render({ hairId: id }).back.includes("hair-glints"),
+      id,
+    );
+  }
+});

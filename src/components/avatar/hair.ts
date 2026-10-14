@@ -12,13 +12,25 @@ function shade(d: string, opacity = 0.22): string {
   return `<path d="${d}" fill="rgba(25, 10, 5, ${opacity})" />`;
 }
 
-function strands(paths: readonly string[], opacity = 0.2): string {
+function strands(paths: readonly string[], opacity = 0.26): string {
   return paths
     .map(
       (d) =>
-        `<path d="${d}" stroke="rgba(25, 10, 5, ${opacity})" stroke-width="0.8" stroke-linecap="round" fill="none" />`,
+        `<path d="${d}" stroke="rgba(25, 10, 5, ${opacity})" stroke-width="0.9" stroke-linecap="round" fill="none" />`,
     )
     .join("");
+}
+
+/** Glossy curved glints on wave crests, drawn on the viewer-left and mirrored. */
+function glints(paths: readonly string[]): string {
+  const left = paths
+    .map(
+      (d) =>
+        `<path d="${d}" stroke="rgba(255,255,255,0.4)" stroke-width="2.4" stroke-linecap="round" fill="none" />` +
+        `<path d="${d}" stroke="#ffffff" stroke-width="0.9" stroke-linecap="round" fill="none" />`,
+    )
+    .join("");
+  return `<g class="hair-glints">${left}<g ${MIRROR}>${left}</g></g>`;
 }
 
 /** Glossy shine ribbon: a soft gradient band plus crisp specular streaks. */
@@ -26,8 +38,8 @@ function shineRibbon(p: string, band: string, streak: string): string {
   return (
     `<g class="hair-highlight">` +
     `<path d="${band}" fill="url(#${p}-shine)" />` +
-    `<path d="${streak}" stroke="rgba(255,255,255,0.85)" stroke-width="1.1" stroke-linecap="round" fill="none" />` +
-    `<path d="${streak}" stroke="rgba(255,255,255,0.4)" stroke-width="2.2" stroke-linecap="round" fill="none" />` +
+    `<path d="${streak}" stroke="rgba(255,255,255,0.45)" stroke-width="2.8" stroke-linecap="round" fill="none" />` +
+    `<path d="${streak}" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" fill="none" />` +
     `</g>`
   );
 }
@@ -166,22 +178,24 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
       };
     }
     case "butterfly_waves": {
+      // Big S-waves down both sides ending in scalloped curls
       const mass =
-        "M60 7 C82 7 94 22 93 42 C92 54 97 64 94.6 76 C92.6 86 97.6 96 94 108 C92 112.6 88 113 85 110 C82.4 113.6 77.6 113.6 75 110.4 C72 112.6 68 112 66 109 L54 109 C52 112 48 112.6 45 110.4 C42.4 113.6 37.6 113.6 35 110 C32 113 28 112.6 26 108 C22.4 96 27.4 86 25.4 76 C23 64 28 54 27 42 C26 22 38 7 60 7 Z";
+        "M60 7 C82 7 94 22 93 42 C96 50 100 54 98 62 C96 70 91 72 94 80 C97 88 101 92 98 100 C95 106 91 108 93 114 Q88 120 82 114 Q76 120 70 113 L50 113 Q44 120 38 114 Q32 120 27 114 C29 108 25 106 22 100 C19 92 23 88 26 80 C29 72 24 70 22 62 C20 54 24 50 27 42 C26 22 38 7 60 7 Z";
       const cap =
         "M30.6 48 C28.6 24 42 8 60 8 C78 8 91.4 24 89.4 48 L85.8 48 C85.2 37 79.4 29 70.6 25.6 C66 24 62 23 60 21.4 C58 23 54 24 49.4 25.6 C40.6 29 34.8 37 34.2 48 Z";
       const wave =
-        "M34.4 40 C32.2 50 35.8 56 33.6 64 C31.6 71 34.8 76 32.2 82.6 C30 87 26.4 87 24.6 84.6 C27.4 80.4 25 74.4 26.4 68 C28.2 60 25.4 52 27.8 44 C28.6 41 30.4 39 31.2 37.6 Z";
+        "M34.4 40 C31 48 36 56 33 64 C30 72 35.6 78 32 86 C30 90 25.4 90.4 23.6 87.4 C27.6 84.4 26 79 27 74 C28.4 66 24.6 58 27.4 48 C28.4 44 30.4 39.6 31.2 37.6 Z";
       return {
         back:
           `<path d="${mass}" fill="${c}" />` +
           shade(mass) +
           strands([
-            "M28 60 C25 72 30 84 27 98 C26 104 28 108 30 110",
-            "M92 60 C95 72 90 84 93 98 C94 104 92 108 90 110",
-            "M34 74 C31 84 35 94 33 106",
-            "M86 74 C89 84 85 94 87 106",
-          ]),
+            "M26 56 C22 64 28 72 26 80 C24 88 21 94 24 102 C25 106 27 108 29 112",
+            "M94 56 C98 64 92 72 94 80 C96 88 99 94 96 102 C95 106 93 108 91 112",
+            "M33 70 C30 80 35 88 32 96 C30 102 33 106 34 112",
+            "M87 70 C90 80 85 88 88 96 C90 102 87 106 86 112",
+          ]) +
+          glints(["M23.4 58 Q22 62 23.6 66", "M23 94 Q21.6 98 23.2 103"]),
         front:
           `<path d="${cap}" fill="${c}" />` +
           `<path d="${wave}" fill="${c}" />` +
@@ -189,8 +203,8 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
           strands([
             "M59 16 C52 22 42 26 36 40",
             "M61 16 C68 22 78 26 84 40",
-            "M31.2 46 C29.6 54 32 60 30 68 C28.6 74 30.6 78 28.6 82",
-            "M88.8 46 C90.4 54 88 60 90 68 C91.4 74 89.4 78 91.4 82",
+            "M31.4 46 C29 54 33 60 31 68 C29 76 32.6 80 29.4 86",
+            "M88.6 46 C91 54 87 60 89 68 C91 76 87.4 80 90.6 86",
           ]) +
           shineRibbon(
             p,
@@ -235,9 +249,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
           strands(
             [
               "M59 16 C52 21 44 25 37 36",
-              "M58 17.4 C54 24 47 30 42 40",
               "M61 16 C68 21 76 25 83 36",
-              "M62 17.4 C66 24 73 30 78 40",
               "M56 12 C48 14 40 20 35 30",
               "M64 12 C72 14 80 20 85 30",
             ],
@@ -803,7 +815,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
           `<circle cx="84" cy="22" r="1.4" fill="rgba(255,255,255,0.35)" />` +
           `<circle cx="60" cy="8" r="1.6" fill="rgba(255,255,255,0.38)" />`,
         front:
-          `<path d="${fluffy(60, 22, 26, 14, 2.2)}" fill="${c}" />` +
+          `<path d="M33.6 42 C32 24 44 11 60 11 C76 11 88 24 86.4 42 C82 32 72 25.4 60 25.4 C48 25.4 38 32 33.6 42 Z" fill="${c}" />` +
           // Edge baby hairs
           `<path d="M44 26 Q47 28 45 32" stroke="${c}" stroke-width="1.3" stroke-linecap="round" fill="none" />` +
           `<path d="M76 26 Q73 28 75 32" stroke="${c}" stroke-width="1.3" stroke-linecap="round" fill="none" />` +
@@ -905,6 +917,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M32.2 50 C31.4 60 32.6 68 33.6 74",
             "M87.8 50 C88.6 60 87.4 68 86.4 74",
           ]) +
+          glints(["M30.6 50 Q29.8 56 30.8 62"]) +
           shineRibbon(
             p,
             "M36 26 C44 12 76 11.4 85 24 C76 16.4 46 17 36.6 29 Z",
@@ -924,7 +937,10 @@ export function renderLayer1HairBack(look: AvatarLook, p: string): string {
   const cls = style.replace(/_/g, "-");
   return (
     `<g class="avatar-hair-back hair-${cls}">` +
+    // Puffed out a little past the front pieces for big glam volume
+    `<g transform="translate(60 26) scale(1.08 1.04) translate(-60 -26)">` +
     inked(hairArt(style, hairColor, p).back, 1.1) +
+    `</g>` +
     `</g>`
   );
 }
@@ -934,7 +950,7 @@ export function renderLayer1HairBack(look: AvatarLook, p: string): string {
  * ------------------------------------------------------------- */
 /** Band hugging the hairline from the part down to the temple. */
 const STREAK_BAND =
-  "M58.6 20.2 C56 21.6 52.4 22.8 48.4 24.2 C39.4 27.8 33.6 36 33 48 L30.4 48 C31 34.6 37.6 25.4 47.4 21.6 C51.6 20 55 18.6 57.2 17 Z";
+  "M58.6 20.2 C56 21.6 52.4 22.8 48.4 24.2 C39.4 27.8 33.6 36 33 48 L29.4 48 C29.6 32.6 36.4 22.4 46.4 18.6 C50.8 16.8 54.6 15 57 13 Z";
 
 /** Stripe down a long face-framing panel. */
 const STREAK_PANEL =
@@ -1052,7 +1068,7 @@ export function hairDefs(p: string): string {
   return (
     `<linearGradient id="${p}-shine" x1="0" y1="0" x2="1" y2="0">` +
     `<stop offset="0" stop-color="#ffffff" stop-opacity="0" />` +
-    `<stop offset="0.5" stop-color="#ffffff" stop-opacity="0.62" />` +
+    `<stop offset="0.5" stop-color="#ffffff" stop-opacity="0.75" />` +
     `<stop offset="1" stop-color="#ffffff" stop-opacity="0" />` +
     `</linearGradient>` +
     `<linearGradient id="${p}-mermaid" x1="0" y1="0" x2="1" y2="1">` +
