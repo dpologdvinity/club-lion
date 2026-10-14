@@ -1,21 +1,63 @@
-import React from "react";
+import { createContext, memo, useContext, type CSSProperties } from "react";
 
-export function ClubPulseScenery({ seconds }: { seconds: number }) {
-  // Kinetic rhythms
-  const beat = (seconds * 2) % 1; // 120 BPM
-  const bassThump = Math.sin(seconds * Math.PI * 4); // 2 Hz kick
-  const bassScale = 1 + Math.max(0, bassThump) * 0.06;
+// Rotate or scale about the local origin, like an SVG transform, instead of the fill-box.
+const PIVOT: CSSProperties = { transformBox: "view-box", "--sm-origin": "0 0" };
 
-  // Sweeping spotlights
-  const sweepAngle1 = Math.sin(seconds * 1.2) * 26;
-  const sweepAngle2 = Math.sin(seconds * 1.2 + 2.1) * -26;
-  const sweepAngle3 = Math.sin(seconds * 0.9 + 1.1) * 32;
-  const sweepAngle4 = Math.sin(seconds * 0.9 + 3.4) * -32;
+// Delay that puts an alternate sm-* loop (from keyframe = peak) in phase with
+// sin(k * seconds + phi), as a negative offset so it starts mid-cycle.
+const sinePhase = (k: number, phi: number) =>
+  `${-((((phi - Math.PI / 2) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / k}s`;
 
-  // Disco ball rotation & sparkle
-  const discoRot = (seconds * 20) % 360;
+// Spotlights: rotate(amp * sin(k * seconds + phi)) about the lamp.
+const sweep = (amp: number, k: number, phi: number): CSSProperties => ({
+  ...PIVOT,
+  "--sm-deg": `${amp}deg`,
+  "--sm-dur": `${Math.PI / k}s`,
+  // sm-sway starts at -amp, so its peak is half a cycle away.
+  "--sm-delay": sinePhase(k, phi + Math.PI),
+  transform: `rotate(${amp * Math.sin(phi)}deg)`,
+});
 
-  // Equalizer bar heights (16 bars)
+// Lasers: the beam end sweeps x2 = xc + amp * sin(k * seconds + phi) along the
+// floor line y2; it becomes a rotation about the emitter whose still pose
+// matches seconds = 0. The beam runs on under the floor, which hides the rest.
+function laser(
+  x1: number,
+  y1: number,
+  y2: number,
+  xc: number,
+  amp: number,
+  k: number,
+  phi: number,
+) {
+  const angle = (x: number) => (Math.atan2(y2 - y1, x - x1) * 180) / Math.PI;
+  const lo = angle(xc + amp);
+  const hi = angle(xc - amp);
+  const mid = (lo + hi) / 2;
+  const rad = (mid * Math.PI) / 180;
+  return {
+    x1,
+    y1,
+    x2: x1 + Math.cos(rad) * 2000,
+    y2: y1 + Math.sin(rad) * 2000,
+    style: {
+      transformBox: "view-box",
+      "--sm-origin": `${x1}px ${y1}px`,
+      "--sm-deg": `${(hi - lo) / 2}deg`,
+      "--sm-dur": `${Math.PI / k}s`,
+      // The angle falls as x2 grows, so sm-sway's -deg start is the sine peak.
+      "--sm-delay": sinePhase(k, phi),
+      transform: `rotate(${angle(xc + amp * Math.sin(phi)) - mid}deg)`,
+    } satisfies CSSProperties,
+  };
+}
+
+// The equalizer keeps React timing: each bar's height drives its bbox gradient,
+// which a uniform CSS scale or slide can't reproduce. Only these bars re-render.
+const Seconds = createContext(0);
+
+function EqualizerBars() {
+  const seconds = useContext(Seconds);
   const eqHeights = [
     32 + Math.sin(seconds * 9.2 + 0) * 24,
     48 + Math.sin(seconds * 11.1 + 1) * 36,
@@ -34,7 +76,46 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
     40 + Math.sin(seconds * 11.8 + 14) * 26,
     30 + Math.sin(seconds * 8.2 + 15) * 20,
   ];
+  return (
+    <g transform="translate(-320 -15)">
+      {eqHeights.map((h, i) => (
+        <g key={`eq-${i}`} transform={`translate(${i * 42} 0)`}>
+          <rect
+            x="0"
+            y={-h}
+            width="28"
+            height={h}
+            rx="5"
+            fill="url(#cp-eq-grad)"
+            opacity="0.92"
+            filter="url(#cp-neon-glow)"
+          />
+          {/* Peak meter floating cap */}
+          <rect
+            x="0"
+            y={-h - 7}
+            width="28"
+            height="4"
+            rx="2"
+            fill="#ffffff"
+            opacity="0.95"
+          />
+        </g>
+      ))}
+    </g>
+  );
+}
 
+export function ClubPulseScenery({ seconds }: { seconds: number }) {
+  // Everything but the equalizer moves in CSS, so the memoized stage skips the ticks.
+  return (
+    <Seconds.Provider value={seconds}>
+      <ClubPulseStage />
+    </Seconds.Provider>
+  );
+}
+
+const ClubPulseStage = memo(function ClubPulseStage() {
   return (
     <g className="club-pulse-scenery">
       <defs>
@@ -340,105 +421,105 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
       {/* 4. VOLUMETRIC STAGE SPOTLIGHTS & LASER BEAMS              */}
       {/* ========================================================= */}
       {/* Spotlight 1: Left Cyan */}
-      <g transform={`translate(420 95) rotate(${sweepAngle1})`}>
-        <polygon
-          points="-24,0 24,0 180,620 -180,620"
-          fill="url(#cp-beam-cyan)"
-        />
-        <ellipse
-          cx="0"
-          cy="0"
-          rx="14"
-          ry="7"
-          fill="#00e5ff"
-          filter="url(#cp-neon-glow)"
-        />
+      <g transform="translate(420 95)">
+        <g className="sm-sway" style={sweep(26, 1.2, 0)}>
+          <polygon
+            points="-24,0 24,0 180,620 -180,620"
+            fill="url(#cp-beam-cyan)"
+          />
+          <ellipse
+            cx="0"
+            cy="0"
+            rx="14"
+            ry="7"
+            fill="#00e5ff"
+            filter="url(#cp-neon-glow)"
+          />
+        </g>
       </g>
 
       {/* Spotlight 2: Center-Left Magenta */}
-      <g transform={`translate(740 95) rotate(${sweepAngle2})`}>
-        <polygon
-          points="-24,0 24,0 190,620 -190,620"
-          fill="url(#cp-beam-magenta)"
-        />
-        <ellipse
-          cx="0"
-          cy="0"
-          rx="14"
-          ry="7"
-          fill="#ff1493"
-          filter="url(#cp-neon-glow)"
-        />
+      <g transform="translate(740 95)">
+        <g className="sm-sway" style={sweep(26, 1.2, 2.1 + Math.PI)}>
+          <polygon
+            points="-24,0 24,0 190,620 -190,620"
+            fill="url(#cp-beam-magenta)"
+          />
+          <ellipse
+            cx="0"
+            cy="0"
+            rx="14"
+            ry="7"
+            fill="#ff1493"
+            filter="url(#cp-neon-glow)"
+          />
+        </g>
       </g>
 
       {/* Spotlight 3: Center-Right Gold */}
-      <g transform={`translate(1180 95) rotate(${sweepAngle3})`}>
-        <polygon
-          points="-24,0 24,0 190,620 -190,620"
-          fill="url(#cp-beam-gold)"
-        />
-        <ellipse
-          cx="0"
-          cy="0"
-          rx="14"
-          ry="7"
-          fill="#ffd700"
-          filter="url(#cp-neon-glow)"
-        />
+      <g transform="translate(1180 95)">
+        <g className="sm-sway" style={sweep(32, 0.9, 1.1)}>
+          <polygon
+            points="-24,0 24,0 190,620 -190,620"
+            fill="url(#cp-beam-gold)"
+          />
+          <ellipse
+            cx="0"
+            cy="0"
+            rx="14"
+            ry="7"
+            fill="#ffd700"
+            filter="url(#cp-neon-glow)"
+          />
+        </g>
       </g>
 
       {/* Spotlight 4: Right Lime */}
-      <g transform={`translate(1500 95) rotate(${sweepAngle4})`}>
-        <polygon
-          points="-24,0 24,0 180,620 -180,620"
-          fill="url(#cp-beam-lime)"
-        />
-        <ellipse
-          cx="0"
-          cy="0"
-          rx="14"
-          ry="7"
-          fill="#39ff14"
-          filter="url(#cp-neon-glow)"
-        />
+      <g transform="translate(1500 95)">
+        <g className="sm-sway" style={sweep(32, 0.9, 3.4 + Math.PI)}>
+          <polygon
+            points="-24,0 24,0 180,620 -180,620"
+            fill="url(#cp-beam-lime)"
+          />
+          <ellipse
+            cx="0"
+            cy="0"
+            rx="14"
+            ry="7"
+            fill="#39ff14"
+            filter="url(#cp-neon-glow)"
+          />
+        </g>
       </g>
 
       {/* High-Energy Overhead Laser Beams */}
       <line
-        x1="200"
-        y1="95"
-        x2={1300 + Math.sin(seconds * 3.5) * 450}
-        y2="520"
+        className="sm-sway"
+        {...laser(200, 95, 520, 1300, 450, 3.5, 0)}
         stroke="#00ffff"
         strokeWidth="3.5"
         opacity="0.8"
         filter="url(#cp-neon-glow)"
       />
       <line
-        x1="1720"
-        y1="95"
-        x2={620 + Math.cos(seconds * 3.5) * 450}
-        y2="520"
+        className="sm-sway"
+        {...laser(1720, 95, 520, 620, 450, 3.5, Math.PI / 2)}
         stroke="#ff007f"
         strokeWidth="3.5"
         opacity="0.8"
         filter="url(#cp-neon-glow)"
       />
       <line
-        x1="960"
-        y1="95"
-        x2={380 + Math.sin(seconds * 2.8) * 350}
-        y2="540"
+        className="sm-sway"
+        {...laser(960, 95, 540, 380, 350, 2.8, 0)}
         stroke="#a855f7"
         strokeWidth="3"
         opacity="0.75"
         filter="url(#cp-neon-glow)"
       />
       <line
-        x1="960"
-        y1="95"
-        x2={1540 + Math.cos(seconds * 2.8) * 350}
-        y2="540"
+        className="sm-sway"
+        {...laser(960, 95, 540, 1540, 350, 2.8, Math.PI / 2)}
         stroke="#39ff14"
         strokeWidth="3"
         opacity="0.75"
@@ -476,16 +557,25 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
             strokeWidth="1.5"
           />
           {/* Glinting Specular Star Highlights */}
-          <polygon
-            points="0,-18 3,-4 18,0 3,4 0,18 -3,4 -18,0 -3,-4"
-            fill="#ffffff"
-            transform={`rotate(${discoRot}) scale(${0.7 + Math.sin(seconds * 5) * 0.3})`}
-          />
-          <polygon
-            points="0,-12 2,-3 12,0 2,3 0,12 -2,3 -12,0 -2,-3"
-            fill="#67e8f9"
-            transform={`translate(12, 10) rotate(${-discoRot * 1.5})`}
-          />
+          <g className="sm-spin" style={{ "--sm-dur": "18s" }}>
+            <g transform="scale(0.7)">
+              {/* Twinkles between 0.4x and 1x of the star's size. */}
+              <polygon
+                className="sm-pulse"
+                style={{ "--sm-dur": "0.63s", "--sm-scale": String(1 / 0.7) }}
+                points="0,-18 3,-4 18,0 3,4 0,18 -3,4 -18,0 -3,-4"
+                fill="#ffffff"
+              />
+            </g>
+          </g>
+          <g transform="translate(12, 10)">
+            <polygon
+              className="sm-spin"
+              style={{ "--sm-dur": "12s", animationDirection: "reverse" }}
+              points="0,-12 2,-3 12,0 2,3 0,12 -2,3 -12,0 -2,-3"
+              fill="#67e8f9"
+            />
+          </g>
         </g>
       </g>
 
@@ -593,45 +683,55 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
         />
 
         {/* Mid-Range Woofer (Pulsing) */}
-        <g transform={`translate(0 -115) scale(${bassScale})`}>
-          <circle
-            cx="0"
-            cy="0"
-            r="38"
-            fill="url(#cp-speaker-ring)"
-            stroke="#38bdf8"
-            strokeWidth="2.5"
-          />
-          <circle cx="0" cy="0" r="28" fill="url(#cp-speaker-cone)" />
-          <circle
-            cx="0"
-            cy="0"
-            r="12"
-            fill="#0f172a"
-            stroke="#64748b"
-            strokeWidth="2"
-          />
+        <g transform="translate(0 -115)">
+          <g
+            className="sm-pulse"
+            style={{ ...PIVOT, "--sm-dur": "0.25s", "--sm-scale": "1.06" }}
+          >
+            <circle
+              cx="0"
+              cy="0"
+              r="38"
+              fill="url(#cp-speaker-ring)"
+              stroke="#38bdf8"
+              strokeWidth="2.5"
+            />
+            <circle cx="0" cy="0" r="28" fill="url(#cp-speaker-cone)" />
+            <circle
+              cx="0"
+              cy="0"
+              r="12"
+              fill="#0f172a"
+              stroke="#64748b"
+              strokeWidth="2"
+            />
+          </g>
         </g>
 
         {/* Low Bass Subwoofer (Heavy Pulse) */}
-        <g transform={`translate(0 -35) scale(${bassScale})`}>
-          <circle
-            cx="0"
-            cy="0"
-            r="44"
-            fill="url(#cp-speaker-ring)"
-            stroke="#f43f5e"
-            strokeWidth="3"
-          />
-          <circle cx="0" cy="0" r="34" fill="url(#cp-speaker-cone)" />
-          <circle
-            cx="0"
-            cy="0"
-            r="15"
-            fill="#0f172a"
-            stroke="#64748b"
-            strokeWidth="2"
-          />
+        <g transform="translate(0 -35)">
+          <g
+            className="sm-pulse"
+            style={{ ...PIVOT, "--sm-dur": "0.25s", "--sm-scale": "1.06" }}
+          >
+            <circle
+              cx="0"
+              cy="0"
+              r="44"
+              fill="url(#cp-speaker-ring)"
+              stroke="#f43f5e"
+              strokeWidth="3"
+            />
+            <circle cx="0" cy="0" r="34" fill="url(#cp-speaker-cone)" />
+            <circle
+              cx="0"
+              cy="0"
+              r="15"
+              fill="#0f172a"
+              stroke="#64748b"
+              strokeWidth="2"
+            />
+          </g>
         </g>
 
         {/* Acoustic Bass Reflex Ports */}
@@ -677,45 +777,55 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
         />
 
         {/* Mid-Range Woofer (Pulsing) */}
-        <g transform={`translate(0 -115) scale(${bassScale})`}>
-          <circle
-            cx="0"
-            cy="0"
-            r="38"
-            fill="url(#cp-speaker-ring)"
-            stroke="#38bdf8"
-            strokeWidth="2.5"
-          />
-          <circle cx="0" cy="0" r="28" fill="url(#cp-speaker-cone)" />
-          <circle
-            cx="0"
-            cy="0"
-            r="12"
-            fill="#0f172a"
-            stroke="#64748b"
-            strokeWidth="2"
-          />
+        <g transform="translate(0 -115)">
+          <g
+            className="sm-pulse"
+            style={{ ...PIVOT, "--sm-dur": "0.25s", "--sm-scale": "1.06" }}
+          >
+            <circle
+              cx="0"
+              cy="0"
+              r="38"
+              fill="url(#cp-speaker-ring)"
+              stroke="#38bdf8"
+              strokeWidth="2.5"
+            />
+            <circle cx="0" cy="0" r="28" fill="url(#cp-speaker-cone)" />
+            <circle
+              cx="0"
+              cy="0"
+              r="12"
+              fill="#0f172a"
+              stroke="#64748b"
+              strokeWidth="2"
+            />
+          </g>
         </g>
 
         {/* Low Bass Subwoofer (Heavy Pulse) */}
-        <g transform={`translate(0 -35) scale(${bassScale})`}>
-          <circle
-            cx="0"
-            cy="0"
-            r="44"
-            fill="url(#cp-speaker-ring)"
-            stroke="#f43f5e"
-            strokeWidth="3"
-          />
-          <circle cx="0" cy="0" r="34" fill="url(#cp-speaker-cone)" />
-          <circle
-            cx="0"
-            cy="0"
-            r="15"
-            fill="#0f172a"
-            stroke="#64748b"
-            strokeWidth="2"
-          />
+        <g transform="translate(0 -35)">
+          <g
+            className="sm-pulse"
+            style={{ ...PIVOT, "--sm-dur": "0.25s", "--sm-scale": "1.06" }}
+          >
+            <circle
+              cx="0"
+              cy="0"
+              r="44"
+              fill="url(#cp-speaker-ring)"
+              stroke="#f43f5e"
+              strokeWidth="3"
+            />
+            <circle cx="0" cy="0" r="34" fill="url(#cp-speaker-cone)" />
+            <circle
+              cx="0"
+              cy="0"
+              r="15"
+              fill="#0f172a"
+              stroke="#64748b"
+              strokeWidth="2"
+            />
+          </g>
         </g>
 
         {/* Acoustic Bass Reflex Ports */}
@@ -757,32 +867,7 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
         />
 
         {/* Dynamic 16-Bar Audio Equalizer Visualizer */}
-        <g transform="translate(-320 -15)">
-          {eqHeights.map((h, i) => (
-            <g key={`eq-${i}`} transform={`translate(${i * 42} 0)`}>
-              <rect
-                x="0"
-                y={-h}
-                width="28"
-                height={h}
-                rx="5"
-                fill="url(#cp-eq-grad)"
-                opacity="0.92"
-                filter="url(#cp-neon-glow)"
-              />
-              {/* Peak meter floating cap */}
-              <rect
-                x="0"
-                y={-h - 7}
-                width="28"
-                height="4"
-                rx="2"
-                fill="#ffffff"
-                opacity="0.95"
-              />
-            </g>
-          ))}
-        </g>
+        <EqualizerBars />
 
         {/* Backlit Golden Lion Crown Medallion */}
         <g transform="translate(0 -140)">
@@ -921,10 +1006,16 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
             />
             <circle cx="0" cy="-1" r="8" fill="#020617" />
             <line
+              className="sm-spin"
+              style={{
+                transformBox: "view-box",
+                "--sm-origin": "0px -1px",
+                "--sm-dur": "1.05s",
+              }}
               x1="0"
               y1="-1"
-              x2={Math.cos(seconds * 6) * 14}
-              y2={-1 + Math.sin(seconds * 6) * 14}
+              x2={14}
+              y2="-1"
               stroke="#38bdf8"
               strokeWidth="2"
             />
@@ -1016,7 +1107,14 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
               strokeWidth="2"
             />
             <rect
-              x={Math.sin(seconds * 2.5) * 12 - 4}
+              className="sm-glide"
+              style={{
+                "--sm-x": "24px",
+                "--sm-dur": "1.26s",
+                "--sm-delay": sinePhase(2.5, Math.PI),
+                transform: "translateX(12px)",
+              }}
+              x={-16}
               y="9"
               width="8"
               height="6"
@@ -1048,10 +1146,16 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
             />
             <circle cx="0" cy="-1" r="8" fill="#020617" />
             <line
+              className="sm-spin"
+              style={{
+                transformBox: "view-box",
+                "--sm-origin": "0px -1px",
+                "--sm-dur": "1.05s",
+              }}
               x1="0"
               y1="-1"
-              x2={Math.cos(seconds * 6 + 1.8) * 14}
-              y2={-1 + Math.sin(seconds * 6 + 1.8) * 14}
+              x2={Math.cos(1.8) * 14}
+              y2={-1 + Math.sin(1.8) * 14}
               stroke="#f43f5e"
               strokeWidth="2"
             />
@@ -1333,6 +1437,6 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
       </g>
     </g>
   );
-}
+});
 
 export default ClubPulseScenery;
