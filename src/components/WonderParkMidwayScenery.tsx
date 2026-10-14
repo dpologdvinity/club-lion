@@ -1,11 +1,45 @@
-import React from "react";
+import { memo, type CSSProperties, type ReactNode } from "react";
+
+// Rotate about the local origin, like an SVG rotate(), instead of the fill-box.
+const PIVOT: CSSProperties = { transformBox: "view-box", "--sm-origin": "0 0" };
+
+// Teacups ride a circle squashed into the platform ellipse (34 / 195).
+const ORBIT_SQUASH = 34 / 195;
+
+const chaseStyle = (delay: number): CSSProperties => ({
+  "--sm-min": "0",
+  "--sm-dur": "0.75s",
+  "--sm-delay": `${delay}s`,
+  animationDirection: "normal",
+  animationTimingFunction: "steps(2, jump-none)",
+});
+
+// Marquee chase at 4 steps/s: the bulbs of `phase` are lit for one third of
+// each 0.75s cycle, where two half-on steps(2) windows overlap.
+function ChaseLit({ phase, children }: { phase: number; children: ReactNode }) {
+  return (
+    <g
+      className="sm-twinkle"
+      style={chaseStyle(phase * 0.25 - 1.25)}
+      opacity={phase === 0 ? 1 : 0}
+    >
+      <g className="sm-twinkle" style={chaseStyle(phase * 0.25 - 1.125)}>
+        {children}
+      </g>
+    </g>
+  );
+}
+
+const CHASE_PHASES = [0, 1, 2];
+// Bulb i is lit in phase p when (i + p) % 3 === 0.
+const inPhase = (i: number, p: number) => (i + p) % 3 === 0;
 
 export function WonderParkMidwayScenery({ seconds }: { seconds: number }) {
-  // Kinetic timings
-  const teacupOrbit = seconds * 0.35;
-  const carouselBob = seconds * 2;
-  const marqueePhase = Math.floor(seconds * 4) % 3;
+  void seconds; // ambient motion is CSS-driven (sceneryMotion.css)
+  return <WonderParkMidwayStage />;
+}
 
+const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
   return (
     <g className="wonder-park-midway-scenery">
       <defs>
@@ -137,7 +171,6 @@ export function WonderParkMidwayScenery({ seconds }: { seconds: number }) {
       {Array.from({ length: 36 }, (_, i) => {
         const x = 40 + i * 76;
         const y = 80 + Math.sin((i / 35) * Math.PI) * 55;
-        const isLit = (i + marqueePhase) % 3 === 0;
         return (
           <g key={`festoon-${i}`} transform={`translate(${x} ${y})`}>
             <line
@@ -148,24 +181,31 @@ export function WonderParkMidwayScenery({ seconds }: { seconds: number }) {
               stroke="#1c1917"
               strokeWidth="2"
             />
-            <circle
-              cx="0"
-              cy="12"
-              r={isLit ? 7 : 5}
-              fill={isLit ? "#fef08a" : "#ca8a04"}
-            />
-            {isLit && (
-              <circle
-                cx="0"
-                cy="12"
-                r="16"
-                fill="url(#wpm-amber-glow)"
-                opacity="0.7"
-              />
-            )}
+            <circle cx="0" cy="12" r="5" fill="#ca8a04" />
           </g>
         );
       })}
+      {CHASE_PHASES.map((p) => (
+        <ChaseLit key={p} phase={p}>
+          {Array.from({ length: 36 }, (_, i) => {
+            if (!inPhase(i, p)) return null;
+            const x = 40 + i * 76;
+            const y = 80 + Math.sin((i / 35) * Math.PI) * 55;
+            return (
+              <g key={i} transform={`translate(${x} ${y})`}>
+                <circle cx="0" cy="12" r="7" fill="#fef08a" />
+                <circle
+                  cx="0"
+                  cy="12"
+                  r="16"
+                  fill="url(#wpm-amber-glow)"
+                  opacity="0.7"
+                />
+              </g>
+            );
+          })}
+        </ChaseLit>
+      ))}
 
       {/* Multi-colored carnival pennants */}
       {Array.from({ length: 24 }, (_, i) => {
@@ -220,17 +260,27 @@ export function WonderParkMidwayScenery({ seconds }: { seconds: number }) {
           const rad = (i * Math.PI * 2) / 24;
           const bx = Math.cos(rad) * 258;
           const by = 46 + Math.sin(rad) * 46;
-          const isBulbLit = (i + marqueePhase) % 3 === 0;
           return (
-            <circle
-              key={`tc-bulb-${i}`}
-              cx={bx}
-              cy={by}
-              r="4"
-              fill={isBulbLit ? "#fef08a" : "#b45309"}
-            />
+            <circle key={`tc-bulb-${i}`} cx={bx} cy={by} r="4" fill="#b45309" />
           );
         })}
+        {CHASE_PHASES.map((p) => (
+          <ChaseLit key={p} phase={p}>
+            {Array.from({ length: 24 }, (_, i) => {
+              if (!inPhase(i, p)) return null;
+              const rad = (i * Math.PI * 2) / 24;
+              return (
+                <circle
+                  key={i}
+                  cx={Math.cos(rad) * 258}
+                  cy={46 + Math.sin(rad) * 46}
+                  r="4"
+                  fill="#fef08a"
+                />
+              );
+            })}
+          </ChaseLit>
+        ))}
 
         {/* Center Giant Sculpted Mango Centerpiece */}
         <g transform="translate(0 15)">
@@ -274,108 +324,127 @@ export function WonderParkMidwayScenery({ seconds }: { seconds: number }) {
         </g>
 
         {/* 5 Orbiting Kinetic Teacups */}
-        {[0, 1, 2, 3, 4].map((i) => {
-          const orbitAngle = teacupOrbit + (i * Math.PI * 2) / 5;
-          const tx = Math.cos(orbitAngle) * 195;
-          const ty = 28 + Math.sin(orbitAngle) * 34;
-          const spin = seconds * 2.5 + i * 1.5;
-          const isWarm = i % 2 === 0;
+        <g transform={`translate(0 28) scale(1 ${ORBIT_SQUASH})`}>
+          <g className="sm-spin" style={{ ...PIVOT, "--sm-dur": "17.95s" }}>
+            {[0, 1, 2, 3, 4].map((i) => {
+              const orbitAngle = (i * Math.PI * 2) / 5;
+              const tx = Math.cos(orbitAngle) * 195;
+              const ty = Math.sin(orbitAngle) * 195;
+              const isWarm = i % 2 === 0;
 
-          return (
-            <g key={`teacup-${i}`} transform={`translate(${tx} ${ty})`}>
-              {/* Teacup Saucer Base */}
-              <ellipse
-                cx="0"
-                cy="22"
-                rx="48"
-                ry="16"
-                fill="#fef08a"
-                stroke="#b45309"
-                strokeWidth="3"
-              />
+              return (
+                <g key={`teacup-${i}`} transform={`translate(${tx} ${ty})`}>
+                  {/* Counter-spin and unsquash so the cup stays upright and round. */}
+                  <g
+                    className="sm-spin"
+                    style={{
+                      ...PIVOT,
+                      "--sm-dur": "17.95s",
+                      animationDirection: "reverse",
+                    }}
+                  >
+                    <g transform={`scale(1 ${1 / ORBIT_SQUASH})`}>
+                      {/* Teacup Saucer Base */}
+                      <ellipse
+                        cx="0"
+                        cy="22"
+                        rx="48"
+                        ry="16"
+                        fill="#fef08a"
+                        stroke="#b45309"
+                        strokeWidth="3"
+                      />
 
-              {/* Teacup Body */}
-              <g transform="translate(0 -5)">
-                {/* Porcelain Curved Cup Body */}
-                <path
-                  d="M-36 0 Q-38 32 0 32 Q38 32 36 0 Z"
-                  fill={
-                    isWarm ? "url(#wpm-mango-glaze)" : "url(#wpm-coral-glaze)"
-                  }
-                  stroke="#78350f"
-                  strokeWidth="3.5"
-                />
-                {/* Teacup Rim Ellipse */}
-                <ellipse
-                  cx="0"
-                  cy="0"
-                  rx="36"
-                  ry="12"
-                  fill="#fffbeb"
-                  stroke="#78350f"
-                  strokeWidth="3"
-                />
-                <ellipse
-                  cx="0"
-                  cy="0"
-                  rx="28"
-                  ry="8"
-                  fill="#d97706"
-                  opacity="0.25"
-                />
+                      {/* Teacup Body */}
+                      <g transform="translate(0 -5)">
+                        {/* Porcelain Curved Cup Body */}
+                        <path
+                          d="M-36 0 Q-38 32 0 32 Q38 32 36 0 Z"
+                          fill={
+                            isWarm
+                              ? "url(#wpm-mango-glaze)"
+                              : "url(#wpm-coral-glaze)"
+                          }
+                          stroke="#78350f"
+                          strokeWidth="3.5"
+                        />
+                        {/* Teacup Rim Ellipse */}
+                        <ellipse
+                          cx="0"
+                          cy="0"
+                          rx="36"
+                          ry="12"
+                          fill="#fffbeb"
+                          stroke="#78350f"
+                          strokeWidth="3"
+                        />
+                        <ellipse
+                          cx="0"
+                          cy="0"
+                          rx="28"
+                          ry="8"
+                          fill="#d97706"
+                          opacity="0.25"
+                        />
 
-                {/* Looped Teacup Handle */}
-                <path
-                  d="M34 6 Q52 14 34 26"
-                  fill="none"
-                  stroke="#fef08a"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                />
+                        {/* Looped Teacup Handle */}
+                        <path
+                          d="M34 6 Q52 14 34 26"
+                          fill="none"
+                          stroke="#fef08a"
+                          strokeWidth="6"
+                          strokeLinecap="round"
+                        />
 
-                {/* Center Spinning Brass Wheel */}
-                <g transform="translate(0 2)">
-                  <circle
-                    cx="0"
-                    cy="0"
-                    r="12"
-                    fill="#f59e0b"
-                    stroke="#78350f"
-                    strokeWidth="2"
-                  />
-                  <line
-                    x1="0"
-                    y1="0"
-                    x2={Math.cos(spin) * 10}
-                    y2={Math.sin(spin) * 10}
-                    stroke="#ffffff"
-                    strokeWidth="2"
-                  />
+                        {/* Center Spinning Brass Wheel */}
+                        <g transform="translate(0 2)">
+                          <circle
+                            cx="0"
+                            cy="0"
+                            r="12"
+                            fill="#f59e0b"
+                            stroke="#78350f"
+                            strokeWidth="2"
+                          />
+                          <line
+                            className="sm-spin"
+                            style={{ ...PIVOT, "--sm-dur": "2.51s" }}
+                            x1="0"
+                            y1="0"
+                            x2={Math.cos(i * 1.5) * 10}
+                            y2={Math.sin(i * 1.5) * 10}
+                            stroke="#ffffff"
+                            strokeWidth="2"
+                          />
+                        </g>
+
+                        {/* Smiling Passenger Heads */}
+                        <g transform="translate(0 -10)">
+                          <circle
+                            cx="-12"
+                            cy="0"
+                            r="7"
+                            fill="#fed7aa"
+                            stroke="#c2410c"
+                            strokeWidth="1.5"
+                          />
+                          <circle
+                            cx="12"
+                            cy="0"
+                            r="7"
+                            fill="#fbcfe8"
+                            stroke="#be185d"
+                            strokeWidth="1.5"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
                 </g>
-
-                {/* Smiling Passenger Heads */}
-                <g transform="translate(0 -10)">
-                  <circle
-                    cx="-12"
-                    cy="0"
-                    r="7"
-                    fill="#fed7aa"
-                    stroke="#c2410c"
-                    strokeWidth="1.5"
-                  />
-                  <circle
-                    cx="12"
-                    cy="0"
-                    r="7"
-                    fill="#fbcfe8"
-                    stroke="#be185d"
-                    strokeWidth="1.5"
-                  />
-                </g>
-              </g>
-            </g>
-          );
-        })}
+              );
+            })}
+          </g>
+        </g>
 
         {/* Ride Signboard */}
         <g transform="translate(0 120)">
@@ -475,7 +544,7 @@ export function WonderParkMidwayScenery({ seconds }: { seconds: number }) {
 
         {/* Majestic Steeds & Gazelles on Spiral Brass Poles */}
         {[-180, -90, 0, 90, 180].map((px, i) => {
-          const yBob = Math.sin(carouselBob + i * 1.3) * 16;
+          const yNow = Math.sin(i * 1.3) * 16;
           const isLion = i % 2 === 0;
 
           return (
@@ -501,129 +570,144 @@ export function WonderParkMidwayScenery({ seconds }: { seconds: number }) {
               />
 
               {/* Animated Carousel Steed (Rising & Falling) */}
-              <g transform={`translate(0 ${-70 + yBob})`}>
-                {isLion ? (
-                  /* Majestic Gilded Lion Mount */
-                  <g transform="scale(0.85)">
-                    {/* Golden Mane & Body */}
-                    <ellipse
-                      cx="-5"
-                      cy="0"
-                      rx="34"
-                      ry="20"
-                      fill="#f59e0b"
-                      stroke="#78350f"
-                      strokeWidth="3"
-                    />
-                    <circle
-                      cx="25"
-                      cy="-14"
-                      r="18"
-                      fill="#d97706"
-                      stroke="#78350f"
-                      strokeWidth="2.5"
-                    />
-                    <ellipse cx="28" cy="-12" rx="14" ry="12" fill="#fbbf24" />
-                    <circle cx="34" cy="-14" r="2.5" fill="#451a03" />
-                    {/* Royal Saddle & Blanket */}
-                    <polygon
-                      points="-16,-12 10,-12 6,8 -12,8"
-                      fill="#b91c1c"
-                      stroke="#fef08a"
-                      strokeWidth="2"
-                    />
-                    {/* Galloping Legs */}
-                    <line
-                      x1="-22"
-                      y1="12"
-                      x2="-32"
-                      y2="28"
-                      stroke="#78350f"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-                    <line
-                      x1="-12"
-                      y1="12"
-                      x2="-18"
-                      y2="28"
-                      stroke="#78350f"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-                    <line
-                      x1="12"
-                      y1="12"
-                      x2="22"
-                      y2="28"
-                      stroke="#78350f"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-                    <line
-                      x1="20"
-                      y1="12"
-                      x2="32"
-                      y2="28"
-                      stroke="#78350f"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-                  </g>
-                ) : (
-                  /* Elegant Savanna Gazelle Mount */
-                  <g transform="scale(0.85)">
-                    <ellipse
-                      cx="-5"
-                      cy="0"
-                      rx="30"
-                      ry="16"
-                      fill="#fed7aa"
-                      stroke="#78350f"
-                      strokeWidth="3"
-                    />
-                    <circle
-                      cx="22"
-                      cy="-16"
-                      r="14"
-                      fill="#fbbf24"
-                      stroke="#78350f"
-                      strokeWidth="2"
-                    />
-                    {/* Gazelle Horns */}
-                    <path
-                      d="M18 -26 Q22 -44 28 -40"
-                      fill="none"
-                      stroke="#451a03"
-                      strokeWidth="3"
-                    />
-                    <polygon
-                      points="-14,-10 8,-10 5,6 -10,6"
-                      fill="#0284c7"
-                      stroke="#fef08a"
-                      strokeWidth="2"
-                    />
-                    {/* Legs */}
-                    <line
-                      x1="-20"
-                      y1="10"
-                      x2="-28"
-                      y2="26"
-                      stroke="#78350f"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                    />
-                    <line
-                      x1="12"
-                      y1="10"
-                      x2="24"
-                      y2="26"
-                      stroke="#78350f"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                    />
-                  </g>
-                )}
+              <g transform={`translate(0 ${-70 + yNow})`}>
+                {/* Ride from the still pose to the farther end of the ±16 bob. */}
+                <g
+                  className="sm-glide"
+                  style={{
+                    "--sm-dur": "1.57s",
+                    "--sm-y": `${(yNow > 0 ? -16 : 16) - yNow}px`,
+                  }}
+                >
+                  {isLion ? (
+                    /* Majestic Gilded Lion Mount */
+                    <g transform="scale(0.85)">
+                      {/* Golden Mane & Body */}
+                      <ellipse
+                        cx="-5"
+                        cy="0"
+                        rx="34"
+                        ry="20"
+                        fill="#f59e0b"
+                        stroke="#78350f"
+                        strokeWidth="3"
+                      />
+                      <circle
+                        cx="25"
+                        cy="-14"
+                        r="18"
+                        fill="#d97706"
+                        stroke="#78350f"
+                        strokeWidth="2.5"
+                      />
+                      <ellipse
+                        cx="28"
+                        cy="-12"
+                        rx="14"
+                        ry="12"
+                        fill="#fbbf24"
+                      />
+                      <circle cx="34" cy="-14" r="2.5" fill="#451a03" />
+                      {/* Royal Saddle & Blanket */}
+                      <polygon
+                        points="-16,-12 10,-12 6,8 -12,8"
+                        fill="#b91c1c"
+                        stroke="#fef08a"
+                        strokeWidth="2"
+                      />
+                      {/* Galloping Legs */}
+                      <line
+                        x1="-22"
+                        y1="12"
+                        x2="-32"
+                        y2="28"
+                        stroke="#78350f"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                      />
+                      <line
+                        x1="-12"
+                        y1="12"
+                        x2="-18"
+                        y2="28"
+                        stroke="#78350f"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                      />
+                      <line
+                        x1="12"
+                        y1="12"
+                        x2="22"
+                        y2="28"
+                        stroke="#78350f"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                      />
+                      <line
+                        x1="20"
+                        y1="12"
+                        x2="32"
+                        y2="28"
+                        stroke="#78350f"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                      />
+                    </g>
+                  ) : (
+                    /* Elegant Savanna Gazelle Mount */
+                    <g transform="scale(0.85)">
+                      <ellipse
+                        cx="-5"
+                        cy="0"
+                        rx="30"
+                        ry="16"
+                        fill="#fed7aa"
+                        stroke="#78350f"
+                        strokeWidth="3"
+                      />
+                      <circle
+                        cx="22"
+                        cy="-16"
+                        r="14"
+                        fill="#fbbf24"
+                        stroke="#78350f"
+                        strokeWidth="2"
+                      />
+                      {/* Gazelle Horns */}
+                      <path
+                        d="M18 -26 Q22 -44 28 -40"
+                        fill="none"
+                        stroke="#451a03"
+                        strokeWidth="3"
+                      />
+                      <polygon
+                        points="-14,-10 8,-10 5,6 -10,6"
+                        fill="#0284c7"
+                        stroke="#fef08a"
+                        strokeWidth="2"
+                      />
+                      {/* Legs */}
+                      <line
+                        x1="-20"
+                        y1="10"
+                        x2="-28"
+                        y2="26"
+                        stroke="#78350f"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                      />
+                      <line
+                        x1="12"
+                        y1="10"
+                        x2="24"
+                        y2="26"
+                        stroke="#78350f"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                      />
+                    </g>
+                  )}
+                </g>
               </g>
             </g>
           );
@@ -654,19 +738,30 @@ export function WonderParkMidwayScenery({ seconds }: { seconds: number }) {
             stroke="#78350f"
             strokeWidth="3"
           />
-          {Array.from({ length: 22 }, (_, i) => {
-            const bx = -270 + i * 25.7;
-            const isLit = (i + marqueePhase) % 3 === 0;
-            return (
-              <circle
-                key={`car-bulb-${i}`}
-                cx={bx}
-                cy="8"
-                r="4.5"
-                fill={isLit ? "#fef08a" : "#b45309"}
-              />
-            );
-          })}
+          {Array.from({ length: 22 }, (_, i) => (
+            <circle
+              key={`car-bulb-${i}`}
+              cx={-270 + i * 25.7}
+              cy="8"
+              r="4.5"
+              fill="#b45309"
+            />
+          ))}
+          {CHASE_PHASES.map((p) => (
+            <ChaseLit key={p} phase={p}>
+              {Array.from({ length: 22 }, (_, i) =>
+                inPhase(i, p) ? (
+                  <circle
+                    key={i}
+                    cx={-270 + i * 25.7}
+                    cy="8"
+                    r="4.5"
+                    fill="#fef08a"
+                  />
+                ) : null,
+              )}
+            </ChaseLit>
+          ))}
 
           {/* Roof Finial & Golden Lion Flag */}
           <line
@@ -997,6 +1092,6 @@ export function WonderParkMidwayScenery({ seconds }: { seconds: number }) {
       ))}
     </g>
   );
-}
+});
 
 export default WonderParkMidwayScenery;
