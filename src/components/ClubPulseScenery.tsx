@@ -124,7 +124,12 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
         </linearGradient>
 
         {/* Acoustic Hex Wall Tile Pattern */}
-        <pattern id="cp-hex-pattern" width="60" height="104" patternUnits="userSpaceOnUse">
+        <pattern
+          id="cp-hex-pattern"
+          width="60"
+          height="104"
+          patternUnits="userSpaceOnUse"
+        >
           <path
             d="M30 0 L60 17.3 L60 52 L30 69.3 L0 52 L0 17.3 Z M30 104 L60 86.7 L60 52 L30 69.3 L0 52 L0 86.7 Z"
             fill="none"
@@ -139,12 +144,40 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
       {/* 1. ROOM BACKGROUND: WALLS & ACOUSTIC TILES                */}
       {/* ========================================================= */}
       <rect width="1920" height="720" fill="url(#cp-wall-grad)" />
-      <rect x="0" y="40" width="1920" height="380" fill="url(#cp-hex-pattern)" opacity="0.85" />
+      <rect
+        x="0"
+        y="40"
+        width="1920"
+        height="380"
+        fill="url(#cp-hex-pattern)"
+        opacity="0.85"
+      />
 
       {/* Ambient Neon Wall Washes */}
-      <ellipse cx="280" cy="220" rx="260" ry="160" fill="#9d174d" opacity="0.18" />
-      <ellipse cx="960" cy="180" rx="420" ry="200" fill="#4338ca" opacity="0.25" />
-      <ellipse cx="1640" cy="220" rx="260" ry="160" fill="#0369a1" opacity="0.18" />
+      <ellipse
+        cx="280"
+        cy="220"
+        rx="260"
+        ry="160"
+        fill="#9d174d"
+        opacity="0.18"
+      />
+      <ellipse
+        cx="960"
+        cy="180"
+        rx="420"
+        ry="200"
+        fill="#4338ca"
+        opacity="0.25"
+      />
+      <ellipse
+        cx="1640"
+        cy="220"
+        rx="260"
+        ry="160"
+        fill="#0369a1"
+        opacity="0.18"
+      />
 
       {/* ========================================================= */}
       {/* 2. INDUSTRIAL CEILING TRUSSES & CABLE RIGS               */}
@@ -181,8 +214,24 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
       ))}
 
       {/* Lower Mid-Ceiling Rig at y=95 */}
-      <line x1="80" y1="95" x2="1840" y2="95" stroke="#1c202a" strokeWidth="8" strokeLinecap="round" />
-      <line x1="80" y1="92" x2="1840" y2="92" stroke="#384154" strokeWidth="2" strokeLinecap="round" />
+      <line
+        x1="80"
+        y1="95"
+        x2="1840"
+        y2="95"
+        stroke="#1c202a"
+        strokeWidth="8"
+        strokeLinecap="round"
+      />
+      <line
+        x1="80"
+        y1="92"
+        x2="1840"
+        y2="92"
+        stroke="#384154"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
 
       {/* ========================================================= */}
       {/* 3. VIP MEZZANINE (2nd Floor Balcony, y: 140 to 240)       */}
@@ -190,26 +239,78 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
       <g className="vip-mezzanine-balcony">
         {/* Mezzanine Upper Deck Floor */}
         <polygon points="120,190 1800,190 1820,215 100,215" fill="#1b172a" />
-        <line x1="100" y1="215" x2="1820" y2="215" stroke="#ff007f" strokeWidth="2" opacity="0.8" />
+        <line
+          x1="100"
+          y1="215"
+          x2="1820"
+          y2="215"
+          stroke="#ff007f"
+          strokeWidth="2"
+          opacity="0.8"
+        />
 
         {/* Velvet Banquettes & VIP Guests Silhouettes */}
         {[300, 520, 1400, 1620].map((bx) => (
           <g key={`vip-booth-${bx}`} transform={`translate(${bx} 185)`}>
             {/* Curved Tufted Velvet Sofa Back */}
-            <path d="M-60 0 C-60 -45 60 -45 60 0 Z" fill="#4c0519" stroke="#be123c" strokeWidth="2" />
-            <path d="M-40 0 C-40 -35 40 -35 40 0" fill="none" stroke="#fb7185" strokeWidth="1" opacity="0.5" />
+            <path
+              d="M-60 0 C-60 -45 60 -45 60 0 Z"
+              fill="#4c0519"
+              stroke="#be123c"
+              strokeWidth="2"
+            />
+            <path
+              d="M-40 0 C-40 -35 40 -35 40 0"
+              fill="none"
+              stroke="#fb7185"
+              strokeWidth="1"
+              opacity="0.5"
+            />
             {/* VIP Cocktail Table */}
-            <ellipse cx="0" cy="5" rx="20" ry="7" fill="#fbbf24" stroke="#d97706" strokeWidth="2" />
+            <ellipse
+              cx="0"
+              cy="5"
+              rx="20"
+              ry="7"
+              fill="#fbbf24"
+              stroke="#d97706"
+              strokeWidth="2"
+            />
             {/* Champagne Bottle in Ice Bucket */}
-            <polygon points="-5,5 5,5 4,-8 -4,-8" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1" />
-            <line x1="0" y1="-8" x2="0" y2="-16" stroke="#15803d" strokeWidth="3" />
+            <polygon
+              points="-5,5 5,5 4,-8 -4,-8"
+              fill="#e2e8f0"
+              stroke="#94a3b8"
+              strokeWidth="1"
+            />
+            <line
+              x1="0"
+              y1="-8"
+              x2="0"
+              y2="-16"
+              stroke="#15803d"
+              strokeWidth="3"
+            />
             <circle cx="0" cy="-16" r="2" fill="#fbbf24" />
           </g>
         ))}
 
         {/* Illuminated VIP Tempered Glass Railing */}
-        <rect x="100" y="165" width="1720" height="45" fill="url(#cp-vip-glass)" />
-        <rect x="100" y="162" width="1720" height="5" fill="#00e5ff" opacity="0.9" />
+        <rect
+          x="100"
+          y="165"
+          width="1720"
+          height="45"
+          fill="url(#cp-vip-glass)"
+        />
+        <rect
+          x="100"
+          y="162"
+          width="1720"
+          height="5"
+          fill="#00e5ff"
+          opacity="0.9"
+        />
         {/* Glass vertical stanchions */}
         {Array.from({ length: 19 }, (_, i) => (
           <line
@@ -224,7 +325,15 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
           />
         ))}
         {/* Neon Under-glow Railing Strip */}
-        <line x1="100" y1="210" x2="1820" y2="210" stroke="#00f0ff" strokeWidth="3" filter="url(#cp-neon-glow)" />
+        <line
+          x1="100"
+          y1="210"
+          x2="1820"
+          y2="210"
+          stroke="#00f0ff"
+          strokeWidth="3"
+          filter="url(#cp-neon-glow)"
+        />
       </g>
 
       {/* ========================================================= */}
@@ -232,26 +341,66 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
       {/* ========================================================= */}
       {/* Spotlight 1: Left Cyan */}
       <g transform={`translate(420 95) rotate(${sweepAngle1})`}>
-        <polygon points="-24,0 24,0 180,620 -180,620" fill="url(#cp-beam-cyan)" />
-        <ellipse cx="0" cy="0" rx="14" ry="7" fill="#00e5ff" filter="url(#cp-neon-glow)" />
+        <polygon
+          points="-24,0 24,0 180,620 -180,620"
+          fill="url(#cp-beam-cyan)"
+        />
+        <ellipse
+          cx="0"
+          cy="0"
+          rx="14"
+          ry="7"
+          fill="#00e5ff"
+          filter="url(#cp-neon-glow)"
+        />
       </g>
 
       {/* Spotlight 2: Center-Left Magenta */}
       <g transform={`translate(740 95) rotate(${sweepAngle2})`}>
-        <polygon points="-24,0 24,0 190,620 -190,620" fill="url(#cp-beam-magenta)" />
-        <ellipse cx="0" cy="0" rx="14" ry="7" fill="#ff1493" filter="url(#cp-neon-glow)" />
+        <polygon
+          points="-24,0 24,0 190,620 -190,620"
+          fill="url(#cp-beam-magenta)"
+        />
+        <ellipse
+          cx="0"
+          cy="0"
+          rx="14"
+          ry="7"
+          fill="#ff1493"
+          filter="url(#cp-neon-glow)"
+        />
       </g>
 
       {/* Spotlight 3: Center-Right Gold */}
       <g transform={`translate(1180 95) rotate(${sweepAngle3})`}>
-        <polygon points="-24,0 24,0 190,620 -190,620" fill="url(#cp-beam-gold)" />
-        <ellipse cx="0" cy="0" rx="14" ry="7" fill="#ffd700" filter="url(#cp-neon-glow)" />
+        <polygon
+          points="-24,0 24,0 190,620 -190,620"
+          fill="url(#cp-beam-gold)"
+        />
+        <ellipse
+          cx="0"
+          cy="0"
+          rx="14"
+          ry="7"
+          fill="#ffd700"
+          filter="url(#cp-neon-glow)"
+        />
       </g>
 
       {/* Spotlight 4: Right Lime */}
       <g transform={`translate(1500 95) rotate(${sweepAngle4})`}>
-        <polygon points="-24,0 24,0 180,620 -180,620" fill="url(#cp-beam-lime)" />
-        <ellipse cx="0" cy="0" rx="14" ry="7" fill="#39ff14" filter="url(#cp-neon-glow)" />
+        <polygon
+          points="-24,0 24,0 180,620 -180,620"
+          fill="url(#cp-beam-lime)"
+        />
+        <ellipse
+          cx="0"
+          cy="0"
+          rx="14"
+          ry="7"
+          fill="#39ff14"
+          filter="url(#cp-neon-glow)"
+        />
       </g>
 
       {/* High-Energy Overhead Laser Beams */}
@@ -304,7 +453,14 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
         <line x1="0" y1="0" x2="0" y2="45" stroke="#94a3b8" strokeWidth="2.5" />
         {/* Disco Ball Sphere */}
         <g transform="translate(0 75)">
-          <circle cx="0" cy="0" r="34" fill="#cbd5e1" stroke="#f8fafc" strokeWidth="2" />
+          <circle
+            cx="0"
+            cy="0"
+            r="34"
+            fill="#cbd5e1"
+            stroke="#f8fafc"
+            strokeWidth="2"
+          />
           {/* Mirrored Facets Simulation */}
           <path
             d="M-34 0 A34 34 0 0 0 34 0 A34 34 0 0 0 -34 0"
@@ -337,7 +493,13 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
       {/* 6. CLUB FLOOR SURROUND & DANCE FLOOR BORDER               */}
       {/* ========================================================= */}
       {/* Dark Glossy Obsidian Surround */}
-      <rect x="0" y="415" width="1920" height="305" fill="url(#cp-floor-grad)" />
+      <rect
+        x="0"
+        y="415"
+        width="1920"
+        height="305"
+        fill="url(#cp-floor-grad)"
+      />
 
       {/* Recessed Glowing Neon Frame for Dance Floor (320 to 1600, 420 to 660) */}
       <rect
@@ -365,9 +527,30 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
       />
 
       {/* Floor Light Reflections */}
-      <ellipse cx="960" cy="425" rx="380" ry="25" fill="#ec4899" opacity="0.18" />
-      <ellipse cx="600" cy="425" rx="180" ry="18" fill="#06b6d4" opacity="0.15" />
-      <ellipse cx="1320" cy="425" rx="180" ry="18" fill="#eab308" opacity="0.15" />
+      <ellipse
+        cx="960"
+        cy="425"
+        rx="380"
+        ry="25"
+        fill="#ec4899"
+        opacity="0.18"
+      />
+      <ellipse
+        cx="600"
+        cy="425"
+        rx="180"
+        ry="18"
+        fill="#06b6d4"
+        opacity="0.15"
+      />
+      <ellipse
+        cx="1320"
+        cy="425"
+        rx="180"
+        ry="18"
+        fill="#eab308"
+        opacity="0.15"
+      />
 
       {/* ========================================================= */}
       {/* 7. CONCERT SUBWOOFER & SPEAKER STACKS (L: 220, R: 1700)   */}
@@ -392,22 +575,63 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
         <polygon points="95,10 65,10 95,-20" fill="#64748b" />
 
         {/* High Frequency Horn Tweeter */}
-        <rect x="-65" y="-205" width="130" height="48" rx="6" fill="#1e2430" stroke="#475569" strokeWidth="2" />
+        <rect
+          x="-65"
+          y="-205"
+          width="130"
+          height="48"
+          rx="6"
+          fill="#1e2430"
+          stroke="#475569"
+          strokeWidth="2"
+        />
         <ellipse cx="0" cy="-181" rx="42" ry="14" fill="#0f172a" />
-        <path d="M-30 -181 Q0 -192 30 -181 Q0 -170 -30 -181" fill="#38bdf8" opacity="0.7" />
+        <path
+          d="M-30 -181 Q0 -192 30 -181 Q0 -170 -30 -181"
+          fill="#38bdf8"
+          opacity="0.7"
+        />
 
         {/* Mid-Range Woofer (Pulsing) */}
         <g transform={`translate(0 -115) scale(${bassScale})`}>
-          <circle cx="0" cy="0" r="38" fill="url(#cp-speaker-ring)" stroke="#38bdf8" strokeWidth="2.5" />
+          <circle
+            cx="0"
+            cy="0"
+            r="38"
+            fill="url(#cp-speaker-ring)"
+            stroke="#38bdf8"
+            strokeWidth="2.5"
+          />
           <circle cx="0" cy="0" r="28" fill="url(#cp-speaker-cone)" />
-          <circle cx="0" cy="0" r="12" fill="#0f172a" stroke="#64748b" strokeWidth="2" />
+          <circle
+            cx="0"
+            cy="0"
+            r="12"
+            fill="#0f172a"
+            stroke="#64748b"
+            strokeWidth="2"
+          />
         </g>
 
         {/* Low Bass Subwoofer (Heavy Pulse) */}
         <g transform={`translate(0 -35) scale(${bassScale})`}>
-          <circle cx="0" cy="0" r="44" fill="url(#cp-speaker-ring)" stroke="#f43f5e" strokeWidth="3" />
+          <circle
+            cx="0"
+            cy="0"
+            r="44"
+            fill="url(#cp-speaker-ring)"
+            stroke="#f43f5e"
+            strokeWidth="3"
+          />
           <circle cx="0" cy="0" r="34" fill="url(#cp-speaker-cone)" />
-          <circle cx="0" cy="0" r="15" fill="#0f172a" stroke="#64748b" strokeWidth="2" />
+          <circle
+            cx="0"
+            cy="0"
+            r="15"
+            fill="#0f172a"
+            stroke="#64748b"
+            strokeWidth="2"
+          />
         </g>
 
         {/* Acoustic Bass Reflex Ports */}
@@ -435,22 +659,63 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
         <polygon points="95,10 65,10 95,-20" fill="#64748b" />
 
         {/* High Frequency Horn Tweeter */}
-        <rect x="-65" y="-205" width="130" height="48" rx="6" fill="#1e2430" stroke="#475569" strokeWidth="2" />
+        <rect
+          x="-65"
+          y="-205"
+          width="130"
+          height="48"
+          rx="6"
+          fill="#1e2430"
+          stroke="#475569"
+          strokeWidth="2"
+        />
         <ellipse cx="0" cy="-181" rx="42" ry="14" fill="#0f172a" />
-        <path d="M-30 -181 Q0 -192 30 -181 Q0 -170 -30 -181" fill="#38bdf8" opacity="0.7" />
+        <path
+          d="M-30 -181 Q0 -192 30 -181 Q0 -170 -30 -181"
+          fill="#38bdf8"
+          opacity="0.7"
+        />
 
         {/* Mid-Range Woofer (Pulsing) */}
         <g transform={`translate(0 -115) scale(${bassScale})`}>
-          <circle cx="0" cy="0" r="38" fill="url(#cp-speaker-ring)" stroke="#38bdf8" strokeWidth="2.5" />
+          <circle
+            cx="0"
+            cy="0"
+            r="38"
+            fill="url(#cp-speaker-ring)"
+            stroke="#38bdf8"
+            strokeWidth="2.5"
+          />
           <circle cx="0" cy="0" r="28" fill="url(#cp-speaker-cone)" />
-          <circle cx="0" cy="0" r="12" fill="#0f172a" stroke="#64748b" strokeWidth="2" />
+          <circle
+            cx="0"
+            cy="0"
+            r="12"
+            fill="#0f172a"
+            stroke="#64748b"
+            strokeWidth="2"
+          />
         </g>
 
         {/* Low Bass Subwoofer (Heavy Pulse) */}
         <g transform={`translate(0 -35) scale(${bassScale})`}>
-          <circle cx="0" cy="0" r="44" fill="url(#cp-speaker-ring)" stroke="#f43f5e" strokeWidth="3" />
+          <circle
+            cx="0"
+            cy="0"
+            r="44"
+            fill="url(#cp-speaker-ring)"
+            stroke="#f43f5e"
+            strokeWidth="3"
+          />
           <circle cx="0" cy="0" r="34" fill="url(#cp-speaker-cone)" />
-          <circle cx="0" cy="0" r="15" fill="#0f172a" stroke="#64748b" strokeWidth="2" />
+          <circle
+            cx="0"
+            cy="0"
+            r="15"
+            fill="#0f172a"
+            stroke="#64748b"
+            strokeWidth="2"
+          />
         </g>
 
         {/* Acoustic Bass Reflex Ports */}
@@ -463,8 +728,21 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
       {/* ========================================================= */}
       <g transform="translate(960 380)">
         {/* Elevated Stage Risers */}
-        <polygon points="-450,35 450,35 420,-10 -420,-10" fill="#181528" stroke="#3730a3" strokeWidth="3" />
-        <line x1="-450" y1="35" x2="450" y2="35" stroke="#ec4899" strokeWidth="4" filter="url(#cp-neon-glow)" />
+        <polygon
+          points="-450,35 450,35 420,-10 -420,-10"
+          fill="#181528"
+          stroke="#3730a3"
+          strokeWidth="3"
+        />
+        <line
+          x1="-450"
+          y1="35"
+          x2="450"
+          y2="35"
+          stroke="#ec4899"
+          strokeWidth="4"
+          filter="url(#cp-neon-glow)"
+        />
 
         {/* DJ Backdrop Acoustic Structure */}
         <rect
@@ -509,16 +787,35 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
         {/* Backlit Golden Lion Crown Medallion */}
         <g transform="translate(0 -140)">
           {/* Radial Aura Glow */}
-          <circle cx="0" cy="0" r="46" fill="#fbbf24" opacity="0.25" filter="url(#cp-neon-glow)" />
+          <circle
+            cx="0"
+            cy="0"
+            r="46"
+            fill="#fbbf24"
+            opacity="0.25"
+            filter="url(#cp-neon-glow)"
+          />
           {/* Outer Gold Ring */}
-          <circle cx="0" cy="0" r="38" fill="#1e1833" stroke="#f59e0b" strokeWidth="4" />
+          <circle
+            cx="0"
+            cy="0"
+            r="38"
+            fill="#1e1833"
+            stroke="#f59e0b"
+            strokeWidth="4"
+          />
           {/* Stylized Lion Face Silhouette */}
           <path
             d="M-18 -8 Q-24 12 0 24 Q24 12 18 -8 Q10 -16 0 -10 Q-10 -16 -18 -8 Z"
             fill="#fbbf24"
           />
           {/* Royal Crown on Lion */}
-          <polygon points="-16,-12 -8,-25 0,-15 8,-25 16,-12" fill="#fcd34d" stroke="#b45309" strokeWidth="1.5" />
+          <polygon
+            points="-16,-12 -8,-25 0,-15 8,-25 16,-12"
+            fill="#fcd34d"
+            stroke="#b45309"
+            strokeWidth="1.5"
+          />
           <circle cx="-8" cy="-25" r="2.5" fill="#ef4444" />
           <circle cx="0" cy="-15" r="2.5" fill="#3b82f6" />
           <circle cx="8" cy="-25" r="2.5" fill="#10b981" />
@@ -603,9 +900,25 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
 
           {/* Turntable 1 (Left Player) */}
           <g transform="translate(-160 -12)">
-            <rect x="-50" y="-18" width="100" height="34" rx="6" fill="#0f172a" stroke="#475569" strokeWidth="2" />
+            <rect
+              x="-50"
+              y="-18"
+              width="100"
+              height="34"
+              rx="6"
+              fill="#0f172a"
+              stroke="#475569"
+              strokeWidth="2"
+            />
             {/* Spinning Jog Wheel */}
-            <circle cx="0" cy="-1" r="16" fill="#1e293b" stroke="#38bdf8" strokeWidth="2" />
+            <circle
+              cx="0"
+              cy="-1"
+              r="16"
+              fill="#1e293b"
+              stroke="#38bdf8"
+              strokeWidth="2"
+            />
             <circle cx="0" cy="-1" r="8" fill="#020617" />
             <line
               x1="0"
@@ -616,35 +929,123 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
               strokeWidth="2"
             />
             {/* Pitch Fader Slider */}
-            <line x1="34" y1="-12" x2="34" y2="10" stroke="#64748b" strokeWidth="2" />
+            <line
+              x1="34"
+              y1="-12"
+              x2="34"
+              y2="10"
+              stroke="#64748b"
+              strokeWidth="2"
+            />
             <rect x="30" y="-4" width="8" height="6" rx="1" fill="#f8fafc" />
           </g>
 
           {/* Central DJ Mixer */}
           <g transform="translate(0 -12)">
-            <rect x="-42" y="-18" width="84" height="34" rx="4" fill="#090d16" stroke="#475569" strokeWidth="2" />
+            <rect
+              x="-42"
+              y="-18"
+              width="84"
+              height="34"
+              rx="4"
+              fill="#090d16"
+              stroke="#475569"
+              strokeWidth="2"
+            />
             {/* Volume Channel Knobs */}
             <circle cx="-24" cy="-10" r="4" fill="#ef4444" />
             <circle cx="-8" cy="-10" r="4" fill="#3b82f6" />
             <circle cx="8" cy="-10" r="4" fill="#3b82f6" />
             <circle cx="24" cy="-10" r="4" fill="#ef4444" />
             {/* Dual Master VU Meters */}
-            <line x1="-12" y1="-2" x2="-12" y2="8" stroke="#22c55e" strokeWidth="3" />
-            <line x1="-12" y1="8" x2="-12" y2="12" stroke="#eab308" strokeWidth="3" />
-            <line x1="-12" y1="12" x2="-12" y2="15" stroke="#ef4444" strokeWidth="3" />
-            <line x1="12" y1="-2" x2="12" y2="8" stroke="#22c55e" strokeWidth="3" />
-            <line x1="12" y1="8" x2="12" y2="12" stroke="#eab308" strokeWidth="3" />
-            <line x1="12" y1="12" x2="12" y2="15" stroke="#ef4444" strokeWidth="3" />
+            <line
+              x1="-12"
+              y1="-2"
+              x2="-12"
+              y2="8"
+              stroke="#22c55e"
+              strokeWidth="3"
+            />
+            <line
+              x1="-12"
+              y1="8"
+              x2="-12"
+              y2="12"
+              stroke="#eab308"
+              strokeWidth="3"
+            />
+            <line
+              x1="-12"
+              y1="12"
+              x2="-12"
+              y2="15"
+              stroke="#ef4444"
+              strokeWidth="3"
+            />
+            <line
+              x1="12"
+              y1="-2"
+              x2="12"
+              y2="8"
+              stroke="#22c55e"
+              strokeWidth="3"
+            />
+            <line
+              x1="12"
+              y1="8"
+              x2="12"
+              y2="12"
+              stroke="#eab308"
+              strokeWidth="3"
+            />
+            <line
+              x1="12"
+              y1="12"
+              x2="12"
+              y2="15"
+              stroke="#ef4444"
+              strokeWidth="3"
+            />
             {/* Horizontal Crossfader */}
-            <line x1="-20" y1="12" x2="20" y2="12" stroke="#64748b" strokeWidth="2" />
-            <rect x={Math.sin(seconds * 2.5) * 12 - 4} y="9" width="8" height="6" rx="1" fill="#fbbf24" />
+            <line
+              x1="-20"
+              y1="12"
+              x2="20"
+              y2="12"
+              stroke="#64748b"
+              strokeWidth="2"
+            />
+            <rect
+              x={Math.sin(seconds * 2.5) * 12 - 4}
+              y="9"
+              width="8"
+              height="6"
+              rx="1"
+              fill="#fbbf24"
+            />
           </g>
 
           {/* Turntable 2 (Right Player) */}
           <g transform="translate(160 -12)">
-            <rect x="-50" y="-18" width="100" height="34" rx="6" fill="#0f172a" stroke="#475569" strokeWidth="2" />
+            <rect
+              x="-50"
+              y="-18"
+              width="100"
+              height="34"
+              rx="6"
+              fill="#0f172a"
+              stroke="#475569"
+              strokeWidth="2"
+            />
             {/* Spinning Jog Wheel */}
-            <circle cx="0" cy="-1" r="16" fill="#1e293b" stroke="#f43f5e" strokeWidth="2" />
+            <circle
+              cx="0"
+              cy="-1"
+              r="16"
+              fill="#1e293b"
+              stroke="#f43f5e"
+              strokeWidth="2"
+            />
             <circle cx="0" cy="-1" r="8" fill="#020617" />
             <line
               x1="0"
@@ -655,15 +1056,45 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
               strokeWidth="2"
             />
             {/* Pitch Fader Slider */}
-            <line x1="34" y1="-12" x2="34" y2="10" stroke="#64748b" strokeWidth="2" />
+            <line
+              x1="34"
+              y1="-12"
+              x2="34"
+              y2="10"
+              stroke="#64748b"
+              strokeWidth="2"
+            />
             <rect x="30" y="2" width="8" height="6" rx="1" fill="#f8fafc" />
           </g>
 
           {/* Pro Audio Headphones resting on table */}
           <g transform="translate(80 20)">
-            <path d="M-10 0 C-10 -15 10 -15 10 0" fill="none" stroke="#cbd5e1" strokeWidth="3" />
-            <rect x="-14" y="-3" width="7" height="12" rx="3" fill="#1e293b" stroke="#94a3b8" strokeWidth="1" />
-            <rect x="7" y="-3" width="7" height="12" rx="3" fill="#1e293b" stroke="#94a3b8" strokeWidth="1" />
+            <path
+              d="M-10 0 C-10 -15 10 -15 10 0"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="3"
+            />
+            <rect
+              x="-14"
+              y="-3"
+              width="7"
+              height="12"
+              rx="3"
+              fill="#1e293b"
+              stroke="#94a3b8"
+              strokeWidth="1"
+            />
+            <rect
+              x="7"
+              y="-3"
+              width="7"
+              height="12"
+              rx="3"
+              fill="#1e293b"
+              stroke="#94a3b8"
+              strokeWidth="1"
+            />
           </g>
         </g>
       </g>
@@ -673,14 +1104,56 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
       {/* ========================================================= */}
       <g transform="translate(120 535)">
         {/* Illuminated Velvet Stanchion Gate */}
-        <line x1="-50" y1="0" x2="-50" y2="-90" stroke="#eab308" strokeWidth="6" strokeLinecap="round" />
-        <circle cx="-50" cy="-94" r="8" fill="#fef08a" stroke="#ca8a04" strokeWidth="2" />
-        <line x1="50" y1="0" x2="50" y2="-90" stroke="#eab308" strokeWidth="6" strokeLinecap="round" />
-        <circle cx="50" cy="-94" r="8" fill="#fef08a" stroke="#ca8a04" strokeWidth="2" />
+        <line
+          x1="-50"
+          y1="0"
+          x2="-50"
+          y2="-90"
+          stroke="#eab308"
+          strokeWidth="6"
+          strokeLinecap="round"
+        />
+        <circle
+          cx="-50"
+          cy="-94"
+          r="8"
+          fill="#fef08a"
+          stroke="#ca8a04"
+          strokeWidth="2"
+        />
+        <line
+          x1="50"
+          y1="0"
+          x2="50"
+          y2="-90"
+          stroke="#eab308"
+          strokeWidth="6"
+          strokeLinecap="round"
+        />
+        <circle
+          cx="50"
+          cy="-94"
+          r="8"
+          fill="#fef08a"
+          stroke="#ca8a04"
+          strokeWidth="2"
+        />
 
         {/* Draped Red Velvet Rope */}
-        <path d="M-50 -80 Q0 -45 50 -80" fill="none" stroke="#dc2626" strokeWidth="8" strokeLinecap="round" />
-        <path d="M-50 -80 Q0 -45 50 -80" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round" />
+        <path
+          d="M-50 -80 Q0 -45 50 -80"
+          fill="none"
+          stroke="#dc2626"
+          strokeWidth="8"
+          strokeLinecap="round"
+        />
+        <path
+          d="M-50 -80 Q0 -45 50 -80"
+          fill="none"
+          stroke="#f87171"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
 
         {/* Glowing Exit Backlit Portal Sign */}
         <g transform="translate(0 -130)">
@@ -724,45 +1197,137 @@ export function ClubPulseScenery({ seconds }: { seconds: number }) {
           strokeWidth="3"
         />
         {/* Backlight Bar Glow */}
-        <rect x="-85" y="-125" width="150" height="110" rx="8" fill="#4338ca" opacity="0.35" />
+        <rect
+          x="-85"
+          y="-125"
+          width="150"
+          height="110"
+          rx="8"
+          fill="#4338ca"
+          opacity="0.35"
+        />
 
         {/* Shelf Tier 1 (y = -85) */}
-        <line x1="-80" y1="-75" x2="60" y2="-75" stroke="#38bdf8" strokeWidth="3" />
+        <line
+          x1="-80"
+          y1="-75"
+          x2="60"
+          y2="-75"
+          stroke="#38bdf8"
+          strokeWidth="3"
+        />
         {/* Tier 1 Glowing Crystal Bottles */}
         {[-65, -45, -25, -5, 15, 35].map((bx, i) => {
-          const colors = ["#06b6d4", "#ec4899", "#10b981", "#f59e0b", "#8b5cf6", "#f43f5e"];
+          const colors = [
+            "#06b6d4",
+            "#ec4899",
+            "#10b981",
+            "#f59e0b",
+            "#8b5cf6",
+            "#f43f5e",
+          ];
           return (
             <g key={`b1-${bx}`} transform={`translate(${bx} -77)`}>
-              <rect x="-6" y="-22" width="12" height="22" rx="2" fill={colors[i]} opacity="0.9" />
+              <rect
+                x="-6"
+                y="-22"
+                width="12"
+                height="22"
+                rx="2"
+                fill={colors[i]}
+                opacity="0.9"
+              />
               <rect x="-3" y="-30" width="6" height="8" rx="1" fill="#e2e8f0" />
             </g>
           );
         })}
 
         {/* Shelf Tier 2 (y = -35) */}
-        <line x1="-80" y1="-25" x2="60" y2="-25" stroke="#38bdf8" strokeWidth="3" />
+        <line
+          x1="-80"
+          y1="-25"
+          x2="60"
+          y2="-25"
+          stroke="#38bdf8"
+          strokeWidth="3"
+        />
         {/* Tier 2 Bottles */}
         {[-60, -38, -16, 6, 28, 48].map((bx, i) => {
-          const colors = ["#f43f5e", "#a855f7", "#06b6d4", "#eab308", "#10b981", "#ec4899"];
+          const colors = [
+            "#f43f5e",
+            "#a855f7",
+            "#06b6d4",
+            "#eab308",
+            "#10b981",
+            "#ec4899",
+          ];
           return (
             <g key={`b2-${bx}`} transform={`translate(${bx} -27)`}>
-              <rect x="-7" y="-24" width="14" height="24" rx="2" fill={colors[i]} opacity="0.9" />
+              <rect
+                x="-7"
+                y="-24"
+                width="14"
+                height="24"
+                rx="2"
+                fill={colors[i]}
+                opacity="0.9"
+              />
               <rect x="-3" y="-32" width="6" height="8" rx="1" fill="#e2e8f0" />
             </g>
           );
         })}
 
         {/* Polished Onyx Bar Counter */}
-        <polygon points="-90,10 70,10 80,45 -100,45" fill="#090a12" stroke="#475569" strokeWidth="2" />
-        <line x1="-100" y1="45" x2="80" y2="45" stroke="#ec4899" strokeWidth="3" filter="url(#cp-neon-glow)" />
+        <polygon
+          points="-90,10 70,10 80,45 -100,45"
+          fill="#090a12"
+          stroke="#475569"
+          strokeWidth="2"
+        />
+        <line
+          x1="-100"
+          y1="45"
+          x2="80"
+          y2="45"
+          stroke="#ec4899"
+          strokeWidth="3"
+          filter="url(#cp-neon-glow)"
+        />
 
         {/* Glowing Neon Martini Glass Sign on Bar */}
         <g transform="translate(-10 -155)">
-          <polygon points="-18,-18 18,-18 0,0" fill="none" stroke="#00f0ff" strokeWidth="2.5" />
-          <line x1="0" y1="0" x2="0" y2="16" stroke="#00f0ff" strokeWidth="2.5" />
-          <ellipse cx="0" cy="16" rx="10" ry="3" fill="none" stroke="#00f0ff" strokeWidth="2.5" />
+          <polygon
+            points="-18,-18 18,-18 0,0"
+            fill="none"
+            stroke="#00f0ff"
+            strokeWidth="2.5"
+          />
+          <line
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="16"
+            stroke="#00f0ff"
+            strokeWidth="2.5"
+          />
+          <ellipse
+            cx="0"
+            cy="16"
+            rx="10"
+            ry="3"
+            fill="none"
+            stroke="#00f0ff"
+            strokeWidth="2.5"
+          />
           {/* Green Olive & Toothpick */}
-          <line x1="-8" y1="-24" x2="10" y2="-6" stroke="#f43f5e" strokeWidth="2" />
+          <line
+            x1="-8"
+            y1="-24"
+            x2="10"
+            y2="-6"
+            stroke="#f43f5e"
+            strokeWidth="2"
+          />
           <circle cx="2" cy="-14" r="4" fill="#22c55e" />
         </g>
       </g>
