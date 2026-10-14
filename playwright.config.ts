@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: "./tests",
   timeout: 60_000,
   fullyParallel: true,
-  workers: 2,
+  workers: "100%",
   reporter: "list",
   outputDir: "/tmp/club-lion-test-results",
   use: {
