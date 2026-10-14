@@ -34,87 +34,139 @@ const WINDOW_STARS: readonly { x: number; y: number; r: number }[] = [
 
 const EQ_BARS = [0, 1, 2, 3, 4];
 
-function WindowStars({ seconds }: { seconds: number }) {
+// Phase offsets turn the old Math.sin(seconds * k + phase) curves into CSS
+// animation delays: delay = -(phase + PI/2) / k lines the cycles back up.
+const WindowStars = React.memo(function WindowStars() {
+  // Stars twinkled between 0.3 and 0.9 opacity; the group caps the peak.
   return (
-    <g>
+    <g opacity={0.9}>
       {WINDOW_STARS.map((star, i) => (
-        <circle
+        <g
           key={`${star.x}-${star.y}`}
-          cx={star.x}
-          cy={star.y}
-          r={star.r * (1 + Math.sin(seconds * 2 + i) * 0.25)}
-          fill="#fff5d0"
-          opacity={0.6 + Math.sin(seconds * 1.5 + i) * 0.3}
-        />
+          className="sm-twinkle"
+          opacity={(0.6 + Math.sin(i) * 0.3) / 0.9}
+          style={{
+            "--sm-dur": `${Math.PI / 1.5}s`,
+            "--sm-delay": `${-(i + Math.PI / 2) / 1.5}s`,
+            "--sm-min": 1 / 3,
+          }}
+        >
+          <circle
+            className="sm-pulse"
+            cx={star.x}
+            cy={star.y}
+            r={star.r * 0.75}
+            fill="#fff5d0"
+            style={{
+              "--sm-dur": `${Math.PI / 2}s`,
+              "--sm-delay": `${-(i + Math.PI / 2) / 2}s`,
+              "--sm-scale": 1.25 / 0.75,
+            }}
+          />
+        </g>
       ))}
     </g>
   );
-}
+});
 
-function CityLights({ seconds }: { seconds: number }) {
+const CityLights = React.memo(function CityLights() {
   const palette = ["#ffd166", "#70d6ff", "#ff9770"];
   return (
     <g>
       {CITY_LIGHTS.map((light, i) => (
         <rect
           key={`${light.x}-${light.y}`}
+          className="sm-twinkle"
           x={light.x}
           y={light.y}
           width="7"
           height="10"
           rx="1"
           fill={palette[i % palette.length]}
-          opacity={0.7 + Math.sin(seconds * 3 + i) * 0.3}
+          opacity={0.7 + Math.sin(i) * 0.3}
+          style={{
+            "--sm-dur": `${Math.PI / 3}s`,
+            "--sm-delay": `${-(i + Math.PI / 2) / 3}s`,
+            "--sm-min": 0.4,
+          }}
         />
       ))}
     </g>
   );
-}
+});
 
-function ChandelierGlow({ seconds }: { seconds: number }) {
+const ChandelierGlow = React.memo(function ChandelierGlow() {
+  // 0.65 to 0.95 opacity: the group caps the peak.
   return (
-    <circle
-      cx="960"
-      cy="150"
-      r="180"
-      fill="url(#pc-chandelier-glow)"
-      opacity={0.8 + Math.sin(seconds * 1.1) * 0.15}
-    />
-  );
-}
-
-function LampGlow({ seconds }: { seconds: number }) {
-  return (
-    <circle
-      cx="420"
-      cy="282"
-      r="130"
-      fill="url(#pc-lamp-glow)"
-      opacity={0.75 + Math.sin(seconds * 0.9 + 1) * 0.12}
-    />
-  );
-}
-
-function JukeboxEqualizer({ seconds }: { seconds: number }) {
-  return (
-    <g>
-      {EQ_BARS.map((i) => {
-        const height = 8 + Math.abs(Math.sin(seconds * 5 + i * 1.3)) * 38;
-        return (
-          <rect
-            key={i}
-            x={772 + i * 12}
-            y={330 - height}
-            width="8"
-            height={height}
-            rx="2"
-            fill="#d64558"
-          />
-        );
-      })}
+    <g opacity={0.95}>
+      <circle
+        className="sm-twinkle"
+        cx="960"
+        cy="150"
+        r="180"
+        fill="url(#pc-chandelier-glow)"
+        opacity={0.8 / 0.95}
+        style={{
+          "--sm-dur": `${Math.PI / 1.1}s`,
+          "--sm-delay": `${-Math.PI / 2 / 1.1}s`,
+          "--sm-min": 0.65 / 0.95,
+        }}
+      />
     </g>
   );
-}
+});
+
+const LampGlow = React.memo(function LampGlow() {
+  // 0.63 to 0.87 opacity: the group caps the peak.
+  return (
+    <g opacity={0.87}>
+      <circle
+        className="sm-twinkle"
+        cx="420"
+        cy="282"
+        r="130"
+        fill="url(#pc-lamp-glow)"
+        opacity={(0.75 + Math.sin(1) * 0.12) / 0.87}
+        style={{
+          "--sm-dur": `${Math.PI / 0.9}s`,
+          "--sm-delay": `${-(1 + Math.PI / 2) / 0.9}s`,
+          "--sm-min": 0.63 / 0.87,
+        }}
+      />
+    </g>
+  );
+});
+
+const JukeboxEqualizer = React.memo(function JukeboxEqualizer() {
+  // Each bar is a full-height rect bobbing behind a clip at the jukebox
+  // shelf, so its visible height swings between 8 and 46.
+  return (
+    <g>
+      <clipPath id="pc-eq-clip">
+        <rect x="760" y="270" width="80" height="60" />
+      </clipPath>
+      <g clipPath="url(#pc-eq-clip)">
+        {EQ_BARS.map((i) => (
+          <rect
+            key={i}
+            className="sm-bob"
+            x={772 + i * 12}
+            y={303}
+            width="8"
+            height="46"
+            rx="2"
+            fill="#d64558"
+            style={{
+              "--sm-dur": `${Math.PI / 10}s`,
+              "--sm-delay": `${-(i * 1.3) / 5}s`,
+              "--sm-amp": "19px",
+            }}
+          />
+        ))}
+      </g>
+    </g>
+  );
+});
 
 const CondoRoomBackdrop = React.memo(function CondoRoomBackdrop() {
   return (
@@ -581,16 +633,17 @@ export function PenthouseCondoScenery({
 }: {
   seconds: number;
 }): React.JSX.Element {
+  void seconds; // ambient motion is CSS-driven (sceneryMotion.css)
   return (
     <g className="penthouse-condo-scenery">
       <CondoRoomBackdrop />
       <g clipPath="url(#pc-window-clip)">
-        <WindowStars seconds={seconds} />
-        <CityLights seconds={seconds} />
+        <WindowStars />
+        <CityLights />
       </g>
-      <ChandelierGlow seconds={seconds} />
-      <LampGlow seconds={seconds} />
-      <JukeboxEqualizer seconds={seconds} />
+      <ChandelierGlow />
+      <LampGlow />
+      <JukeboxEqualizer />
     </g>
   );
 }
