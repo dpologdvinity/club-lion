@@ -46,54 +46,74 @@ const STARFISH: readonly Starfish[] = [
   { x: 2010, y: 664 },
 ];
 
-function Gulls({ seconds }: { seconds: number }): JSX.Element {
+// Each wing flaps by rotating about the gull's body point.
+const Gulls = memo(function Gulls(): JSX.Element {
   return (
-    <>
+    <g fill="none" stroke="#6f4a4d" strokeWidth="3.5" strokeLinecap="round">
       {GULLS.map((g, i) => {
-        const wing = 6 + ((Math.sin(seconds * 3 + g.phase) + 1) / 2) * 5;
+        const flap = {
+          "--sm-dur": `${Math.PI / 3}s`,
+          "--sm-delay": `${-g.phase / 3}s`,
+        };
         return (
-          <path
-            key={i}
-            transform={`translate(${g.x} ${g.y}) scale(${g.s})`}
-            d={`M-16 ${-wing}Q-8 ${-wing - 6} 0 0Q8 ${-wing - 6} 16 ${-wing}`}
-            fill="none"
-            stroke="#6f4a4d"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-          />
+          <g key={i} transform={`translate(${g.x} ${g.y}) scale(${g.s})`}>
+            <path
+              className="sm-sway"
+              style={{
+                ...flap,
+                "--sm-deg": "7deg",
+                "--sm-origin": "100% 100%",
+              }}
+              d="M-16-8.5Q-8-14.5 0 0"
+            />
+            <path
+              className="sm-sway"
+              style={{ ...flap, "--sm-deg": "-7deg", "--sm-origin": "0% 100%" }}
+              d="M0 0Q8-14.5 16-8.5"
+            />
+          </g>
         );
       })}
-    </>
-  );
-}
-
-function Waves({ seconds }: { seconds: number }): JSX.Element {
-  const sway = Math.sin(seconds * 0.7);
-  return (
-    <>
-      {Array.from({ length: 10 }, (_, i) => (
-        <path
-          key={i}
-          d={`M${i * 240 - 50 + sway * 6} ${392 + (i % 3) * 40}q60 -12 120 0t120 0`}
-          fill="none"
-          stroke="#c7e1d9"
-          strokeWidth="4"
-          opacity=".55"
-          strokeLinecap="round"
-        />
-      ))}
-    </>
-  );
-}
-
-function LanternGlow({ seconds }: { seconds: number }): JSX.Element {
-  const glow = (Math.sin(seconds * 1.6) + 1) / 2;
-  return (
-    <g transform="translate(1950 540)">
-      <circle cy="-322" r={92 + glow * 8} fill="url(#cp-lantern)" />
     </g>
   );
-}
+});
+
+const Waves = memo(function Waves(): JSX.Element {
+  return (
+    <g transform="translate(-6 0)">
+      <g
+        className="sm-glide"
+        style={{ "--sm-x": "12px", "--sm-dur": `${Math.PI / 0.7}s` }}
+      >
+        {Array.from({ length: 10 }, (_, i) => (
+          <path
+            key={i}
+            d={`M${i * 240 - 50} ${392 + (i % 3) * 40}q60 -12 120 0t120 0`}
+            fill="none"
+            stroke="#c7e1d9"
+            strokeWidth="4"
+            opacity=".55"
+            strokeLinecap="round"
+          />
+        ))}
+      </g>
+    </g>
+  );
+});
+
+const LanternGlow = memo(function LanternGlow(): JSX.Element {
+  return (
+    <g transform="translate(1950 540)">
+      <circle
+        className="sm-pulse"
+        style={{ "--sm-scale": 100 / 92, "--sm-dur": `${Math.PI / 1.6}s` }}
+        cy="-322"
+        r="92"
+        fill="url(#cp-lantern)"
+      />
+    </g>
+  );
+});
 
 /** Static sky, sun, headland and water. Memoized so the 80ms scenery ticks skip it. */
 const CoastalPierBackdrop = memo(function CoastalPierBackdrop(): JSX.Element {
@@ -415,13 +435,15 @@ export function CoastalPierScenery({
 }: {
   seconds: number;
 }): JSX.Element {
+  // Motion is CSS-driven; `seconds` stays in the signature for the dispatcher.
+  void seconds;
   return (
     <>
       <CoastalPierBackdrop />
-      <Waves seconds={seconds} />
+      <Waves />
       <CoastalPierFront />
-      <LanternGlow seconds={seconds} />
-      <Gulls seconds={seconds} />
+      <LanternGlow />
+      <Gulls />
     </>
   );
 }
