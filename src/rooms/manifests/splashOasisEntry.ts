@@ -42,6 +42,12 @@ export const splashOasisEntryManifest: RoomManifest = {
       actionData: { rideId: "tsunami-wave-pool" },
     },
     {
+      id: "speed-slides",
+      type: "ride",
+      position: { x: 1560, y: 560 },
+      actionData: { rideId: "speed-slides" },
+    },
+    {
       id: "dump-bucket-fortress",
       type: "ride",
       position: { x: 1900, y: 580 },

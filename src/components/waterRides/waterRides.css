@@ -1,0 +1,759 @@
+/*
+ * Splash Oasis rides. The dialog fills the screen; .wr-world is a 16:9 box
+ * that covers it, so scene SVG (viewBox 1600×900) and HTML layers share
+ * world units: 1 unit = 1/16 cqw.
+ */
+.water-ride {
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: #5cc8f0;
+  color: #fff;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.water-ride::backdrop {
+  background: #18392775;
+}
+.wr-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+}
+.wr-world {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, 177.78cqh);
+  aspect-ratio: 16 / 9;
+  translate: -50% -50%;
+  container-type: inline-size;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+.wr-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* Rider in a tube: the element's origin is the tube centre on the water. */
+.wr-rider {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20cqw;
+  transform-origin: 0 0;
+  will-change: transform;
+  pointer-events: none;
+}
+.wr-rider-body {
+  position: relative;
+  aspect-ratio: 320 / 330;
+  translate: -50% -78%;
+}
+.wr-rider .wr-tube-back,
+.wr-rider .wr-tube-front {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  overflow: visible;
+}
+.wr-avatar-clip {
+  position: absolute;
+  left: 20%;
+  top: 0;
+  width: 60%;
+  height: 86%;
+  overflow: hidden;
+}
+.wr-avatar-clip .wr-avatar {
+  position: absolute;
+  left: 0;
+  top: 36%;
+  width: 100%;
+  height: auto;
+}
+.wr-pet {
+  position: absolute;
+  right: -4%;
+  bottom: 8%;
+  width: 34%;
+  aspect-ratio: 1;
+}
+.wr-pet .pet-companion {
+  width: 100% !important;
+  height: 100% !important;
+}
+.wr-rider.is-floating .wr-rider-body {
+  animation: wr-float-bob 2.6s ease-in-out infinite alternate;
+}
+@keyframes wr-float-bob {
+  from {
+    transform: rotate(-4deg);
+  }
+  to {
+    transform: rotate(4deg);
+  }
+}
+
+/* Splash bursts: a ring plus ten drops thrown in an arc. */
+.wr-splashes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.wr-splash {
+  position: absolute;
+  width: 0;
+  height: 0;
+  animation: wr-life 1s linear forwards;
+}
+.wr-splash b {
+  position: absolute;
+  width: calc(13cqw * var(--size));
+  aspect-ratio: 2.6;
+  border: calc(0.55cqw * var(--size)) solid #fff;
+  border-radius: 50%;
+  translate: -50% -50%;
+  animation: wr-ring 0.75s ease-out forwards;
+}
+.wr-splash i {
+  position: absolute;
+  width: calc(2.2cqw * var(--size));
+  aspect-ratio: 0.8;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    #fff 0 22%,
+    #b8f0ff 40%,
+    #4cc3ea
+  );
+  animation: wr-drop 0.9s cubic-bezier(0.2, 0.7, 0.4, 1) forwards;
+}
+.wr-splash i:nth-child(2) {
+  --dx: -7cqw;
+  --dy: -9.8cqw;
+}
+.wr-splash i:nth-child(3) {
+  --dx: -3.5cqw;
+  --dy: -14cqw;
+}
+.wr-splash i:nth-child(4) {
+  --dx: 0cqw;
+  --dy: -16.8cqw;
+}
+.wr-splash i:nth-child(5) {
+  --dx: 3.6cqw;
+  --dy: -14cqw;
+}
+.wr-splash i:nth-child(6) {
+  --dx: 7cqw;
+  --dy: -9.8cqw;
+}
+.wr-splash i:nth-child(7) {
+  --dx: -9.8cqw;
+  --dy: -4.2cqw;
+}
+.wr-splash i:nth-child(8) {
+  --dx: 9.8cqw;
+  --dy: -4.2cqw;
+}
+.wr-splash i:nth-child(9) {
+  --dx: -5cqw;
+  --dy: -7cqw;
+}
+.wr-splash i:nth-child(10) {
+  --dx: 5.3cqw;
+  --dy: -7.7cqw;
+}
+.wr-splash i:nth-child(11) {
+  --dx: 1.4cqw;
+  --dy: -9.8cqw;
+}
+@keyframes wr-life {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes wr-ring {
+  from {
+    transform: scale(0.15);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+@keyframes wr-drop {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(
+        calc(-50% + var(--dx) * 0.6 * var(--size)),
+        calc(-50% + var(--dy) * var(--size))
+      )
+      scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(
+        calc(-50% + var(--dx) * var(--size)),
+        calc(-50% + var(--dy) * 0.1 * var(--size))
+      )
+      scale(0.6);
+    opacity: 0;
+  }
+}
+.wr-splash.is-gentle i {
+  display: none;
+}
+
+/* Drops on the "camera lens" after a big splash. */
+.wr-lens {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+.wr-lens i {
+  position: absolute;
+  width: 6cqw;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 30%,
+    #ffffffee 0 12%,
+    #d9f6ff88 30%,
+    #7fd6ef33 70%,
+    #ffffff66 100%
+  );
+  box-shadow: inset 0 -0.3cqw 0.6cqw #ffffff99;
+}
+.wr-lens i:nth-child(1) {
+  left: 8%;
+  top: 12%;
+  scale: 1.4;
+}
+.wr-lens i:nth-child(2) {
+  left: 24%;
+  top: 30%;
+}
+.wr-lens i:nth-child(3) {
+  left: 38%;
+  top: 8%;
+  scale: 0.8;
+}
+.wr-lens i:nth-child(4) {
+  left: 55%;
+  top: 22%;
+  scale: 1.6;
+}
+.wr-lens i:nth-child(5) {
+  left: 70%;
+  top: 10%;
+}
+.wr-lens i:nth-child(6) {
+  left: 84%;
+  top: 32%;
+  scale: 1.3;
+}
+.wr-lens i:nth-child(7) {
+  left: 12%;
+  top: 58%;
+  scale: 0.9;
+}
+.wr-lens i:nth-child(8) {
+  left: 30%;
+  top: 70%;
+  scale: 1.5;
+}
+.wr-lens i:nth-child(9) {
+  left: 47%;
+  top: 48%;
+  scale: 0.7;
+}
+.wr-lens i:nth-child(10) {
+  left: 62%;
+  top: 64%;
+  scale: 1.2;
+}
+.wr-lens i:nth-child(11) {
+  left: 78%;
+  top: 54%;
+  scale: 0.8;
+}
+.wr-lens i:nth-child(12) {
+  left: 90%;
+  top: 76%;
+  scale: 1.4;
+}
+.wr-lens i:nth-child(13) {
+  left: 4%;
+  top: 84%;
+}
+.wr-lens i:nth-child(14) {
+  left: 52%;
+  top: 84%;
+  scale: 1.1;
+}
+.is-drenched .wr-lens,
+.wr-lens.is-on,
+.wr-slide.is-splash .wr-lens {
+  animation: wr-lens 3.2s ease-out forwards;
+}
+.is-drenched .wr-lens i,
+.wr-lens.is-on i,
+.wr-slide.is-splash .wr-lens i {
+  animation: wr-lens-slide 3.2s ease-in forwards;
+}
+@keyframes wr-lens {
+  0% {
+    opacity: 0;
+  }
+  8%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes wr-lens-slide {
+  from {
+    transform: scale(0.3);
+  }
+  12% {
+    transform: scale(1);
+  }
+  to {
+    transform: translateY(6cqw) scale(0.9, 1.1);
+  }
+}
+
+/* Speed Slides */
+.wr-slide .wr-art {
+  transition: transform 1.2s ease-in;
+}
+.wr-slide.is-drop .wr-art {
+  transform: scale(1.12);
+}
+.wr-slide-tunnel,
+.wr-ring-full,
+.wr-slide-light,
+.wr-slide-pool {
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.wr-slide-trough,
+.wr-ring-half {
+  transition: opacity 0.35s;
+}
+.wr-slide.is-tunnel .wr-slide-tunnel,
+.wr-slide.is-tunnel .wr-ring-full,
+.wr-slide.is-splash .wr-slide-pool {
+  opacity: 1;
+}
+.wr-slide.is-splash .wr-slide-tube,
+.wr-slide.is-tunnel .wr-slide-trough,
+.wr-slide.is-tunnel .wr-ring-half {
+  opacity: 0;
+}
+.wr-slide-light {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 0.3s,
+    transform 0.9s ease-in;
+}
+.wr-slide-pool-ahead {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0.3);
+}
+.wr-slide.is-drop .wr-slide-pool-ahead {
+  opacity: 1;
+  transform: scale(5);
+  transition:
+    opacity 0.3s,
+    transform 2s ease-in;
+}
+.wr-slide.is-light-ahead .wr-slide-light {
+  opacity: 1;
+  transform: scale(3.2);
+}
+.wr-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+.wr-slide.is-splash::after {
+  animation: wr-flash 0.7s ease-out;
+}
+@keyframes wr-flash {
+  from {
+    opacity: 0.9;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Layers drawn over the rider never catch taps. */
+.wr-front {
+  pointer-events: none;
+}
+
+/* Lazy River */
+.wr-critter {
+  cursor: pointer;
+}
+.wr-critter-body,
+.wr-hearts {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.wr-hearts {
+  opacity: 0;
+}
+.wr-critter.is-happy .wr-critter-body {
+  animation: wr-hop 1.2s ease-out;
+}
+.wr-critter.is-happy .wr-hearts {
+  animation: wr-hearts 1.2s ease-out;
+}
+@keyframes wr-hop {
+  0%,
+  100% {
+    transform: none;
+  }
+  30% {
+    transform: translateY(-40px) scale(1.08, 0.94);
+  }
+  55% {
+    transform: translateY(0) scale(1.1, 0.9);
+  }
+  75% {
+    transform: translateY(-14px);
+  }
+}
+@keyframes wr-hearts {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-90px) scale(1);
+  }
+}
+.wr-curtain {
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+.wr-river.is-drenched .wr-curtain {
+  opacity: 1;
+}
+.wr-fall-lines {
+  animation: wr-fall 0.5s linear infinite;
+}
+@keyframes wr-fall {
+  from {
+    transform: translateY(-30px);
+  }
+  to {
+    transform: translateY(30px);
+  }
+}
+.wr-rider.is-spinning .wr-rider-body {
+  animation: wr-spin 1.1s ease-in-out;
+}
+@keyframes wr-spin {
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+/* Wave Pool */
+.wr-wave-lamp {
+  transition: opacity 0.2s;
+}
+.wr-wave.is-big .wr-wave-lamp {
+  animation: wr-blink 0.4s steps(2) infinite;
+}
+@keyframes wr-blink {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+/* Dump Bucket */
+.wr-wobble {
+  transform-box: view-box;
+  transform-origin: 800px 190px;
+  animation: wr-wobble 0.35s ease-in-out infinite alternate;
+}
+@keyframes wr-wobble {
+  from {
+    transform: rotate(-4deg);
+  }
+  to {
+    transform: rotate(4deg);
+  }
+}
+.wr-alarm {
+  animation: wr-blink 0.3s steps(2) infinite;
+}
+.wr-pour-lines {
+  animation: wr-fall 0.35s linear infinite;
+}
+.wr-squirt {
+  fill: none;
+  stroke: #bff0fb;
+  stroke-width: 22;
+  stroke-linecap: round;
+  stroke-dasharray: 0.35 1;
+  stroke-dashoffset: 0.35;
+  animation: wr-squirt 0.6s ease-in forwards;
+}
+@keyframes wr-squirt {
+  to {
+    stroke-dashoffset: -1;
+  }
+}
+.wr-stander,
+.wr-stander-pet {
+  position: absolute;
+  translate: -50% -100%;
+  pointer-events: none;
+}
+.wr-stander {
+  width: 17cqw;
+}
+.wr-stander .wr-avatar {
+  width: 100%;
+  height: auto;
+}
+.wr-stander-pet {
+  width: 8cqw;
+  aspect-ratio: 1;
+}
+.wr-stander-pet .pet-companion {
+  width: 100% !important;
+  height: 100% !important;
+}
+.wr-giggle {
+  position: absolute;
+  top: -2%;
+  right: -6%;
+  font-size: 5cqw;
+  opacity: 0;
+  transform: scale(0.3);
+  transition:
+    opacity 0.2s,
+    transform 0.3s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.wr-stander.is-giggling .wr-giggle {
+  opacity: 1;
+  transform: scale(1) rotate(10deg);
+}
+
+/* Controls: big, icon-only, thumb-friendly. */
+.wr-button {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  padding: 0;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  background: #ff8a3d;
+  color: #fff;
+  box-shadow:
+    0 6px 0 #c25a1a,
+    0 12px 26px #0b3a4a55;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.08s;
+}
+.wr-button:active {
+  transform: translateY(5px) scale(0.96);
+  box-shadow:
+    0 1px 0 #c25a1a,
+    0 6px 14px #0b3a4a55;
+}
+.wr-button:focus-visible,
+.wr-pick-button:focus-visible {
+  outline: 5px solid #294b3c;
+  outline-offset: 4px;
+}
+.wr-exit {
+  position: absolute;
+  top: calc(16px + env(safe-area-inset-top));
+  right: calc(16px + env(safe-area-inset-right));
+  width: 64px;
+  height: 64px;
+  border-width: 4px;
+  background: #fffdf9;
+  color: #294b3c;
+  box-shadow:
+    0 5px 0 #b9c7c0,
+    0 10px 22px #0b3a4a44;
+}
+.wr-actions {
+  position: absolute;
+  left: 50%;
+  bottom: calc(22px + env(safe-area-inset-bottom));
+  translate: -50% 0;
+  display: flex;
+  gap: 22px;
+}
+.wr-actions.is-side {
+  left: auto;
+  right: calc(22px + env(safe-area-inset-right));
+  translate: none;
+}
+.wr-actions .wr-button:nth-child(2) {
+  background: #2fb3d6;
+  box-shadow:
+    0 6px 0 #1b7f9c,
+    0 12px 26px #0b3a4a55;
+}
+.wr-actions .wr-button:nth-child(3) {
+  background: #8a5be0;
+  box-shadow:
+    0 6px 0 #5a35a3,
+    0 12px 26px #0b3a4a55;
+}
+.wr-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(18px, 4vw, 44px);
+  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+.wr-overlay > * {
+  pointer-events: auto;
+}
+.wr-pick-button {
+  width: clamp(96px, 16vmin, 140px);
+  height: clamp(96px, 16vmin, 140px);
+  padding: 20px;
+  border: 6px solid #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+/* The icon bounces, not the button, so the tap target holds still. */
+.wr-pick-button svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  animation: wr-pick-bounce 1.4s ease-in-out infinite alternate;
+}
+.wr-pick-button.is-sunny {
+  background: #ffc93c;
+  box-shadow:
+    0 8px 0 #d48a12,
+    0 14px 30px #0b3a4a55;
+}
+.wr-pick-button.is-grape {
+  background: #a66be0;
+  box-shadow:
+    0 8px 0 #6e3fa8,
+    0 14px 30px #0b3a4a55;
+}
+.wr-pick-button.is-grape svg {
+  animation-delay: -0.45s;
+}
+.wr-pick-button.is-coral {
+  background: #ff6f59;
+  box-shadow:
+    0 8px 0 #c2412f,
+    0 14px 30px #0b3a4a55;
+}
+.wr-pick-button.is-coral svg {
+  animation-delay: -0.9s;
+}
+@keyframes wr-pick-bounce {
+  to {
+    transform: translateY(-10px);
+  }
+}
+.wr-pick {
+  align-items: center;
+  padding-bottom: 22vh;
+}
+.wr-done {
+  align-items: center;
+  background: radial-gradient(circle at 50% 55%, #0b3a4a66, transparent 60%);
+  animation: wr-fade-in 0.5s ease-out;
+}
+.wr-big {
+  width: clamp(112px, 18vmin, 150px);
+  height: clamp(112px, 18vmin, 150px);
+  border-width: 6px;
+}
+.wr-big.is-leave {
+  background: #fffdf9;
+  color: #294b3c;
+  box-shadow:
+    0 7px 0 #b9c7c0,
+    0 14px 30px #0b3a4a55;
+}
+@keyframes wr-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wr-splash i {
+    display: none;
+  }
+  .wr-fall-lines,
+  .wr-pour-lines,
+  .wr-wobble,
+  .wr-alarm,
+  .wr-wave.is-big .wr-wave-lamp,
+  .wr-rider.is-spinning .wr-rider-body,
+  .wr-critter.is-happy .wr-critter-body {
+    animation: none;
+  }
+  .wr-pick-button svg,
+  .wr-rider.is-floating .wr-rider-body,
+  .wr-slide.is-splash::after {
+    animation: none;
+  }
+  .wr-slide .wr-art {
+    transition: none;
+  }
+  .wr-slide.is-drop .wr-art {
+    transform: none;
+  }
+}

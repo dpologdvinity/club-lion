@@ -1,7 +1,7 @@
 import { getSharedAudioBus } from "./audioBus.ts";
 
 /** Finite voices always feed the shared SFX bus, including injected contexts. */
-function playVoice(
+export function playVoice(
   audioCtx: AudioContext | null | undefined,
   build: (
     ctx: AudioContext,

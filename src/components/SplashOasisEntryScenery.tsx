@@ -193,6 +193,37 @@ function SlideTower() {
   );
 }
 
+/** Ride entrance sign: three tube swirls in the slide colours, no reading needed. */
+function SlidePictureSign() {
+  return (
+    <g transform="translate(0 -70)">
+      <rect x="-16" y="20" width="12" height="50" fill="#25748a" />
+      <rect x="4" y="20" width="12" height="50" fill="#25748a" />
+      <rect
+        x="-92"
+        y="-44"
+        width="184"
+        height="70"
+        rx="20"
+        fill="#fffdf9"
+        stroke="#25748a"
+        strokeWidth="6"
+      />
+      {TUBES.map((tube, i) => (
+        <path
+          key={tube.color}
+          transform={`translate(${-56 + i * 56} -9)`}
+          d="M-14-20C14-20 16-6 0-2S-16 14 14 18"
+          fill="none"
+          stroke={tube.color}
+          strokeWidth="9"
+          strokeLinecap="round"
+        />
+      ))}
+    </g>
+  );
+}
+
 const SplashPalm = memo(function SplashPalm({
   x,
   y,
@@ -580,6 +611,7 @@ const EntrySkyline = memo(function EntrySkyline() {
       </g>
       <g transform="translate(1560 430)">
         <SlideTower />
+        <SlidePictureSign />
       </g>
       {BUSHES.map((bush, i) => (
         <g key={i}>

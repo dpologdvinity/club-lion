@@ -693,6 +693,16 @@ const RiverBed = memo(function RiverBed() {
           strokeLinecap="round"
         />
         <path d="M76-104L96-90L74-80Z" fill="#2fb8c8" />
+        {/* A little tube riding the current: the picture says "float here". */}
+        <ellipse
+          cx="-96"
+          cy="-98"
+          rx="24"
+          ry="10"
+          fill="none"
+          stroke="#ffc93c"
+          strokeWidth="10"
+        />
       </g>
     </>
   );

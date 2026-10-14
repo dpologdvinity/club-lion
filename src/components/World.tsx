@@ -52,6 +52,7 @@ import { SpyPinModal } from "./SpyPinModal.tsx";
 import type { TimeOfDay } from "../utils/environmentalLighting.ts";
 import { playPropSound } from "../utils/interactiveProps.ts";
 import { RIDE_HOTSPOTS, type ParkRideId } from "../utils/parkRides.ts";
+import type { WaterRideId } from "../utils/waterRides.ts";
 
 const BOARD_SPEED_MULTIPLIER = 1.5;
 const WALK_DURATION_MS = 850;
@@ -88,7 +89,15 @@ type WorldProps = {
   onOpenRooftop?: () => void;
   onOpenKartRace?: () => void;
   onOpenRide?: (ride: ParkRideId) => void;
+  onRide?: (ride: WaterRideId) => void;
   timeOfDay?: TimeOfDay;
+};
+
+const WATER_RIDE_HOTSPOTS: Record<string, WaterRideId> = {
+  "speed-slides": "slides",
+  "tsunami-wave-pool": "wave",
+  "dump-bucket-fortress": "bucket",
+  "lazy-river-current": "river",
 };
 
 export function World({
@@ -115,6 +124,7 @@ export function World({
   onOpenRooftop,
   onOpenKartRace,
   onOpenRide,
+  onRide,
   timeOfDay = "day",
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
@@ -410,16 +420,8 @@ export function World({
       notify(
         "A little splash of sunshine! The lion fountain keeps the plaza cool.",
       );
-    else if (id === "tsunami-wave-pool")
-      notify(
-        "Catch the rolling swell! The tsunami wave pool laps against the shore.",
-      );
-    else if (id === "dump-bucket-fortress")
-      notify(
-        "Watch out below! 1,000 gallons of cool water splash down every 30 seconds!",
-      );
-    else if (id === "lazy-river-current")
-      notify("Drift along the gentle tropical current on your inner tube.");
+    else if (Object.hasOwn(WATER_RIDE_HOTSPOTS, id))
+      onRide?.(WATER_RIDE_HOTSPOTS[id]);
     else if (id === "pet-grooming-station") onOpenPetCare?.();
     else if (id === "spy-terminal") onOpenSpy?.();
     else if (id === "river-surf-dock") onOpenRiverSurf?.();
@@ -454,9 +456,10 @@ export function World({
     "club-pulse-dj-booth": "DJ Booth · DJ Beat Drop",
     "club-pulse-dance-floor": "Step onto the dance floor",
     "marble-lion-fountain": "Visit the lion fountain",
-    "tsunami-wave-pool": "Tsunami Wave Pool",
-    "dump-bucket-fortress": "Dump Bucket Fortress",
-    "lazy-river-current": "Lazy River Current",
+    "speed-slides": "Ride the Speed Slides",
+    "tsunami-wave-pool": "Ride the Wave Pool",
+    "dump-bucket-fortress": "Splash under the Bucket",
+    "lazy-river-current": "Float the Lazy River",
     "pet-grooming-station": "Grooming Spa",
     "spy-terminal": "Launch Spy Terminal",
     "condo-furniture-editor": "Customize Furniture Grid",

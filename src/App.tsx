@@ -92,6 +92,8 @@ import { LeaderboardModal } from "./components/LeaderboardModal";
 import { RooftopLounge } from "./components/RooftopLounge";
 import { ParkRide } from "./components/ParkRide";
 import { PARK_RIDES, type ParkRideId } from "./utils/parkRides";
+import { WaterRide } from "./components/WaterRide";
+import { WATER_RIDE_STAMPS, type WaterRideId } from "./utils/waterRides.ts";
 
 type Panel =
   | "map"
@@ -141,6 +143,7 @@ export default function App() {
   );
   const [spawn, setSpawn] = useState<{ x: number; y: number } | undefined>();
   const [initialGame, setInitialGame] = useState<GameId | null>(null);
+  const [waterRide, setWaterRide] = useState<WaterRideId | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
   const [ride, setRide] = useState<ParkRideId>("ferris");
   const rideStamp = PARK_RIDES[ride].stampId;
@@ -483,6 +486,7 @@ export default function App() {
               setRide(id);
               setPanel("ride");
             }}
+            onRide={setWaterRide}
           />
           <aside
             className={`sidebar-drawer ${sidebarOpen ? "is-open" : "is-collapsed"}`}
@@ -817,6 +821,17 @@ export default function App() {
         <LeaderboardModal player={player} onClose={closePanel} />
       )}
       {panel === "rooftop" && <RooftopLounge onClose={closePanel} />}
+      {waterRide && (
+        <WaterRide
+          ride={waterRide}
+          look={player.look}
+          pet={player.pet}
+          onClose={() => setWaterRide(null)}
+          onFinish={(ride) =>
+            setPlayer((p) => unlockStamp(p, WATER_RIDE_STAMPS[ride]))
+          }
+        />
+      )}
       {panel &&
         panel !== "card" &&
         panel !== "catalog" &&
