@@ -11,6 +11,7 @@ import {
   completeMangoRun,
   completeSledRun,
   completeKartRace,
+  completeRiverSurf,
   evaluateStampUnlocks,
   completeBeeStop,
   completePawSteps,
@@ -1451,4 +1452,22 @@ test("saves from before the coloring book and Bubble Pop still load", () => {
   );
   assert.equal(tampered.coins, 410);
   assert.equal(tampered.coloringBook, undefined);
+});
+
+test("River Surf best score survives V1/V2 saves and bad values are dropped", () => {
+  const surfed = completeRiverSurf(newPlayer(), { score: 42, coins: 12 });
+  assert.equal(surfed.riverSurfBest, 42);
+  assert.equal(restorePlayer(JSON.stringify(surfed)).riverSurfBest, 42);
+  const v2 = migratePlayerSave(surfed);
+  assert.equal(v2.riverSurfBest, 42);
+  assert.equal(migratePlayerSave(JSON.stringify(v2)).riverSurfBest, 42);
+  const legacy = { ...newPlayer(), coins: 330 };
+  assert.equal(restorePlayer(JSON.stringify(legacy)).riverSurfBest, undefined);
+  for (const value of [-1, 2.5, "42", null, Number.MAX_VALUE]) {
+    const restored = restorePlayer(
+      JSON.stringify({ ...legacy, riverSurfBest: value }),
+    );
+    assert.equal(restored.riverSurfBest, undefined);
+    assert.equal(restored.coins, 330);
+  }
 });

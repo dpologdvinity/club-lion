@@ -547,6 +547,9 @@ export function restorePlayer(raw: string | null): Player {
       ...(Number.isSafeInteger(p.kartRacesFinished) && p.kartRacesFinished > 0
         ? { kartRacesFinished: p.kartRacesFinished }
         : {}),
+      ...(Number.isSafeInteger(p.riverSurfBest) && p.riverSurfBest >= 0
+        ? { riverSurfBest: p.riverSurfBest }
+        : {}),
       ...(isKartLapMs(p.kartBestLapMs)
         ? { kartBestLapMs: p.kartBestLapMs }
         : {}),
