@@ -1,18 +1,30 @@
-import React from "react";
+import { memo, type CSSProperties } from "react";
+
+const MARQUEE_BULBS = Array.from({ length: 15 }, (_, i) => {
+  const t = i / 14;
+  return { bx: -85 + t * 170, by: -260 - Math.sin(t * Math.PI) * 78 };
+});
+
+// Fountain ripples grow and fade at a steady rate, restarting each cycle.
+const RIPPLE_FADE: CSSProperties = {
+  "--sm-dur": `${85 / 22}s`,
+  "--sm-min": 0,
+  "--sm-scale": 115 / 30,
+  animationDirection: "reverse",
+  animationTimingFunction: "linear",
+};
+const RIPPLE_GROW: CSSProperties = {
+  animationDirection: "normal",
+  animationTimingFunction: "linear",
+};
 
 export function DowntownPlazaScenery({ seconds }: { seconds: number }) {
-  // Animated timing values
-  const r1 = 30 + ((seconds * 22) % 85);
-  const r2 = 30 + ((seconds * 22 + 42) % 85);
-  const op1 = Math.max(0, 1 - r1 / 115);
-  const op2 = Math.max(0, 1 - r2 / 115);
+  // Motion is CSS-driven; `seconds` stays in the signature for the dispatcher.
+  void seconds;
+  return <DowntownPlazaArt />;
+}
 
-  const neonPulse = 0.85 + Math.sin(seconds * 3.5) * 0.15;
-  const marqueePhase = Math.floor(seconds * 3) % 3;
-  const cloudShift1 = (seconds * 2.5) % 2400;
-  const cloudShift2 = (seconds * 1.8) % 2400;
-  const balloonBob = Math.sin(seconds * 0.8) * 8;
-
+const DowntownPlazaArt = memo(function DowntownPlazaArt() {
   return (
     <g className="downtown-plaza-scenery">
       <defs>
@@ -165,43 +177,60 @@ export function DowntownPlazaScenery({ seconds }: { seconds: number }) {
 
       {/* Drifting Clouds */}
       <g fill="#fff0e0" opacity="0.45">
-        <path
-          d={`M${180 + cloudShift1} 120 Q${240 + cloudShift1} 85 ${320 + cloudShift1} 120 Q${380 + cloudShift1} 95 ${440 + cloudShift1} 120 Q${480 + cloudShift1} 150 ${410 + cloudShift1} 165 H${200 + cloudShift1} Z`}
-        />
-        <path
-          d={`M${1100 + cloudShift2} 90 Q${1170 + cloudShift2} 60 ${1260 + cloudShift2} 90 Q${1330 + cloudShift2} 70 ${1400 + cloudShift2} 90 Q${1450 + cloudShift2} 125 ${1380 + cloudShift2} 135 H${1120 + cloudShift2} Z`}
-        />
-        <path
-          d={`M${2000 + cloudShift1} 140 Q${2060 + cloudShift1} 110 ${2140 + cloudShift1} 140 Q${2200 + cloudShift1} 120 ${2260 + cloudShift1} 140 Q${2300 + cloudShift1} 165 ${2230 + cloudShift1} 180 H${2020 + cloudShift1} Z`}
-        />
+        {/* A second copy one stage-width behind makes the loop seamless. */}
+        {[0, -2400].map((dx) => (
+          <g key={dx} transform={`translate(${dx} 0)`}>
+            <g
+              className="sm-drift"
+              style={{ "--sm-dist": "2400px", "--sm-dur": "960s" }}
+            >
+              <path d="M180 120 Q240 85 320 120 Q380 95 440 120 Q480 150 410 165 H200 Z" />
+              <path d="M2000 140 Q2060 110 2140 140 Q2200 120 2260 140 Q2300 165 2230 180 H2020 Z" />
+            </g>
+            <g
+              className="sm-drift"
+              style={{ "--sm-dist": "2400px", "--sm-dur": `${2400 / 1.8}s` }}
+            >
+              <path d="M1100 90 Q1170 60 1260 90 Q1330 70 1400 90 Q1450 125 1380 135 H1120 Z" />
+            </g>
+          </g>
+        ))}
       </g>
 
       {/* Distant Hot Air Balloons in the Sky */}
       <g
-        transform={`translate(1380 ${130 + balloonBob}) scale(0.65)`}
-        opacity="0.85"
+        className="sm-bob"
+        style={{ "--sm-amp": "8px", "--sm-dur": `${Math.PI / 0.8}s` }}
       >
-        <ellipse cx="0" cy="0" rx="26" ry="32" fill="#e85d43" />
-        <path d="M-26 0 Q0 -25 26 0 Q0 25 -26 0 Z" fill="#ffd15c" />
-        <path
-          d="M-8 32 L-5 44 M8 32 L5 44"
-          stroke="#754224"
-          strokeWidth="1.5"
-        />
-        <rect x="-7" y="44" width="14" height="10" rx="2" fill="#9e5d32" />
+        <g transform="translate(1380 130) scale(0.65)" opacity="0.85">
+          <ellipse cx="0" cy="0" rx="26" ry="32" fill="#e85d43" />
+          <path d="M-26 0 Q0 -25 26 0 Q0 25 -26 0 Z" fill="#ffd15c" />
+          <path
+            d="M-8 32 L-5 44 M8 32 L5 44"
+            stroke="#754224"
+            strokeWidth="1.5"
+          />
+          <rect x="-7" y="44" width="14" height="10" rx="2" fill="#9e5d32" />
+        </g>
       </g>
       <g
-        transform={`translate(740 ${90 - balloonBob * 0.7}) scale(0.45)`}
-        opacity="0.75"
+        className="sm-bob"
+        style={{
+          "--sm-amp": "5.6px",
+          "--sm-dur": `${Math.PI / 0.8}s`,
+          "--sm-delay": `${-Math.PI / 0.8}s`,
+        }}
       >
-        <ellipse cx="0" cy="0" rx="26" ry="32" fill="#429be8" />
-        <path d="M-26 0 Q0 -25 26 0 Q0 25 -26 0 Z" fill="#ffffff" />
-        <path
-          d="M-8 32 L-5 44 M8 32 L5 44"
-          stroke="#754224"
-          strokeWidth="1.5"
-        />
-        <rect x="-7" y="44" width="14" height="10" rx="2" fill="#9e5d32" />
+        <g transform="translate(740 90) scale(0.45)" opacity="0.75">
+          <ellipse cx="0" cy="0" rx="26" ry="32" fill="#429be8" />
+          <path d="M-26 0 Q0 -25 26 0 Q0 25 -26 0 Z" fill="#ffffff" />
+          <path
+            d="M-8 32 L-5 44 M8 32 L5 44"
+            stroke="#754224"
+            strokeWidth="1.5"
+          />
+          <rect x="-7" y="44" width="14" height="10" rx="2" fill="#9e5d32" />
+        </g>
       </g>
 
       {/* 2. Distant Horizon & Savanna Plateaus */}
@@ -804,7 +833,9 @@ export function DowntownPlazaScenery({ seconds }: { seconds: number }) {
             rx="12"
             fill="#120c1f"
             stroke="#ff2a8d"
-            strokeWidth={2 + neonPulse * 2}
+            strokeWidth="3.7"
+            className="sm-twinkle"
+            style={{ "--sm-min": 0.8, "--sm-dur": `${Math.PI / 3.5}s` }}
           />
           <text
             y="7"
@@ -830,23 +861,32 @@ export function DowntownPlazaScenery({ seconds }: { seconds: number }) {
         </g>
 
         {/* Sound Equalizer Waves on Upper Facade */}
-        {[-80, -60, -40, -20, 0, 20, 40, 60, 80].map((eqX, i) => {
-          const barH = 14 + Math.sin(seconds * 5 + i * 0.9) * 12;
-          return (
+        {/* Bars bob 12px behind a clip at their baseline, so their visible height rises and falls. */}
+        <clipPath id="club-eq-clip">
+          <rect x="-90" y="-260" width="180" height="45" />
+        </clipPath>
+        <g clipPath="url(#club-eq-clip)">
+          {[-80, -60, -40, -20, 0, 20, 40, 60, 80].map((eqX, i) => (
             <rect
               key={eqX}
+              className="sm-bob"
+              style={{
+                "--sm-amp": "12px",
+                "--sm-dur": `${Math.PI / 5}s`,
+                "--sm-delay": `${(-i * 0.9) / 5}s`,
+              }}
               x={eqX - 5}
-              y={-215 - barH}
+              y="-229"
               width="10"
-              height={barH}
+              height="28"
               rx="2"
               fill={
                 i % 2 === 0 ? "url(#club-neon-pink)" : "url(#club-neon-cyan)"
               }
               opacity="0.9"
             />
-          );
-        })}
+          ))}
+        </g>
 
         {/* Smoked Tint Double Entrance Doors */}
         <rect
@@ -956,24 +996,26 @@ export function DowntownPlazaScenery({ seconds }: { seconds: number }) {
         <ellipse cy="16" rx="190" ry="38" fill="url(#fountain-pool-water)" />
 
         {/* Animated Expanding Concentric Water Ripples */}
-        <ellipse
-          cy="16"
-          rx={r1 * 1.8}
-          ry={r1 * 0.42}
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="2.5"
-          opacity={op1}
-        />
-        <ellipse
-          cy="16"
-          rx={r2 * 1.8}
-          ry={r2 * 0.42}
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="2"
-          opacity={op2}
-        />
+        {[2.5, 2].map((strokeWidth, i) => (
+          <g
+            key={i}
+            className="sm-twinkle"
+            style={{ ...RIPPLE_FADE, "--sm-delay": `${(-i * 42) / 22}s` }}
+          >
+            <ellipse
+              className="sm-pulse"
+              style={RIPPLE_GROW}
+              cy="16"
+              rx={30 * 1.8}
+              ry={30 * 0.42}
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth={strokeWidth}
+              vectorEffect="non-scaling-stroke"
+              opacity={1 - 30 / 115}
+            />
+          </g>
+        ))}
 
         {/* Floating Water Lily Pads with Pink Lotus Blossoms */}
         {[-120, -70, 75, 125].map((lx, i) => (
@@ -1121,8 +1163,14 @@ export function DowntownPlazaScenery({ seconds }: { seconds: number }) {
         {[-40, -15, 0, 15, 40].map((dx, i) => (
           <circle
             key={dx}
+            className="sm-bob"
+            style={{
+              "--sm-amp": "15px",
+              "--sm-dur": `${Math.PI / 6}s`,
+              "--sm-delay": `${-i / 6}s`,
+            }}
             cx={dx}
-            cy={-210 + Math.sin(seconds * 6 + i) * 15}
+            cy="-210"
             r="3"
             fill="#ffffff"
             opacity="0.85"
@@ -1324,24 +1372,45 @@ export function DowntownPlazaScenery({ seconds }: { seconds: number }) {
         />
 
         {/* Glowing Marquee Chase Lightbulbs around Arch */}
-        {Array.from({ length: 15 }, (_, i) => {
-          const t = i / 14;
-          const bx = -85 + t * 170;
-          const by = -260 - Math.sin(t * Math.PI) * 78;
-          const isLit = (i + marqueePhase) % 3 === 0;
-          return (
-            <circle
-              key={i}
-              cx={bx}
-              cy={by}
-              r={isLit ? 6.5 : 4.5}
-              fill={isLit ? "#fffde0" : "#d97706"}
-              stroke="#854d0e"
-              strokeWidth="1.5"
-              filter={isLit ? "drop-shadow(0px 0px 4px #ffd700)" : undefined}
-            />
-          );
-        })}
+        {MARQUEE_BULBS.map(({ bx, by }, i) => (
+          <circle
+            key={i}
+            cx={bx}
+            cy={by}
+            r="4.5"
+            fill="#d97706"
+            stroke="#854d0e"
+            strokeWidth="1.5"
+          />
+        ))}
+        {/* Lit bulbs chase in thirds: steps() parks each set 5000px off stage except during its third of the second. */}
+        {[0, 2, 1].map((set, third) => (
+          <g key={set} transform={`translate(${-5000 * third} 0)`}>
+            <g
+              className="sm-drift"
+              style={{
+                "--sm-dist": "15000px",
+                "--sm-dur": "1s",
+                animationTimingFunction: "steps(3, end)",
+              }}
+            >
+              {MARQUEE_BULBS.filter((_, i) => i % 3 === set).map(
+                ({ bx, by }) => (
+                  <circle
+                    key={bx}
+                    cx={bx}
+                    cy={by}
+                    r="6.5"
+                    fill="#fffde0"
+                    stroke="#854d0e"
+                    strokeWidth="1.5"
+                    filter="drop-shadow(0px 0px 4px #ffd700)"
+                  />
+                ),
+              )}
+            </g>
+          </g>
+        ))}
 
         {/* Glowing Marquee Signboard */}
         <g transform="translate(0 -275)">
@@ -1876,6 +1945,6 @@ export function DowntownPlazaScenery({ seconds }: { seconds: number }) {
       ))}
     </g>
   );
-}
+});
 
 export default DowntownPlazaScenery;
