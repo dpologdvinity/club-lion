@@ -890,7 +890,7 @@ test("salon makeup tab previews free looks and prices premium ones", async ({
   await page.goto("/");
   await page.getByRole("button", { name: "Salon", exact: true }).click();
   const salon = page.getByRole("dialog", { name: "Stella's Salon" });
-  await salon.getByRole("button", { name: "Makeup", exact: true }).click();
+  await salon.getByRole("button", { name: "Face & Makeup", exact: true }).click();
   await salon.getByRole("button", { name: /Siren Flick/ }).click();
   await salon.getByRole("button", { name: /Cherry Red/ }).click();
   await expect(salon.locator(".salon-cost")).toHaveCount(0);
