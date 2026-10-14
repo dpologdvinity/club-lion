@@ -140,6 +140,19 @@ test("race round Lion Speedway, reach the podium and get paid exactly once", asy
   const reloaded = await saved(page);
   expect(reloaded.coins).toBe(after.coins);
   expect(reloaded.races).toBe(1);
+  // The garage remembers the kart colour picked before the race.
+  await page.getByRole("button", { name: "Map", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: /^Lion Speedway/ })
+    .click();
+  await page
+    .getByLabel("Room paths and activities")
+    .getByRole("button", { name: "Race karts", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Cherry kart" }),
+  ).toHaveAttribute("aria-pressed", "true");
   expect(errors).toEqual([]);
 });
 

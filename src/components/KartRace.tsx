@@ -31,13 +31,18 @@ import {
   trackFrame,
   trackPath,
   type KartDriver,
+  type KartColorId,
   type KartInput,
   type KartMode,
   type RaceState,
 } from "../utils/kartRace.ts";
 import { playKartSound, startEngineHum } from "../utils/kartAudio.ts";
 
-export const KART_COLORS = [
+export const KART_COLORS: readonly {
+  id: KartColorId;
+  label: string;
+  color: string;
+}[] = [
   { id: "mango", label: "Mango kart", color: "#ff9f1c" },
   { id: "cherry", label: "Cherry kart", color: "#ef476f" },
   { id: "sunny", label: "Sunny kart", color: "#ffd23f" },
@@ -409,6 +414,9 @@ export function KartRace({
   petColor,
   racesFinished,
   bestLapMs,
+  colorId = "mango",
+  mode = "easy",
+  onPrefs,
   onFinish,
   onExit,
 }: {
@@ -416,13 +424,14 @@ export function KartRace({
   petColor?: string;
   racesFinished: number;
   bestLapMs?: number;
+  /** Saved garage choices; changes go back through onPrefs. */
+  colorId?: KartColorId;
+  mode?: KartMode;
+  onPrefs: (prefs: { color: KartColorId; mode: KartMode }) => void;
   onFinish: (result: KartRaceResult) => void;
   onExit: () => void;
 }) {
   const [phase, setPhase] = useState<Phase>("garage");
-  const [colorId, setColorId] =
-    useState<(typeof KART_COLORS)[number]["id"]>("mango");
-  const [mode, setMode] = useState<KartMode>("easy");
   const [race, setRace] = useState<RaceState>(() => createRace("easy"));
   const [bumped, setBumped] = useState(0);
   const [announcement, setAnnouncement] = useState("");
@@ -628,7 +637,7 @@ export function KartRace({
               aria-label={c.label}
               aria-pressed={c.id === colorId}
               onClick={() => {
-                setColorId(c.id);
+                onPrefs({ color: c.id, mode });
                 playKartSound("mango");
               }}
             />
@@ -641,7 +650,12 @@ export function KartRace({
             aria-label="Fast mode"
             title="Fast mode"
             aria-pressed={mode === "fast"}
-            onClick={() => setMode(mode === "fast" ? "easy" : "fast")}
+            onClick={() =>
+              onPrefs({
+                color: colorId,
+                mode: mode === "fast" ? "easy" : "fast",
+              })
+            }
           >
             {mode === "fast" ? <Rabbit size={30} /> : <Turtle size={30} />}
           </button>

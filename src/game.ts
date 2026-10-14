@@ -7,7 +7,13 @@ import {
   type SledState,
 } from "./utils/sledPhysics.ts";
 import { sanitizeSocialGraph } from "./utils/socialGraph.ts";
-import { kartRaceCoins } from "./utils/kartRace.ts";
+import {
+  isKartColorId,
+  isKartMode,
+  kartRaceCoins,
+  type KartColorId,
+  type KartMode,
+} from "./utils/kartRace.ts";
 import {
   STAMP_DEFINITIONS,
   evaluateStampUnlocks,
@@ -143,6 +149,8 @@ export type PlayerBase = {
   petCare?: PetCareState;
   kartRacesFinished?: number;
   kartBestLapMs?: number;
+  kartColor?: KartColorId;
+  kartMode?: KartMode;
   bubblePopBest?: number;
   coloringBook?: ColoringBookSave;
 };
@@ -550,6 +558,8 @@ export function restorePlayer(raw: string | null): Player {
       ...(Number.isSafeInteger(p.riverSurfBest) && p.riverSurfBest >= 0
         ? { riverSurfBest: p.riverSurfBest }
         : {}),
+      ...(isKartColorId(p.kartColor) ? { kartColor: p.kartColor } : {}),
+      ...(isKartMode(p.kartMode) ? { kartMode: p.kartMode } : {}),
       ...(isKartLapMs(p.kartBestLapMs)
         ? { kartBestLapMs: p.kartBestLapMs }
         : {}),
@@ -1364,4 +1374,16 @@ export function completeKartRace<T extends PlayerBase>(
       ? { kartBestLapMs: lap }
       : {}),
   };
+}
+
+/** Remembers the kart colour and Fast mode picked in the garage. */
+export function setKartPrefs<T extends PlayerBase>(
+  player: T,
+  prefs: { color: string; mode: string },
+): T {
+  const { color, mode } = prefs;
+  if (!isKartColorId(color) || !isKartMode(mode)) return player;
+  return player.kartColor === color && player.kartMode === mode
+    ? player
+    : { ...player, kartColor: color, kartMode: mode };
 }

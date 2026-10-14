@@ -48,6 +48,7 @@ import {
   recordFashionShowResult,
   completeRiverSurf,
   completeKartRace,
+  setKartPrefs,
   completeSpyPuzzle,
   applyPetCareAction,
   meetLion,
@@ -792,6 +793,9 @@ export default function App() {
             petColor={player.pet?.color || player.color}
             racesFinished={player.kartRacesFinished ?? 0}
             bestLapMs={player.kartBestLapMs}
+            colorId={player.kartColor}
+            mode={player.kartMode}
+            onPrefs={(prefs) => setPlayer((p) => setKartPrefs(p, prefs))}
             onFinish={(result) =>
               setPlayer((p) => {
                 let updated = completeKartRace(p, result);

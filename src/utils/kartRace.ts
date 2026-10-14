@@ -6,6 +6,20 @@
  */
 
 export type KartMode = "easy" | "fast";
+export const KART_COLOR_IDS = [
+  "mango",
+  "cherry",
+  "sunny",
+  "lime",
+  "sky",
+  "bubblegum",
+] as const;
+export type KartColorId = (typeof KART_COLOR_IDS)[number];
+
+export const isKartColorId = (value: unknown): value is KartColorId =>
+  KART_COLOR_IDS.some((id) => id === value);
+export const isKartMode = (value: unknown): value is KartMode =>
+  value === "easy" || value === "fast";
 export type KartDriver = "player" | "zebra" | "giraffe" | "hippo";
 export type KartInput = { throttle: boolean; steer: number; boost: boolean };
 

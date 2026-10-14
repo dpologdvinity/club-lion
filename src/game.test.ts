@@ -12,6 +12,7 @@ import {
   completeSledRun,
   completeKartRace,
   completeRiverSurf,
+  setKartPrefs,
   evaluateStampUnlocks,
   completeBeeStop,
   completePawSteps,
@@ -1469,5 +1470,38 @@ test("River Surf best score survives V1/V2 saves and bad values are dropped", ()
     );
     assert.equal(restored.riverSurfBest, undefined);
     assert.equal(restored.coins, 330);
+  }
+});
+
+test("kart colour and Fast mode are remembered, validated, and optional", () => {
+  const player = newPlayer();
+  const chosen = setKartPrefs(player, { color: "sky", mode: "fast" });
+  assert.equal(chosen.kartColor, "sky");
+  assert.equal(chosen.kartMode, "fast");
+  assert.equal(chosen.coins, player.coins);
+  assert.equal(setKartPrefs(chosen, { color: "gold", mode: "fast" }), chosen);
+  assert.equal(setKartPrefs(chosen, { color: "sky", mode: "turbo" }), chosen);
+  const restored = restorePlayer(JSON.stringify(chosen));
+  assert.equal(restored.kartColor, "sky");
+  assert.equal(restored.kartMode, "fast");
+  const v2 = migratePlayerSave(chosen);
+  assert.equal(migratePlayerSave(JSON.stringify(v2)).kartColor, "sky");
+  assert.equal(migratePlayerSave(JSON.stringify(v2)).kartMode, "fast");
+  const legacy = { ...newPlayer(), coins: 275 };
+  const old = restorePlayer(JSON.stringify(legacy));
+  assert.equal(old.coins, 275);
+  assert.equal(old.kartColor, undefined);
+  assert.equal(old.kartMode, undefined);
+  for (const [color, mode] of [
+    ["purple", "slow"],
+    [3, true],
+    [null, "FAST"],
+  ]) {
+    const bad = restorePlayer(
+      JSON.stringify({ ...legacy, kartColor: color, kartMode: mode }),
+    );
+    assert.equal(bad.coins, 275);
+    assert.equal(bad.kartColor, undefined);
+    assert.equal(bad.kartMode, undefined);
   }
 });
