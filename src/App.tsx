@@ -38,6 +38,8 @@ import {
   completeGame,
   completeDJBeatDrop,
   completeSmoothieOrder,
+  completeBakeryServe,
+  completeSeekRound,
   completePawSteps,
   completeFruitCatch,
   completeBubblePop,
@@ -939,6 +941,12 @@ export default function App() {
                 }
                 onCompleteSmoothie={(coins) =>
                   setPlayer((p) => completeSmoothieOrder(p, coins))
+                }
+                onServeCake={(cake, coins) =>
+                  setPlayer((p) => completeBakeryServe(p, cake, coins))
+                }
+                onCompleteSeek={(round) =>
+                  setPlayer((p) => completeSeekRound(p, round))
                 }
                 onCompleteGame={(pairs) =>
                   setPlayer((p) => completeGame(p, pairs))

@@ -101,6 +101,12 @@ export const downtownPlazaManifest: RoomManifest = {
   ],
   interactives: [
     {
+      id: "cafe-bakery-window",
+      type: "game_launch",
+      position: { x: 2228, y: 470 },
+      actionData: {},
+    },
+    {
       id: "marble-lion-fountain",
       type: "secret_clickable",
       position: { x: 1200, y: 550 },

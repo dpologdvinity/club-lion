@@ -27,6 +27,20 @@ import {
   type ColoringBookSave,
   type PageFills,
 } from "./utils/coloringBook.ts";
+import {
+  MAX_BAKERY_COINS,
+  MAX_CAKE_PHOTOS,
+  restoreCakePhoto,
+  restoreCakePhotos,
+  type Cake,
+} from "./utils/bakery.ts";
+import {
+  SEEK_MAX_TIME_MS,
+  SEEK_STAMPS,
+  isSeekScene,
+  seekRoundCoins,
+  type SeekSceneId,
+} from "./utils/seekSafari.ts";
 import { FISH_SPECIES } from "./utils/fishingEngine.ts";
 import {
   coinsForScore,
@@ -106,6 +120,12 @@ export type PlayerBase = {
   mangoRunBest?: number;
   djBeatDropBest?: number;
   smoothiesServed?: number;
+  cakesServed?: number;
+  /** Photos of the newest served cakes, oldest first. */
+  bakeryCakes?: Cake[];
+  seekRounds?: number;
+  /** Fastest hard Hide & Seek Safari round in milliseconds. */
+  seekBestMs?: number;
   stamps?: string[];
   fishCaughtCount?: number;
   largestFishWeight?: number;
@@ -555,6 +575,26 @@ export function restorePlayer(raw: string | null): Player {
         ? {}
         : Number.isSafeInteger(p.smoothiesServed) && p.smoothiesServed >= 0
           ? { smoothiesServed: p.smoothiesServed as number }
+          : {}),
+      ...(p.cakesServed === undefined
+        ? {}
+        : Number.isSafeInteger(p.cakesServed) && p.cakesServed >= 0
+          ? { cakesServed: p.cakesServed }
+          : {}),
+      ...(p.bakeryCakes === undefined
+        ? {}
+        : { bakeryCakes: restoreCakePhotos(p.bakeryCakes) }),
+      ...(p.seekRounds === undefined
+        ? {}
+        : Number.isSafeInteger(p.seekRounds) && p.seekRounds >= 0
+          ? { seekRounds: p.seekRounds }
+          : {}),
+      ...(p.seekBestMs === undefined
+        ? {}
+        : Number.isSafeInteger(p.seekBestMs) &&
+            p.seekBestMs > 0 &&
+            p.seekBestMs <= SEEK_MAX_TIME_MS
+          ? { seekBestMs: p.seekBestMs }
           : {}),
       ...(p.fishCaughtCount === undefined
         ? {}
@@ -1064,6 +1104,60 @@ export function completeSmoothieOrder<T extends PlayerBase>(
     coins: player.coins + coinsEarned,
     smoothiesServed: (player.smoothiesServed ?? 0) + 1,
   } as T;
+}
+
+/** Serves a cake once: free play pays a flat treat, orders pay by their stars. */
+export function completeBakeryServe<T extends PlayerBase>(
+  player: T,
+  cake: Cake,
+  coinsEarned: number,
+): T {
+  const photo = restoreCakePhoto(cake);
+  if (
+    !photo ||
+    !Number.isSafeInteger(coinsEarned) ||
+    coinsEarned < 0 ||
+    coinsEarned > MAX_BAKERY_COINS ||
+    !Number.isSafeInteger(player.coins + coinsEarned) ||
+    !Number.isSafeInteger((player.cakesServed ?? 0) + 1)
+  )
+    return player;
+  return {
+    ...player,
+    coins: player.coins + coinsEarned,
+    cakesServed: (player.cakesServed ?? 0) + 1,
+    bakeryCakes: [...(player.bakeryCakes ?? []), photo].slice(-MAX_CAKE_PHOTOS),
+  };
+}
+
+/** Pays a finished Hide & Seek Safari round and stamps its scene once. */
+export function completeSeekRound<T extends PlayerBase>(
+  player: T,
+  round: { scene: SeekSceneId; hard: boolean; timeMs: number },
+): T {
+  const timeMs = Math.round(round.timeMs);
+  if (
+    !isSeekScene(round.scene) ||
+    !Number.isSafeInteger(timeMs) ||
+    timeMs <= 0 ||
+    !Number.isSafeInteger(player.coins + seekRoundCoins(round.hard)) ||
+    !Number.isSafeInteger((player.seekRounds ?? 0) + 1)
+  )
+    return player;
+  const best =
+    round.hard && timeMs <= SEEK_MAX_TIME_MS
+      ? Math.min(player.seekBestMs ?? timeMs, timeMs)
+      : player.seekBestMs;
+  return unlockStamp(
+    {
+      ...player,
+      coins: player.coins + seekRoundCoins(round.hard),
+      gamesPlayed: player.gamesPlayed + 1,
+      seekRounds: (player.seekRounds ?? 0) + 1,
+      ...(best === undefined ? {} : { seekBestMs: best }),
+    },
+    SEEK_STAMPS[round.scene],
+  );
 }
 
 export function applyPetCareAction<T extends PlayerBase>(

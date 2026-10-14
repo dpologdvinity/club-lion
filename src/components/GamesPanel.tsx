@@ -13,6 +13,8 @@ import { InstrumentContent } from "./InstrumentModal";
 import { BubblePop } from "./BubblePop";
 import { ColoringBook } from "./ColoringBook";
 import type { PageFills } from "../utils/coloringBook.ts";
+import { MangoBakery } from "./MangoBakery";
+import { HideAndSeekSafari } from "./HideAndSeekSafari";
 import { PAW_STEPS_COINS_PER_ROUND } from "../game";
 import type { PlayerV2 } from "../game.ts";
 
@@ -29,7 +31,9 @@ export type GameId =
   | "instrument"
   | "sled-run"
   | "bubble-pop"
-  | "coloring-book";
+  | "coloring-book"
+  | "bakery"
+  | "seek";
 
 export function GamesPanel({
   player,
@@ -47,6 +51,8 @@ export function GamesPanel({
   onCompleteFashion,
   onCompleteBubblePop,
   onColorPage,
+  onServeCake,
+  onCompleteSeek,
   onClose,
 }: {
   player: PlayerV2;
@@ -73,6 +79,8 @@ export function GamesPanel({
   }) => void;
   onCompleteBubblePop?: (score: number) => void;
   onColorPage?: (pageId: string, fills: PageFills, finish: boolean) => void;
+  onServeCake?: ComponentProps<typeof MangoBakery>["onServe"];
+  onCompleteSeek?: ComponentProps<typeof HideAndSeekSafari>["onComplete"];
   onClose: () => void;
 }) {
   const [picked, setPicked] = useState<GameId | null>(initialGame);
@@ -115,7 +123,9 @@ export function GamesPanel({
           picked === "runway" ||
           picked === "instrument" ||
           picked === "bubble-pop" ||
-          picked === "coloring-book") && (
+          picked === "coloring-book" ||
+          picked === "bakery" ||
+          picked === "seek") && (
           <button className="game-back" onClick={backToMenu}>
             <ArrowLeft size={14} /> All games
           </button>
@@ -174,6 +184,18 @@ export function GamesPanel({
             onColor={(pageId, fills, finish) =>
               onColorPage?.(pageId, fills, finish)
             }
+          />
+        )}
+        {picked === "bakery" && (
+          <MangoBakery
+            photos={player.bakeryCakes ?? []}
+            onServe={onServeCake ?? (() => {})}
+          />
+        )}
+        {picked === "seek" && (
+          <HideAndSeekSafari
+            bestMs={player.seekBestMs}
+            onComplete={onCompleteSeek ?? (() => {})}
           />
         )}
         {picked === "memory" && (
@@ -236,6 +258,22 @@ export function GamesPanel({
             description: "Tap to fill six pages. There is no wrong color.",
             reward: "Finish a page for a stamp",
             best: 0,
+          },
+          {
+            id: "bakery",
+            name: "Mango Bakery",
+            art: "🎂 🥭 🕯️",
+            description: "Bake, decorate and serve cakes to animal friends.",
+            reward: "Earn up to 24 coins per cake",
+            best: player.cakesServed ?? 0,
+          },
+          {
+            id: "seek",
+            name: "Hide & Seek Safari",
+            art: "🔍 🦓 🌿",
+            description: "Spot the animals hiding in the scene.",
+            reward: "Earn 10–20 coins and a stamp per place",
+            best: player.seekRounds ?? 0,
           },
           {
             id: "dj-beat-drop",
@@ -305,9 +343,11 @@ export function GamesPanel({
             <span className="arcade-reward">{game.reward}</span>
             {game.best > 0 && (
               <span className="game-card-best">
-                {game.id === "smoothie"
+                {game.id === "smoothie" || game.id === "bakery"
                   ? `Orders served ${game.best}`
-                  : `Best ${game.best}`}
+                  : game.id === "seek"
+                    ? `Rounds found ${game.best}`
+                    : `Best ${game.best}`}
               </span>
             )}
           </span>

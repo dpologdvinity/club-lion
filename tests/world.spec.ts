@@ -152,6 +152,8 @@ test("the arcade offers all seven activities", async ({ page }) => {
     "Play DJ Beat Drop",
     "Play Smoothie Kitchen",
     "Play Savanna Screamer",
+    "Play Mango Bakery",
+    "Play Hide & Seek Safari",
   ]) {
     await expect(page.getByRole("button", { name, exact: true })).toBeVisible();
   }

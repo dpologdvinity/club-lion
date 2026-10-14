@@ -19,6 +19,8 @@ import {
   colorPage,
   completeDJBeatDrop,
   completeSmoothieOrder,
+  completeBakeryServe,
+  completeSeekRound,
   completeFishingCatch,
   completeSpyPuzzle,
   applyPetCareAction,
@@ -30,6 +32,7 @@ import {
 } from "./game.ts";
 import { SPY_PUZZLE_MAX_COINS } from "./utils/spyPuzzles.ts";
 import { BUBBLE_POP_MAX_SCORE } from "./utils/bubblePop.ts";
+import { MAX_CAKE_PHOTOS, newCake, type Cake } from "./utils/bakery.ts";
 import { DEFAULT_AVATAR_LOOK, DEFAULT_PET_STATE } from "./types/world.ts";
 import { serializeLayout, type PlacedFurniture } from "./utils/condoGrid.ts";
 
@@ -54,6 +57,97 @@ test("smoothie orders pay bounded rewards and never overflow player progress", (
   assert.equal(completeSmoothieOrder(fullWallet, 30), fullWallet);
   const fullCounter = { ...player, smoothiesServed: Number.MAX_SAFE_INTEGER };
   assert.equal(completeSmoothieOrder(fullCounter, 0), fullCounter);
+});
+
+test("bakery serves pay bounded coins and keep photos of the newest six cakes", () => {
+  const player = newPlayer();
+  const cake: Cake = {
+    ...newCake(),
+    shape: "star",
+    toppings: [{ kind: "lion", x: 50, y: 40 }],
+  };
+  const served = completeBakeryServe(player, cake, 24);
+  assert.equal(served.coins, 274);
+  assert.equal(served.cakesServed, 1);
+  assert.deepEqual(served.bakeryCakes, [cake]);
+  for (const coins of [-1, 0.5, NaN, 25])
+    assert.equal(completeBakeryServe(player, cake, coins), player);
+  const badCake = JSON.parse(JSON.stringify({ ...cake, shape: "cube" }));
+  assert.equal(completeBakeryServe(player, badCake, 5), player);
+  let busy = served;
+  for (let i = 0; i < 8; i++)
+    busy = completeBakeryServe(busy, { ...newCake(), sponge: "mango" }, 5);
+  assert.equal(busy.bakeryCakes?.length, MAX_CAKE_PHOTOS);
+  assert.equal(busy.bakeryCakes?.[0].sponge, "mango");
+  assert.equal(busy.cakesServed, 9);
+});
+
+test("bakery photos survive save round trips and old saves still load", () => {
+  const player = completeBakeryServe(newPlayer(), newCake(), 5);
+  assert.deepEqual(restorePlayer(JSON.stringify(player)), player);
+  const migrated = migratePlayerSave(player);
+  assert.deepEqual(migrated.bakeryCakes, [newCake()]);
+  assert.deepEqual(
+    migratePlayerSave(JSON.parse(JSON.stringify(migrated))),
+    migrated,
+  );
+  const old = restorePlayer(JSON.stringify(newPlayer()));
+  assert.equal(old.bakeryCakes, undefined);
+  assert.equal(old.cakesServed, undefined);
+  const tampered = restorePlayer(
+    JSON.stringify({
+      ...player,
+      cakesServed: -3,
+      bakeryCakes: [newCake(), { shape: "cube" }, "cake"],
+    }),
+  );
+  assert.equal(tampered.cakesServed, undefined);
+  assert.deepEqual(tampered.bakeryCakes, [newCake()]);
+});
+
+test("seek rounds pay per round, stamp each scene once, and track the best hard time", () => {
+  const player = newPlayer();
+  const easy = completeSeekRound(player, {
+    scene: "beach",
+    hard: false,
+    timeMs: 40_000,
+  });
+  assert.equal(easy.coins, 250 + 10 + 15);
+  assert.deepEqual(easy.stamps, ["seek_beach"]);
+  assert.equal(easy.seekBestMs, undefined);
+  const again = completeSeekRound(easy, {
+    scene: "beach",
+    hard: true,
+    timeMs: 21_000,
+  });
+  assert.equal(again.coins, easy.coins + 20);
+  assert.deepEqual(again.stamps, ["seek_beach"]);
+  assert.equal(again.seekBestMs, 21_000);
+  const slower = completeSeekRound(again, {
+    scene: "jungle",
+    hard: true,
+    timeMs: 30_000,
+  });
+  assert.equal(slower.seekBestMs, 21_000);
+  assert.equal(slower.seekRounds, 3);
+  for (const timeMs of [0, -5, NaN, Infinity])
+    assert.equal(
+      completeSeekRound(player, { scene: "beach", hard: false, timeMs }),
+      player,
+    );
+  assert.equal(
+    completeSeekRound(player, {
+      scene: JSON.parse('"moon"'),
+      hard: false,
+      timeMs: 10,
+    }),
+    player,
+  );
+  assert.deepEqual(restorePlayer(JSON.stringify(slower)), slower);
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...slower, seekBestMs: -1 })).seekBestMs,
+    undefined,
+  );
 });
 
 test("a valid condo layout round trips through v1 restoration and v2 migration", () => {

@@ -407,6 +407,7 @@ export function World({
     else if (id === "coaster-ticket-gate") onActivity("coaster");
     else if (id === "club-pulse-dj-booth") onActivity("dj-beat-drop");
     else if (id === "midway-game-booth") onActivity("fruit");
+    else if (id === "cafe-bakery-window") onActivity("bakery");
     else if (id === "park-map-kiosk") onMap();
     else if (id === "club-pulse-dance-floor") {
       walk(50, 75);
@@ -453,6 +454,7 @@ export function World({
     "sunshine-flume": "Ride the Log Flume",
     "lion-leap-tower": "Ride Lion Leap Tower",
     "midway-game-booth": "Play Fruit Catch!",
+    "cafe-bakery-window": "Mango Bakery",
     "club-pulse-dj-booth": "DJ Booth · DJ Beat Drop",
     "club-pulse-dance-floor": "Step onto the dance floor",
     "marble-lion-fountain": "Visit the lion fountain",
