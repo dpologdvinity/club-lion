@@ -7,7 +7,7 @@ type Snowflake = { x: number; y: number; r: number; speed: number };
 type PineSpec = { x: number; y: number; s: number };
 type GondolaSpec = { tone: string };
 
-// Deterministic snowflakes; motion comes only from the `seconds` prop.
+// Deterministic snowflakes; they fall and sway via CSS animations.
 const SNOWFLAKES: readonly Snowflake[] = Array.from({ length: 26 }, (_, i) => ({
   x: (i * 397) % STAGE_WIDTH,
   y: (i * 131) % 560,
@@ -249,13 +249,14 @@ const MtMistLandmarks = memo(function MtMistLandmarks(): JSX.Element {
   );
 });
 
-/** Chimney smoke drifts above the lodge, so it is animated and sits outside the memoized group. */
-function ChimneySmoke({ seconds }: { seconds: number }): JSX.Element {
-  const puff = Math.sin(seconds * 1.4);
+/** Chimney smoke wavers above the lodge. */
+const ChimneySmoke = memo(function ChimneySmoke(): JSX.Element {
   return (
     <g transform="translate(940 540)">
       <path
-        d={`M192-372Q${176 + puff * 6} -398 ${194 - puff * 4} -420Q${210 + puff * 5} -440 196 -460`}
+        className="sm-sway"
+        style={{ "--sm-deg": "3deg", "--sm-dur": "2.24s" }}
+        d="M192-372Q176 -398 194 -420Q210 -440 196 -460"
         fill="none"
         stroke="#e9eef0"
         strokeWidth="10"
@@ -264,59 +265,114 @@ function ChimneySmoke({ seconds }: { seconds: number }): JSX.Element {
       />
     </g>
   );
-}
+});
 
-function Gondolas({ seconds }: { seconds: number }): JSX.Element {
+// Gondolas ride the cable's parabola: a linear drift plus a bob whose
+// quadratic ease-out (mirrored on the way back) traces y exactly.
+const CABLE_EASE = "cubic-bezier(0.333, 0.667, 0.667, 1)";
+
+const Gondolas = memo(function Gondolas(): JSX.Element {
   return (
-    <>
-      {GONDOLAS.map((g, i) => {
-        const x = ((i * 520 + seconds * 70) % 2600) - 100;
-        const y = 130 + 120 * (x / 2400) * (1 - x / 2400);
-        return (
-          <g key={i} transform={`translate(${x} ${y})`}>
-            <path d="M0 0V35" stroke="#526b74" strokeWidth="6" />
-            <rect
-              x="-42"
-              y="32"
-              width="84"
-              height="77"
-              rx="17"
-              fill={g.tone}
-              stroke="#fff0d2"
-              strokeWidth="5"
-            />
-            <rect x="-30" y="44" width="60" height="35" rx="7" fill="#d7edf0" />
-            <path d="M0 45V78" stroke="#fff0d2" strokeWidth="4" />
-            <path d="M-38 98H38" stroke="#fff0d2" strokeWidth="4" />
+    <g clipPath="url(#mm-below-cable)">
+      {/* Hangers reach up past the cable and are trimmed to it, so they stay attached in the still frame. */}
+      <clipPath id="mm-below-cable">
+        <path d="M0 130Q1200 190 2400 130V720H0Z" />
+      </clipPath>
+      {GONDOLAS.flatMap((g, i) =>
+        [0, -2600].map((shift) => (
+          <g
+            key={`${i}${shift}`}
+            transform={`translate(${i * 520 - 100 + shift} 142.4)`}
+          >
+            <g
+              className="sm-drift"
+              style={{ "--sm-dist": "2600px", "--sm-dur": "37.142s" }}
+            >
+              <g
+                className="sm-bob"
+                style={{
+                  "--sm-amp": "17.6px",
+                  "--sm-dur": "18.571s",
+                  "--sm-delay": `${(-i * 520) / 70}s`,
+                  animationTimingFunction: CABLE_EASE,
+                }}
+              >
+                <path d="M0-30V35" stroke="#526b74" strokeWidth="6" />
+                <rect
+                  x="-42"
+                  y="32"
+                  width="84"
+                  height="77"
+                  rx="17"
+                  fill={g.tone}
+                  stroke="#fff0d2"
+                  strokeWidth="5"
+                />
+                <rect
+                  x="-30"
+                  y="44"
+                  width="60"
+                  height="35"
+                  rx="7"
+                  fill="#d7edf0"
+                />
+                <path d="M0 45V78" stroke="#fff0d2" strokeWidth="4" />
+                <path d="M-38 98H38" stroke="#fff0d2" strokeWidth="4" />
+              </g>
+            </g>
           </g>
-        );
-      })}
-    </>
+        )),
+      )}
+    </g>
   );
-}
+});
 
-function Snow({ seconds }: { seconds: number }): JSX.Element {
+// Each flake falls in a rotate(90) frame, so the drift points down and the bob sways sideways.
+// Two copies 600px apart loop seamlessly; the clip hides flakes below the old wrap line.
+const Snow = memo(function Snow(): JSX.Element {
   return (
-    <>
-      {SNOWFLAKES.map((f, i) => {
-        const y = (f.y + seconds * f.speed) % 600;
-        const x = f.x + Math.sin(seconds + i) * 10;
-        return (
-          <circle key={i} cx={x} cy={y} r={f.r} fill="#ffffff" opacity=".8" />
-        );
-      })}
-    </>
+    <g clipPath="url(#mm-snow-clip)">
+      <clipPath id="mm-snow-clip">
+        <rect width={STAGE_WIDTH} height="600" />
+      </clipPath>
+      {SNOWFLAKES.flatMap((f, i) =>
+        [0, -600].map((shift) => (
+          <g
+            key={`${i}${shift}`}
+            transform={`translate(${f.x} ${f.y + shift}) rotate(90)`}
+          >
+            <g
+              className="sm-drift"
+              style={{ "--sm-dist": "600px", "--sm-dur": `${600 / f.speed}s` }}
+            >
+              <g
+                className="sm-bob"
+                style={{
+                  "--sm-amp": "10px",
+                  "--sm-dur": `${Math.PI}s`,
+                  "--sm-delay": `${-i}s`,
+                }}
+              >
+                <circle r={f.r} fill="#ffffff" opacity=".8" />
+              </g>
+            </g>
+          </g>
+        )),
+      )}
+    </g>
   );
-}
+});
 
 export function MtMistScenery({ seconds }: { seconds: number }): JSX.Element {
+  // Motion is CSS-driven; `seconds` stays in the signature for the dispatcher.
+  void seconds;
   return (
     <>
       <MtMistBackdrop />
       <MtMistLandmarks />
-      <ChimneySmoke seconds={seconds} />
-      <Gondolas seconds={seconds} />
-      <Snow seconds={seconds} />
+      <ChimneySmoke />
+      <Gondolas />
+      <Snow />
     </>
   );
 }
