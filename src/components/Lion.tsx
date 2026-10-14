@@ -3,9 +3,9 @@ import type { LionColor } from "../game";
 export type LionVariant = "chibi" | "bratz_cute" | "bratz_sassy";
 
 const LION_SRC_MAP: Record<LionVariant, string> = {
-  chibi: "/assets/lion-chibi-living-cub.png",
-  bratz_cute: "/assets/lion-bratz-cute-cub.png",
-  bratz_sassy: "/assets/lion-bratz-sassy-cub.png",
+  chibi: `${import.meta.env.BASE_URL}assets/lion-chibi-living-cub.png`,
+  bratz_cute: `${import.meta.env.BASE_URL}assets/lion-bratz-cute-cub.png`,
+  bratz_sassy: `${import.meta.env.BASE_URL}assets/lion-bratz-sassy-cub.png`,
 };
 
 export function Lion({
