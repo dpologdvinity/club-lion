@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
 import { coinsFor, FLOWER_SPOTS } from "../src/beeStop";
-import { openHeaderSettings } from "./header";
+import { closeAdventures, openAdventures, openHeaderSettings } from "./header";
 
 const PAW_LABELS = ["Up", "Down", "Left", "Right"];
 const PAW_KEYS: Record<string, string> = {
@@ -67,15 +67,18 @@ test("map travel and unique greetings complete adventures with one reward each",
   for (const name of ["Milo", "Cleo", "Pip"])
     await page.getByRole("button", { name: `Say hello to ${name}` }).click();
   await page.getByRole("button", { name: "Say hello to Milo" }).click();
+  await openAdventures(page);
   await expect(page.getByRole("button", { name: "Claim 50" })).toHaveCount(1);
   await page.getByRole("button", { name: "Claim 50" }).click();
   await expect(page.locator(".wallet")).toHaveText("✦300");
+  await closeAdventures(page);
   await page.getByRole("button", { name: "Map", exact: true }).click();
   await page
     .getByRole("button", { name: /Your cozy den Make yourself/ })
     .click();
   await expect(page.locator(".world-location h2")).toHaveText("Your cozy den");
   await expect(page.locator(".world-stage")).toHaveClass(/scene-den/);
+  await openAdventures(page);
   await page.getByRole("button", { name: "Claim 50" }).click();
   await expect(page.locator(".wallet")).toHaveText("✦350");
   await page.reload();
@@ -89,6 +92,7 @@ test("wardrobe validation, purchases, and persistent customizations work", async
   page,
 }) => {
   await page.goto("/");
+  await openAdventures(page);
   await page
     .getByRole("button", { name: "Style your lion", exact: true })
     .click();
@@ -263,6 +267,7 @@ test("Memory Safari can be completed and awards exactly 60 coins", async ({
     page.getByRole("button", { name: "All games", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Back to the pride" }).click();
+  await openAdventures(page);
   await page.getByRole("button", { name: "Claim 50" }).click();
   await expect(page.locator(".wallet")).toHaveText("✦360");
 });
@@ -382,6 +387,7 @@ test("Paw Steps pays for every finished round, then remembers the best score", a
     page.getByText("You repeated 1 round", { exact: false }),
   ).toBeVisible();
   await expect(page.locator(".wallet")).toHaveText("✦260");
+  await openAdventures(page);
   await expect(page.getByRole("button", { name: "Claim 50" })).toHaveCount(1);
   await page.reload();
   await expect(page.locator(".wallet")).toHaveText("✦260");
@@ -508,6 +514,7 @@ test("the main world and dialogs have no WCAG AA accessibility violations", asyn
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();
   expect(mainResults.violations).toEqual([]);
+  await openAdventures(page);
   await page.getByRole("button", { name: "Style your lion" }).click();
   const dialogResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])

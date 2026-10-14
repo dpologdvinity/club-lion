@@ -112,6 +112,9 @@ type Panel =
   | "rooftop"
   | null;
 
+// Matches the compact header and drawer breakpoint in styles.css.
+const COMPACT_LAYOUT = "(max-width: 1279px)";
+
 export default function App() {
   const { player, setPlayer, saveError: playerSaveError } = usePlayer();
   const {
@@ -132,7 +135,9 @@ export default function App() {
   const [spawn, setSpawn] = useState<{ x: number; y: number } | undefined>();
   const [initialGame, setInitialGame] = useState<GameId | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => !window.matchMedia(COMPACT_LAYOUT).matches,
+  );
   const [settingsOpen, setSettingsOpen] = useState(false);
   useEffect(() => {
     if (!settingsOpen) return;

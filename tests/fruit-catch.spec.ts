@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { openAdventures } from "./header";
 
 async function openFruitCatch(page: Page) {
   await page.getByRole("button", { name: "Games", exact: true }).click();
@@ -128,6 +129,7 @@ test("three rotten catches end the round and a lower replay keeps the record", a
   await expect(page.locator(".fruit-best")).toHaveText("Personal best: 100");
   await expect(page.locator(".wallet")).toHaveText("✦250");
   await page.getByRole("button", { name: "Back to the pride" }).click();
+  await openAdventures(page);
   await expect(page.getByRole("button", { name: "Claim 50" })).toHaveCount(1);
   const saved = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("club-lion-player-v1")!),
