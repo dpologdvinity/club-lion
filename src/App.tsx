@@ -51,7 +51,7 @@ import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
 import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
 import { GamesPanel, type GameId } from "./components/GamesPanel";
-import { RoomScenery } from "./components/RoomScenery";
+import { SafeRoomScenery } from "./components/SafeRoomScenery";
 import { ROOM_MANIFESTS } from "./rooms/registry";
 import { PlayerCard } from "./components/PlayerCard";
 import { CatalogModal } from "./components/CatalogModal";
@@ -444,7 +444,7 @@ export default function App() {
                   className={`destination-image scene ${destination.imageClass}`}
                 >
                   {ROOM_MANIFESTS[destination.id] && (
-                    <RoomScenery place={destination.id} preview />
+                    <SafeRoomScenery place={destination.id} preview />
                   )}
                   <span className="destination-caption">
                     {destination.subtitle}

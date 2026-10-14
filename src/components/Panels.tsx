@@ -16,7 +16,7 @@ import {
   type PlaceId,
   type PlayerV2,
 } from "../game";
-import { RoomScenery } from "./RoomScenery";
+import { SafeRoomScenery } from "./SafeRoomScenery";
 import { ROOM_MANIFESTS } from "../rooms/registry";
 import { Coin, Lion } from "./Lion";
 
@@ -37,7 +37,7 @@ export function WorldMap({
         >
           <span className={`scene map-image ${destination.imageClass}`}>
             {ROOM_MANIFESTS[destination.id] && (
-              <RoomScenery place={destination.id} preview />
+              <SafeRoomScenery place={destination.id} preview />
             )}
           </span>
           <span className="map-destination-copy">

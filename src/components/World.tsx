@@ -29,7 +29,7 @@ import { ROOM_MANIFESTS } from "../rooms/registry";
 import type { RoomManifest } from "../rooms/types";
 import { clampToWalkable } from "../rooms/camera";
 import { CameraViewport } from "./CameraViewport";
-import { RoomScenery } from "./RoomScenery";
+import { SafeRoomScenery } from "./SafeRoomScenery";
 import { GlobalLightingOverlay } from "./GlobalLightingOverlay";
 import { DanceFloor } from "./DanceFloor";
 import { CLUB_PULSE_DANCE_FLOOR_BOUNDS } from "../rooms/manifests/clubPulse";
@@ -510,7 +510,7 @@ export function World({
         timeOfDay={timeOfDay}
         reducedMotion={reducedMotion}
       >
-        {manifest && <RoomScenery place={place} />}
+        {manifest && <SafeRoomScenery place={place} />}
         {place === "club-pulse" && (
           <DanceFloor
             floorBounds={CLUB_PULSE_DANCE_FLOOR_BOUNDS}
