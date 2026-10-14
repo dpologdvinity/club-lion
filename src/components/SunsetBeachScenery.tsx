@@ -498,18 +498,17 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
       <g transform="translate(1150 560)">
         <path d="M-50-60H70" stroke="#7b5a2c" strokeWidth="8" />
         <path d="M-40 0V-70M60 0V-70" stroke="#7b5a2c" strokeWidth="8" />
-        {[
-          [-30, "#ff7b6b", -8],
-          [8, "#4fc3b0", -3],
-          [46, "#ffd56f", 4],
-        ].map(([sx, color, tilt]) => (
-          <g
-            key={sx as number}
-            transform={`translate(${sx} 0) rotate(${tilt})`}
-          >
+        {(
+          [
+            [-30, "#ff7b6b", -8],
+            [8, "#4fc3b0", -3],
+            [46, "#ffd56f", 4],
+          ] as const
+        ).map(([sx, color, tilt]) => (
+          <g key={sx} transform={`translate(${sx} 0) rotate(${tilt})`}>
             <path
               d="M0 0C-17-40-17-130 0-170C17-130 17-40 0 0Z"
-              fill={color as string}
+              fill={color}
               stroke="#00000030"
               strokeWidth="3"
             />
@@ -682,16 +681,18 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
         <path d="M0-86V-112" stroke="#7b5a2c" strokeWidth="3" />
         <path d={`M0-112L${20 + flagWave * 0.6}-104L0-96Z`} fill="#e86a5c" />
       </g>
-      {[
-        [520, 670, "#ffb8a8"],
-        [980, 692, "#fff1d9"],
-        [1700, 676, "#ffcf9a"],
-        [2240, 690, "#ffb8a8"],
-      ].map(([sx, sy, color]) => (
-        <g key={sx as number} transform={`translate(${sx} ${sy})`}>
+      {(
+        [
+          [520, 670, "#ffb8a8"],
+          [980, 692, "#fff1d9"],
+          [1700, 676, "#ffcf9a"],
+          [2240, 690, "#ffb8a8"],
+        ] as const
+      ).map(([sx, sy, color]) => (
+        <g key={sx} transform={`translate(${sx} ${sy})`}>
           <path
             d="M-16 0Q0-30 16 0Z"
-            fill={color as string}
+            fill={color}
             stroke="#c18d60"
             strokeWidth="3"
           />
