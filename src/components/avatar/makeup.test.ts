@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { generateAvatarSvgString } from "../avatarSvg.ts";
-import { resolveMakeup } from "./makeup.ts";
+import { eyeGeometry, resolveMakeup } from "./makeup.ts";
 import { DEFAULT_AVATAR_LOOK, type AvatarLook } from "../../types/world.ts";
 import {
   BLUSHES,
@@ -168,4 +168,29 @@ test("the wink keeps one closed eye with the chosen eyeshadow color", () => {
   const svg = render({ eyeStyle: "wink", eyeshadowId: "teal" });
   assert.ok(svg.includes("eye-closed"));
   assert.ok(svg.includes('fill="#2a9d9a" opacity="0.55"'));
+});
+
+test("doll eyes: almond lids, outer lashes, and no stray markup text", () => {
+  for (const look of EYE_LOOKS) {
+    const svg = render({ eyeStyle: look.id });
+    assert.ok(!/\/>[^<\s]/.test(svg), `${look.id}: text between tags`);
+    assert.ok(
+      svg.includes("outer-lashes") || svg.includes("lower-lashes"),
+      `${look.id}: lower lashes`,
+    );
+  }
+});
+
+test("almond eye is wider than it is tall", () => {
+  const xs: number[] = [];
+  const ys: number[] = [];
+  for (const [, x, y] of eyeGeometry(0).sclera.matchAll(
+    /(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g,
+  )) {
+    xs.push(Number(x));
+    ys.push(Number(y));
+  }
+  const width = Math.max(...xs) - Math.min(...xs);
+  const height = Math.max(...ys) - Math.min(...ys);
+  assert.ok(width / height > 1.25, `ratio ${width / height}`);
 });
