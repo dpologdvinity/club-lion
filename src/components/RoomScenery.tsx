@@ -10,6 +10,8 @@ import { ClubPulseScenery } from "./ClubPulseScenery.tsx";
 import { WonderParkEntranceScenery } from "./WonderParkEntranceScenery.tsx";
 import { WonderParkMidwayScenery } from "./WonderParkMidwayScenery.tsx";
 import { SunsetBeachScenery } from "./SunsetBeachScenery.tsx";
+import { CoastalPierScenery } from "./CoastalPierScenery.tsx";
+import { MtMistScenery } from "./MtMistScenery.tsx";
 
 function PalmTree({
   x,
@@ -1083,394 +1085,6 @@ function ScoutBaseScenery({
   );
 }
 
-function CoastalOcean({ seconds }: { seconds: number }) {
-  const id = useId();
-  return (
-    <>
-      <defs>
-        <linearGradient id={`${id}-sunset`} x2="0" y2="1">
-          <stop stopColor="#d79291" />
-          <stop offset=".6" stopColor="#f7c78b" />
-          <stop offset="1" stopColor="#ffe3ae" />
-        </linearGradient>
-        <linearGradient id={`${id}-water`} x2="0" y2="1">
-          <stop stopColor="#80b5b8" />
-          <stop offset="1" stopColor="#397d8e" />
-        </linearGradient>
-      </defs>
-      <rect width="2400" height="720" fill={`url(#${id}-sunset)`} />
-      <circle cx="1350" cy="265" r="100" fill="#ffecb1" />
-      <g fill="#fff1cf" opacity=".5">
-        <ellipse cx="480" cy="150" rx="180" ry="24" />
-        <ellipse cx="1850" cy="110" rx="220" ry="20" />
-      </g>
-      <rect y="310" width="2400" height="410" fill={`url(#${id}-water)`} />
-      {Array.from({ length: 7 }, (_, i) => (
-        <path
-          key={i}
-          d={`M${1240 - i * 26} ${328 + i * 24}h${220 + i * 52}`}
-          stroke="#ffe1a0"
-          strokeWidth="8"
-          opacity={0.5 - i * 0.05}
-          strokeLinecap="round"
-        />
-      ))}
-      {Array.from({ length: 12 }, (_, i) => (
-        <path
-          key={i}
-          d={`M${i * 210 - 50} ${390 + (i % 3) * 43 + Math.sin(seconds * 0.7 + i) * 8}q60 -13 120 0t120 0`}
-          fill="none"
-          stroke="#c7e1d9"
-          strokeWidth="5"
-          opacity=".65"
-          strokeLinecap="round"
-        />
-      ))}
-      <path
-        d="M470 255q18 -20 36 0q18 -20 36 0M720 210q14 -16 28 0q14 -16 28 0"
-        fill="none"
-        stroke="#6a6762"
-        strokeWidth="4"
-        strokeLinecap="round"
-      />
-    </>
-  );
-}
-
-function CoastalPierScenery({ seconds }: { seconds: number }) {
-  const planksId = useId();
-  return (
-    <g>
-      <CoastalOcean seconds={seconds} />
-      <defs>
-        <pattern
-          id={planksId}
-          width="160"
-          height="36"
-          patternUnits="userSpaceOnUse"
-        >
-          <rect width="160" height="36" fill="#b38e6a" />
-          <path
-            d="M0 0H160M0 36H160M80 0V36"
-            stroke="#755e4a"
-            strokeWidth="3"
-          />
-          <path
-            d="M10 12h53M90 24h45"
-            stroke="#d4b692"
-            strokeWidth="2"
-            opacity=".6"
-          />
-          <circle cx="8" cy="7" r="2" fill="#675a4c" />
-          <circle cx="150" cy="29" r="2" fill="#675a4c" />
-        </pattern>
-      </defs>
-      {Array.from({ length: 13 }, (_, i) => (
-        <g key={i} transform={`translate(${i * 200} 480)`}>
-          <path d="M-12-10V70H12V-10" fill="#79614b" />
-          <ellipse cy="65" rx="35" ry="6" fill="#c2dbcf" opacity=".5" />
-        </g>
-      ))}
-      <path d="M0 475H2400V510H0Z" fill="#745d48" />
-      <path d="M0 475H2400" stroke="#d8b78c" strokeWidth="9" />
-      <rect y="540" width="2400" height="180" fill={`url(#${planksId})`} />
-      {Array.from({ length: 17 }, (_, i) => (
-        <path
-          key={i}
-          d={`M${i * 150} 540V455`}
-          stroke="#8e7358"
-          strokeWidth="12"
-          strokeLinecap="round"
-        />
-      ))}
-      <path d="M0 460H2400M0 500H2400" stroke="#e1c39b" strokeWidth="8" />
-      <g transform="translate(1950 540)">
-        <ellipse cy="4" rx="160" ry="26" fill="#624f42" opacity=".35" />
-        <path
-          d="M-105 0L-65-300H65L105 0Z"
-          fill="#fff5dc"
-          stroke="#8d6552"
-          strokeWidth="6"
-        />
-        <path
-          d="M-91-95H91L82-160H-82ZM-74-220H74L65-285H-65Z"
-          fill="#c46757"
-        />
-        <path
-          d="M-44 0V-65Q0-110 44-65V0"
-          fill="#5c594d"
-          stroke="#ae8260"
-          strokeWidth="6"
-        />
-        <rect
-          x="-72"
-          y="-360"
-          width="144"
-          height="62"
-          rx="6"
-          fill="#f5dfa5"
-          stroke="#6a5d51"
-          strokeWidth="7"
-        />
-        <path
-          d="M-45-360V-300M0-360V-300M45-360V-300"
-          stroke="#6a5d51"
-          strokeWidth="5"
-        />
-        <path
-          d="M-98-365L0-425L98-365Z"
-          fill="#b4574a"
-          stroke="#854c40"
-          strokeWidth="5"
-        />
-        <path
-          d="M-95-298H95M-105-318V-288M105-318V-288"
-          fill="none"
-          stroke="#695a4c"
-          strokeWidth="7"
-        />
-        <circle cy="-330" r="16" fill="#fff4c2" />
-        <g transform="translate(80 -265)">
-          <path
-            d="M-20-10H20L65-30V30L20 10H-20Z"
-            fill="#d9ae50"
-            stroke="#946b32"
-            strokeWidth="4"
-          />
-          <ellipse cx="65" rx="9" ry="30" fill="#a47a34" />
-          <path
-            d="M0 12V218"
-            fill="none"
-            stroke="#caa54d"
-            strokeWidth="6"
-            strokeDasharray="4 5"
-            strokeLinecap="round"
-          />
-          <ellipse
-            cy="222"
-            rx="9"
-            ry="14"
-            fill="none"
-            stroke="#d9ae50"
-            strokeWidth="5"
-          />
-        </g>
-        <rect
-          x="-145"
-          y="30"
-          width="290"
-          height="40"
-          rx="8"
-          fill="#fff0cf"
-          stroke="#987650"
-          strokeWidth="4"
-        />
-        <text y="57" textAnchor="middle" fontSize="24" fill="#674f3e">
-          HISTORIC LIGHTHOUSE
-        </text>
-      </g>
-      <g transform="translate(820 533)">
-        <rect
-          x="-125"
-          y="-100"
-          width="250"
-          height="38"
-          rx="7"
-          fill="#c59b6e"
-          stroke="#795e43"
-          strokeWidth="4"
-        />
-        <path
-          d="M-140-48H140M-105-48V0M105-48V0"
-          stroke="#795e43"
-          strokeWidth="12"
-        />
-        <path d="M-110-80V-48M110-80V-48" stroke="#795e43" strokeWidth="8" />
-      </g>
-      <g fill="#617a72" opacity=".6">
-        <path d="M270 337l70-75 4 75Z" />
-        <path d="M350 340l-6-95 85 95Z" />
-        <path d="M265 350h170l-30 23H300Z" />
-      </g>
-    </g>
-  );
-}
-
-/** Original vector scenery. Manifest asset names describe layers, never requests. */
-function MtMistScenery({ seconds }: { seconds: number }) {
-  return (
-    <g className="mtmist-scenery">
-      <path
-        d="M0 500L310 160L560 420L900 60L1260 420L1540 120L1840 400L2140 80L2400 450V580H0Z"
-        fill="#7499aa"
-      />
-      <path
-        d="M150 337L310 160L452 308L365 289L308 243L253 299ZM665 298L900 60L1130 292L1006 243L938 172L893 194L840 164L781 261ZM1400 285L1540 120L1708 277L1619 249L1533 184L1482 249ZM1992 260L2140 80L2290 292L2200 254L2135 160L2081 221Z"
-        fill="#fffdf9"
-      />
-      <path
-        d="M0 505Q280 360 560 492Q860 335 1150 489Q1590 352 1900 485Q2220 392 2400 495V720H0Z"
-        fill="#c4dbe1"
-      />
-      <path d="M0 560Q500 525 1100 565T2400 545V720H0Z" fill="#f1f6f4" />
-      {Array.from({ length: 22 }, (_, i) => (
-        <g
-          key={i}
-          transform={`translate(${i * 116 + 20} ${500 + (i % 3) * 15}) scale(${0.65 + (i % 3) * 0.15})`}
-        >
-          <path
-            d="M0-155L-38-80H38ZM0-112L-54-35H54ZM0-70L-65 8H65Z"
-            fill="#3d705d"
-          />
-          <path
-            d="M0-155L-20-115H20ZM0-112L-26-73H26ZM0-70L-35-29H35Z"
-            fill="#e7f2ee"
-          />
-          <path d="M0 5V35" stroke="#805e43" strokeWidth="12" />
-        </g>
-      ))}
-      <g transform="translate(940 540)">
-        <rect
-          x="-255"
-          y="-220"
-          width="510"
-          height="235"
-          rx="10"
-          fill="#a77750"
-          stroke="#654b35"
-          strokeWidth="7"
-        />
-        {Array.from({ length: 8 }, (_, i) => (
-          <path
-            key={i}
-            d={`M-250 ${-207 + i * 28}H250`}
-            stroke="#805737"
-            strokeWidth="7"
-          />
-        ))}
-        <path
-          d="M-310-210L0-380L310-210Z"
-          fill="#76533d"
-          stroke="#563f30"
-          strokeWidth="7"
-        />
-        <path
-          d="M-310-210L0-380L310-210L264-205L0-345L-269-197Z"
-          fill="#fffdf9"
-        />
-        <rect x="172" y="-359" width="40" height="110" fill="#8b8178" />
-        <path d="M165-359H220" stroke="#fffdf9" strokeWidth="12" />
-        {[-160, 160].map((x) => (
-          <g key={x} transform={`translate(${x} -140)`}>
-            <rect
-              x="-42"
-              y="-45"
-              width="84"
-              height="90"
-              rx="6"
-              fill="#f9d993"
-              stroke="#644b37"
-              strokeWidth="8"
-            />
-            <path d="M0-42V42M-39 0H39" stroke="#644b37" strokeWidth="5" />
-          </g>
-        ))}
-        <rect
-          x="-49"
-          y="-108"
-          width="98"
-          height="123"
-          rx="6"
-          fill="#634d3a"
-          stroke="#edc987"
-          strokeWidth="5"
-        />
-        <circle cx="26" cy="-44" r="5" fill="#edc987" />
-        <rect
-          x="-175"
-          y="-258"
-          width="350"
-          height="48"
-          rx="10"
-          fill="#fff1d4"
-          stroke="#674c34"
-          strokeWidth="4"
-        />
-        <text
-          y="-225"
-          textAnchor="middle"
-          fill="#294b3c"
-          fontSize="27"
-          fontWeight="900"
-        >
-          MT. MIST BASECAMP
-        </text>
-      </g>
-      <g stroke="#617982" fill="none" strokeWidth="9">
-        <path d="M340 465V150M2040 450V150M300 158H380M2000 158H2080" />
-        <path d="M0 130Q1200 250 2400 130" strokeWidth="5" />
-      </g>
-      {Array.from({ length: 5 }, (_, i) => {
-        const x = ((i * 520 + seconds * 70) % 2600) - 100;
-        const y = 130 + 240 * (x / 2400) * (1 - x / 2400);
-        return (
-          <g key={i} transform={`translate(${x} ${y})`}>
-            <path d="M0 0V35" stroke="#526b74" strokeWidth="6" />
-            <rect
-              x="-42"
-              y="32"
-              width="84"
-              height="77"
-              rx="17"
-              fill={i % 2 ? "#ba744d" : "#477962"}
-              stroke="#fff0d2"
-              strokeWidth="5"
-            />
-            <rect x="-30" y="44" width="60" height="35" rx="7" fill="#d7edf0" />
-            <path d="M0 45V78" stroke="#fff0d2" strokeWidth="4" />
-            <path d="M-38 98H38" stroke="#fff0d2" strokeWidth="4" />
-          </g>
-        );
-      })}
-      <g transform="translate(1800 540)">
-        <path d="M-130 15V-135M130 15V-135" stroke="#846042" strokeWidth="14" />
-        <path d="M-156-140H156" stroke="#f3f7f5" strokeWidth="20" />
-        <rect
-          x="-145"
-          y="-130"
-          width="290"
-          height="56"
-          rx="8"
-          fill="#f3dfb2"
-          stroke="#846042"
-          strokeWidth="5"
-        />
-        <text
-          y="-92"
-          textAnchor="middle"
-          fill="#294b3c"
-          fontSize="29"
-          fontWeight="900"
-        >
-          SLED RUN
-        </text>
-        <path
-          d="M-64 0H64M-69 13H69M-50-10V13M50-10V13"
-          stroke="#846042"
-          strokeWidth="8"
-        />
-        <path
-          d="M0 38Q120 30 210 12Q260 0 320-10"
-          fill="none"
-          stroke="#b7ccd1"
-          strokeWidth="8"
-          strokeDasharray="14 16"
-        />
-      </g>
-    </g>
-  );
-}
-
 function CanyonRapidsScenery({
   seconds,
   width,
@@ -1610,7 +1224,7 @@ export function RoomScenery({
       query.removeEventListener("change", update);
     };
   }, [preview]);
-  if (place === "sunset-beach" || place === "coastal-pier") {
+  if (place === "sunset-beach") {
     return (
       <svg
         className="room-scenery"
@@ -1618,11 +1232,31 @@ export function RoomScenery({
         preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
         aria-hidden="true"
       >
-        {place === "sunset-beach" ? (
-          <SunsetBeachScenery seconds={seconds} />
-        ) : (
-          <CoastalPierScenery seconds={seconds} />
-        )}
+        <SunsetBeachScenery seconds={seconds} />
+      </svg>
+    );
+  }
+  if (place === "coastal-pier") {
+    return (
+      <svg
+        className="room-scenery"
+        viewBox="0 0 2400 720"
+        preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
+        aria-hidden="true"
+      >
+        <CoastalPierScenery seconds={seconds} />
+      </svg>
+    );
+  }
+  if (place === "mt-mist") {
+    return (
+      <svg
+        className="room-scenery"
+        viewBox="0 0 2400 720"
+        preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
+        aria-hidden="true"
+      >
+        <MtMistScenery seconds={seconds} />
       </svg>
     );
   }
@@ -1679,13 +1313,12 @@ export function RoomScenery({
   const isSplashRiver = place === "splash-oasis-river";
   const isCondo = place === "penthouse-condo";
   const isScoutBase = place === "secret-scout-base";
-  const isMtMist = place === "mt-mist";
   const isCanyonRapids = place === "canyon-rapids";
   const isPetParadise = place === "pet-paradise";
   const width =
     isCondo || isScoutBase
       ? 1920
-      : isMtMist || isCanyonRapids || isPetParadise
+      : isCanyonRapids || isPetParadise
         ? 2400
         : 2800;
   return (
@@ -1757,7 +1390,7 @@ export function RoomScenery({
         </pattern>
       </defs>
       <rect width={width} height="720" fill={`url(#sky-${place})`} />
-      {!club && !isCondo && !isScoutBase && !isMtMist && (
+      {!club && !isCondo && !isScoutBase && (
         <>
           <circle cx={width - 360} cy="100" r="57" fill="#ffedbb" />
           <g fill="#fff8df" opacity=".7">
@@ -1801,9 +1434,7 @@ export function RoomScenery({
         height="300"
         fill={`url(#pavers-${place})`}
       />
-      {isMtMist ? (
-        <MtMistScenery seconds={seconds} />
-      ) : isCondo ? (
+      {isCondo ? (
         <CondoScenery seconds={seconds} width={width} />
       ) : isScoutBase ? (
         <ScoutBaseScenery seconds={seconds} width={width} />
@@ -2056,7 +1687,7 @@ export function RoomScenery({
           </text>
         </>
       ) : null}
-      {!club && !isCondo && !isScoutBase && !isMtMist && (
+      {!club && !isCondo && !isScoutBase && (
         <>
           <path d={`M0 690H${width}`} stroke="#d3ae7c" strokeWidth="4" />
           {Array.from({ length: Math.floor(width / 170) }, (_, i) => (
