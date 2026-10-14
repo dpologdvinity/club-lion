@@ -2557,6 +2557,473 @@ svg {
   bottom: 30%;
   filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.25));
 }
+/* Lion Speedway kart race */
+.kart-race {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  justify-items: center;
+}
+.kart-garage-preview {
+  width: min(100%, 420px);
+  height: auto;
+  overflow: visible;
+}
+.kart-garage-kart {
+  animation: kart-idle 0.22s ease-in-out infinite alternate;
+}
+@keyframes kart-idle {
+  to {
+    transform: translateY(1.5px);
+  }
+}
+.kart-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+.kart-swatch {
+  width: 64px;
+  height: 64px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2px #2b223333,
+    0 6px 14px #2b223326;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.kart-swatch[aria-pressed="true"] {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 0 5px var(--text),
+    0 8px 18px #2b223340;
+}
+.kart-garage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.kart-round {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border: 3px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.kart-mode[aria-pressed="true"] {
+  border-color: #ff9f1c;
+  background: #fff1d6;
+  color: #b55d00;
+}
+.kart-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 76px;
+  padding: 0 34px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(#5fd068, #2e9e4a);
+  box-shadow:
+    0 6px 0 #1f7a37,
+    0 12px 24px #1f7a3740;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  cursor: pointer;
+}
+.kart-go:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #1f7a37;
+}
+.kart-best {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--green-soft);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+}
+.kart-best.is-record {
+  background: #fff1b8;
+  color: #8a5a00;
+}
+.kart-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(320px, 62dvh, 640px);
+  overflow: hidden;
+  border-radius: 20px;
+  background: #7cc46a;
+  touch-action: none;
+  outline: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.kart-stage:focus-visible {
+  box-shadow: inset 0 0 0 4px var(--accent);
+}
+.kart-track {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.kart-track.is-bumped-0 {
+  animation: kart-shake-a 0.3s ease-out;
+}
+.kart-track.is-bumped-1 {
+  animation: kart-shake-b 0.3s ease-out;
+}
+@keyframes kart-shake-a {
+  25% {
+    transform: translate(-6px, 3px);
+  }
+  50% {
+    transform: translate(5px, -3px);
+  }
+  75% {
+    transform: translate(-3px, 2px);
+  }
+}
+@keyframes kart-shake-b {
+  25% {
+    transform: translate(6px, 3px);
+  }
+  50% {
+    transform: translate(-5px, -3px);
+  }
+  75% {
+    transform: translate(3px, 2px);
+  }
+}
+.kart-pet-sand {
+  filter: saturate(0.42) sepia(0.28) brightness(1.06);
+}
+.kart-pet-copper {
+  filter: saturate(0.65) brightness(0.84) sepia(0.14);
+}
+.kart-pet-rose {
+  filter: hue-rotate(315deg) saturate(0.57) brightness(1.07);
+}
+.kart-speed {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.kart-speed span {
+  position: absolute;
+  top: -30%;
+  width: 5px;
+  height: 22%;
+  border-radius: 3px;
+  background: linear-gradient(#fff0, #fffd);
+  animation: kart-streak 0.32s linear infinite;
+}
+@keyframes kart-streak {
+  to {
+    transform: translateY(560%);
+  }
+}
+.kart-hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.kart-laps {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #ffffffd9;
+  color: #b8b3c6;
+}
+.kart-laps .is-done {
+  color: #2e9e4a;
+  fill: #5fd068;
+}
+.kart-laps .is-now {
+  color: var(--text);
+}
+.kart-medal {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: #8fb8ff;
+  box-shadow: 0 6px 14px #2b223340;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  text-shadow: 0 2px 0 #2b223366;
+}
+.kart-medal-1 {
+  background: linear-gradient(135deg, #ffe680, #f5b700);
+}
+.kart-medal-2 {
+  background: linear-gradient(135deg, #f4f6fb, #a9b3c6);
+}
+.kart-medal-3 {
+  background: linear-gradient(135deg, #f7c08a, #c77a3a);
+}
+.kart-lights {
+  position: absolute;
+  top: 28%;
+  left: 50%;
+  display: flex;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 24px;
+  background: #23202bf0;
+  box-shadow: 0 10px 30px #0006;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.kart-lights span {
+  width: clamp(44px, 12vw, 70px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #4a4458;
+  box-shadow: inset 0 -6px 0 #0004;
+}
+.kart-lights span.on {
+  background: radial-gradient(circle at 35% 35%, #ff9a9a, #ff2d2d 60%);
+  box-shadow:
+    0 0 24px #ff2d2d,
+    inset 0 -6px 0 #0003;
+}
+.kart-lights span.go {
+  background: radial-gradient(circle at 35% 35%, #c6ffc9, #2ee65a 60%);
+  box-shadow:
+    0 0 28px #2ee65a,
+    inset 0 -6px 0 #0003;
+}
+.kart-finish-flag {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #23202b;
+  pointer-events: none;
+}
+.kart-finish-flag > svg {
+  padding: 18px;
+  border-radius: 50%;
+  background: #fffdf9e6;
+  animation: kart-wave 0.5s ease-in-out infinite alternate;
+}
+@keyframes kart-wave {
+  from {
+    transform: rotate(-12deg);
+  }
+  to {
+    transform: rotate(12deg);
+  }
+}
+.kart-controls {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.kart-pad,
+.kart-boost {
+  display: grid;
+  place-items: center;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  cursor: pointer;
+}
+.kart-pad {
+  width: 84px;
+  height: 84px;
+  background: #2b2233a6;
+}
+.kart-pad:active {
+  background: #2b2233d9;
+  transform: scale(0.95);
+}
+.kart-boost {
+  --charge: 360deg;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 6px;
+  background:
+    radial-gradient(circle, #ff9f1c 0 58%, transparent 59%),
+    conic-gradient(#ffd23f var(--charge), #2b223380 0);
+  box-shadow: 0 8px 18px #2b223359;
+}
+.kart-boost:disabled {
+  color: #ffffffb3;
+  cursor: default;
+}
+.kart-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.kart-confetti span {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 16px;
+  border-radius: 3px;
+  animation-name: kart-confetti;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes kart-confetti {
+  to {
+    transform: translateY(110vh) rotate(720deg);
+  }
+}
+.kart-confetti.is-calm span {
+  animation: none;
+  top: auto;
+  transform: rotate(25deg);
+}
+.kart-confetti.is-calm span:nth-child(odd) {
+  top: 6%;
+}
+.kart-confetti.is-calm span:nth-child(even) {
+  top: 18%;
+}
+.kart-podium {
+  overflow: hidden;
+  padding: 8px 0 10px;
+}
+.kart-podium-stage {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 150px));
+  align-items: end;
+  justify-content: center;
+  gap: 8px;
+}
+.kart-step {
+  display: grid;
+  justify-items: center;
+}
+.kart-step-racer {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.kart-step-block {
+  display: grid;
+  place-items: start center;
+  width: 100%;
+  padding-top: 10px;
+  border-radius: 14px 14px 4px 4px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  text-shadow: 0 3px 0 #2b223359;
+}
+.kart-step-1 .kart-step-block {
+  height: 150px;
+  background: linear-gradient(#ffe680, #f5b700);
+}
+.kart-step-2 .kart-step-block {
+  height: 110px;
+  background: linear-gradient(#f4f6fb, #a9b3c6);
+}
+.kart-step-3 .kart-step-block {
+  height: 80px;
+  background: linear-gradient(#f7c08a, #c77a3a);
+}
+.kart-step.is-you .kart-step-racer {
+  animation: kart-hop 0.6s ease-in-out infinite alternate;
+}
+@keyframes kart-hop {
+  to {
+    transform: translateY(-8px);
+  }
+}
+.kart-podium-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.kart-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  color: #b55d00;
+}
+.kart-coins::before {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e7a800;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff4b0, #ffd23f 60%);
+}
+.kart-fourth {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 16px;
+  border-radius: 999px;
+  background: #e8f0ff;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+}
+.kart-fourth svg {
+  width: 44px;
+  height: 44px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kart-garage-kart,
+  .kart-step.is-you .kart-step-racer,
+  .kart-finish-flag > svg {
+    animation: none;
+  }
+}
+@media (max-width: 590px) {
+  .kart-pad {
+    width: 72px;
+    height: 72px;
+  }
+  .kart-boost {
+    width: 84px;
+    height: 84px;
+  }
+  .kart-swatch {
+    width: 56px;
+    height: 56px;
+  }
+}
 .game-help {
   text-align: center;
   color: var(--muted);

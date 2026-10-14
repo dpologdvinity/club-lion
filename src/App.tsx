@@ -43,6 +43,7 @@ import {
   completeFishingCatch,
   recordFashionShowResult,
   completeRiverSurf,
+  completeKartRace,
   completeSpyPuzzle,
   applyPetCareAction,
   meetLion,
@@ -63,6 +64,7 @@ import { Coin, Lion } from "./components/Lion";
 import { Dialog } from "./components/Dialog";
 import { SledRun } from "./components/SledRun";
 import { RiverSurf } from "./components/RiverSurf";
+import { KartRace } from "./components/KartRace";
 import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
 import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
@@ -106,6 +108,7 @@ type Panel =
   | "account"
   | "sled-run"
   | "river-surf"
+  | "kart-race"
   | "servers"
   | "pet-care"
   | "leaderboard"
@@ -466,6 +469,7 @@ export default function App() {
               setPlayer((p) => unlockStamp(p, stampId))
             }
             onOpenRiverSurf={() => setPanel("river-surf")}
+            onOpenKartRace={() => setPanel("kart-race")}
             onOpenPetCare={() => setPanel("pet-care")}
             onOpenLeaderboard={() => setPanel("leaderboard")}
             onOpenRooftop={() => setPanel("rooftop")}
@@ -742,6 +746,25 @@ export default function App() {
           />
         </Dialog>
       )}
+      {panel === "kart-race" && (
+        <Dialog title="Lion Speedway" onClose={closePanel} wide>
+          <KartRace
+            look={player.look}
+            petColor={player.pet?.color || player.color}
+            racesFinished={player.kartRacesFinished ?? 0}
+            bestLapMs={player.kartBestLapMs}
+            onFinish={(result) =>
+              setPlayer((p) => {
+                let updated = completeKartRace(p, result);
+                for (const id of evaluateStampUnlocks(updated))
+                  updated = unlockStamp(updated, id);
+                return updated;
+              })
+            }
+            onExit={closePanel}
+          />
+        </Dialog>
+      )}
       {panel === "pet-care" && (
         <PetCareModal
           lionColor={player.color}
@@ -776,6 +799,7 @@ export default function App() {
         panel !== "account" &&
         panel !== "servers" &&
         panel !== "river-surf" &&
+        panel !== "kart-race" &&
         panel !== "pet-care" &&
         panel !== "leaderboard" &&
         panel !== "rooftop" && (
