@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { openHeaderSettings } from "./header";
 
 test("Sunset Beach and Coastal Pier allow travel, lighthouse foghorn activation, and Foghorn Mariner stamp unlock", async ({
   page,
@@ -325,6 +326,7 @@ test("Global Environmental Lighting controls cycle Day, Sunset, Dusk, Night stat
   page.on("pageerror", (err) => errors.push(err.message));
 
   await page.goto("/");
+  await openHeaderSettings(page);
 
   const lightingControls = page.locator(".lighting-controls");
   await expect(lightingControls).toBeVisible();

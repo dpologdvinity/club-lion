@@ -5,10 +5,26 @@ import {
   ChevronDown,
   ChevronRight,
   CircleHelp,
+  CircleUserRound,
   Compass,
+  Crown,
+  Gamepad2,
+  Globe,
   Heart,
+  House,
+  IdCard,
+  Music,
   PawPrint,
+  Scissors,
+  Server,
+  Settings,
+  Shirt,
+  ShoppingBag,
+  Stamp,
+  Store,
   Sun,
+  Trophy,
+  Users,
 } from "lucide-react";
 import {
   applySalonLook,
@@ -117,6 +133,26 @@ export default function App() {
   const [initialGame, setInitialGame] = useState<GameId | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  useEffect(() => {
+    if (!settingsOpen) return;
+    const close = (event: Event) => {
+      if (event instanceof KeyboardEvent) {
+        if (event.key === "Escape") setSettingsOpen(false);
+      } else if (
+        !(event.target instanceof Element) ||
+        !event.target.closest(".header-actions")
+      ) {
+        setSettingsOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, [settingsOpen]);
   const [toast, setToast] = useState("");
   useEffect(() => {
     if (!toast) return;
@@ -207,104 +243,144 @@ export default function App() {
                 closePanel();
               }}
             >
-              World
+              <Globe size={20} aria-hidden="true" />
+              <span className="nav-label">World</span>
             </button>
             <button
               className={panel === "catalog" ? "selected" : ""}
               onClick={() => setPanel("catalog")}
             >
-              Le Shop
+              <ShoppingBag size={20} aria-hidden="true" />
+              <span className="nav-label">Le Shop</span>
             </button>
             <button
               className={panel === "salon" ? "selected" : ""}
               onClick={() => setPanel("salon")}
             >
-              Salon
+              <Scissors size={20} aria-hidden="true" />
+              <span className="nav-label">Salon</span>
             </button>
             <button
               className={panel === "closet" ? "selected" : ""}
               onClick={() => setPanel("closet")}
             >
-              Closet
+              <Shirt size={20} aria-hidden="true" />
+              <span className="nav-label">Closet</span>
             </button>
             <button
               className={panel === "games" ? "selected" : ""}
               onClick={() => openGames()}
             >
-              Games
+              <Gamepad2 size={20} aria-hidden="true" />
+              <span className="nav-label">Games</span>
             </button>
             <button
               className={place === "den" && !panel ? "selected" : ""}
               onClick={() => navigate("den")}
             >
-              My den
+              <House size={20} aria-hidden="true" />
+              <span className="nav-label">My den</span>
             </button>
             <button
               className={panel === "shop" ? "selected" : ""}
               onClick={() => setPanel("shop")}
             >
-              Shop
+              <Store size={20} aria-hidden="true" />
+              <span className="nav-label">Shop</span>
             </button>
             <button
               className={panel === "card" ? "selected" : ""}
               onClick={() => setPanel("card")}
             >
-              ID Card
+              <IdCard size={20} aria-hidden="true" />
+              <span className="nav-label">ID Card</span>
             </button>
             <button
               className={panel === "stamps" ? "selected" : ""}
               onClick={() => setPanel("stamps")}
             >
-              Stamp Book
+              <Stamp size={20} aria-hidden="true" />
+              <span className="nav-label">Stamp Book</span>
             </button>
             <button
               className={panel === "friends" ? "selected" : ""}
               onClick={() => setPanel("friends")}
             >
-              Friends
+              <Users size={20} aria-hidden="true" />
+              <span className="nav-label">Friends</span>
             </button>
             <button
               className={panel === "servers" ? "selected" : ""}
               onClick={() => setPanel("servers")}
             >
-              Servers
+              <Server size={20} aria-hidden="true" />
+              <span className="nav-label">Servers</span>
             </button>
             <button
               className={panel === "jukebox" ? "selected" : ""}
               onClick={() => setPanel("jukebox")}
             >
-              Jukebox
+              <Music size={20} aria-hidden="true" />
+              <span className="nav-label">Jukebox</span>
             </button>
             <button
               className={panel === "leaderboard" ? "selected" : ""}
               onClick={() => setPanel("leaderboard")}
             >
-              Leaderboard
+              <Trophy size={20} aria-hidden="true" />
+              <span className="nav-label">Leaderboard</span>
             </button>
             <button
               className={panel === "rooftop" ? "selected" : ""}
               onClick={() => setPanel("rooftop")}
             >
-              VIP Lounge
+              <Crown size={20} aria-hidden="true" />
+              <span className="nav-label">VIP Lounge</span>
             </button>
             <button
               className={panel === "account" ? "selected" : ""}
               onClick={() => setPanel("account")}
             >
-              Account
+              <CircleUserRound size={20} aria-hidden="true" />
+              <span className="nav-label">Account</span>
             </button>
           </nav>
           <div className="header-actions">
-            <LightingControls
-              timeOfDay={timeOfDay}
-              autoTime={autoTime}
-              onSelectTime={(time) => {
-                setAutoTime(false);
-                setTimeOfDay(time);
-              }}
-              onToggleAuto={() => setAutoTime((prev) => !prev)}
-            />
-            <AudioControls />
+            <button
+              type="button"
+              className={`icon-button header-settings-toggle ${settingsOpen ? "is-active" : ""}`}
+              aria-label="Settings"
+              aria-expanded={settingsOpen}
+              aria-controls="header-settings"
+              onClick={() => setSettingsOpen((open) => !open)}
+            >
+              <Settings size={22} />
+            </button>
+            <div
+              id="header-settings"
+              className={`header-settings ${settingsOpen ? "is-open" : ""}`}
+            >
+              <LightingControls
+                timeOfDay={timeOfDay}
+                autoTime={autoTime}
+                onSelectTime={(time) => {
+                  setAutoTime(false);
+                  setTimeOfDay(time);
+                }}
+                onToggleAuto={() => setAutoTime((prev) => !prev)}
+              />
+              <AudioControls />
+              <button
+                className="icon-button help-button"
+                aria-label="How to play"
+                onClick={() => {
+                  setSettingsOpen(false);
+                  setPanel("help");
+                }}
+              >
+                <CircleHelp size={22} />
+              </button>
+            </div>
             <button
               className={`icon-button sidebar-toggle ${sidebarOpen ? "is-active" : ""}`}
               aria-label={
@@ -312,19 +388,10 @@ export default function App() {
                   ? "Hide adventures sidebar"
                   : "Show adventures sidebar"
               }
-              title="Adventures & Quests"
               aria-expanded={sidebarOpen}
               onClick={() => setSidebarOpen((prev) => !prev)}
             >
               <Compass size={21} />
-            </button>
-            <button
-              className="icon-button help-button"
-              aria-label="How to play"
-              title="How to play"
-              onClick={() => setPanel("help")}
-            >
-              <CircleHelp size={22} />
             </button>
             <div className="player-menu">
               <span className="wallet" aria-label={`${player.coins} coins`}>

@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
+import { openHeaderSettings } from "./header";
 
 test("header audio controls and procedural jukebox modal play tracks and adjust volume", async ({
   page,
@@ -9,6 +10,7 @@ test("header audio controls and procedural jukebox modal play tracks and adjust 
   page.on("pageerror", (err) => errors.push(err.message));
 
   await page.goto("/");
+  await openHeaderSettings(page);
 
   // Verify AudioControls in header
   const audioControls = page.locator(".audio-controls");

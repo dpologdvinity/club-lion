@@ -342,6 +342,102 @@ svg {
   width: 34px;
   height: 43px;
 }
+/* Nav icons stand in for words on phones; labels stay for screen readers. */
+.main-nav button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.main-nav button > svg {
+  display: none;
+}
+.header-settings {
+  display: contents;
+}
+.header-settings-toggle {
+  display: none;
+}
+@media (max-width: 1279px) {
+  .site-header {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+  }
+  .header-inner {
+    gap: 8px;
+  }
+  .main-nav {
+    flex: 1 1 auto;
+    /* Fade the trailing edge so the scrollable nav reads as "more this way". */
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+  .header-actions {
+    position: relative;
+    gap: 6px;
+    padding: 4px 6px;
+  }
+  .header-settings-toggle {
+    display: inline-flex;
+  }
+  .header-settings {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: max-content;
+    max-width: calc(100vw - 16px);
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 12px;
+    background: rgba(255, 253, 249, 0.97);
+    border: 1px solid rgba(233, 229, 218, 0.85);
+    border-radius: 22px;
+    box-shadow: 0 12px 36px rgba(41, 75, 60, 0.18);
+  }
+  .header-settings.is-open {
+    display: flex;
+  }
+}
+@media (max-width: 590px) {
+  .brand {
+    display: none;
+  }
+  .main-nav {
+    gap: 2px;
+    padding: 2px 4px;
+  }
+  .main-nav button {
+    padding: 0;
+    width: 48px;
+    height: 48px;
+    justify-content: center;
+  }
+  .main-nav button > svg {
+    display: block;
+  }
+  .main-nav .nav-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .player-menu {
+    height: 44px;
+    gap: 6px;
+    padding: 0 4px 0 8px;
+  }
+  .wallet {
+    min-width: 0;
+    font-size: 13px;
+  }
+  .player-menu-divider,
+  .avatar-button > svg {
+    display: none;
+  }
+}
 .page-container {
   max-width: 100vw;
   padding: 0;
@@ -2994,20 +3090,6 @@ svg {
   }
 }
 @media (max-width: 1150px) {
-  .header-inner {
-    gap: 30px;
-    padding: 0 26px;
-  }
-  .main-nav {
-    gap: 4px;
-  }
-  .main-nav button {
-    min-width: 68px;
-    padding: 10px 15px;
-  }
-  .page-container {
-    padding: 0 26px;
-  }
   .game-layout {
     grid-template-columns: minmax(0, 1fr) 274px;
     gap: 16px;
@@ -3068,40 +3150,6 @@ svg {
   }
 }
 @media (max-width: 850px) {
-  .header-inner {
-    gap: 16px;
-    padding: 0 20px;
-  }
-  .brand > span:last-child {
-    font-size: 22px;
-  }
-  .brand-sun {
-    left: 90px;
-  }
-  .brand-lion {
-    width: 38px;
-  }
-  .brand-lion .lion {
-    width: 40px;
-  }
-  .main-nav button {
-    font-size: 12px;
-    min-width: 59px;
-    padding: 9px 12px;
-  }
-  .header-actions {
-    gap: 10px;
-  }
-  .help-button {
-    display: none;
-  }
-  .player-menu {
-    gap: 10px;
-    padding-left: 10px;
-  }
-  .page-container {
-    padding: 0 20px;
-  }
   .welcome {
     padding: 27px 3px 23px;
   }
@@ -3183,92 +3231,6 @@ svg {
   }
 }
 @media (max-width: 590px) {
-  .site-header {
-    height: auto;
-  }
-  .header-inner {
-    padding: 12px 17px 0;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .brand > span:last-child {
-    font-size: 23px;
-  }
-  .brand-lion {
-    height: 38px;
-  }
-  .brand-lion .lion {
-    height: 49px;
-  }
-  .brand-sun {
-    top: -13px;
-  }
-  .header-actions {
-    order: 2;
-    width: 100%;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-left: 0;
-    gap: 8px;
-    max-width: 100%;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-  .header-actions .audio-controls {
-    max-width: 100%;
-  }
-  .header-actions .audio-controls-slider {
-    min-width: 0;
-  }
-  .player-menu {
-    height: 37px;
-  }
-  .wallet {
-    font-size: 12px;
-    min-width: 45px;
-  }
-  .coin-icon {
-    width: 19px;
-    height: 19px;
-    font-size: 12px;
-  }
-  .header-avatar {
-    width: 26px;
-    height: 28px;
-  }
-  .header-avatar .lion {
-    width: 28px;
-    height: 34px;
-  }
-  .avatar-button {
-    gap: 4px;
-  }
-  .player-menu-divider {
-    height: 15px;
-  }
-  .main-nav {
-    order: 3;
-    width: 100%;
-    display: flex;
-    overflow-x: auto;
-    scrollbar-width: none;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    gap: 6px;
-    padding: 7px 0 11px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .main-nav::-webkit-scrollbar {
-    display: none;
-  }
-  .main-nav button {
-    flex: 0 0 auto;
-    min-height: 36px;
-    font-size: 12px;
-    padding: 8px 11px;
-    border-radius: 11px;
-    white-space: nowrap;
-  }
   .page-container {
     padding: 0;
     max-width: 100vw;
@@ -3740,15 +3702,6 @@ svg {
   }
 }
 @media (max-width: 370px) {
-  .brand > span:last-child {
-    font-size: 21px;
-  }
-  .brand-lion {
-    width: 31px;
-  }
-  .player-menu {
-    gap: 7px;
-  }
   .welcome h1 {
     font-size: 25px;
   }

@@ -2,6 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
 import { coinsFor, FLOWER_SPOTS } from "../src/beeStop";
+import { openHeaderSettings } from "./header";
 
 const PAW_LABELS = ["Up", "Down", "Left", "Right"];
 const PAW_KEYS: Record<string, string> = {
@@ -541,6 +542,7 @@ test("unavailable browser storage preserves a playable world with an honest warn
   await expect(page.getByRole("alert")).toContainText(
     "Your browser couldn’t save",
   );
+  await openHeaderSettings(page);
   await expect(
     page.getByRole("group", { name: "Environmental lighting" }),
   ).toBeVisible();
@@ -550,11 +552,13 @@ test("unavailable browser storage preserves a playable world with an honest warn
 
 test("a valid saved lighting preference survives reload", async ({ page }) => {
   await page.goto("/");
+  await openHeaderSettings(page);
   await page.getByRole("button", { name: "Night", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Night", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
   await page.reload();
+  await openHeaderSettings(page);
   await expect(
     page.getByRole("button", { name: "Night", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
@@ -588,6 +592,7 @@ test("environmental lighting applies globally to raster rooms without manifests"
   page,
 }) => {
   await page.goto("/");
+  await openHeaderSettings(page);
   await page.getByRole("button", { name: "Night", exact: true }).click();
   await expect(page.locator(".global-lighting-tint")).toBeVisible();
   await page.getByRole("button", { name: "My den", exact: true }).click();
@@ -600,6 +605,7 @@ test("lighting controls are keyboard selectable with visible focus", async ({
   page,
 }) => {
   await page.goto("/");
+  await openHeaderSettings(page);
   const dusk = page.getByRole("button", { name: "Dusk", exact: true });
   await dusk.focus();
   await page.keyboard.press("Enter");
@@ -614,6 +620,7 @@ test.describe("with reduced motion", () => {
     page,
   }) => {
     await page.goto("/");
+    await openHeaderSettings(page);
     await page.getByRole("button", { name: "Night", exact: true }).click();
     const star = page.locator(".global-lighting-star").first();
     await expect(star).toBeVisible();
@@ -634,6 +641,7 @@ test("the header with lighting controls fits narrow viewports without overflow",
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+  await openHeaderSettings(page);
   await expect(
     page.getByRole("group", { name: "Environmental lighting" }),
   ).toBeVisible();
