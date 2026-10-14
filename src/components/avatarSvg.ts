@@ -1,6 +1,7 @@
 import type { AvatarLook, EntityAction } from "../types/world.ts";
 import { DEFAULT_AVATAR_LOOK } from "../types/world.ts";
 import {
+  INK,
   MIRROR,
   RIGHT_ARM_DOWN,
   RIGHT_ARM_WAVE,
@@ -8,6 +9,7 @@ import {
   armMarkup,
   n,
   resolveSkinTone,
+  rig,
   rightArmFor,
   sleeve,
 } from "./avatar/shared.ts";
@@ -51,7 +53,7 @@ function renderLayer0ShadowAndBoard(look: AvatarLook, action: string): string {
   // Ground shadow
   parts.push(
     `<g class="avatar-shadow">` +
-      `<ellipse cx="60" cy="147" rx="24" ry="5.5" fill="rgba(41, 75, 60, 0.22)" />` +
+      `<ellipse cx="60" cy="153" rx="20" ry="4.6" fill="rgba(41, 75, 60, 0.22)" />` +
       `</g>`,
   );
 
@@ -73,7 +75,7 @@ function renderLayer0ShadowAndBoard(look: AvatarLook, action: string): string {
     let boardContent = "";
     if (look.boardId === "hover_leaf") {
       boardContent =
-        `<g class="avatar-board hover-leaf" transform="translate(0, 4)">` +
+        `<g class="avatar-board hover-leaf" transform="translate(0, 10)">` +
         sparkleMarkup +
         // Glowing hover leaf deck
         `<ellipse cx="60" cy="144" rx="38" ry="9" fill="rgba(46, 204, 113, 0.25)" filter="blur(2px)" />` +
@@ -86,7 +88,7 @@ function renderLayer0ShadowAndBoard(look: AvatarLook, action: string): string {
     } else {
       // Generic skateboard / deck
       boardContent =
-        `<g class="avatar-board generic-board" transform="translate(0, 4)">` +
+        `<g class="avatar-board generic-board" transform="translate(0, 10)">` +
         sparkleMarkup +
         `<rect x="24" y="141" width="72" height="7" rx="3.5" fill="#e67e22" stroke="#d35400" stroke-width="1.2" />` +
         `<circle cx="36" cy="148" r="3" fill="#2c3e50" />` +
@@ -104,32 +106,44 @@ function renderLayer0ShadowAndBoard(look: AvatarLook, action: string): string {
  * Layer 2: Body Base (Skin tones, head, neck, torso, arms, legs)
  * ------------------------------------------------------------- */
 const HEAD_PATH =
-  "M60 13 C76.4 13 86.4 23 86.2 38.4 C86 46.4 83.6 52 79.2 57 C74 62.6 66.4 67.2 60 67.2 C53.6 67.2 46 62.6 40.8 57 C36.4 52 34 46.4 33.8 38.4 C33.6 23 43.6 13 60 13 Z";
+  "M60 13 C76.6 13 86.6 23.4 86.4 38.6 C86.3 45.6 84.8 50.6 81.4 55.2 C75.8 62.2 67.4 67.6 60 67.6 C52.6 67.6 44.2 62.2 38.6 55.2 C35.2 50.6 33.7 45.6 33.6 38.6 C33.4 23.4 43.4 13 60 13 Z";
 
 const LEG_PATH =
   "M49.4 99 L59 99 C59.2 108 58.2 118 56.6 131 L51.8 131 C50.8 118 49.2 108 49.4 99 Z";
+
+/** Slender neck flaring into the shoulders (final canvas coordinates). */
+const NECK_PATH =
+  "M57.3 50 L62.7 50 L62.7 57.6 C63.1 61.6 64.6 63.6 67.8 64.6 L68 66.4 L52 66.4 L52.2 64.6 C55.4 63.6 56.9 61.6 57.3 57.6 Z";
 
 function renderLayer2BodyBase(look: AvatarLook, action: string): string {
   const skin = resolveSkinTone(look.skinTone);
   const isWaving = action === "wave";
   const contour = "rgba(110, 50, 30, 0.16)";
+  const ink = (width: number) =>
+    `stroke="${INK}" stroke-width="${width}" stroke-linejoin="round"`;
 
   return (
     `<g class="avatar-body">` +
     // Long slender legs
-    `<g class="avatar-legs">` +
-    `<path d="${LEG_PATH}" fill="${skin}" />` +
-    `<path d="${LEG_PATH}" ${MIRROR} fill="${skin}" />` +
-    `<path d="M52.4 116 Q54 117 55.8 116" stroke="${contour}" stroke-width="0.6" fill="none" />` +
-    `<path d="M64.2 116 Q66 117 67.6 116" stroke="${contour}" stroke-width="0.6" fill="none" />` +
-    `</g>` +
-    // Slim torso with defined waist
-    `<path d="M48 72.4 C52 70.6 68 70.6 72 72.4 C73.2 78 70.8 84 67.8 91 C68.2 95 70.6 98.6 70.8 102 L49.2 102 C49.4 98.6 51.8 95 52.2 91 C49.2 84 46.8 78 48 72.4 Z" fill="${skin}" />` +
-    `<path d="M57.6 96.4 Q60 97.4 62.4 96.4" stroke="${contour}" stroke-width="0.5" fill="none" />` +
-    // Belly button with sparkling rhinestone navel gem
-    `<ellipse cx="60" cy="95.4" rx="0.55" ry="0.75" fill="rgba(90, 40, 20, 0.45)" />` +
-    `<circle cx="60" cy="94.6" r="0.65" fill="#f4c542" />` +
-    `<circle cx="60" cy="94.6" r="0.35" fill="#ffffff" />` +
+    rig(
+      "legs",
+      `<g class="avatar-legs">` +
+        `<path d="${LEG_PATH}" fill="${skin}" ${ink(1.1)} />` +
+        `<path d="${LEG_PATH}" ${MIRROR} fill="${skin}" ${ink(1.1)} />` +
+        `<path d="M52.4 116 Q54 117 55.8 116" stroke="${contour}" stroke-width="0.6" fill="none" />` +
+        `<path d="M64.2 116 Q66 117 67.6 116" stroke="${contour}" stroke-width="0.6" fill="none" />` +
+        `</g>`,
+    ) +
+    // Slim torso with a nipped waist
+    rig(
+      "torso",
+      `<path d="M48 72.4 C52 70.6 68 70.6 72 72.4 C73.2 78 70.8 84 67.8 91 C68.2 95 70.6 98.6 70.8 102 L49.2 102 C49.4 98.6 51.8 95 52.2 91 C49.2 84 46.8 78 48 72.4 Z" fill="${skin}" ${ink(1.1)} />` +
+        `<path d="M57.6 96.4 Q60 97.4 62.4 96.4" stroke="${contour}" stroke-width="0.5" fill="none" />` +
+        // Belly button with sparkling rhinestone navel gem
+        `<ellipse cx="60" cy="95.4" rx="0.55" ry="0.75" fill="rgba(90, 40, 20, 0.45)" />` +
+        `<circle cx="60" cy="94.6" r="0.65" fill="#f4c542" />` +
+        `<circle cx="60" cy="94.6" r="0.35" fill="#ffffff" />`,
+    ) +
     // Left arm, hand on hip (player's left, viewer's right)
     `<g class="avatar-left-arm">` +
     armMarkup(LEFT_ARM_HIP, skin) +
@@ -139,16 +153,18 @@ function renderLayer2BodyBase(look: AvatarLook, action: string): string {
       ? ""
       : `<g class="avatar-right-arm">${armMarkup(RIGHT_ARM_DOWN, skin)}</g>`) +
     // Graceful slender neck with chin shadow and collarbones
-    `<path d="M56.4 58 L63.6 58 L64.0 73 L56.0 73 Z" fill="${skin}" />` +
-    `<path d="M56.2 63.4 Q60 68.6 63.8 63.4 L63.9 67.8 Q60 70.8 56.1 67.8 Z" fill="${contour}" />` +
-    `<path d="M53.4 73.4 Q56 74.6 58.2 74" stroke="${contour}" stroke-width="0.6" stroke-linecap="round" fill="none" />` +
-    `<path d="M66.6 73.4 Q64 74.6 61.8 74" stroke="${contour}" stroke-width="0.6" stroke-linecap="round" fill="none" />` +
-    `<path d="M53.6 73.0 Q56 74.2 58.0 73.6" stroke="rgba(255,255,255,0.32)" stroke-width="0.5" stroke-linecap="round" fill="none" />` +
-    // Ears
-    `<ellipse cx="34.6" cy="45" rx="3" ry="4.4" fill="${skin}" />` +
-    `<ellipse cx="85.4" cy="45" rx="3" ry="4.4" fill="${skin}" />` +
-    // Sculpted head: wide cheekbones tapering to a graceful chin
-    `<path d="${HEAD_PATH}" fill="${skin}" />` +
+    `<path d="${NECK_PATH}" fill="${skin}" />` +
+    `<path d="M57.3 50 L57.3 57.6 C56.9 61.6 55.4 63.6 52.2 64.6 M62.7 50 L62.7 57.6 C63.1 61.6 64.6 63.6 67.8 64.6" stroke="${INK}" stroke-width="0.9" stroke-linecap="round" fill="none" />` +
+    `<path d="M57.4 54 Q60 58.4 62.6 54 L62.6 57.2 Q60 59.6 57.4 57.2 Z" fill="${contour}" />` +
+    `<path d="M54.6 65.6 Q57 66.6 58.8 66 M65.4 65.6 Q63 66.6 61.2 66" stroke="${contour}" stroke-width="0.6" stroke-linecap="round" fill="none" />` +
+    rig(
+      "head",
+      // Ears
+      `<ellipse cx="34.6" cy="45" rx="3" ry="4.4" fill="${skin}" ${ink(1)} />` +
+        `<ellipse cx="85.4" cy="45" rx="3" ry="4.4" fill="${skin}" ${ink(1)} />` +
+        // Sculpted head: wide cheekbones tapering to a small pointed chin
+        `<path d="${HEAD_PATH}" fill="${skin}" ${ink(1.25)} />`,
+    ) +
     `</g>`
   );
 }
@@ -322,7 +338,15 @@ export function renderJewelry(look: AvatarLook): string {
         `</g>`;
       break;
   }
-  return `<g class="avatar-jewelry jewelry-${jewelry.replace(/_/g, "-")}">${art}</g>`;
+  // Earrings hang from the head; chokers and chains sit on the neck
+  const onNeck =
+    jewelry === "rhinestone_choker" ||
+    jewelry === "layered_chains" ||
+    jewelry === "butterfly_choker";
+  return rig(
+    onNeck ? "torso" : "head",
+    `<g class="avatar-jewelry jewelry-${jewelry.replace(/_/g, "-")}">${art}</g>`,
+  );
 }
 
 /* -------------------------------------------------------------
@@ -388,15 +412,15 @@ export function generateAvatarLayersString(
   return [
     `<defs>${makeupDefs(p, look)}${hairDefs(p)}</defs>`,
     renderLayer0ShadowAndBoard(look, act),
-    renderLayer1HairBack(look, p),
+    rig("head", renderLayer1HairBack(look, p)),
     renderLayer2BodyBase(look, act),
-    renderLayer3GlamFace(look, p),
+    rig("head", renderLayer3GlamFace(look, p)),
     renderLayer4Footwear(look),
     renderLayer5Outfit(look, act),
-    renderLayer6HairFront(look, p),
+    rig("head", renderLayer6HairFront(look, p)),
     renderRaisedArm(look, act),
     renderJewelry(look),
-    renderLayer7HeadwearAndEyewear(look),
+    rig("head", renderLayer7HeadwearAndEyewear(look)),
     renderLayer8Handheld(look, act),
   ]
     .filter((layer) => layer.length > 0)

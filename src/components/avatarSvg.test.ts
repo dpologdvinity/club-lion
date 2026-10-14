@@ -151,16 +151,15 @@ test("uses standard 120x160 canvas coordinates and fixed anchor points", () => {
   assert.ok(svg.includes('width="120"'));
   assert.ok(svg.includes('height="160"'));
 
-  assert.equal(ANCHORS.HeadCenter.x, 60);
-  assert.equal(ANCHORS.HeadCenter.y, 38);
-  assert.equal(ANCHORS.Neck.x, 60);
-  assert.equal(ANCHORS.Neck.y, 68);
-  assert.equal(ANCHORS.Waist.x, 60);
-  assert.equal(ANCHORS.Waist.y, 98);
-  assert.equal(ANCHORS.HandRight.x, 32);
-  assert.equal(ANCHORS.HandRight.y, 92);
-  assert.equal(ANCHORS.Feet.x, 60);
-  assert.equal(ANCHORS.Feet.y, 142);
+  assert.deepEqual(ANCHORS.HeadCenter, { x: 60, y: 31 });
+  assert.deepEqual(ANCHORS.Neck, { x: 60, y: 60 });
+  assert.deepEqual(ANCHORS.Waist, { x: 60, y: 90 });
+  assert.deepEqual(ANCHORS.HandRight, { x: 44, y: 101 });
+  assert.deepEqual(ANCHORS.Feet, { x: 60, y: 146 });
+  // Doll proportions: the head is about a third of the standing height
+  const headHeight = (ANCHORS.Neck.y - ANCHORS.HeadCenter.y) * 2;
+  const standing = ANCHORS.Feet.y + 7 - (ANCHORS.HeadCenter.y - headHeight / 2);
+  assert.ok(headHeight / standing > 0.3 && headHeight / standing < 0.42);
 });
 
 test("applies action classes and poses for idle, walk, wave, dance, sit, and jam", () => {

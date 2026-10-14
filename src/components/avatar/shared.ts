@@ -21,14 +21,31 @@ export const SKIN_TONE_COLORS: Record<SkinTone, string> = {
   midnight: "#2d160e",
 };
 
+/** Doll proportions on the canvas: a big head (about a third of the height), slim torso, long legs. */
 export const ANCHORS = {
-  HeadCenter: { x: 60, y: 38 },
-  Neck: { x: 60, y: 68 },
-  Waist: { x: 60, y: 98 },
-  HandRight: { x: 32, y: 92 },
-  HandLeft: { x: 88, y: 92 },
-  Feet: { x: 60, y: 142 },
+  HeadCenter: { x: 60, y: 31 },
+  Neck: { x: 60, y: 60 },
+  Waist: { x: 60, y: 90 },
+  HandRight: { x: 44, y: 101 },
+  HandLeft: { x: 70, y: 91 },
+  Feet: { x: 60, y: 146 },
 } as const;
+
+/**
+ * Head, torso, and leg art is drawn on a shared 120×160 layout grid and
+ * placed onto the doll proportions by these transforms: the head shrinks
+ * slightly, the torso slims, and the legs stretch long onto chunky platforms.
+ */
+export const RIG = {
+  head: "matrix(0.9 0 0 0.9 6 -4.3)",
+  torso: "matrix(0.86 0 0 1 8.4 -7.5)",
+  legs: "matrix(0.86 0 0 1.32 8.4 -39.18)",
+} as const;
+
+/** Wraps markup in one of the {@link RIG} transforms. */
+export function rig(part: keyof typeof RIG, markup: string): string {
+  return markup ? `<g transform="${RIG[part]}">${markup}</g>` : "";
+}
 
 export function resolveSkinTone(tone?: string): string {
   if (!tone) return SKIN_TONE_COLORS.warm;
@@ -63,6 +80,23 @@ export const MIRROR = `transform="matrix(-1 0 0 1 120 0)"`;
 
 export const INK = "#2a1610";
 
+/**
+ * Adds the doll's bold ink outline to solid shapes that have no stroke of
+ * their own. Highlights (white, translucent, gradient, or `opacity`) and
+ * tiny specks stay unlined so the cel shading reads clean.
+ */
+export function inked(markup: string, width: number): string {
+  return markup.replace(
+    /<(path|rect|ellipse|circle|polygon)\b([^>]*?)\s*\/>/g,
+    (tag: string, name: string, attrs: string) =>
+      /\bstroke=|\bopacity=|fill="(none|url|rgba|#fff")|fill="#ffffff"|\br="0\.|\brx="0\./.test(
+        attrs,
+      )
+        ? tag
+        : `<${name}${attrs} stroke="${INK}" stroke-width="${width}" stroke-linejoin="round" />`,
+  );
+}
+
 /* -------------------------------------------------------------
  * Arms: shared by the body, sleeves, and handheld anchor
  * ------------------------------------------------------------- */
@@ -78,32 +112,32 @@ export type ArmPose = {
 };
 
 export const RIGHT_ARM_DOWN: ArmPose = {
-  shoulder: [49.4, 74.6],
-  elbowControl: [45, 79.4],
-  elbow: [43.6, 86.2],
-  wristControl: [42.2, 92.4],
-  wrist: [39.4, 96.4],
-  hand: [38.2, 98.4],
-  handAngle: 30,
+  shoulder: [51.2, 66.6],
+  elbowControl: [47.6, 73.4],
+  elbow: [46.8, 82.6],
+  wristControl: [46, 92],
+  wrist: [44.8, 98.8],
+  hand: [44.2, 101.2],
+  handAngle: 16,
 };
 
 export const RIGHT_ARM_WAVE: ArmPose = {
-  shoulder: [49.4, 74.6],
-  elbowControl: [39.4, 75],
-  elbow: [32.6, 68.4],
-  wristControl: [27.6, 62.6],
-  wrist: [26.8, 55.4],
-  hand: [26.8, 52.6],
+  shoulder: [51.2, 66.6],
+  elbowControl: [43.4, 67.6],
+  elbow: [38.6, 61.2],
+  wristControl: [34.6, 55.4],
+  wrist: [34.2, 48.4],
+  hand: [34.2, 45.8],
   handAngle: -5,
 };
 
 export const LEFT_ARM_HIP: ArmPose = {
-  shoulder: [70.6, 74.6],
-  elbowControl: [78.4, 78.6],
-  elbow: [80.8, 85.2],
-  wristControl: [79.6, 91.6],
-  wrist: [74.2, 95.6],
-  hand: [72.4, 96.8],
+  shoulder: [68.8, 66.6],
+  elbowControl: [74.6, 71.6],
+  elbow: [76.8, 79.6],
+  wristControl: [76.4, 87],
+  wrist: [71.4, 90.2],
+  hand: [69.8, 91],
   handAngle: -60,
 };
 
@@ -129,16 +163,21 @@ export function upperArmPath(arm: ArmPose, t: number): string {
 export function handMarkup(arm: ArmPose, skin: string): string {
   const [hx, hy] = arm.hand;
   return (
-    `<ellipse cx="${n(hx)}" cy="${n(hy)}" rx="2.3" ry="3" fill="${skin}" transform="rotate(${arm.handAngle} ${n(hx)} ${n(hy)})" />` +
+    `<ellipse cx="${n(hx)}" cy="${n(hy)}" rx="1.9" ry="2.6" fill="${skin}" stroke="${INK}" stroke-width="0.7" transform="rotate(${arm.handAngle} ${n(hx)} ${n(hy)})" />` +
     // Sculpted acrylic manicured nails with gloss highlight
     `<ellipse cx="${n(hx)}" cy="${n(hy + 2.1)}" rx="1.4" ry="0.95" fill="#ff4f94" transform="rotate(${arm.handAngle} ${n(hx)} ${n(hy)})" />` +
     `<ellipse cx="${n(hx - 0.3)}" cy="${n(hy + 1.9)}" rx="0.5" ry="0.3" fill="#ffffff" opacity="0.75" transform="rotate(${arm.handAngle} ${n(hx)} ${n(hy)})" />`
   );
 }
 
+/** Slim doll arm width; the ink outline adds 0.7 on each side. */
+const ARM_WIDTH = 3.3;
+
 export function armMarkup(arm: ArmPose, skin: string): string {
+  const d = armPath(arm);
   return (
-    `<path d="${armPath(arm)}" stroke="${skin}" stroke-width="4.4" stroke-linecap="round" fill="none" />` +
+    `<path d="${d}" stroke="${INK}" stroke-width="${ARM_WIDTH + 1.4}" stroke-linecap="round" fill="none" />` +
+    `<path d="${d}" stroke="${skin}" stroke-width="${ARM_WIDTH}" stroke-linecap="round" fill="none" />` +
     handMarkup(arm, skin)
   );
 }
@@ -157,8 +196,11 @@ export type SleeveSpec = {
 /** Sleeve following an arm pose; cap sleeves cover only the upper arm. */
 export function sleeve(arm: ArmPose, spec: SleeveSpec): string {
   const d = spec.upperOnly ? upperArmPath(arm, 0.5) : armPath(arm);
+  // Sleeve widths were tuned for a thicker arm; slim them to the doll arm
+  const width = spec.width * 0.8;
   return (
-    `<path d="${d}" stroke="${spec.color}" stroke-width="${spec.width}" stroke-linecap="round" fill="none" />` +
+    `<path d="${d}" stroke="${INK}" stroke-width="${n(width + 1.2)}" stroke-linecap="round" fill="none" />` +
+    `<path d="${d}" stroke="${spec.color}" stroke-width="${n(width)}" stroke-linecap="round" fill="none" />` +
     (spec.detail
       ? `<path d="${d}" stroke="${spec.detail}" stroke-width="0.5" fill="none" />`
       : "")

@@ -13,8 +13,10 @@ import {
   MIRROR,
   RIGHT_ARM_DOWN,
   handMarkup,
+  inked,
   n,
   resolveSkinTone,
+  rig,
   sleeve,
   type SleeveSpec,
 } from "./shared.ts";
@@ -157,12 +159,13 @@ const SHOE_ART: Record<ShoeId, (skin: string) => string> = {
 
 export function renderLayer4Footwear(look: AvatarLook): string {
   const shoesId = resolveShoeId(look);
-  const shoe = SHOE_ART[shoesId](resolveSkinTone(look.skinTone));
-  return (
+  const shoe = inked(SHOE_ART[shoesId](resolveSkinTone(look.skinTone)), 0.8);
+  return rig(
+    "legs",
     `<g class="avatar-footwear footwear-${dashed(shoesId)}">` +
-    `<g class="shoe-left">${shoe}</g>` +
-    `<g class="shoe-right" ${MIRROR}>${shoe}</g>` +
-    `</g>`
+      `<g class="shoe-left">${shoe}</g>` +
+      `<g class="shoe-right" ${MIRROR}>${shoe}</g>` +
+      `</g>`,
   );
 }
 
@@ -629,8 +632,8 @@ export function renderLayer5Outfit(
 
   return (
     `<g class="avatar-outfit${legacy} top-${dashed(topId)} bottom-${dashed(bottomId)}">` +
-    BOTTOM_ART[bottomId]() +
-    TOP_ART[topId].markup() +
+    rig("legs", inked(BOTTOM_ART[bottomId](), 0.8)) +
+    rig("torso", inked(TOP_ART[topId].markup(), 0.8)) +
     sleeves(look, action) +
     hipHand +
     `</g>`

@@ -1,6 +1,6 @@
 import type { AvatarLook, HairStyle } from "../../types/world.ts";
 import { resolveHairStyle } from "../../types/world.ts";
-import { MIRROR, escapeXml, n } from "./shared.ts";
+import { MIRROR, escapeXml, inked, n } from "./shared.ts";
 
 /* -------------------------------------------------------------
  * Hairstyles: each cut provides a back mass and a face-framing front
@@ -924,7 +924,7 @@ export function renderLayer1HairBack(look: AvatarLook, p: string): string {
   const cls = style.replace(/_/g, "-");
   return (
     `<g class="avatar-hair-back hair-${cls}">` +
-    hairArt(style, hairColor, p).back +
+    inked(hairArt(style, hairColor, p).back, 1.1) +
     `</g>`
   );
 }
@@ -1040,9 +1040,9 @@ export function renderLayer6HairFront(look: AvatarLook, p: string): string {
   const cls = style.replace(/_/g, "-");
   return (
     `<g class="avatar-hair-front hair-${cls}">` +
-    hairArt(style, hairColor, p).front +
+    inked(hairArt(style, hairColor, p).front, 1.1) +
     renderHairStreak(style, look.hairStreak) +
-    renderBangs(look, hairColor) +
+    inked(renderBangs(look, hairColor), 1.1) +
     `</g>`
   );
 }
