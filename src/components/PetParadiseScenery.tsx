@@ -99,9 +99,16 @@ function ClawTub({
 }
 
 // Paw-print chandelier over the grooming spa: the room's memorable landmark.
-function PawChandelier({ sway }: { sway: number }): JSX.Element {
+const PawChandelier = memo(function PawChandelier(): JSX.Element {
   return (
-    <g transform={`rotate(${sway} 1200 0)`}>
+    <g
+      className="sm-sway"
+      style={{
+        "--sm-deg": "2deg",
+        "--sm-dur": "3.93s",
+        "--sm-origin": "50% 0%",
+      }}
+    >
       <rect x="1199" y="0" width="2" height="150" fill="#c9a04e" />
       <PawPrint x={1200} y={232} scale={2} fill="url(#pp-gold)" />
       {[-44, -18, 18, 44].map((dx) => (
@@ -115,7 +122,7 @@ function PawChandelier({ sway }: { sway: number }): JSX.Element {
       ))}
     </g>
   );
-}
+});
 
 function Sparkle({
   x,
@@ -137,7 +144,7 @@ function Sparkle({
   );
 }
 
-// Static decoration below: memoized and never given `seconds`, so the 80ms ticks skip them.
+// Decoration below is memoized; its motion runs as CSS animations.
 
 const PetWall = memo(function PetWall(): JSX.Element {
   return (
@@ -282,54 +289,100 @@ const PetPortalDoor = memo(function PetPortalDoor(): JSX.Element {
   );
 });
 
-function SpaEffects({ seconds }: { seconds: number }): JSX.Element {
-  const bubbles = BUBBLES.map((bubble, i) => {
-    const rise = (seconds * 26 + i * 21) % 60;
-    return { ...bubble, y: bubble.y - rise, r: 5 + (i % 2) * 2, rise };
-  });
+const SpaEffects = memo(function SpaEffects(): JSX.Element {
   return (
     <>
-      {bubbles.map((bubble, i) => (
-        <circle
-          key={i}
-          cx={bubble.x}
-          cy={bubble.y}
-          r={bubble.r}
-          fill="#ffffff"
-          opacity={0.85 - bubble.rise / 90}
+      {/* Bubbles rise 60px and fade; rotate(-90) turns the sideways drift upward. */}
+      <mask
+        id="pp-bubble-fade"
+        maskUnits="userSpaceOnUse"
+        maskContentUnits="userSpaceOnUse"
+        x="-20"
+        y="-75"
+        width="40"
+        height="90"
+      >
+        <linearGradient
+          id="pp-bubble-fade-grad"
+          gradientUnits="userSpaceOnUse"
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="-60"
+        >
+          <stop offset="0" stopColor="#ffffff" stopOpacity=".85" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity=".18" />
+        </linearGradient>
+        <rect
+          x="-20"
+          y="-75"
+          width="40"
+          height="90"
+          fill="url(#pp-bubble-fade-grad)"
         />
+      </mask>
+      {BUBBLES.map((bubble, i) => (
+        <g
+          key={i}
+          transform={`translate(${bubble.x} ${bubble.y})`}
+          mask="url(#pp-bubble-fade)"
+        >
+          <g transform="rotate(-90)">
+            <g
+              className="sm-drift"
+              style={{
+                "--sm-dist": "60px",
+                "--sm-dur": "2.31s",
+                "--sm-delay": `${(-i * 21) / 26}s`,
+              }}
+            >
+              <circle r={5 + (i % 2) * 2} fill="#ffffff" />
+            </g>
+          </g>
+        </g>
       ))}
       {SPARKLES.map((sparkle, i) => (
-        <Sparkle
+        <g
           key={i}
-          x={sparkle.x}
-          y={sparkle.y}
-          scale={0.8 + 0.25 * Math.sin(seconds * 3 + i)}
-        />
+          className="sm-pulse"
+          style={{
+            "--sm-scale": 1.05 / 0.8,
+            "--sm-dur": "1.05s",
+            "--sm-delay": `${-i / 3}s`,
+          }}
+        >
+          <Sparkle x={sparkle.x} y={sparkle.y} scale={0.8} />
+        </g>
       ))}
     </>
   );
-}
+});
 
 export function PetParadiseScenery({
   seconds,
 }: {
   seconds: number;
 }): JSX.Element {
-  const sway = Math.sin(seconds * 0.8) * 2;
-  const glowPulse = Math.sin(seconds * 2.2);
-
+  // Motion is CSS-driven; `seconds` stays in the signature for the dispatcher.
+  void seconds;
   return (
     <g className="pet-paradise-scenery">
       <PetWall />
-      <PawChandelier sway={sway} />
+      <PawChandelier />
       <PetSpa />
-      <SpaEffects seconds={seconds} />
+      <SpaEffects />
       <PetFloor />
       <PetProps />
 
       {/* Portal to Downtown Plaza: glowing arched paw door on the left */}
-      <circle cx="64" cy="500" r={72 + glowPulse * 6} fill="url(#pp-glow)" />
+      <circle
+        className="sm-pulse"
+        style={{ "--sm-scale": 78 / 66, "--sm-dur": "1.43s" }}
+        cx="64"
+        cy="500"
+        r="66"
+        fill="url(#pp-glow)"
+      />
       <PetPortalDoor />
     </g>
   );
