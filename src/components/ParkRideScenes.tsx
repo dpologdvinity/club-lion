@@ -1337,9 +1337,9 @@ function DropTowerScene({ look, pet, armsUp }: SceneProps) {
             <Tent x={470} y={250} w={240} h={230} a="#fff7ed" b="#3b82f6" />
             <Tent x={-620} y={250} w={200} h={190} a="#fff7ed" b="#22c55e" />
             <Tent x={780} y={250} w={220} h={200} a="#fff7ed" b="#f59e0b" />
-            <rect x="40" y="-1700" width="120" height="1950" fill="#e11d48" />
-            <rect x="60" y="-1700" width="80" height="1950" fill="#fb7185" />
-            {Array.from({ length: 32 }, (_, i) => (
+            <rect x="40" y="-1000" width="120" height="1250" fill="#e11d48" />
+            <rect x="60" y="-1000" width="80" height="1250" fill="#fb7185" />
+            {Array.from({ length: 21 }, (_, i) => (
               <g key={i}>
                 <circle
                   className="sm-twinkle"
@@ -1365,20 +1365,20 @@ function DropTowerScene({ look, pet, armsUp }: SceneProps) {
                 />
               </g>
             ))}
-            <g transform="translate(100 -1830)">
+            <g transform="translate(100 -1130)">
               <path
                 d="M-110 40 L-80 -40 L-40 10 L0 -60 L40 10 L80 -40 L110 40 Z"
                 fill="#fbbf24"
                 stroke="#b45309"
                 strokeWidth="6"
               />
-              <LionFace x={0} y={100} r={85} />
+              <LionFace x={0} y={80} r={72} />
             </g>
             {[
-              [-300, -500, "#f43f5e"],
-              [480, -800, "#facc15"],
-              [-420, -1100, "#38bdf8"],
-              [380, -1350, "#a3e635"],
+              [-300, -300, "#f43f5e"],
+              [480, -480, "#facc15"],
+              [-420, -640, "#38bdf8"],
+              [380, -760, "#a3e635"],
             ].map(([x, y, c]) => (
               <g key={String(c)} transform={`translate(${x} ${y})`}>
                 <line y1="40" y2="150" stroke="#475569" strokeWidth="2" />
@@ -1393,9 +1393,9 @@ function DropTowerScene({ look, pet, armsUp }: SceneProps) {
                 />
               </g>
             ))}
-            <Cloud x={-360} y={-1500} s={2.2} />
-            <Cloud x={520} y={-1720} s={1.8} />
-            <Cloud x={-520} y={-1780} s={1.4} />
+            <Cloud x={-360} y={-800} s={2.2} />
+            <Cloud x={520} y={-1020} s={1.8} />
+            <Cloud x={-520} y={-1080} s={1.4} />
           </g>
         }
         back={

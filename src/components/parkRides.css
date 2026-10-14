@@ -643,7 +643,7 @@
   animation-fill-mode: both;
 }
 .pr-drop-world {
-  transform: translateY(1650px);
+  transform: translateY(950px);
   animation-name: pr-drop-world;
   animation-timing-function: ease-in-out;
 }
@@ -652,10 +652,10 @@
     transform: none;
   }
   37.5% {
-    transform: translateY(1650px);
+    transform: translateY(950px);
   }
   54.167% {
-    transform: translateY(1650px);
+    transform: translateY(950px);
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.5);
   }
   60% {
