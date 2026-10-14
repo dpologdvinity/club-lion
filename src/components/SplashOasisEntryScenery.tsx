@@ -193,7 +193,7 @@ function SlideTower() {
   );
 }
 
-function SplashPalm({
+const SplashPalm = memo(function SplashPalm({
   x,
   y,
   scale = 1,
@@ -204,7 +204,8 @@ function SplashPalm({
   y: number;
   scale?: number;
   lean?: 1 | -1;
-  sway: number;
+  /** Swing direction: -1 swings opposite to 1, like the old -sway. */
+  sway: 1 | -1;
 }) {
   const fronds = [-165, -128, -92, -56, -20, 16, 52];
   return (
@@ -239,37 +240,48 @@ function SplashPalm({
           />
         );
       })}
-      <g transform={`translate(20 -300) rotate(${sway})`}>
-        {fronds.map((angle, i) => (
-          <g key={angle} transform={`rotate(${angle})`}>
-            <path
-              d="M0 0Q70-42 158 8Q76-12 0 0Z"
-              fill={i % 2 ? "#2a9668" : "#3cb47c"}
-            />
-            <path
-              d="M0 0Q70-42 158 8"
-              fill="none"
-              stroke="#1d7550"
-              strokeWidth="3"
-            />
-            {[34, 66, 98, 128].map((fx) => (
+      <g transform="translate(20 -300)">
+        <g
+          className="sm-sway"
+          style={{
+            "--sm-dur": `${Math.PI / 0.9}s`,
+            "--sm-delay": `${-((sway === 1 ? 0 : Math.PI) + Math.PI / 2) / 0.9}s`,
+            "--sm-origin": "50% 50%",
+          }}
+        >
+          {/* Invisible ring centres the sway box on the crown. */}
+          <circle r="180" fill="none" />
+          {fronds.map((angle, i) => (
+            <g key={angle} transform={`rotate(${angle})`}>
               <path
-                key={fx}
-                d={`M${fx} ${-18 + fx * 0.13}l12 20`}
-                stroke={i % 2 ? "#3cb47c" : "#2a9668"}
-                strokeWidth="6"
-                strokeLinecap="round"
+                d="M0 0Q70-42 158 8Q76-12 0 0Z"
+                fill={i % 2 ? "#2a9668" : "#3cb47c"}
               />
-            ))}
-          </g>
-        ))}
-        <circle cx="-7" cy="9" r="11" fill="#6b4424" />
-        <circle cx="9" cy="12" r="10" fill="#7f5230" />
-        <circle cx="1" cy="-1" r="9" fill="#5a3a1f" />
+              <path
+                d="M0 0Q70-42 158 8"
+                fill="none"
+                stroke="#1d7550"
+                strokeWidth="3"
+              />
+              {[34, 66, 98, 128].map((fx) => (
+                <path
+                  key={fx}
+                  d={`M${fx} ${-18 + fx * 0.13}l12 20`}
+                  stroke={i % 2 ? "#3cb47c" : "#2a9668"}
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                />
+              ))}
+            </g>
+          ))}
+          <circle cx="-7" cy="9" r="11" fill="#6b4424" />
+          <circle cx="9" cy="12" r="10" fill="#7f5230" />
+          <circle cx="1" cy="-1" r="9" fill="#5a3a1f" />
+        </g>
       </g>
     </g>
   );
-}
+});
 
 function SurfboardSign({
   x,
@@ -1277,27 +1289,138 @@ const ForegroundLeaves = memo(function ForegroundLeaves() {
   );
 });
 
+// Phase offsets turn the old Math.sin(seconds * k + phase) curves into CSS
+// animation delays: delay = -(phase + PI/2) / k lines the cycles back up.
+
+// Clouds creep right and wrap every 3200px; a second copy one wrap to the
+// left keeps the sky filled when the first slides off.
+const DriftingClouds = memo(function DriftingClouds() {
+  return (
+    <g
+      className="sm-drift"
+      style={{ "--sm-dur": `${3200 / 6}s`, "--sm-dist": "3200px" }}
+    >
+      {CLOUDS.flatMap((cloud) =>
+        [0, -3200].map((wrap) => (
+          <g
+            key={`${cloud.x}${wrap}`}
+            transform={`translate(${cloud.x - 200 + wrap} ${cloud.y})`}
+            opacity=".92"
+          >
+            <Cloud s={cloud.s} />
+          </g>
+        )),
+      )}
+    </g>
+  );
+});
+
+const PoolBobbers = memo(function PoolBobbers() {
+  return (
+    <>
+      {(
+        [
+          [700, 548, "#ff7fb0"],
+          [1090, 506, "#ffc93c"],
+        ] as const
+      ).map(([fx, fy, color], i) => {
+        const phase = {
+          "--sm-dur": `${Math.PI / 1.6}s`,
+          "--sm-delay": `${-(i * 2 + Math.PI / 2) / 1.6}s`,
+        };
+        return (
+          <g key={color} transform={`translate(${fx} ${fy})`}>
+            <g className="sm-bob" style={{ ...phase, "--sm-amp": "4px" }}>
+              <g
+                className="sm-sway"
+                style={{
+                  ...phase,
+                  "--sm-deg": "8deg",
+                  "--sm-origin": "50% 50%",
+                }}
+              >
+                {/* Invisible ring centres the rock on the float's middle. */}
+                <circle r="40" fill="none" />
+                <ellipse cy="6" rx="34" ry="12" fill="#0f5f80" opacity=".25" />
+                <ellipse rx="32" ry="14" fill={color} />
+                <ellipse rx="13" ry="5" fill="#2bb0d2" />
+                <path
+                  d="M-24-6Q0-14 24-6"
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth="3"
+                  opacity=".7"
+                />
+              </g>
+            </g>
+          </g>
+        );
+      })}
+      {/* Sparkles pulse between half and full size. */}
+      {POOL_SPARKLES.map(([sx, sy], i) => (
+        <g key={sx} transform={`translate(${sx} ${sy})`}>
+          <path
+            className="sm-pulse"
+            d="M0-5L1-1L5 0L1 1L0 5L-1 1L-5 0L-1-1Z"
+            fill="#ffffff"
+            style={{
+              "--sm-dur": `${Math.PI / 5.2}s`,
+              "--sm-delay": `${(-i * 1.7) / 2.6}s`,
+              "--sm-scale": 2,
+            }}
+          />
+        </g>
+      ))}
+    </>
+  );
+});
+
+const SplashPadGeysers = memo(function SplashPadGeysers() {
+  // Columns stretch between 20 and 56 tall with their droplets riding on top.
+  return (
+    <>
+      {[-90, 0, 90].map((gx, i) => {
+        const phase = {
+          "--sm-dur": `${Math.PI / 3}s`,
+          "--sm-delay": `${-(i * 2 + (3 * Math.PI) / 2) / 3}s`,
+        };
+        return (
+          <g key={gx}>
+            <path
+              className="sm-pulse"
+              d={`M${gx - 6} -2Q${gx} ${-56 * 1.1} ${gx + 6} -2Z`}
+              fill="#c9f6ff"
+              opacity=".85"
+              style={{
+                ...phase,
+                "--sm-scale": `1, ${20 / 56}`,
+                "--sm-origin": "50% 100%",
+              }}
+            />
+            <g className="sm-glide" style={{ ...phase, "--sm-y": "36px" }}>
+              <circle cx={gx - 8} cy={-56} r="4" fill="#c9f6ff" />
+              <circle cx={gx + 9} cy={-56 + 8} r="3" fill="#c9f6ff" />
+            </g>
+          </g>
+        );
+      })}
+    </>
+  );
+});
+
 export function SplashOasisEntryScenery({ seconds }: { seconds: number }) {
   const timeMs = seconds * 1000;
   const bucket = calculateBucketCycle(timeMs);
   const pour = bucket.isDumping ? 0.9 : (bucket.splashRadius / 180) * 0.7;
-  const sway = Math.sin(seconds * 0.9) * 3;
+  // Dashes crawling along curved streams and the rolling wave crests, which
+  // change shape as they travel, stay on seconds with the bucket cycle.
   const flow = seconds * 70;
-  const cloudDrift = seconds * 6;
   const { cx, cy, rx, ry } = POOL;
 
   return (
     <>
       <EntrySky />
-      {CLOUDS.map((cloud) => (
-        <g
-          key={cloud.x}
-          transform={`translate(${((cloud.x + cloudDrift) % 3200) - 200} ${cloud.y})`}
-          opacity=".92"
-        >
-          <Cloud s={cloud.s} />
-        </g>
-      ))}
+      <DriftingClouds />
       <EntrySkyline />
       <EntryDeck />
 
@@ -1330,42 +1453,7 @@ export function SplashOasisEntryScenery({ seconds }: { seconds: number }) {
             </g>
           );
         })}
-        {(
-          [
-            [700, 548, "#ff7fb0"],
-            [1090, 506, "#ffc93c"],
-          ] as const
-        ).map(([fx, fy, color], i) => {
-          const bob = Math.sin(seconds * 1.6 + i * 2) * 4;
-          return (
-            <g
-              key={color}
-              transform={`translate(${fx} ${fy + bob}) rotate(${bob * 2})`}
-            >
-              <ellipse cy="6" rx="34" ry="12" fill="#0f5f80" opacity=".25" />
-              <ellipse rx="32" ry="14" fill={color} />
-              <ellipse rx="13" ry="5" fill="#2bb0d2" />
-              <path
-                d="M-24-6Q0-14 24-6"
-                fill="none"
-                stroke="#ffffff"
-                strokeWidth="3"
-                opacity=".7"
-              />
-            </g>
-          );
-        })}
-        {POOL_SPARKLES.map(([sx, sy], i) => {
-          const s = 0.5 + 0.5 * Math.abs(Math.sin(seconds * 2.6 + i * 1.7));
-          return (
-            <path
-              key={sx}
-              transform={`translate(${sx} ${sy}) scale(${s})`}
-              d="M0-10L2-2L10 0L2 2L0 10L-2 2L-10 0L-2-2Z"
-              fill="#ffffff"
-            />
-          );
-        })}
+        <PoolBobbers />
       </g>
 
       {/* Lion fountain arc into the pool */}
@@ -1387,45 +1475,44 @@ export function SplashOasisEntryScenery({ seconds }: { seconds: number }) {
         strokeLinecap="round"
       />
       <ellipse
+        className="sm-pulse"
         cx="524"
         cy="488"
-        rx={16 + Math.sin(seconds * 5) * 4}
+        rx="12"
         ry="5"
         fill="none"
         stroke="#ffffff"
         strokeWidth="3"
+        style={{
+          "--sm-dur": `${Math.PI / 5}s`,
+          "--sm-delay": `${-Math.PI / 2 / 5}s`,
+          "--sm-scale": `${20 / 12}, 1`,
+        }}
       />
 
       <EntryProps />
 
       {/* Foot shower drips */}
+      {/* Turned a quarter so sm-drift's travel falls 148px, then repeats. */}
       {[0, 1, 2].map((i) => (
-        <circle
-          key={i}
-          cx={288 + (i - 1) * 6}
-          cy={452 + ((seconds * 140 + i * 50) % 148)}
-          r="3"
-          fill="#7fd7e6"
-        />
+        <g key={i} transform={`translate(${288 + (i - 1) * 6} 452) rotate(90)`}>
+          <circle
+            className="sm-drift"
+            r="3"
+            fill="#7fd7e6"
+            style={{
+              "--sm-dur": `${148 / 140}s`,
+              "--sm-delay": `${-(i * 50) / 140}s`,
+              "--sm-dist": "148px",
+            }}
+          />
+        </g>
       ))}
 
       <g transform="translate(1900 580)">
         <FortressFrame />
         {/* Ground geysers on the splash pad */}
-        {[-90, 0, 90].map((gx, i) => {
-          const h = 38 + Math.sin(seconds * 3 + i * 2) * 18;
-          return (
-            <g key={gx}>
-              <path
-                d={`M${gx - 6} -2Q${gx} ${-h * 1.1} ${gx + 6} -2Z`}
-                fill="#c9f6ff"
-                opacity=".85"
-              />
-              <circle cx={gx - 8} cy={-h} r="4" fill="#c9f6ff" />
-              <circle cx={gx + 9} cy={-h + 8} r="3" fill="#c9f6ff" />
-            </g>
-          );
-        })}
+        <SplashPadGeysers />
         {/* Spray curtains under the first deck */}
         {[-110, -36, 36, 110].map((nx) => (
           <path
@@ -1452,12 +1539,18 @@ export function SplashOasisEntryScenery({ seconds }: { seconds: number }) {
                 strokeDashoffset={-flow}
               />
               <ellipse
+                className="sm-pulse"
                 cx={side * 262}
                 cy="-4"
-                rx={12 + Math.sin(seconds * 5 + side) * 3}
+                rx="9"
                 ry="4"
                 stroke="#ffffff"
                 strokeWidth="3"
+                style={{
+                  "--sm-dur": `${Math.PI / 5}s`,
+                  "--sm-delay": `${-(side + Math.PI / 2) / 5}s`,
+                  "--sm-scale": `${15 / 9}, 1`,
+                }}
               />
             </g>
           );
@@ -1473,23 +1566,34 @@ export function SplashOasisEntryScenery({ seconds }: { seconds: number }) {
           opacity=".8"
         />
         <ellipse
+          className="sm-pulse"
           cx="318"
           cy="-6"
-          rx={20 + Math.sin(seconds * 4) * 4}
+          rx="16"
           ry="6"
           fill="#c9f6ff"
+          style={{
+            "--sm-dur": `${Math.PI / 4}s`,
+            "--sm-delay": `${-Math.PI / 2 / 4}s`,
+            "--sm-scale": "1.5, 1",
+          }}
         />
         {/* Turret pennants */}
-        {[-150, 150].map((tx, i) => {
-          const wave = Math.sin(seconds * 3.4 + i) * 6;
-          return (
-            <path
-              key={tx}
-              d={`M${tx}-400Q${tx + 16}-${400 + wave} ${tx + 32}-392Q${tx + 16}-${388 - wave} ${tx}-384Z`}
-              fill={i ? "#ffc93c" : "#2fb3c6"}
-            />
-          );
-        })}
+        {/* Pennants flap on their poles. */}
+        {[-150, 150].map((tx, i) => (
+          <path
+            key={tx}
+            className="sm-sway"
+            d={`M${tx}-400Q${tx + 16}-400 ${tx + 32}-392Q${tx + 16}-388 ${tx}-384Z`}
+            fill={i ? "#ffc93c" : "#2fb3c6"}
+            style={{
+              "--sm-dur": `${Math.PI / 3.4}s`,
+              "--sm-delay": `${-(i + Math.PI / 2) / 3.4}s`,
+              "--sm-deg": "6deg",
+              "--sm-origin": "0% 50%",
+            }}
+          />
+        ))}
 
         {/* Water cascade when the bucket tips */}
         {pour > 0.02 && (
@@ -1580,9 +1684,9 @@ export function SplashOasisEntryScenery({ seconds }: { seconds: number }) {
         </g>
       </g>
 
-      <SplashPalm x={1265} y={436} scale={0.62} sway={sway} />
-      <SplashPalm x={575} y={432} scale={0.58} lean={-1} sway={-sway} />
-      <SplashPalm x={2190} y={444} scale={0.6} lean={-1} sway={-sway} />
+      <SplashPalm x={1265} y={436} scale={0.62} sway={1} />
+      <SplashPalm x={575} y={432} scale={0.58} lean={-1} sway={-1} />
+      <SplashPalm x={2190} y={444} scale={0.6} lean={-1} sway={-1} />
       <ForegroundLeaves />
     </>
   );
