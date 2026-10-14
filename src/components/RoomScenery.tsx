@@ -12,6 +12,8 @@ import { WonderParkMidwayScenery } from "./WonderParkMidwayScenery.tsx";
 import { SunsetBeachScenery } from "./SunsetBeachScenery.tsx";
 import { CoastalPierScenery } from "./CoastalPierScenery.tsx";
 import { MtMistScenery } from "./MtMistScenery.tsx";
+import { CanyonRapidsScenery } from "./CanyonRapidsScenery.tsx";
+import { PetParadiseScenery } from "./PetParadiseScenery.tsx";
 
 function PalmTree({
   x,
@@ -607,129 +609,6 @@ function CondoScenery({ seconds, width }: { seconds: number; width: number }) {
   );
 }
 
-function PetParadiseScenery({
-  seconds: _seconds,
-  width,
-}: {
-  seconds: number;
-  width: number;
-}) {
-  return (
-    <g className="scene-petparadise">
-      {/* Clawfoot tubs row */}
-      {[200, 600, 1000, 1400, 1800, 2200].map((x, i) => (
-        <g key={`tub-${i}`} transform={`translate(${x} 450)`}>
-          {/* Tub base */}
-          <ellipse cx="0" cy="0" rx="80" ry="30" fill="#d4a574" />
-          {/* Tub body */}
-          <rect x="-70" y="-40" width="140" height="50" rx="8" fill="#fefbf0" />
-          {/* Claw feet */}
-          {[-50, 50].map((fx, fi) => (
-            <g key={`foot-${fi}`}>
-              <circle cx={fx} cy="15" r="6" fill="#d4a574" />
-            </g>
-          ))}
-          {/* Water bubbles */}
-          {[...Array(3)].map((_, bi) => (
-            <circle
-              key={`bubble-${bi}`}
-              cx={-40 + bi * 40}
-              cy={-15 + Math.sin(i + bi) * 5}
-              r="4"
-              fill="#a8d8ea"
-              opacity="0.6"
-            />
-          ))}
-        </g>
-      ))}
-
-      {/* Plush velvet cushions */}
-      {[400, 1000, 1600, 2000].map((x, i) => (
-        <g key={`cushion-${i}`} transform={`translate(${x} 550)`}>
-          {/* Cushion shape */}
-          <ellipse cx="0" cy="0" rx="60" ry="50" fill="#d8b4d8" />
-          {/* Texture lines */}
-          {[...Array(4)].map((_, ti) => (
-            <line
-              key={`line-${ti}`}
-              x1="-50"
-              y1={-25 + ti * 15}
-              x2="50"
-              y2={-25 + ti * 15}
-              stroke="#c8a4c8"
-              strokeWidth="1"
-              opacity="0.5"
-            />
-          ))}
-        </g>
-      ))}
-
-      {/* Colorful agility tunnels */}
-      {[300, 1200, 2100].map((x, i) => (
-        <g key={`tunnel-${i}`} transform={`translate(${x} 480)`}>
-          {/* Tunnel barrel */}
-          <ellipse
-            cx="0"
-            cy="0"
-            rx="90"
-            ry="45"
-            fill={["#ffb3ba", "#ffdfba", "#ffffba"][i]}
-            opacity="0.8"
-          />
-          {/* Tunnel opening */}
-          <ellipse
-            cx="0"
-            cy="0"
-            rx="75"
-            ry="35"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="2"
-          />
-          {/* Rings */}
-          {[...Array(3)].map((_, ri) => (
-            <circle
-              key={`ring-${ri}`}
-              cx={-60 + ri * 60}
-              cy="0"
-              r="5"
-              fill={["#ffb3ba", "#ffdfba", "#ffffba"][i]}
-              opacity="0.6"
-            />
-          ))}
-        </g>
-      ))}
-
-      {/* Paw-print chandeliers hanging from above */}
-      {[600, 1200, 1800].map((x, i) => (
-        <g key={`chandelier-${i}`} transform={`translate(${x} 250)`}>
-          {/* Hanging chain */}
-          <line x1="0" y1="0" x2="0" y2="80" stroke="#d4a574" strokeWidth="2" />
-          {/* Main paw center pad */}
-          <circle cx="0" cy="80" r="15" fill="#f4c430" />
-          {/* Toe pads arranged in paw pattern */}
-          {[
-            { x: -20, y: 50 },
-            { x: 20, y: 50 },
-            { x: -10, y: 30 },
-            { x: 10, y: 30 },
-          ].map((pos, pi) => (
-            <circle
-              key={`toe-${pi}`}
-              cx={pos.x}
-              cy={pos.y}
-              r="8"
-              fill="#f4c430"
-            />
-          ))}
-          {/* Light glow */}
-          <circle cx="0" cy="80" r="20" fill="#ffd700" opacity="0.2" />
-        </g>
-      ))}
-    </g>
-  );
-}
-
 function ScoutBaseScenery({
   seconds,
   width,
@@ -1085,109 +964,6 @@ function ScoutBaseScenery({
   );
 }
 
-function CanyonRapidsScenery({
-  seconds,
-  width,
-}: {
-  seconds: number;
-  width: number;
-}) {
-  const foamOffset = (seconds * 220) % 60;
-  return (
-    <g className="canyon-rapids-scenery">
-      <defs>
-        <linearGradient id="canyon-wall" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#c1613f" />
-          <stop offset="55%" stopColor="#9c4a30" />
-          <stop offset="100%" stopColor="#7a3620" />
-        </linearGradient>
-        <linearGradient id="canyon-river" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4fa7c9" />
-          <stop offset="100%" stopColor="#2c7496" />
-        </linearGradient>
-        <pattern
-          id="canyon-foam"
-          width="60"
-          height="24"
-          patternUnits="userSpaceOnUse"
-          patternTransform={`translate(${foamOffset} 0)`}
-        >
-          <path
-            d="M0 12Q15 0 30 12Q45 24 60 12"
-            fill="none"
-            stroke="#eaf6fb"
-            strokeWidth="4"
-            opacity="0.65"
-          />
-        </pattern>
-      </defs>
-
-      <rect x="0" y="40" width={width} height="420" fill="url(#canyon-wall)" />
-      {[260, 820, 1380, 1940].map((x, i) => (
-        <path
-          key={x}
-          d={`M${x} 40 L${x + 90} 40 L${x + 150} 460 L${x - 60} 460 Z`}
-          fill={i % 2 === 0 ? "#b2572f" : "#a24f2b"}
-          opacity="0.85"
-        />
-      ))}
-      {[400, 1000, 1600, 2150].map((x) => (
-        <g key={x} transform={`translate(${x} 470)`}>
-          <path
-            d="M0 0 L-10 -90 L10 -90 Z"
-            fill="#2f5d3a"
-            transform="translate(0 -20) scale(1.6)"
-          />
-          <path
-            d="M0 0 L-8 -60 L8 -60 Z"
-            fill="#3c7a48"
-            transform="translate(0 -10)"
-          />
-          <rect x="-4" y="-4" width="8" height="24" fill="#5a3d21" />
-        </g>
-      ))}
-
-      <path
-        d="M0 420 Q480 390 960 425 Q1440 395 1920 425 Q2160 395 2400 420 V720H0Z"
-        fill="#8a4a2e"
-      />
-
-      <rect y="500" width={width} height="150" fill="url(#canyon-river)" />
-      <rect
-        y="500"
-        width={width}
-        height="150"
-        fill="url(#canyon-foam)"
-        opacity="0.5"
-      />
-
-      <g transform="translate(1100 440)">
-        <path
-          d="M-260 0 Q-130 30 0 5 Q130 -20 260 10"
-          fill="none"
-          stroke="#8b6540"
-          strokeWidth="10"
-        />
-        {Array.from({ length: 9 }, (_, i) => {
-          const x = -240 + i * 60;
-          const y = 5 + Math.sin(i * 0.8) * 12;
-          return (
-            <line
-              key={i}
-              x1={x}
-              y1={y - 12}
-              x2={x}
-              y2={y + 22}
-              stroke="#6b4a2a"
-              strokeWidth="6"
-            />
-          );
-        })}
-      </g>
-    </g>
-  );
-}
-
 export function RoomScenery({
   place,
   preview = false,
@@ -1308,19 +1084,36 @@ export function RoomScenery({
       </svg>
     );
   }
+  if (place === "canyon-rapids") {
+    return (
+      <svg
+        className="room-scenery"
+        viewBox="0 0 2400 720"
+        preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
+        aria-hidden="true"
+      >
+        <CanyonRapidsScenery seconds={seconds} />
+      </svg>
+    );
+  }
+  if (place === "pet-paradise") {
+    return (
+      <svg
+        className="room-scenery"
+        viewBox="0 0 2400 720"
+        preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
+        aria-hidden="true"
+      >
+        <PetParadiseScenery seconds={seconds} />
+      </svg>
+    );
+  }
   const club = false;
   const isSplashEntry = place === "splash-oasis-entry";
   const isSplashRiver = place === "splash-oasis-river";
   const isCondo = place === "penthouse-condo";
   const isScoutBase = place === "secret-scout-base";
-  const isCanyonRapids = place === "canyon-rapids";
-  const isPetParadise = place === "pet-paradise";
-  const width =
-    isCondo || isScoutBase
-      ? 1920
-      : isCanyonRapids || isPetParadise
-        ? 2400
-        : 2800;
+  const width = isCondo || isScoutBase ? 1920 : 2800;
   return (
     <svg
       className="room-scenery"
@@ -1338,13 +1131,9 @@ export function RoomScenery({
                   ? "#100d24"
                   : isScoutBase
                     ? "#0e1517"
-                    : isCanyonRapids
-                      ? "#cf9a64"
-                      : isPetParadise
-                        ? "#f5e6f0"
-                        : isSplashEntry || isSplashRiver
-                          ? "#58b5be"
-                          : "#91cfc9"
+                    : isSplashEntry || isSplashRiver
+                      ? "#58b5be"
+                      : "#91cfc9"
             }
           />
           <stop
@@ -1356,13 +1145,9 @@ export function RoomScenery({
                   ? "#2d1a38"
                   : isScoutBase
                     ? "#192529"
-                    : isCanyonRapids
-                      ? "#f6ddb0"
-                      : isPetParadise
-                        ? "#d0f0e8"
-                        : isSplashEntry || isSplashRiver
-                          ? "#e3f3db"
-                          : "#f7e4aa"
+                    : isSplashEntry || isSplashRiver
+                      ? "#e3f3db"
+                      : "#f7e4aa"
             }
           />
         </linearGradient>
@@ -1423,9 +1208,7 @@ export function RoomScenery({
                   ? "#dfca99"
                   : isSplashRiver
                     ? "#d6be8e"
-                    : isCanyonRapids
-                      ? "#b5693f"
-                      : "#e7c794"
+                    : "#e7c794"
         }
       />
       <rect
@@ -1438,10 +1221,6 @@ export function RoomScenery({
         <CondoScenery seconds={seconds} width={width} />
       ) : isScoutBase ? (
         <ScoutBaseScenery seconds={seconds} width={width} />
-      ) : isCanyonRapids ? (
-        <CanyonRapidsScenery seconds={seconds} width={width} />
-      ) : isPetParadise ? (
-        <PetParadiseScenery seconds={seconds} width={width} />
       ) : isSplashEntry ? (
         <>
           <g transform="translate(900 500)">
