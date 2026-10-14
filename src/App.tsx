@@ -40,6 +40,8 @@ import {
   completeSmoothieOrder,
   completePawSteps,
   completeFruitCatch,
+  completeBubblePop,
+  colorPage,
   completeFishingCatch,
   recordFashionShowResult,
   completeRiverSurf,
@@ -964,6 +966,12 @@ export default function App() {
                   setPlayer((p) => recordFashionShowResult(p, res));
                   notify(`Runway show complete! +${res.coins} coins.`);
                 }}
+                onCompleteBubblePop={(score) =>
+                  setPlayer((p) => completeBubblePop(p, score))
+                }
+                onColorPage={(pageId, fills, finish) =>
+                  setPlayer((p) => colorPage(p, pageId, fills, finish))
+                }
                 onSafariFinish={(pairs) =>
                   setPlayer((p) => completeGame(p, pairs))
                 }

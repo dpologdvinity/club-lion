@@ -10,6 +10,9 @@ import { RollerCoasterRide } from "./RollerCoasterRide";
 import { WaterholeAngler } from "./WaterholeAngler";
 import { TopModelsRunway } from "./TopModelsRunway";
 import { InstrumentContent } from "./InstrumentModal";
+import { BubblePop } from "./BubblePop";
+import { ColoringBook } from "./ColoringBook";
+import type { PageFills } from "../utils/coloringBook.ts";
 import { PAW_STEPS_COINS_PER_ROUND } from "../game";
 import type { PlayerV2 } from "../game.ts";
 
@@ -24,7 +27,9 @@ export type GameId =
   | "fishing"
   | "runway"
   | "instrument"
-  | "sled-run";
+  | "sled-run"
+  | "bubble-pop"
+  | "coloring-book";
 
 export function GamesPanel({
   player,
@@ -40,6 +45,8 @@ export function GamesPanel({
   onFruitFinish,
   onCompleteFishing,
   onCompleteFashion,
+  onCompleteBubblePop,
+  onColorPage,
   onClose,
 }: {
   player: PlayerV2;
@@ -64,6 +71,8 @@ export function GamesPanel({
     stars: number;
     coins: number;
   }) => void;
+  onCompleteBubblePop?: (score: number) => void;
+  onColorPage?: (pageId: string, fills: PageFills, finish: boolean) => void;
   onClose: () => void;
 }) {
   const [picked, setPicked] = useState<GameId | null>(initialGame);
@@ -104,7 +113,9 @@ export function GamesPanel({
           picked === "coaster" ||
           picked === "fishing" ||
           picked === "runway" ||
-          picked === "instrument") && (
+          picked === "instrument" ||
+          picked === "bubble-pop" ||
+          picked === "coloring-book") && (
           <button className="game-back" onClick={backToMenu}>
             <ArrowLeft size={14} /> All games
           </button>
@@ -151,6 +162,20 @@ export function GamesPanel({
             <InstrumentContent instrument="piano" onClose={onClose} />
           </div>
         )}
+        {picked === "bubble-pop" && (
+          <BubblePop
+            best={player.bubblePopBest ?? 0}
+            onFinish={(score) => onCompleteBubblePop?.(score)}
+          />
+        )}
+        {picked === "coloring-book" && (
+          <ColoringBook
+            book={player.coloringBook}
+            onColor={(pageId, fills, finish) =>
+              onColorPage?.(pageId, fills, finish)
+            }
+          />
+        )}
         {picked === "memory" && (
           <MemorySafari
             onFinish={handleSafari}
@@ -196,6 +221,22 @@ export function GamesPanel({
     <div className="arcade-picker">
       {(
         [
+          {
+            id: "bubble-pop",
+            name: "Bubble Pop",
+            art: "🫧 🦁 ⭐",
+            description: "Pop floating bubbles to free the surprises inside.",
+            reward: "Challenge mode pays up to 60 coins",
+            best: player.bubblePopBest ?? 0,
+          },
+          {
+            id: "coloring-book",
+            name: "Coloring Book",
+            art: "🖍️ 🐉 🎡",
+            description: "Tap to fill six pages. There is no wrong color.",
+            reward: "Finish a page for a stamp",
+            best: 0,
+          },
           {
             id: "dj-beat-drop",
             name: "DJ Beat Drop",

@@ -15,6 +15,8 @@ import {
   completeBeeStop,
   completePawSteps,
   completeFruitCatch,
+  completeBubblePop,
+  colorPage,
   completeDJBeatDrop,
   completeSmoothieOrder,
   completeFishingCatch,
@@ -27,6 +29,7 @@ import {
   type Player,
 } from "./game.ts";
 import { SPY_PUZZLE_MAX_COINS } from "./utils/spyPuzzles.ts";
+import { BUBBLE_POP_MAX_SCORE } from "./utils/bubblePop.ts";
 import { DEFAULT_AVATAR_LOOK, DEFAULT_PET_STATE } from "./types/world.ts";
 import { serializeLayout, type PlacedFurniture } from "./utils/condoGrid.ts";
 
@@ -1291,4 +1294,67 @@ test("kart race progress survives saves, and old or bad saves still load", () =>
     assert.equal(bad.kartRacesFinished, undefined);
     assert.equal(bad.kartBestLapMs, undefined);
   }
+});
+test("a finished Bubble Pop challenge pays once by score and keeps the best", () => {
+  const first = completeBubblePop(newPlayer(), 1_000);
+  assert.equal(first.coins, 275);
+  assert.equal(first.gamesPlayed, 1);
+  assert.equal(first.bubblePopBest, 1_000);
+  const lower = completeBubblePop(first, 120);
+  assert.equal(lower.coins, 278);
+  assert.equal(lower.bubblePopBest, 1_000);
+  const maxed = completeBubblePop(newPlayer(), BUBBLE_POP_MAX_SCORE);
+  assert.equal(maxed.coins, 310);
+  for (const bad of [-1, 10.5, Number.NaN, BUBBLE_POP_MAX_SCORE + 1]) {
+    assert.equal(completeBubblePop(first, bad), first);
+  }
+});
+
+test("Bubble Pop bests survive a save round trip and tampered bests are dropped", () => {
+  const played = completeBubblePop(newPlayer(), 640);
+  assert.equal(restorePlayer(JSON.stringify(played)).bubblePopBest, 640);
+  for (const bad of [-5, "640", BUBBLE_POP_MAX_SCORE + 10]) {
+    const restored = restorePlayer(
+      JSON.stringify({ ...played, bubblePopBest: bad }),
+    );
+    assert.equal(restored.bubblePopBest, undefined);
+    assert.equal(restored.coins, played.coins);
+  }
+});
+
+test("coloring pages persist, restore, and finishing one earns the stamp", () => {
+  const started = colorPage(newPlayer(), "lion-cub", { mane: "mango" });
+  assert.deepEqual(started.coloringBook, {
+    pages: { "lion-cub": { mane: "mango" } },
+    finished: [],
+  });
+  assert.deepEqual(evaluateStampUnlocks(started), []);
+  const done = colorPage(started, "lion-cub", { mane: "rainbow" }, true);
+  assert.deepEqual(evaluateStampUnlocks(done), ["coloring_first_page"]);
+  const restored = migratePlayerSave(JSON.stringify(done));
+  assert.deepEqual(restored.coloringBook, done.coloringBook);
+  assert.equal(
+    colorPage(done, "nowhere", { mane: "cocoa" }).coloringBook,
+    done.coloringBook,
+  );
+});
+
+test("saves from before the coloring book and Bubble Pop still load", () => {
+  const {
+    coloringBook: _book,
+    bubblePopBest: _best,
+    ...older
+  } = {
+    ...newPlayer(),
+    coins: 410,
+  };
+  const restored = restorePlayer(JSON.stringify(older));
+  assert.equal(restored.coins, 410);
+  assert.equal(restored.coloringBook, undefined);
+  assert.equal(restored.bubblePopBest, undefined);
+  const tampered = restorePlayer(
+    JSON.stringify({ ...older, coloringBook: { pages: "crayons" } }),
+  );
+  assert.equal(tampered.coins, 410);
+  assert.equal(tampered.coloringBook, undefined);
 });

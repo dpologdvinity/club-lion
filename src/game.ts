@@ -20,6 +20,13 @@ export {
 } from "./utils/stampDefinitions.ts";
 import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
 import { MAX_SMOOTHIE_COINS } from "./utils/smoothieRecipes.ts";
+import { BUBBLE_POP_MAX_SCORE, bubblePopCoins } from "./utils/bubblePop.ts";
+import {
+  restoreColoringBook,
+  saveColoringPage,
+  type ColoringBookSave,
+  type PageFills,
+} from "./utils/coloringBook.ts";
 import { FISH_SPECIES } from "./utils/fishingEngine.ts";
 import {
   coinsForScore,
@@ -116,6 +123,8 @@ export type PlayerBase = {
   petCare?: PetCareState;
   kartRacesFinished?: number;
   kartBestLapMs?: number;
+  bubblePopBest?: number;
+  coloringBook?: ColoringBookSave;
 };
 
 export type Player = PlayerBase & {
@@ -521,6 +530,15 @@ export function restorePlayer(raw: string | null): Player {
       ...(isKartLapMs(p.kartBestLapMs)
         ? { kartBestLapMs: p.kartBestLapMs }
         : {}),
+      ...(Number.isSafeInteger(p.bubblePopBest) &&
+      p.bubblePopBest > 0 &&
+      p.bubblePopBest <= BUBBLE_POP_MAX_SCORE
+        ? { bubblePopBest: p.bubblePopBest }
+        : {}),
+      ...(() => {
+        const coloringBook = restoreColoringBook(p.coloringBook);
+        return coloringBook ? { coloringBook } : {};
+      })(),
       ...(p.mangoRunBest === undefined
         ? {}
         : Number.isSafeInteger(p.mangoRunBest) && p.mangoRunBest >= 0
@@ -969,6 +987,39 @@ export function completeFruitCatch<T extends PlayerBase>(
     gamesPlayed: newGamesPlayed,
     fruitCatchBest: newBest,
   } as T;
+}
+
+/** Pays a finished Bubble Pop challenge once, by score, and keeps the best. */
+export function completeBubblePop<T extends PlayerBase>(
+  player: T,
+  score: number,
+): T {
+  if (
+    !Number.isSafeInteger(score) ||
+    score < 0 ||
+    score > BUBBLE_POP_MAX_SCORE ||
+    !Number.isSafeInteger(player.coins + bubblePopCoins(score))
+  )
+    return player;
+  return {
+    ...player,
+    coins: player.coins + bubblePopCoins(score),
+    gamesPlayed: player.gamesPlayed + 1,
+    bubblePopBest: Math.max(player.bubblePopBest ?? 0, score),
+  };
+}
+
+/** Saves a coloring page; finishing one unlocks its stamp through evaluateStampUnlocks. */
+export function colorPage<T extends PlayerBase>(
+  player: T,
+  pageId: string,
+  fills: PageFills,
+  finish = false,
+): T {
+  return {
+    ...player,
+    coloringBook: saveColoringPage(player.coloringBook, pageId, fills, finish),
+  };
 }
 
 export function completeDJBeatDrop<T extends PlayerBase>(

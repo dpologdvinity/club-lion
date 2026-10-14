@@ -260,6 +260,14 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     unlockHint: "Reach a Fruit Catch best score of 100.",
   },
   {
+    id: "coloring_first_page",
+    name: "First Masterpiece",
+    category: "arcade_mastery",
+    description: "Finished a page in the Coloring Book.",
+    icon: "🖍️",
+    unlockHint: "Color a Coloring Book page and tap the big check.",
+  },
+  {
     id: "bee_stop_perfect",
     name: "Perfect Pollinator",
     category: "arcade_mastery",
@@ -397,6 +405,7 @@ export function evaluateStampUnlocks(player: Player | PlayerV2): string[] {
       player.moodQuote.trim() !== "Vibing in the savanna",
     mango_run_pro: (player.mangoRunBest ?? 0) >= 100,
     fruit_catch_pro: player.fruitCatchBest >= 100,
+    coloring_first_page: (player.coloringBook?.finished.length ?? 0) > 0,
     bee_stop_perfect: player.beeStopBest === 1000,
     paw_steps_expert: player.pawStepsBest >= 10,
     smoothie_chef: (player.smoothiesServed ?? 0) >= 5,
