@@ -9,20 +9,34 @@ const COASTER_LINE = Array.from({ length: 260 }, (_, i) => {
   return `${i === 0 ? "M" : "L"}${p.x},${p.y}`;
 }).join(" ");
 
-export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
-  // Kinetic coaster cart tracking
-  const cart = computeCoasterTrackPosition(seconds / 28);
-  const cartAngle = cart.angle ?? 0;
-
-  // Kinetic flume water animation
-  const flumeSplash = Math.sin(seconds * 4) * 8;
-  const logBob = Math.sin(seconds * 2.5) * 4;
-
-  // Marquee light chase phase
-  const chasePhase = Math.floor(seconds * 4) % 3;
-
+// Chase bulbs light for one 0.25s slot in three, like the old
+// floor(seconds * 4) % 3 chase. The lit cap steps between the bulb and two
+// spots 3000px and 6000px off the scene; a cap that starts unlit is drawn
+// 6000px left so it steps onto the bulb in its own slot.
+function ChaseCap({ i, children }: { i: number; children: React.ReactNode }) {
+  const slot = (3 - (i % 3)) % 3;
   return (
-    <g className="wonder-park-entrance-scenery">
+    <g
+      className="sm-drift"
+      style={{
+        "--sm-dur": "0.75s",
+        "--sm-dist": "6000px",
+        "--sm-delay": `${slot === 0 ? 0 : -(2 - slot) * 0.25}s`,
+        animationTimingFunction: "steps(3, jump-none)",
+      }}
+    >
+      <g transform={slot === 0 ? undefined : "translate(-6000 0)"}>
+        {children}
+      </g>
+    </g>
+  );
+}
+
+// Phase offsets turn the old Math.sin(seconds * k + phase) curves into CSS
+// animation delays: delay = -(phase + PI/2) / k lines the cycles back up.
+const WonderParkBelowTrain = React.memo(function WonderParkBelowTrain() {
+  return (
+    <>
       <defs>
         {/* Sky Sunset & Carnival Atmosphere Gradients */}
         <linearGradient id="wp-sky-sunset" x1="0" y1="0" x2="0" y2="1">
@@ -97,49 +111,81 @@ export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
       />
 
       {/* Distant Hot Air Balloons */}
+      {/* Balloons creep right (2800px wrap, like the old seconds % 2800) and bob. */}
       <g
-        transform={`translate(${480 + ((seconds * 2) % 2800)} ${110 + Math.sin(seconds * 0.8) * 8}) scale(0.65)`}
+        className="sm-drift"
+        style={{ "--sm-dur": "1400s", "--sm-dist": "2800px" }}
       >
-        <ellipse
-          cx="0"
-          cy="0"
-          rx="26"
-          ry="34"
-          fill="#ef4444"
-          stroke="#7f1d1d"
-          strokeWidth="2"
-        />
-        <path d="M-26 0 Q0 15 26 0 Q0 -15 -26 0" fill="#facc15" />
-        <polygon
-          points="-12,30 12,30 6,42 -6,42"
-          fill="#78350f"
-          stroke="#451a03"
-          strokeWidth="1"
-        />
-        <line
-          x1="-10"
-          y1="30"
-          x2="-6"
-          y2="42"
-          stroke="#451a03"
-          strokeWidth="1"
-        />
-        <line x1="10" y1="30" x2="6" y2="42" stroke="#451a03" strokeWidth="1" />
+        <g
+          className="sm-bob"
+          style={{
+            "--sm-dur": `${Math.PI / 0.8}s`,
+            "--sm-delay": `${-Math.PI / 2 / 0.8}s`,
+            "--sm-amp": "8px",
+          }}
+        >
+          <g transform="translate(480 110) scale(0.65)">
+            <ellipse
+              cx="0"
+              cy="0"
+              rx="26"
+              ry="34"
+              fill="#ef4444"
+              stroke="#7f1d1d"
+              strokeWidth="2"
+            />
+            <path d="M-26 0 Q0 15 26 0 Q0 -15 -26 0" fill="#facc15" />
+            <polygon
+              points="-12,30 12,30 6,42 -6,42"
+              fill="#78350f"
+              stroke="#451a03"
+              strokeWidth="1"
+            />
+            <line
+              x1="-10"
+              y1="30"
+              x2="-6"
+              y2="42"
+              stroke="#451a03"
+              strokeWidth="1"
+            />
+            <line
+              x1="10"
+              y1="30"
+              x2="6"
+              y2="42"
+              stroke="#451a03"
+              strokeWidth="1"
+            />
+          </g>
+        </g>
       </g>
       <g
-        transform={`translate(${1350 + ((seconds * 1.5) % 2800)} ${90 + Math.sin(seconds * 0.7 + 2) * 6}) scale(0.5)`}
+        className="sm-drift"
+        style={{ "--sm-dur": `${2800 / 1.5}s`, "--sm-dist": "2800px" }}
       >
-        <ellipse
-          cx="0"
-          cy="0"
-          rx="24"
-          ry="32"
-          fill="#06b6d4"
-          stroke="#0e7490"
-          strokeWidth="2"
-        />
-        <path d="M-24 0 Q0 12 24 0 Q0 -12 -24 0" fill="#f43f5e" />
-        <polygon points="-10,28 10,28 5,38 -5,38" fill="#78350f" />
+        <g
+          className="sm-bob"
+          style={{
+            "--sm-dur": `${Math.PI / 0.7}s`,
+            "--sm-delay": `${-(2 + Math.PI / 2) / 0.7}s`,
+            "--sm-amp": "6px",
+          }}
+        >
+          <g transform="translate(1350 90) scale(0.5)">
+            <ellipse
+              cx="0"
+              cy="0"
+              rx="24"
+              ry="32"
+              fill="#06b6d4"
+              stroke="#0e7490"
+              strokeWidth="2"
+            />
+            <path d="M-24 0 Q0 12 24 0 Q0 -12 -24 0" fill="#f43f5e" />
+            <polygon points="-10,28 10,28 5,38 -5,38" fill="#78350f" />
+          </g>
+        </g>
       </g>
 
       {/* ========================================================= */}
@@ -209,7 +255,6 @@ export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
       {Array.from({ length: 36 }, (_, i) => {
         const x = 80 + i * 75;
         const y = 65 + Math.sin((i / 35) * Math.PI) * 35;
-        const isBulbLit = (i + chasePhase) % 3 === 0;
         return (
           <g key={`bulb-${i}`} transform={`translate(${x} ${y})`}>
             <line
@@ -220,13 +265,9 @@ export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
               stroke="#1c1917"
               strokeWidth="2"
             />
-            <circle
-              cx="0"
-              cy="12"
-              r={isBulbLit ? 7 : 5}
-              fill={isBulbLit ? "#fef08a" : "#ca8a04"}
-            />
-            {isBulbLit && (
+            <circle cx="0" cy="12" r="5" fill="#ca8a04" />
+            <ChaseCap i={i}>
+              <circle cx="0" cy="12" r="7" fill="#fef08a" />
               <circle
                 cx="0"
                 cy="12"
@@ -234,7 +275,7 @@ export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
                 fill="url(#wp-lamp-glow)"
                 opacity="0.6"
               />
-            )}
+            </ChaseCap>
           </g>
         );
       })}
@@ -404,126 +445,13 @@ export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
         strokeLinecap="round"
         opacity="0.9"
       />
+    </>
+  );
+});
 
-      {/* Kinetic Roller Coaster Train */}
-      <g
-        transform={`translate(${cart.x} ${cart.y}) rotate(${cartAngle})`}
-        style={{ transition: "none" }}
-      >
-        {/* Front Engine Car */}
-        <g transform="translate(0 -16)">
-          {/* Wheel Bogie Assemblies */}
-          <rect x="-30" y="8" width="60" height="12" rx="4" fill="#1e293b" />
-          <circle
-            cx="-22"
-            cy="14"
-            r="7"
-            fill="#64748b"
-            stroke="#f8fafc"
-            strokeWidth="2"
-          />
-          <circle
-            cx="22"
-            cy="14"
-            r="7"
-            fill="#64748b"
-            stroke="#f8fafc"
-            strokeWidth="2"
-          />
-
-          {/* Sleek Crimson Coaster Car Shell */}
-          <polygon
-            points="-34,8 34,8 44,-14 26,-22 -30,-22 -34,8"
-            fill="#dc2626"
-            stroke="#991b1b"
-            strokeWidth="3"
-          />
-          <path d="M-30 -22 L26 -22 L40 -12 L-30 -12 Z" fill="#ef4444" />
-
-          {/* Fierce Carved Golden Lion Mascot Figurehead on front */}
-          <g transform="translate(36 -12) scale(0.85)">
-            <ellipse
-              cx="0"
-              cy="0"
-              rx="14"
-              ry="12"
-              fill="#f59e0b"
-              stroke="#b45309"
-              strokeWidth="2"
-            />
-            <polygon points="4,-6 10,-2 4,2" fill="#fef08a" />
-            <circle cx="2" cy="-4" r="2.5" fill="#451a03" />
-            <polygon points="-8,-12 -2,-18 4,-12" fill="#fbbf24" />
-          </g>
-
-          {/* Animated Screaming Passengers with raised hands */}
-          <g transform="translate(-10 -24)">
-            {/* Passenger 1 */}
-            <circle
-              cx="-12"
-              cy="0"
-              r="7"
-              fill="#fbcfe8"
-              stroke="#be185d"
-              strokeWidth="1.5"
-            />
-            <line
-              x1="-16"
-              y1="0"
-              x2="-22"
-              y2="-12"
-              stroke="#be185d"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-            <line
-              x1="-8"
-              y1="0"
-              x2="-2"
-              y2="-12"
-              stroke="#be185d"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-            {/* Passenger 2 */}
-            <circle
-              cx="10"
-              cy="0"
-              r="7"
-              fill="#fed7aa"
-              stroke="#c2410c"
-              strokeWidth="1.5"
-            />
-            <line
-              x1="6"
-              y1="0"
-              x2="0"
-              y2="-12"
-              stroke="#c2410c"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-            <line
-              x1="14"
-              y1="0"
-              x2="20"
-              y2="-12"
-              stroke="#c2410c"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-          </g>
-
-          {/* Safety Lap Bar */}
-          <path
-            d="M-26 -14 H24"
-            stroke="#e2e8f0"
-            strokeWidth="4"
-            strokeLinecap="round"
-          />
-        </g>
-      </g>
-
+const WonderParkAboveTrain = React.memo(function WonderParkAboveTrain() {
+  return (
+    <>
       {/* ========================================================= */}
       {/* 4. SAVANNA SCREAMER STATION PAVILION (x=900, y=555)       */}
       {/* ========================================================= */}
@@ -633,28 +561,24 @@ export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
           {/* Marquee Chase Bulbs around perimeter */}
           {Array.from({ length: 18 }, (_, i) => {
             const bx = -150 + i * 17.6;
-            const isChase = (i + chasePhase) % 3 === 0;
             return (
-              <circle
-                key={`mq-top-${i}`}
-                cx={bx}
-                cy="-21"
-                r="3.5"
-                fill={isChase ? "#fef08a" : "#ca8a04"}
-              />
+              <g key={`mq-top-${i}`}>
+                <circle cx={bx} cy="-21" r="3.5" fill="#ca8a04" />
+                <ChaseCap i={i}>
+                  <circle cx={bx} cy="-21" r="3.5" fill="#fef08a" />
+                </ChaseCap>
+              </g>
             );
           })}
           {Array.from({ length: 18 }, (_, i) => {
             const bx = -150 + i * 17.6;
-            const isChase = (i + chasePhase) % 3 === 0;
             return (
-              <circle
-                key={`mq-bot-${i}`}
-                cx={bx}
-                cy="21"
-                r="3.5"
-                fill={isChase ? "#fef08a" : "#ca8a04"}
-              />
+              <g key={`mq-bot-${i}`}>
+                <circle cx={bx} cy="21" r="3.5" fill="#ca8a04" />
+                <ChaseCap i={i}>
+                  <circle cx={bx} cy="21" r="3.5" fill="#fef08a" />
+                </ChaseCap>
+              </g>
             );
           })}
           {/* Signboard Text */}
@@ -735,104 +659,116 @@ export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
           strokeWidth="8"
         />
 
-        {/* 12 Filigree Radial Spokes & Rotating Gondolas */}
-        {Array.from({ length: 12 }, (_, i) => {
-          const deg = seconds * 5 + i * 30;
-          const p = computeFerrisWheelCabin(deg, 215, { x: 0, y: 0 });
-          const rad = (deg * Math.PI) / 180;
-          const colors = [
-            "#ef4444",
-            "#3b82f6",
-            "#10b981",
-            "#f59e0b",
-            "#ec4899",
-            "#8b5cf6",
-          ];
-          const gondolaColor = colors[i % colors.length];
+        {/* 12 Filigree Radial Spokes & Rotating Gondolas: the wheel turns
+            anticlockwise at 5deg/s and each cabin counter-spins to hang level. */}
+        <g
+          className="sm-spin"
+          style={{ "--sm-dur": "72s", animationDirection: "reverse" }}
+        >
+          {/* Invisible ring centres the spin box on the hub. */}
+          <circle r="300" fill="none" />
+          {Array.from({ length: 12 }, (_, i) => {
+            const deg = i * 30;
+            const p = computeFerrisWheelCabin(deg, 215, { x: 0, y: 0 });
+            const rad = (deg * Math.PI) / 180;
+            const colors = [
+              "#ef4444",
+              "#3b82f6",
+              "#10b981",
+              "#f59e0b",
+              "#ec4899",
+              "#8b5cf6",
+            ];
+            const gondolaColor = colors[i % colors.length];
 
-          return (
-            <g key={`ferris-spoke-${i}`}>
-              {/* Filigree Spoke Truss */}
-              <line
-                x1="0"
-                y1="0"
-                x2={p.x}
-                y2={p.y}
-                stroke="#d97706"
-                strokeWidth="5"
-              />
-              <line
-                x1="0"
-                y1="0"
-                x2={Math.cos(rad) * 175}
-                y2={Math.sin(rad) * 175}
-                stroke="#fef08a"
-                strokeWidth="2.5"
-              />
-
-              {/* Self-Righting Gondola Cabin (Always stays upright!) */}
-              <g transform={`translate(${p.x} ${p.y})`}>
-                {/* Brass Suspension Arm */}
+            return (
+              <g key={`ferris-spoke-${i}`}>
+                {/* Filigree Spoke Truss */}
                 <line
                   x1="0"
-                  y1="-14"
-                  x2="0"
-                  y2="0"
-                  stroke="#f59e0b"
-                  strokeWidth="4"
+                  y1="0"
+                  x2={p.x}
+                  y2={p.y}
+                  stroke="#d97706"
+                  strokeWidth="5"
                 />
-                {/* Curved Victorian Gondola Canopy */}
-                <path
-                  d="M-28 -4 Q0 -22 28 -4 Z"
-                  fill={gondolaColor}
-                  stroke="#451a03"
+                <line
+                  x1="0"
+                  y1="0"
+                  x2={Math.cos(rad) * 175}
+                  y2={-Math.sin(rad) * 175}
+                  stroke="#fef08a"
                   strokeWidth="2.5"
                 />
-                {/* Cabin Enclosure & Glass Windows */}
-                <rect
-                  x="-26"
-                  y="-4"
-                  width="52"
-                  height="38"
-                  rx="8"
-                  fill="#fffbeb"
-                  stroke="#b45309"
-                  strokeWidth="3"
-                />
-                {/* Frosted Arched Windows */}
-                <rect
-                  x="-20"
-                  y="2"
-                  width="16"
-                  height="18"
-                  rx="4"
-                  fill="#38bdf8"
-                  opacity="0.6"
-                  stroke="#94a3b8"
-                  strokeWidth="1"
-                />
-                <rect
-                  x="4"
-                  y="2"
-                  width="16"
-                  height="18"
-                  rx="4"
-                  fill="#38bdf8"
-                  opacity="0.6"
-                  stroke="#94a3b8"
-                  strokeWidth="1"
-                />
-                {/* Decorative Lower Filigree Trim */}
-                <path
-                  d="M-26 26 Q0 36 26 26"
-                  fill={gondolaColor}
-                  stroke="#451a03"
-                  strokeWidth="2"
-                />
+
+                {/* Self-Righting Gondola Cabin (Always stays upright!) */}
+                <g transform={`translate(${p.x} ${p.y})`}>
+                  <g className="sm-spin" style={{ "--sm-dur": "72s" }}>
+                    {/* Invisible ring centres the counter-spin on the hanger. */}
+                    <circle r="60" fill="none" />
+                    {/* Brass Suspension Arm */}
+                    <line
+                      x1="0"
+                      y1="-14"
+                      x2="0"
+                      y2="0"
+                      stroke="#f59e0b"
+                      strokeWidth="4"
+                    />
+                    {/* Curved Victorian Gondola Canopy */}
+                    <path
+                      d="M-28 -4 Q0 -22 28 -4 Z"
+                      fill={gondolaColor}
+                      stroke="#451a03"
+                      strokeWidth="2.5"
+                    />
+                    {/* Cabin Enclosure & Glass Windows */}
+                    <rect
+                      x="-26"
+                      y="-4"
+                      width="52"
+                      height="38"
+                      rx="8"
+                      fill="#fffbeb"
+                      stroke="#b45309"
+                      strokeWidth="3"
+                    />
+                    {/* Frosted Arched Windows */}
+                    <rect
+                      x="-20"
+                      y="2"
+                      width="16"
+                      height="18"
+                      rx="4"
+                      fill="#38bdf8"
+                      opacity="0.6"
+                      stroke="#94a3b8"
+                      strokeWidth="1"
+                    />
+                    <rect
+                      x="4"
+                      y="2"
+                      width="16"
+                      height="18"
+                      rx="4"
+                      fill="#38bdf8"
+                      opacity="0.6"
+                      stroke="#94a3b8"
+                      strokeWidth="1"
+                    />
+                    {/* Decorative Lower Filigree Trim */}
+                    <path
+                      d="M-26 26 Q0 36 26 26"
+                      fill={gondolaColor}
+                      stroke="#451a03"
+                      strokeWidth="2"
+                    />
+                  </g>
+                </g>
               </g>
-            </g>
-          );
-        })}
+            );
+          })}
+        </g>
 
         {/* Center Golden Sunburst Lion Medallion */}
         <g transform="translate(0 0)">
@@ -1095,47 +1031,81 @@ export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
           opacity="0.8"
         />
         <ellipse
+          className="sm-pulse"
           cx="130"
           cy="55"
-          rx={90 + flumeSplash}
-          ry={20 + flumeSplash * 0.3}
+          rx="82"
+          ry="17.6"
           fill="none"
           stroke="#ffffff"
           strokeWidth="3"
           opacity="0.9"
+          style={{
+            "--sm-dur": `${Math.PI / 4}s`,
+            "--sm-delay": `${-Math.PI / 2 / 4}s`,
+            "--sm-scale": 98 / 82,
+          }}
         />
 
         {/* Natural Cedar Log Flume Boat Bobbing */}
-        <g
-          transform={`translate(${45 + Math.sin(seconds * 1.5) * 16} ${-6 + logBob})`}
-        >
-          {/* Carved Log Hollow Hull */}
-          <rect
-            x="-35"
-            y="-12"
-            width="70"
-            height="28"
-            rx="12"
-            fill="#78350f"
-            stroke="#451a03"
-            strokeWidth="3"
-          />
-          <ellipse
-            cx="28"
-            cy="2"
-            rx="7"
-            ry="12"
-            fill="#b45309"
-            stroke="#451a03"
-            strokeWidth="2"
-          />
-          <rect x="-24" y="-8" width="48" height="18" rx="6" fill="#1e293b" />
-          {/* Water Splash Foam at Log Bow */}
-          <path
-            d="M25 8 Q38 2 30 18 Q20 12 25 8"
-            fill="#ffffff"
-            opacity="0.9"
-          />
+        <g transform="translate(45 -6)">
+          <g
+            className="sm-bob"
+            style={{
+              "--sm-dur": `${Math.PI / 2.5}s`,
+              "--sm-delay": `${-Math.PI / 2 / 2.5}s`,
+              "--sm-amp": "4px",
+            }}
+          >
+            {/* Turned a quarter so sm-bob's swing runs left and right. */}
+            <g transform="rotate(-90)">
+              <g
+                className="sm-bob"
+                style={{
+                  "--sm-dur": `${Math.PI / 1.5}s`,
+                  "--sm-delay": `${-Math.PI / 2 / 1.5}s`,
+                  "--sm-amp": "16px",
+                }}
+              >
+                <g transform="rotate(90)">
+                  {/* Carved Log Hollow Hull */}
+                  <rect
+                    x="-35"
+                    y="-12"
+                    width="70"
+                    height="28"
+                    rx="12"
+                    fill="#78350f"
+                    stroke="#451a03"
+                    strokeWidth="3"
+                  />
+                  <ellipse
+                    cx="28"
+                    cy="2"
+                    rx="7"
+                    ry="12"
+                    fill="#b45309"
+                    stroke="#451a03"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="-24"
+                    y="-8"
+                    width="48"
+                    height="18"
+                    rx="6"
+                    fill="#1e293b"
+                  />
+                  {/* Water Splash Foam at Log Bow */}
+                  <path
+                    d="M25 8 Q38 2 30 18 Q20 12 25 8"
+                    fill="#ffffff"
+                    opacity="0.9"
+                  />
+                </g>
+              </g>
+            </g>
+          </g>
         </g>
 
         {/* Rustic Timber Splash Signboard */}
@@ -1298,6 +1268,139 @@ export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
           </g>
         </g>
       ))}
+    </>
+  );
+});
+
+export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
+  // The coaster train rides a curved track at varying speed, so it stays on
+  // seconds; the rest of the park loops in CSS.
+  const cart = computeCoasterTrackPosition(seconds / 28);
+  const cartAngle = cart.angle ?? 0;
+
+  return (
+    <g className="wonder-park-entrance-scenery">
+      <WonderParkBelowTrain />
+      {/* Kinetic Roller Coaster Train */}
+      <g
+        transform={`translate(${cart.x} ${cart.y}) rotate(${cartAngle})`}
+        style={{ transition: "none" }}
+      >
+        {/* Front Engine Car */}
+        <g transform="translate(0 -16)">
+          {/* Wheel Bogie Assemblies */}
+          <rect x="-30" y="8" width="60" height="12" rx="4" fill="#1e293b" />
+          <circle
+            cx="-22"
+            cy="14"
+            r="7"
+            fill="#64748b"
+            stroke="#f8fafc"
+            strokeWidth="2"
+          />
+          <circle
+            cx="22"
+            cy="14"
+            r="7"
+            fill="#64748b"
+            stroke="#f8fafc"
+            strokeWidth="2"
+          />
+
+          {/* Sleek Crimson Coaster Car Shell */}
+          <polygon
+            points="-34,8 34,8 44,-14 26,-22 -30,-22 -34,8"
+            fill="#dc2626"
+            stroke="#991b1b"
+            strokeWidth="3"
+          />
+          <path d="M-30 -22 L26 -22 L40 -12 L-30 -12 Z" fill="#ef4444" />
+
+          {/* Fierce Carved Golden Lion Mascot Figurehead on front */}
+          <g transform="translate(36 -12) scale(0.85)">
+            <ellipse
+              cx="0"
+              cy="0"
+              rx="14"
+              ry="12"
+              fill="#f59e0b"
+              stroke="#b45309"
+              strokeWidth="2"
+            />
+            <polygon points="4,-6 10,-2 4,2" fill="#fef08a" />
+            <circle cx="2" cy="-4" r="2.5" fill="#451a03" />
+            <polygon points="-8,-12 -2,-18 4,-12" fill="#fbbf24" />
+          </g>
+
+          {/* Animated Screaming Passengers with raised hands */}
+          <g transform="translate(-10 -24)">
+            {/* Passenger 1 */}
+            <circle
+              cx="-12"
+              cy="0"
+              r="7"
+              fill="#fbcfe8"
+              stroke="#be185d"
+              strokeWidth="1.5"
+            />
+            <line
+              x1="-16"
+              y1="0"
+              x2="-22"
+              y2="-12"
+              stroke="#be185d"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+            <line
+              x1="-8"
+              y1="0"
+              x2="-2"
+              y2="-12"
+              stroke="#be185d"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+            {/* Passenger 2 */}
+            <circle
+              cx="10"
+              cy="0"
+              r="7"
+              fill="#fed7aa"
+              stroke="#c2410c"
+              strokeWidth="1.5"
+            />
+            <line
+              x1="6"
+              y1="0"
+              x2="0"
+              y2="-12"
+              stroke="#c2410c"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+            <line
+              x1="14"
+              y1="0"
+              x2="20"
+              y2="-12"
+              stroke="#c2410c"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+          </g>
+
+          {/* Safety Lap Bar */}
+          <path
+            d="M-26 -14 H24"
+            stroke="#e2e8f0"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+        </g>
+      </g>
+
+      <WonderParkAboveTrain />
     </g>
   );
 }
