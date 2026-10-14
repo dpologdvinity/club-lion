@@ -1,3 +1,5 @@
+import { memo, type CSSProperties } from "react";
+
 const STAGE_WIDTH = 2400;
 const HORIZON = 330;
 
@@ -8,18 +10,25 @@ const SAND_SPECKLES = Array.from({ length: 90 }, (_, i) => ({
   r: 1.5 + (i % 3),
 }));
 
+// Rotate about the local origin, like an SVG rotate(), instead of the fill-box.
+const PIVOT: CSSProperties = { transformBox: "view-box", "--sm-origin": "0 0" };
+
+// sm-pulse grows from the still frame toward the farther end of the old range.
+const pulseToward = (now: number, lo: number, hi: number) =>
+  String((now - lo > hi - now ? lo : hi) / now);
+
 function BeachPalm({
   x,
   y,
   scale = 1,
   lean = 1,
-  sway,
+  swayDelay,
 }: {
   x: number;
   y: number;
   scale?: number;
   lean?: 1 | -1;
-  sway: number;
+  swayDelay: number;
 }) {
   const fronds = [-150, -115, -80, -45, -10, 25];
   return (
@@ -54,50 +63,62 @@ function BeachPalm({
           />
         );
       })}
-      <g transform={`translate(70 -300) rotate(${sway})`}>
-        {fronds.map((angle, i) => (
-          <g key={angle} transform={`rotate(${angle})`}>
-            <path
-              d="M0 0Q70-38 150 8Q78-12 0 0"
-              fill={i % 2 ? "#2f7a4f" : "#3d9460"}
-            />
-            <path
-              d="M0 0Q70-38 150 8"
-              fill="none"
-              stroke="#245c3c"
-              strokeWidth="3"
-            />
-            {[30, 60, 90, 120].map((fx) => (
+      <g transform="translate(70 -300)">
+        <g
+          className="sm-sway"
+          style={{
+            ...PIVOT,
+            "--sm-deg": "3deg",
+            "--sm-dur": "3.49s",
+            "--sm-delay": `${swayDelay}s`,
+          }}
+        >
+          {fronds.map((angle, i) => (
+            <g key={angle} transform={`rotate(${angle})`}>
               <path
-                key={fx}
-                d={`M${fx} ${-16 + fx * 0.12}l12 22`}
-                stroke={i % 2 ? "#3d9460" : "#2f7a4f"}
-                strokeWidth="6"
-                strokeLinecap="round"
+                d="M0 0Q70-38 150 8Q78-12 0 0"
+                fill={i % 2 ? "#2f7a4f" : "#3d9460"}
               />
-            ))}
-          </g>
-        ))}
-        <circle cx="-8" cy="8" r="11" fill="#5d3b1d" />
-        <circle cx="9" cy="12" r="10" fill="#6d4826" />
-        <circle cx="1" cy="-2" r="9" fill="#4f321a" />
+              <path
+                d="M0 0Q70-38 150 8"
+                fill="none"
+                stroke="#245c3c"
+                strokeWidth="3"
+              />
+              {[30, 60, 90, 120].map((fx) => (
+                <path
+                  key={fx}
+                  d={`M${fx} ${-16 + fx * 0.12}l12 22`}
+                  stroke={i % 2 ? "#3d9460" : "#2f7a4f"}
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                />
+              ))}
+            </g>
+          ))}
+          <circle cx="-8" cy="8" r="11" fill="#5d3b1d" />
+          <circle cx="9" cy="12" r="10" fill="#6d4826" />
+          <circle cx="1" cy="-2" r="9" fill="#4f321a" />
+        </g>
       </g>
     </g>
   );
 }
 
-function TikiTorch({
-  x,
-  y,
-  flicker,
-}: {
-  x: number;
-  y: number;
-  flicker: number;
-}) {
+function TikiTorch({ x, y, delay }: { x: number; y: number; delay: number }) {
   return (
     <g transform={`translate(${x} ${y})`}>
-      <circle cy="-150" r={58 + flicker * 6} fill="url(#sb-torch-glow)" />
+      <circle
+        className="sm-pulse"
+        style={{
+          "--sm-dur": "0.35s",
+          "--sm-scale": "1.2",
+          "--sm-delay": `${delay}s`,
+        }}
+        cy="-150"
+        r="58"
+        fill="url(#sb-torch-glow)"
+      />
       <path d="M-5 0L-7-118H7L5 0Z" fill="#7c5532" />
       {[-30, -60, -90].map((ry) => (
         <path key={ry} d={`M-8 ${ry}h16`} stroke="#4d321b" strokeWidth="4" />
@@ -109,11 +130,25 @@ function TikiTorch({
         strokeWidth="3"
       />
       <path
-        d={`M-10-136Q-14-${158 + flicker * 8} 0-${178 + flicker * 12}Q14-${158 + flicker * 6} 10-136Z`}
+        className="sm-pulse"
+        style={{
+          "--sm-dur": "0.3s",
+          "--sm-scale": "1.25",
+          "--sm-origin": "50% 100%",
+          "--sm-delay": `${delay}s`,
+        }}
+        d="M-10-136Q-14-158 0-178Q14-158 10-136Z"
         fill="#ff8a3d"
       />
       <path
-        d={`M-5-136Q-6-${152 + flicker * 4} 0-${164 + flicker * 8}Q6-152 5-136Z`}
+        className="sm-pulse"
+        style={{
+          "--sm-dur": "0.23s",
+          "--sm-scale": "1.3",
+          "--sm-origin": "50% 100%",
+          "--sm-delay": `${delay * 0.7}s`,
+        }}
+        d="M-5-136Q-6-152 0-164Q6-152 5-136Z"
         fill="#ffe08a"
       />
     </g>
@@ -157,19 +192,22 @@ function BeachUmbrella({
 }
 
 export function SunsetBeachScenery({ seconds }: { seconds: number }) {
-  const swell = Math.sin(seconds * 0.8);
-  const foamY = 506 + swell * 7;
-  const sway = Math.sin(seconds * 0.9) * 3;
-  const flicker = (Math.sin(seconds * 9) + Math.sin(seconds * 13.7)) / 2;
-  const cloudDrift = (seconds * 4) % STAGE_WIDTH;
-  const boatX = 300 + ((seconds * 9) % 1900);
-  const flagWave = Math.sin(seconds * 3.2) * 8;
-  const twinkle = (i: number) =>
-    0.65 + Math.sin(seconds * 2.4 + i * 1.3) * 0.35;
+  void seconds; // ambient motion is CSS-driven (sceneryMotion.css)
+  return <SunsetBeachStage />;
+}
+
+const SunsetBeachStage = memo(function SunsetBeachStage() {
+  const foamY = 506;
+  const twinkle = (i: number) => 0.65 + Math.sin(i * 1.3) * 0.35;
+  const twinkleStyle = (i: number): CSSProperties => ({
+    "--sm-dur": "1.31s",
+    "--sm-scale": pulseToward(twinkle(i), 0.3, 1),
+    "--sm-delay": `${-(i * 1.3 + Math.PI / 2) / 2.4}s`,
+  });
   const gulls = [0, 1, 2].map((i) => ({
-    x: ((220 + i * 140 + seconds * (22 + i * 6)) % (STAGE_WIDTH + 200)) - 100,
-    y: 150 + i * 32 + Math.sin(seconds * 1.4 + i) * 10,
-    flap: Math.sin(seconds * 6 + i * 2) * 6,
+    x: 120 + i * 140,
+    y: 150 + i * 32 + Math.sin(i) * 10,
+    flap: Math.sin(i * 2) * 6,
   }));
   const lightBulbs = Array.from({ length: 14 }, (_, i) => {
     const t = (i + 0.5) / 14;
@@ -224,40 +262,76 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
       <rect width={STAGE_WIDTH} height={HORIZON + 10} fill="url(#sb-sky)" />
       <circle cx="1250" cy={HORIZON - 10} r="300" fill="url(#sb-sun-glow)" />
       <circle cx="1250" cy={HORIZON - 10} r="120" fill="url(#sb-sun)" />
-      {[0, -STAGE_WIDTH].map((offset) => (
+      <g
+        className="sm-drift"
+        style={{ "--sm-dist": `${STAGE_WIDTH}px`, "--sm-dur": "600s" }}
+      >
+        {[0, -STAGE_WIDTH].map((offset) => (
+          <g key={offset} transform={`translate(${offset} 0)`} opacity=".85">
+            {[
+              [260, 110, 260, 22],
+              [720, 70, 320, 18],
+              [1660, 128, 300, 24],
+              [2120, 64, 220, 16],
+            ].map(([cx, cy, rx, ry]) => (
+              <g key={cx}>
+                <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="#f7c1a4" />
+                <ellipse
+                  cx={cx + 20}
+                  cy={cy + ry * 0.55}
+                  rx={rx * 0.85}
+                  ry={ry * 0.5}
+                  fill="#e58f88"
+                />
+              </g>
+            ))}
+          </g>
+        ))}
+      </g>
+      {gulls.map((g, i) => (
         <g
-          key={offset}
-          transform={`translate(${offset + cloudDrift} 0)`}
-          opacity=".85"
+          key={i}
+          className="sm-drift"
+          style={{
+            "--sm-dist": `${STAGE_WIDTH + 200}px`,
+            "--sm-dur": `${(STAGE_WIDTH + 200) / (22 + i * 6)}s`,
+          }}
         >
-          {[
-            [260, 110, 260, 22],
-            [720, 70, 320, 18],
-            [1660, 128, 300, 24],
-            [2120, 64, 220, 16],
-          ].map(([cx, cy, rx, ry]) => (
-            <g key={cx}>
-              <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="#f7c1a4" />
-              <ellipse
-                cx={cx + 20}
-                cy={cy + ry * 0.55}
-                rx={rx * 0.85}
-                ry={ry * 0.5}
-                fill="#e58f88"
-              />
+          {[0, -(STAGE_WIDTH + 200)].map((offset) => (
+            <g key={offset} transform={`translate(${g.x + offset} ${g.y})`}>
+              <g
+                className="sm-bob"
+                style={{
+                  "--sm-dur": "2.24s",
+                  "--sm-amp": "10px",
+                  "--sm-delay": `${-(i + Math.PI / 2) / 1.4}s`,
+                }}
+                fill="none"
+                stroke="#4b3b56"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              >
+                {/* Wings flap by rotating about the body; the left one mirrors the right. */}
+                {[
+                  { d: `M-16 ${g.flap}Q-8 -8 0 0`, mirror: Math.PI },
+                  { d: `M0 0Q8 -8 16 ${g.flap}`, mirror: 0 },
+                ].map(({ d, mirror }) => (
+                  <path
+                    key={d}
+                    className="sm-sway"
+                    style={{
+                      ...PIVOT,
+                      "--sm-deg": "22deg",
+                      "--sm-dur": "0.52s",
+                      "--sm-delay": `${-(i * 2 + Math.PI / 2 + mirror) / 6}s`,
+                    }}
+                    d={d}
+                  />
+                ))}
+              </g>
             </g>
           ))}
         </g>
-      ))}
-      {gulls.map((g, i) => (
-        <path
-          key={i}
-          d={`M${g.x - 16} ${g.y + g.flap}Q${g.x - 8} ${g.y - 8} ${g.x} ${g.y}Q${g.x + 8} ${g.y - 8} ${g.x + 16} ${g.y + g.flap}`}
-          fill="none"
-          stroke="#4b3b56"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-        />
       ))}
 
       {/* Distant islands */}
@@ -280,64 +354,109 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
         fill="url(#sb-ocean)"
       />
       {Array.from({ length: 9 }, (_, i) => {
-        const w = 240 - i * 18 + Math.sin(seconds * 1.6 + i) * 24;
+        const mid = 240 - i * 18;
+        const w = mid + Math.sin(i) * 24;
+        const shift = Math.sin(i * 2) * 12;
         return (
-          <rect
+          <g
             key={i}
-            x={1250 - w / 2 + Math.sin(seconds + i * 2) * 12}
-            y={HORIZON + 8 + i * 17}
-            width={w}
-            height="5"
-            rx="2.5"
-            fill="#ffe2a2"
-            opacity={0.7 - i * 0.06}
-          />
+            className="sm-glide"
+            style={{
+              "--sm-dur": `${Math.PI}s`,
+              "--sm-x": `${shift > 0 ? -24 : 24}px`,
+            }}
+          >
+            <rect
+              className="sm-pulse"
+              style={{
+                "--sm-dur": "1.96s",
+                "--sm-scale": pulseToward(w, mid - 24, mid + 24),
+                "--sm-delay": `${-(i + Math.PI / 2) / 1.6}s`,
+              }}
+              x={1250 - w / 2 + shift}
+              y={HORIZON + 8 + i * 17}
+              width={w}
+              height="5"
+              rx="2.5"
+              fill="#ffe2a2"
+              opacity={0.7 - i * 0.06}
+            />
+          </g>
         );
       })}
-      {Array.from({ length: 16 }, (_, i) => {
-        const row = i % 4;
-        const x =
-          ((i * 173 + seconds * (8 + row * 3)) % (STAGE_WIDTH + 200)) - 100;
-        const y = 370 + row * 34 + Math.sin(seconds * 0.9 + i) * 4;
-        return (
-          <path
-            key={i}
-            d={`M${x} ${y}q40 -10 80 0t80 0`}
-            fill="none"
-            stroke="#cfe6e1"
-            strokeWidth={3 + row}
-            opacity={0.35 + row * 0.1}
-            strokeLinecap="round"
-          />
-        );
-      })}
-      <g transform={`translate(${boatX} ${HORIZON + 14})`}>
-        <path d="M-26 0H26L18 9H-18Z" fill="#5d4560" />
-        <path d="M0 -2V-46L24 -6Z" fill="#fff0d8" />
-        <path d="M-2 -6V-38L-20 -6Z" fill="#f2b28c" />
+      {[0, 1, 2, 3].map((row) => (
+        <g
+          key={row}
+          className="sm-drift"
+          style={{
+            "--sm-dist": `${STAGE_WIDTH + 200}px`,
+            "--sm-dur": `${(STAGE_WIDTH + 200) / (8 + row * 3)}s`,
+          }}
+          fill="none"
+          stroke="#cfe6e1"
+          strokeWidth={3 + row}
+          strokeLinecap="round"
+        >
+          {[row, row + 4, row + 8, row + 12].flatMap((i) => {
+            const x = ((i * 173) % (STAGE_WIDTH + 200)) - 100;
+            const y = 370 + row * 34 + Math.sin(i) * 4;
+            return [0, -(STAGE_WIDTH + 200)].map((offset) => (
+              <path
+                key={`${i}${offset}`}
+                className="sm-bob"
+                style={{
+                  "--sm-dur": "3.49s",
+                  "--sm-amp": "4px",
+                  "--sm-delay": `${-(i + Math.PI / 2) / 0.9}s`,
+                }}
+                d={`M${x + offset} ${y}q40 -10 80 0t80 0`}
+                opacity={0.35 + row * 0.1}
+              />
+            ));
+          })}
+        </g>
+      ))}
+      <g transform={`translate(300 ${HORIZON + 14})`}>
+        <g
+          className="sm-drift"
+          style={{ "--sm-dist": "1900px", "--sm-dur": "211s" }}
+        >
+          <path d="M-26 0H26L18 9H-18Z" fill="#5d4560" />
+          <path d="M0 -2V-46L24 -6Z" fill="#fff0d8" />
+          <path d="M-2 -6V-38L-20 -6Z" fill="#f2b28c" />
+        </g>
       </g>
 
       {/* Shoreline: wet sand, foam and dry beach */}
-      <path
-        d={`M0 ${foamY + 6}Q600 ${foamY - 18} 1200 ${foamY + 4}T2400 ${foamY - 4}V720H0Z`}
-        fill="#c9965f"
-      />
-      <path
-        d={`M0 ${foamY}Q600 ${foamY - 24} 1200 ${foamY - 2}T2400 ${foamY - 10}`}
-        fill="none"
-        stroke="#fff6e4"
-        strokeWidth="10"
-        strokeLinecap="round"
-        opacity=".9"
-      />
-      <path
-        d={`M0 ${foamY + 10}Q600 ${foamY - 12} 1200 ${foamY + 8}T2400 ${foamY}`}
-        fill="none"
-        stroke="#fff6e4"
-        strokeWidth="4"
-        strokeDasharray="30 22"
-        opacity=".6"
-      />
+      <g
+        className="sm-bob"
+        style={{
+          "--sm-dur": "3.93s",
+          "--sm-amp": "7px",
+          "--sm-delay": "-1.96s",
+        }}
+      >
+        <path
+          d={`M0 ${foamY + 6}Q600 ${foamY - 18} 1200 ${foamY + 4}T2400 ${foamY - 4}V720H0Z`}
+          fill="#c9965f"
+        />
+        <path
+          d={`M0 ${foamY}Q600 ${foamY - 24} 1200 ${foamY - 2}T2400 ${foamY - 10}`}
+          fill="none"
+          stroke="#fff6e4"
+          strokeWidth="10"
+          strokeLinecap="round"
+          opacity=".9"
+        />
+        <path
+          d={`M0 ${foamY + 10}Q600 ${foamY - 12} 1200 ${foamY + 8}T2400 ${foamY}`}
+          fill="none"
+          stroke="#fff6e4"
+          strokeWidth="4"
+          strokeDasharray="30 22"
+          opacity=".6"
+        />
+      </g>
       <path d="M0 540Q520 512 1100 536T2400 528V720H0Z" fill="url(#sb-sand)" />
       <path
         d="M0 650Q420 610 900 640T1700 652T2400 628V720H0Z"
@@ -356,9 +475,9 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
       ))}
 
       {/* Palms framing the bay */}
-      <BeachPalm x={70} y={560} scale={1.15} sway={sway} />
-      <BeachPalm x={430} y={548} scale={0.85} lean={-1} sway={-sway} />
-      <BeachPalm x={2050} y={552} scale={0.95} lean={-1} sway={sway} />
+      <BeachPalm x={70} y={560} scale={1.15} swayDelay={-1.75} />
+      <BeachPalm x={430} y={548} scale={0.85} lean={-1} swayDelay={-5.24} />
+      <BeachPalm x={2050} y={552} scale={0.95} lean={-1} swayDelay={-1.75} />
 
       {/* Directional sign to Downtown */}
       <g transform="translate(190 560)">
@@ -375,8 +494,8 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
       </g>
 
       {/* Sunset Cabana tiki bar */}
-      <TikiTorch x={600} y={560} flicker={flicker} />
-      <TikiTorch x={1070} y={560} flicker={-flicker} />
+      <TikiTorch x={600} y={560} delay={0} />
+      <TikiTorch x={1070} y={560} delay={-0.17} />
       <g transform="translate(835 560)">
         <ellipse cy="8" rx="270" ry="26" fill="#a8743f" opacity=".3" />
         {[-185, -65, 65, 185].map((px) => (
@@ -445,7 +564,13 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
         {[-125, 0, 125].map((lx, i) => (
           <g key={lx} transform={`translate(${lx} -168)`}>
             <path d="M0-4V14" stroke="#4f3219" strokeWidth="2" />
-            <circle cy="30" r={30 * twinkle(i)} fill="url(#sb-bulb-glow)" />
+            <circle
+              className="sm-pulse"
+              style={twinkleStyle(i)}
+              cy="30"
+              r={30 * twinkle(i)}
+              fill="url(#sb-bulb-glow)"
+            />
             <ellipse
               cy="30"
               rx="12"
@@ -527,6 +652,8 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
       {lightBulbs.map((b, i) => (
         <g key={i}>
           <circle
+            className="sm-pulse"
+            style={twinkleStyle(i)}
             cx={b.x}
             cy={b.y + 8}
             r={16 * twinkle(i)}
@@ -572,14 +699,17 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
         <rect x="-62" y="-12" width="124" height="24" rx="6" fill="#7fd0c0" />
         <path d="M-62 0H62" stroke="#fff3e0" strokeWidth="6" />
       </g>
-      <g
-        transform={`translate(1478 ${640 + Math.abs(Math.sin(seconds * 2.2)) * -10})`}
-      >
-        <circle r="20" fill="#fff6e4" />
-        <path d="M-20 0A20 20 0 0 1 0-20V0Z" fill="#e86a5c" />
-        <path d="M20 0A20 20 0 0 1 0 20V0Z" fill="#2f9e95" />
-        <path d="M0-20A20 20 0 0 1 20 0H0Z" fill="#ffd56f" />
-        <circle r="20" fill="none" stroke="#00000025" strokeWidth="2" />
+      <g transform="translate(1478 640)">
+        <g
+          className="sm-glide"
+          style={{ "--sm-dur": "0.71s", "--sm-y": "-10px" }}
+        >
+          <circle r="20" fill="#fff6e4" />
+          <path d="M-20 0A20 20 0 0 1 0-20V0Z" fill="#e86a5c" />
+          <path d="M20 0A20 20 0 0 1 0 20V0Z" fill="#2f9e95" />
+          <path d="M0-20A20 20 0 0 1 20 0H0Z" fill="#ffd56f" />
+          <circle r="20" fill="none" stroke="#00000025" strokeWidth="2" />
+        </g>
       </g>
 
       {/* Lifeguard tower with lion pennant */}
@@ -635,11 +765,18 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
           LIFEGUARD
         </text>
         <path d="M0-292V-352" stroke="#7b5a2c" strokeWidth="4" />
-        <path
-          d={`M2-350Q24 ${-354 + flagWave} 48 ${-344 + flagWave * 0.5}Q26 ${-332 - flagWave * 0.4} 2-326Z`}
-          fill="#ffb84d"
-        />
-        <circle cx="18" cy={-338 + flagWave * 0.3} r="6" fill="#c46a2a" />
+        <g
+          className="sm-sway"
+          style={{
+            "--sm-deg": "8deg",
+            "--sm-dur": "0.98s",
+            "--sm-origin": "0% 50%",
+            "--sm-delay": "-0.49s",
+          }}
+        >
+          <path d="M2-350Q24-354 48-344Q26-332 2-326Z" fill="#ffb84d" />
+          <circle cx="18" cy="-338" r="6" fill="#c46a2a" />
+        </g>
         {/* Ring buoy */}
         <circle
           cx="-60"
@@ -679,7 +816,17 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
         ))}
         <path d="M-6-34V-52Q0-60 6-52V-34Z" fill="#a8743f" />
         <path d="M0-86V-112" stroke="#7b5a2c" strokeWidth="3" />
-        <path d={`M0-112L${20 + flagWave * 0.6}-104L0-96Z`} fill="#e86a5c" />
+        <path
+          className="sm-sway"
+          style={{
+            "--sm-deg": "10deg",
+            "--sm-dur": "0.98s",
+            "--sm-origin": "0% 50%",
+            "--sm-delay": "-0.49s",
+          }}
+          d="M0-112L20-104L0-96Z"
+          fill="#e86a5c"
+        />
       </g>
       {(
         [
@@ -750,4 +897,4 @@ export function SunsetBeachScenery({ seconds }: { seconds: number }) {
       </g>
     </g>
   );
-}
+});
