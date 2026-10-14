@@ -91,12 +91,10 @@ function RiverBoulder({
   x,
   y,
   scale,
-  splash,
 }: {
   x: number;
   y: number;
   scale: number;
-  splash: number;
 }): JSX.Element {
   return (
     <g transform={`translate(${x} ${y}) scale(${scale})`}>
@@ -124,8 +122,14 @@ function RiverBoulder({
       {[-24, 6, 26].map((sx, i) => (
         <circle
           key={sx}
+          className="sm-bob"
+          style={{
+            "--sm-dur": "0.39s",
+            "--sm-amp": "7px",
+            "--sm-delay": `${-(((x + i * 2) / 4) % 0.78)}s`,
+          }}
           cx={sx}
-          cy={-30 - Math.abs(Math.sin(splash + i * 2)) * 14}
+          cy={-30 - Math.abs(Math.sin(x + i * 2)) * 14}
           r="4"
           fill="#f4fbff"
           opacity=".85"
@@ -195,7 +199,15 @@ const CanyonRiver = memo(function CanyonRiver(): JSX.Element {
   return (
     <>
       <rect y="462" width={STAGE_WIDTH} height="96" fill="url(#cr-river)" />
-      <rect y="462" width={STAGE_WIDTH} height="96" fill="url(#cr-foam)" />
+      <rect
+        className="sm-drift"
+        style={{ "--sm-dist": "60px", "--sm-dur": "0.27s" }}
+        x="-60"
+        y="462"
+        width={STAGE_WIDTH + 60}
+        height="96"
+        fill="url(#cr-foam)"
+      />
     </>
   );
 });
@@ -320,65 +332,77 @@ const CanyonPortalSign = memo(function CanyonPortalSign(): JSX.Element {
   );
 });
 
-function CanyonClouds({ seconds }: { seconds: number }): JSX.Element {
-  const cloudDrift = (seconds * 5) % STAGE_WIDTH;
-  const birds = [0, 1].map((i) => ({
-    x: ((200 + i * 260 + seconds * (18 + i * 5)) % (STAGE_WIDTH + 200)) - 100,
-    y: 170 + i * 40 + Math.sin(seconds * 1.3 + i) * 6,
-  }));
+const CanyonClouds = memo(function CanyonClouds(): JSX.Element {
   return (
     <>
-      {[0, -STAGE_WIDTH].map((offset) => (
+      <g
+        className="sm-drift"
+        style={{ "--sm-dist": `${STAGE_WIDTH}px`, "--sm-dur": "480s" }}
+      >
+        {[0, -STAGE_WIDTH].map((offset) => (
+          <g
+            key={offset}
+            transform={`translate(${offset} 0)`}
+            fill="#fff4e0"
+            opacity=".8"
+          >
+            <ellipse cx="380" cy="120" rx="160" ry="30" />
+            <ellipse cx="1500" cy="70" rx="210" ry="26" />
+            <ellipse cx="2080" cy="160" rx="140" ry="28" />
+          </g>
+        ))}
+      </g>
+      {[0, 1].map((i) => (
         <g
-          key={offset}
-          transform={`translate(${offset + cloudDrift} 0)`}
-          fill="#fff4e0"
-          opacity=".8"
-        >
-          <ellipse cx="380" cy="120" rx="160" ry="30" />
-          <ellipse cx="1500" cy="70" rx="210" ry="26" />
-          <ellipse cx="2080" cy="160" rx="140" ry="28" />
-        </g>
-      ))}
-      {birds.map((bird, i) => (
-        <path
           key={i}
-          transform={`translate(${bird.x} ${bird.y})`}
-          d="M-12 0q6-7 12 0q6-7 12 0"
-          fill="none"
-          stroke="#7a3b26"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
+          className="sm-bob"
+          style={{
+            "--sm-dur": "2.42s",
+            "--sm-amp": "6px",
+            "--sm-delay": `${-(i + Math.PI / 2) / 1.3}s`,
+          }}
+        >
+          <g
+            className="sm-drift"
+            style={{
+              "--sm-dist": `${STAGE_WIDTH + 200}px`,
+              "--sm-dur": `${(STAGE_WIDTH + 200) / (18 + i * 5)}s`,
+            }}
+          >
+            {[0, -(STAGE_WIDTH + 200)].map((offset) => (
+              <path
+                key={offset}
+                transform={`translate(${100 + i * 260 + offset} ${170 + i * 40 + Math.sin(i) * 6})`}
+                d="M-12 0q6-7 12 0q6-7 12 0"
+                fill="none"
+                stroke="#7a3b26"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+            ))}
+          </g>
+        </g>
       ))}
     </>
   );
-}
+});
 
-function RapidBoulders({ seconds }: { seconds: number }): JSX.Element {
+const RapidBoulders = memo(function RapidBoulders(): JSX.Element {
   return (
     <>
       {RAPIDS.map((rock) => (
-        <RiverBoulder
-          key={rock.x}
-          x={rock.x}
-          y={rock.y}
-          scale={rock.scale}
-          splash={seconds * 4 + rock.x}
-        />
+        <RiverBoulder key={rock.x} x={rock.x} y={rock.y} scale={rock.scale} />
       ))}
     </>
   );
-}
+});
 
 export function CanyonRapidsScenery({
   seconds,
 }: {
   seconds: number;
 }): JSX.Element {
-  const foamOffset = (seconds * 220) % 60;
-  const fallOffset = (seconds * 120) % 40;
-  const glowPulse = Math.sin(seconds * 2.2);
+  void seconds; // ambient motion is CSS-driven (sceneryMotion.css)
 
   return (
     <g className="canyon-rapids-scenery">
@@ -413,7 +437,6 @@ export function CanyonRapidsScenery({
           width="60"
           height="24"
           patternUnits="userSpaceOnUse"
-          patternTransform={`translate(${foamOffset} 0)`}
         >
           <path
             d="M0 12Q15 0 30 12Q45 24 60 12"
@@ -428,7 +451,6 @@ export function CanyonRapidsScenery({
           width="40"
           height="40"
           patternUnits="userSpaceOnUse"
-          patternTransform={`translate(0 ${fallOffset})`}
         >
           <path
             d="M6 0V40M26 0V40"
@@ -440,15 +462,22 @@ export function CanyonRapidsScenery({
       </defs>
 
       <CanyonSky />
-      <CanyonClouds seconds={seconds} />
+      <CanyonClouds />
       <CanyonWalls />
       <CanyonRiver />
-      <RapidBoulders seconds={seconds} />
+      <RapidBoulders />
       <CanyonBridge />
       <CanyonBank />
 
       {/* Portal to Downtown Plaza: glowing trail sign pointing west */}
-      <circle cx="40" cy="600" r={64 + glowPulse * 6} fill="url(#cr-glow)" />
+      <circle
+        className="sm-pulse"
+        style={{ "--sm-dur": "1.43s", "--sm-scale": "1.19" }}
+        cx="40"
+        cy="600"
+        r="64"
+        fill="url(#cr-glow)"
+      />
       <CanyonPortalSign />
     </g>
   );
