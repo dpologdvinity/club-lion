@@ -888,3 +888,17 @@ test("salon makeup tab previews free looks and prices premium ones", async ({
     page.locator(".your-character .chibi-avatar .avatar-eyes"),
   ).toHaveClass(/eye-siren/);
 });
+
+test("the room paths bar stays one row in rooms with many exits", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page
+    .getByRole("region", { name: "Lion world", exact: true })
+    .getByRole("button", { name: "Downtown Plaza", exact: true })
+    .click();
+  const paths = page.getByLabel("Room paths and activities");
+  await expect(paths).toBeVisible();
+  const box = await paths.boundingBox();
+  expect(box!.height).toBeLessThan(80);
+});

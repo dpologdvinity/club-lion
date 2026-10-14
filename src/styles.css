@@ -4985,7 +4985,9 @@ svg {
   min-height: 38px;
 }
 .room-navigation-hint {
-  width: 100%;
+  /* One line that scrolls with the buttons; a shrinking hint wrapped into a tall blob. */
+  flex-shrink: 0;
+  white-space: nowrap;
   color: var(--muted);
   font-size: 12px;
 }
