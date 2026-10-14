@@ -13,9 +13,10 @@ export interface AvatarProps extends React.SVGProps<SVGSVGElement> {
  * Renders a vector Y2K fashion-doll avatar SVG with layered clothing,
  * glam makeup looks, hairstyles, accessories, and action animations.
  *
- * Canvas coordinates: universal 120×160 coordinate space.
+ * Canvas coordinates: universal 120×160 coordinate space. Memoized because
+ * the world re-renders every walking frame while the look rarely changes.
  */
-export function Avatar({
+export const Avatar = React.memo(function Avatar({
   look = DEFAULT_AVATAR_LOOK,
   action = "idle",
   size,
@@ -56,6 +57,6 @@ export function Avatar({
       {...props}
     />
   );
-}
+});
 
 export default Avatar;
