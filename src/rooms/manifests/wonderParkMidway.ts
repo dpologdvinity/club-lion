@@ -43,6 +43,12 @@ export const wonderParkMidwayManifest: RoomManifest = {
       actionData: { rideId: "golden-carousel" },
     },
     {
+      id: "lion-leap-tower",
+      type: "ride",
+      position: { x: 2500, y: 600 },
+      actionData: { rideId: "lion-leap-tower" },
+    },
+    {
       id: "midway-game-booth",
       type: "game_launch",
       position: { x: 2200, y: 610 },

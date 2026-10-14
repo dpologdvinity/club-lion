@@ -1,0 +1,766 @@
+/*
+ * Wonder Park ride views. Keyframe percentages follow the beat times in
+ * src/utils/parkRides.ts. Each animated element's resting (non-animated)
+ * style is the ride's best moment, so reduced motion shows a calm still.
+ */
+
+.dialog.dialog-ride {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.dialog-ride .dialog-inner {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 10px 16px 16px;
+}
+.dialog-ride .dialog-header {
+  align-items: center;
+  margin-bottom: 10px;
+}
+.dialog-ride .dialog-header .icon-button {
+  width: 56px;
+  height: 56px;
+}
+
+.park-ride {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.pr-stage {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #2c224d;
+  container-type: size;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.pr-scene,
+.pr-scene-root {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.pr-pivot {
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+
+/* ---------- Rider ---------- */
+.pr-rider {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: min(46%, 64cqw);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.pr-rider-body,
+.pr-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.pr-avatar {
+  position: absolute;
+  top: 9%;
+  left: 27%;
+  width: 46%;
+  height: 61%;
+}
+.pr-pet {
+  position: absolute;
+  top: 31%;
+  left: 64%;
+  width: 26%;
+  aspect-ratio: 1;
+}
+.pr-pet .pet-companion {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ---------- Taps, confetti and the finale ---------- */
+.pr-tap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.pr-tap:focus-visible {
+  outline: 5px solid #fde047;
+  outline-offset: -9px;
+}
+.pr-burst {
+  position: absolute;
+  z-index: 2;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.pr-burst b {
+  position: absolute;
+  font-size: clamp(48px, 10cqmin, 88px);
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  animation: pr-pop 1.3s ease-out forwards;
+}
+.pr-burst i {
+  position: absolute;
+  width: 12px;
+  height: 18px;
+  border-radius: 3px;
+  transform: translate(-50%, -50%);
+  animation: pr-confetti 1.3s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+}
+@keyframes pr-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -65%) scale(1.25);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -170%) scale(1);
+  }
+}
+@keyframes pr-confetti {
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 90px))
+      rotate(var(--spin));
+  }
+}
+.pr-finale {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  background: radial-gradient(circle, #fffbeb, #fffbebcc 32%, #fffbeb00 70%);
+  animation: pr-fade-in 0.5s ease-out;
+}
+.pr-finale-stars {
+  font-size: clamp(44px, 9cqmin, 72px);
+  line-height: 1;
+}
+.pr-coins {
+  margin: 0;
+  border: 4px solid #f59e0b;
+  border-radius: 999px;
+  padding: 8px 26px;
+  background: #fef3c7;
+  color: #92400e;
+  font: 800 clamp(30px, 6cqmin, 46px) / 1.1 var(--font-display);
+  animation: pr-coin 0.7s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.pr-finale-actions {
+  display: flex;
+  gap: 28px;
+}
+.pr-big-button {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  box-shadow:
+    0 8px 0 #0000002e,
+    0 14px 30px #0000003d;
+  cursor: pointer;
+}
+.pr-big-button:active {
+  transform: translateY(4px);
+}
+.pr-big-button:focus-visible {
+  outline: 5px solid #1d4ed8;
+  outline-offset: 4px;
+}
+.pr-again {
+  background: #16a34a;
+}
+.pr-exit {
+  background: #ea580c;
+}
+@keyframes pr-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pr-coin {
+  from {
+    transform: scale(0.3) rotate(-12deg);
+  }
+}
+
+/* ---------- Ferris wheel (30s: rise, top 11-19s, descend) ---------- */
+.pr-ferris .pr-rider-body {
+  transform-origin: 50% -35%;
+  animation: pr-sway 3.4s ease-in-out infinite alternate;
+}
+@keyframes pr-sway {
+  from {
+    transform: rotate(-3deg);
+  }
+  to {
+    transform: rotate(3deg);
+  }
+}
+.pr-ferris-turn,
+.pr-ferris-counter,
+.pr-ferris-far,
+.pr-ferris-mid,
+.pr-ferris-near,
+.pr-ferris-sunset,
+.pr-ferris-sun,
+.pr-birds {
+  animation-duration: 30s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+.pr-ferris-turn {
+  transform: rotate(180deg);
+  animation-name: pr-ferris-turn;
+}
+@keyframes pr-ferris-turn {
+  0% {
+    transform: rotate(0deg);
+  }
+  36.667%,
+  63.333% {
+    transform: rotate(180deg);
+  }
+  93.333%,
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.pr-ferris-counter {
+  transform: rotate(-180deg);
+  animation-name: pr-ferris-counter;
+}
+@keyframes pr-ferris-counter {
+  0% {
+    transform: rotate(0deg);
+  }
+  36.667%,
+  63.333% {
+    transform: rotate(-180deg);
+  }
+  93.333%,
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+.pr-ferris-far {
+  animation-name: pr-ferris-far;
+}
+@keyframes pr-ferris-far {
+  0%,
+  93.333%,
+  100% {
+    transform: translateY(-120px);
+  }
+  36.667%,
+  63.333% {
+    transform: none;
+  }
+}
+.pr-ferris-mid {
+  animation-name: pr-ferris-mid;
+}
+@keyframes pr-ferris-mid {
+  0%,
+  93.333%,
+  100% {
+    transform: translateY(-240px);
+  }
+  36.667%,
+  63.333% {
+    transform: none;
+  }
+}
+.pr-ferris-near {
+  transform: translateY(700px);
+  animation-name: pr-ferris-near;
+}
+@keyframes pr-ferris-near {
+  0%,
+  93.333%,
+  100% {
+    transform: none;
+  }
+  36.667%,
+  63.333% {
+    transform: translateY(700px);
+  }
+}
+.pr-ferris-sunset {
+  animation-name: pr-ferris-sunset;
+}
+@keyframes pr-ferris-sunset {
+  0% {
+    opacity: 0;
+  }
+  36.667%,
+  63.333% {
+    opacity: 1;
+  }
+  93.333%,
+  100% {
+    opacity: 0.35;
+  }
+}
+.pr-ferris-sun {
+  animation-name: pr-ferris-sun;
+}
+@keyframes pr-ferris-sun {
+  0%,
+  100% {
+    transform: translateY(260px);
+  }
+  36.667%,
+  63.333% {
+    transform: none;
+  }
+}
+.pr-birds {
+  transform: translate(560px, 330px);
+  animation-name: pr-birds;
+  animation-timing-function: linear;
+}
+@keyframes pr-birds {
+  0%,
+  36% {
+    transform: translate(-260px, 380px);
+  }
+  64%,
+  100% {
+    transform: translate(1150px, 280px);
+  }
+}
+
+/* ---------- Mango teacups (driven by --dizzy, --pano, --spin) ---------- */
+.pr-teacup-pano {
+  transform: translateX(var(--pano, -620px));
+}
+.pr-streaks {
+  opacity: calc(var(--dizzy, 0) * 0.75);
+}
+.pr-swirl {
+  opacity: calc(0.14 + var(--dizzy, 0) * 0.6);
+  transform: rotate(var(--swirl, 20deg));
+}
+.pr-cup-wheel {
+  transform: rotate(var(--spin, 0deg));
+}
+.pr-cup-band {
+  transform: translateX(var(--band, 0px));
+}
+.pr-dizzy-stars {
+  opacity: calc(var(--dizzy, 0) * 1.6 - 0.3);
+  transform: rotate(calc(var(--spin, 0deg) * 2));
+}
+.pr-teacups .pr-rider-body {
+  transform: rotate(var(--wobble, 0deg));
+  transform-origin: 50% 90%;
+}
+.pr-hold-hint {
+  position: absolute;
+  bottom: 7%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #fffbebdd;
+  color: #9a3412;
+  opacity: calc(1 - var(--dizzy, 0) * 5);
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: pr-press 1.1s ease-in-out infinite alternate;
+}
+@keyframes pr-press {
+  to {
+    transform: translateX(-50%) translateY(8px) scale(0.92);
+  }
+}
+
+/* ---------- Golden carousel (around and around, horses bob) ---------- */
+.pr-carousel-pano {
+  animation: pr-carousel-pano 14s linear infinite;
+}
+@keyframes pr-carousel-pano {
+  to {
+    transform: translateX(-2000px);
+  }
+}
+.pr-carousel .pr-avatar {
+  top: 9%;
+}
+.pr-carousel .pr-pet {
+  top: 25%;
+  left: 3%;
+}
+.pr-carousel .pr-rider-body {
+  animation: pr-carousel-bob 1.3s ease-in-out infinite alternate;
+}
+@keyframes pr-carousel-bob {
+  from {
+    transform: translateY(-9%);
+  }
+  to {
+    transform: translateY(9%);
+  }
+}
+.pr-note {
+  opacity: 0.9;
+  transform-box: fill-box;
+  animation: pr-note 4.5s ease-out infinite;
+}
+@keyframes pr-note {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(-8deg);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-60px, -300px) rotate(10deg);
+  }
+}
+
+/* ---------- Log flume (28s: climb 3-13s, top, drop 15s, splash 17s) ---------- */
+.pr-flume .pr-avatar {
+  top: 21%;
+}
+.pr-flume .pr-pet {
+  top: 40%;
+}
+.pr-flume-world,
+.pr-flume .pr-rider-body,
+.pr-flume-far,
+.pr-splash,
+.pr-rainbow {
+  animation-duration: 28s;
+  animation-fill-mode: both;
+}
+.pr-flume-world {
+  transform: translate(-1380px, 172px);
+  animation-name: pr-flume-world;
+  animation-timing-function: linear;
+}
+@keyframes pr-flume-world {
+  0% {
+    transform: translate(600px, 172px);
+  }
+  10.714% {
+    transform: translate(100px, 172px);
+  }
+  46.429% {
+    transform: translate(-800px, 532px);
+  }
+  53.571% {
+    transform: translate(-1000px, 532px);
+    animation-timing-function: cubic-bezier(0.6, 0, 1, 0.7);
+  }
+  60.714% {
+    transform: translate(-1300px, 172px);
+    animation-timing-function: cubic-bezier(0, 0.7, 0.4, 1);
+  }
+  75% {
+    transform: translate(-1600px, 172px);
+  }
+  100% {
+    transform: translate(-2200px, 172px);
+  }
+}
+.pr-flume .pr-rider-body {
+  transform-origin: 50% 88%;
+  animation-name: pr-flume-tilt;
+  animation-timing-function: ease-in-out;
+}
+@keyframes pr-flume-tilt {
+  0%,
+  10%,
+  47.5%,
+  53.571%,
+  68%,
+  100% {
+    transform: none;
+  }
+  12.5%,
+  45.5% {
+    transform: rotate(-22deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+  52% {
+    transform: rotate(-3deg);
+  }
+  55%,
+  60.2% {
+    transform: rotate(48deg);
+  }
+  62% {
+    transform: rotate(-10deg);
+  }
+  65% {
+    transform: rotate(5deg);
+  }
+}
+.pr-flume-far {
+  animation-name: pr-flume-far;
+  animation-timing-function: linear;
+}
+@keyframes pr-flume-far {
+  0%,
+  10.714%,
+  60.714%,
+  100% {
+    transform: none;
+  }
+  46.429%,
+  53.571% {
+    transform: translateY(140px);
+  }
+}
+.pr-splash {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation-name: pr-splash;
+  animation-timing-function: ease-out;
+}
+@keyframes pr-splash {
+  0%,
+  60.5% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  61.5% {
+    opacity: 1;
+    transform: scale(1.1, 1.15);
+  }
+  66% {
+    opacity: 0.9;
+    transform: scale(1, 0.8);
+  }
+  72%,
+  100% {
+    opacity: 0;
+    transform: scaleY(0.2);
+  }
+}
+.pr-droplets circle {
+  opacity: 0;
+  animation: pr-droplet 1.9s cubic-bezier(0.2, 0.7, 0.4, 1) 17s both;
+}
+@keyframes pr-droplet {
+  0% {
+    opacity: 0;
+    transform: none;
+  }
+  6% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+    transform: translate(var(--dx), var(--dy));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--dx) * 1.25), calc(var(--dy) + 260px));
+  }
+}
+.pr-rainbow {
+  animation-name: pr-rainbow;
+  animation-timing-function: linear;
+}
+@keyframes pr-rainbow {
+  0%,
+  61% {
+    opacity: 0;
+  }
+  68%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ---------- Lion Leap drop tower (24s: rise, top 9-13s, drop, bounce) ---------- */
+.pr-drop-tower .pr-avatar {
+  top: 2%;
+}
+.pr-drop-tower .pr-pet {
+  top: 22%;
+  left: 66%;
+}
+.pr-drop-world,
+.pr-drop-far,
+.pr-speed-lines,
+.pr-drop-tower .pr-rider-body {
+  animation-duration: 24s;
+  animation-fill-mode: both;
+}
+.pr-drop-world {
+  transform: translateY(1650px);
+  animation-name: pr-drop-world;
+  animation-timing-function: ease-in-out;
+}
+@keyframes pr-drop-world {
+  0% {
+    transform: none;
+  }
+  37.5% {
+    transform: translateY(1650px);
+  }
+  54.167% {
+    transform: translateY(1650px);
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.5);
+  }
+  60% {
+    transform: none;
+    animation-timing-function: ease-out;
+  }
+  62.5% {
+    transform: translateY(90px);
+    animation-timing-function: ease-in;
+  }
+  65% {
+    transform: none;
+    animation-timing-function: ease-out;
+  }
+  67.5% {
+    transform: translateY(30px);
+    animation-timing-function: ease-in;
+  }
+  70%,
+  100% {
+    transform: none;
+  }
+}
+.pr-drop-far {
+  transform: translateY(100px);
+  animation-name: pr-drop-far;
+  animation-timing-function: ease-in-out;
+}
+@keyframes pr-drop-far {
+  0%,
+  60%,
+  100% {
+    transform: none;
+  }
+  37.5%,
+  54.167% {
+    transform: translateY(100px);
+  }
+}
+.pr-speed-lines {
+  opacity: 0;
+  animation-name: pr-speed-lines;
+  animation-timing-function: linear;
+}
+@keyframes pr-speed-lines {
+  0%,
+  54.5% {
+    opacity: 0;
+    transform: translateY(400px);
+  }
+  57% {
+    opacity: 1;
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: translateY(-500px);
+  }
+}
+.pr-drop-tower .pr-rider-body {
+  animation-name: pr-drop-body;
+  animation-timing-function: ease-in-out;
+}
+@keyframes pr-drop-body {
+  0%,
+  45%,
+  62%,
+  100% {
+    transform: none;
+  }
+  47%,
+  49%,
+  51%,
+  53% {
+    transform: translateX(-1.5%);
+  }
+  48%,
+  50%,
+  52% {
+    transform: translateX(1.5%);
+  }
+  55%,
+  59% {
+    transform: translateY(-7%);
+  }
+  60.5% {
+    transform: translateY(3%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-droplets,
+  .pr-hold-hint {
+    display: none;
+  }
+  .pr-burst i {
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)));
+  }
+}
+@media (max-width: 590px) {
+  .dialog-ride .dialog-inner {
+    padding: 8px 10px 10px;
+  }
+  .pr-big-button {
+    width: 88px;
+    height: 88px;
+  }
+}

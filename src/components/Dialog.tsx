@@ -7,12 +7,14 @@ export function Dialog({
   onClose,
   children,
   wide = false,
+  className = "",
 }: {
   title: string;
   subtitle?: string;
   onClose: () => void;
   children: ReactNode;
   wide?: boolean;
+  className?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   // Capture the opener before a directly launched activity focuses its controls.
@@ -41,7 +43,7 @@ export function Dialog({
   return (
     <dialog
       ref={ref}
-      className={`dialog ${wide ? "dialog-wide" : ""}`}
+      className={`dialog ${wide ? "dialog-wide" : ""} ${className}`}
       aria-label={title}
       aria-labelledby="dialog-title"
       aria-describedby={subtitle ? "dialog-subtitle" : undefined}

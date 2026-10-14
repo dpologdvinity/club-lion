@@ -50,6 +50,7 @@ import {
   unlockSecretCatalogItem,
   unlockStamp,
   evaluateStampUnlocks,
+  STAMP_DEFINITIONS,
   PLACES,
   SHOP_ITEMS,
   visitPlace,
@@ -89,6 +90,8 @@ import { PetCareModal } from "./components/PetCareModal";
 import { performPetCare } from "./utils/petCare";
 import { LeaderboardModal } from "./components/LeaderboardModal";
 import { RooftopLounge } from "./components/RooftopLounge";
+import { ParkRide } from "./components/ParkRide";
+import { PARK_RIDES, type ParkRideId } from "./utils/parkRides";
 
 type Panel =
   | "map"
@@ -113,6 +116,7 @@ type Panel =
   | "pet-care"
   | "leaderboard"
   | "rooftop"
+  | "ride"
   | null;
 
 // Matches the compact header and drawer breakpoint in styles.css.
@@ -138,6 +142,8 @@ export default function App() {
   const [spawn, setSpawn] = useState<{ x: number; y: number } | undefined>();
   const [initialGame, setInitialGame] = useState<GameId | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
+  const [ride, setRide] = useState<ParkRideId>("ferris");
+  const rideStamp = PARK_RIDES[ride].stampId;
   const [sidebarOpen, setSidebarOpen] = useState(
     () => !window.matchMedia(COMPACT_LAYOUT).matches,
   );
@@ -473,6 +479,10 @@ export default function App() {
             onOpenPetCare={() => setPanel("pet-care")}
             onOpenLeaderboard={() => setPanel("leaderboard")}
             onOpenRooftop={() => setPanel("rooftop")}
+            onOpenRide={(id) => {
+              setRide(id);
+              setPanel("ride");
+            }}
           />
           <aside
             className={`sidebar-drawer ${sidebarOpen ? "is-open" : "is-collapsed"}`}
@@ -725,6 +735,27 @@ export default function App() {
           notify={notify}
         />
       )}
+      {panel === "ride" && (
+        <Dialog
+          title={PARK_RIDES[ride].name}
+          onClose={closePanel}
+          className="dialog-ride"
+        >
+          <ParkRide
+            ride={ride}
+            look={player.look}
+            pet={player.pet}
+            rewardCoins={
+              player.stamps?.includes(rideStamp)
+                ? 0
+                : (STAMP_DEFINITIONS.find((stamp) => stamp.id === rideStamp)
+                    ?.rewardCoins ?? 0)
+            }
+            onFinish={() => setPlayer((p) => unlockStamp(p, rideStamp))}
+            onClose={closePanel}
+          />
+        </Dialog>
+      )}
       {panel === "river-surf" && (
         <Dialog title="Canyon Rapids River Surf" onClose={closePanel}>
           <RiverSurf
@@ -802,7 +833,8 @@ export default function App() {
         panel !== "kart-race" &&
         panel !== "pet-care" &&
         panel !== "leaderboard" &&
-        panel !== "rooftop" && (
+        panel !== "rooftop" &&
+        panel !== "ride" && (
           <Dialog
             title={titles[panel][0]}
             subtitle={titles[panel][1]}

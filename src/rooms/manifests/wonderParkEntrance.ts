@@ -53,6 +53,12 @@ export const wonderParkEntranceManifest: RoomManifest = {
       actionData: { rideId: "giant-ferris-wheel" },
     },
     {
+      id: "sunshine-flume",
+      type: "ride",
+      position: { x: 2350, y: 600 },
+      actionData: { rideId: "sunshine-flume" },
+    },
+    {
       id: "park-map-kiosk",
       type: "secret_clickable",
       position: { x: 1400, y: 610 },

@@ -51,6 +51,7 @@ import {
 import { SpyPinModal } from "./SpyPinModal.tsx";
 import type { TimeOfDay } from "../utils/environmentalLighting.ts";
 import { playPropSound } from "../utils/interactiveProps.ts";
+import { RIDE_HOTSPOTS, type ParkRideId } from "../utils/parkRides.ts";
 
 const BOARD_SPEED_MULTIPLIER = 1.5;
 const WALK_DURATION_MS = 850;
@@ -86,6 +87,7 @@ type WorldProps = {
   onOpenLeaderboard?: () => void;
   onOpenRooftop?: () => void;
   onOpenKartRace?: () => void;
+  onOpenRide?: (ride: ParkRideId) => void;
   timeOfDay?: TimeOfDay;
 };
 
@@ -112,6 +114,7 @@ export function World({
   onOpenLeaderboard,
   onOpenRooftop,
   onOpenKartRace,
+  onOpenRide,
   timeOfDay = "day",
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
@@ -435,23 +438,18 @@ export function World({
     else if (id === "condo-jukebox") onOpenJukebox?.();
     else if (id === "surveillance-holo-map")
       notify("The Pride Agency satellite grid is scanning the savanna.");
-    else
-      notify(
-        id === "giant-ferris-wheel"
-          ? "Watch the Ferris wheel cabins turn above Wonder Park."
-          : id === "spinning-mango-teacups"
-            ? "The mango teacups spin around the midway. Enjoy the spectacle!"
-            : "The golden carousel horses bob to the carnival rhythm. Enjoy the spectacle!",
-      );
+    else if (RIDE_HOTSPOTS[id]) onOpenRide?.(RIDE_HOTSPOTS[id]);
   };
   const hotspotLabels: Record<string, string> = {
     "lighthouse-foghorn": "Sound Foghorn",
     "sled-run-gate": "Sled Run Race",
     "coaster-ticket-gate": "Ride Savanna Screamer",
-    "giant-ferris-wheel": "Watch the Ferris wheel",
+    "giant-ferris-wheel": "Ride the Ferris wheel",
     "park-map-kiosk": "Park map",
-    "spinning-mango-teacups": "Watch Mango Teacups",
-    "grand-golden-carousel": "Watch Golden Carousel",
+    "spinning-mango-teacups": "Ride Mango Teacups",
+    "grand-golden-carousel": "Ride Golden Carousel",
+    "sunshine-flume": "Ride the Log Flume",
+    "lion-leap-tower": "Ride Lion Leap Tower",
     "midway-game-booth": "Play Fruit Catch!",
     "club-pulse-dj-booth": "DJ Booth · DJ Beat Drop",
     "club-pulse-dance-floor": "Step onto the dance floor",
