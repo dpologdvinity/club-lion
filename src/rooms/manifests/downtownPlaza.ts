@@ -101,6 +101,18 @@ export const downtownPlazaManifest: RoomManifest = {
   ],
   interactives: [
     {
+      id: "plaza-bubble-cart",
+      type: "game_launch",
+      position: { x: 930, y: 560 },
+      actionData: {},
+    },
+    {
+      id: "plaza-coloring-easel",
+      type: "game_launch",
+      position: { x: 1600, y: 560 },
+      actionData: {},
+    },
+    {
       id: "cafe-bakery-window",
       type: "game_launch",
       position: { x: 2228, y: 470 },

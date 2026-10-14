@@ -5371,6 +5371,10 @@ svg {
   z-index: 7;
   transform: translateX(-50%);
 }
+.hotspot-icon {
+  font-size: 1.5em;
+  line-height: 1;
+}
 .room-hotspot svg,
 .camera-viewport-stage .room-action svg {
   width: 1.1em;

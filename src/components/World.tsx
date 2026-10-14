@@ -408,6 +408,9 @@ export function World({
     else if (id === "club-pulse-dj-booth") onActivity("dj-beat-drop");
     else if (id === "midway-game-booth") onActivity("fruit");
     else if (id === "cafe-bakery-window") onActivity("bakery");
+    else if (id === "plaza-bubble-cart") onActivity("bubble-pop");
+    else if (id === "plaza-coloring-easel") onActivity("coloring-book");
+    else if (id === "beach-seek-lookout") onActivity("seek");
     else if (id === "park-map-kiosk") onMap();
     else if (id === "club-pulse-dance-floor") {
       walk(50, 75);
@@ -455,6 +458,9 @@ export function World({
     "lion-leap-tower": "Ride Lion Leap Tower",
     "midway-game-booth": "Play Fruit Catch!",
     "cafe-bakery-window": "Mango Bakery",
+    "plaza-bubble-cart": "Bubble Pop",
+    "plaza-coloring-easel": "Coloring Book",
+    "beach-seek-lookout": "Hide & Seek Safari",
     "club-pulse-dj-booth": "DJ Booth · DJ Beat Drop",
     "club-pulse-dance-floor": "Step onto the dance floor",
     "marble-lion-fountain": "Visit the lion fountain",
@@ -471,6 +477,19 @@ export function World({
     "kart-race-gate": "Race karts",
     "winner-podium": "Podium",
   };
+  // Picture-first labels for game hotspots, so pre-readers can spot them.
+  const hotspotIcons: Record<string, string> = {
+    "cafe-bakery-window": "🎂",
+    "plaza-bubble-cart": "🫧",
+    "plaza-coloring-easel": "🖍️",
+    "beach-seek-lookout": "🔍",
+  };
+  const hotspotIcon = (id: string) =>
+    hotspotIcons[id] && (
+      <span className="hotspot-icon" aria-hidden="true">
+        {hotspotIcons[id]}
+      </span>
+    );
   return (
     <section className="world-panel" aria-label="Lion world">
       <div className="world-heading">
@@ -555,6 +574,7 @@ export function World({
               }}
               onClick={() => hotspot(item.id)}
             >
+              {hotspotIcon(item.id)}
               {hotspotLabels[item.id]} <ArrowUpRight size={17} />
             </button>
           ))}
@@ -960,6 +980,7 @@ export function World({
               className="button-secondary"
               onClick={() => hotspot(item.id)}
             >
+              {hotspotIcon(item.id)}
               {hotspotLabels[item.id]}
             </button>
           ))}

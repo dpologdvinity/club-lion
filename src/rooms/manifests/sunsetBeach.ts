@@ -28,6 +28,13 @@ export const sunsetBeachManifest: RoomManifest = {
       label: "Coastal Pier & Boardwalk",
     },
   ],
-  interactives: [],
+  interactives: [
+    {
+      id: "beach-seek-lookout",
+      type: "game_launch",
+      position: { x: 760, y: 560 },
+      actionData: {},
+    },
+  ],
   ambientAudioPreset: "ocean-surf",
 };
