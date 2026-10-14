@@ -1,4 +1,5 @@
 import React from "react";
+import { RideQueueGate } from "./RideQueueGate";
 import {
   computeCoasterTrackPosition,
   computeFerrisWheelCabin,
@@ -1107,30 +1108,6 @@ const WonderParkAboveTrain = React.memo(function WonderParkAboveTrain() {
             </g>
           </g>
         </g>
-
-        {/* Rustic Timber Splash Signboard */}
-        <g transform="translate(130 115)">
-          <rect
-            x="-105"
-            y="-18"
-            width="210"
-            height="36"
-            rx="8"
-            fill="#fef3c7"
-            stroke="#b45309"
-            strokeWidth="4"
-          />
-          <text
-            y="7"
-            textAnchor="middle"
-            fontSize="16"
-            fontWeight="bold"
-            letterSpacing="2"
-            fill="#78350f"
-          >
-            SUNSHINE FLUME
-          </text>
-        </g>
       </g>
 
       {/* ========================================================= */}
@@ -1268,6 +1245,9 @@ const WonderParkAboveTrain = React.memo(function WonderParkAboveTrain() {
           </g>
         </g>
       ))}
+
+      <RideQueueGate x={1560} y={572} icon="ferris" />
+      <RideQueueGate x={2440} y={580} icon="flume" />
     </>
   );
 });

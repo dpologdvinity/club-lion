@@ -1,4 +1,5 @@
 import { memo, type CSSProperties, type ReactNode } from "react";
+import { RideQueueGate } from "./RideQueueGate";
 
 // Rotate about the local origin, like an SVG rotate(), instead of the fill-box.
 const PIVOT: CSSProperties = { transformBox: "view-box", "--sm-origin": "0 0" };
@@ -444,30 +445,6 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
               );
             })}
           </g>
-        </g>
-
-        {/* Ride Signboard */}
-        <g transform="translate(0 120)">
-          <rect
-            x="-130"
-            y="-18"
-            width="260"
-            height="36"
-            rx="10"
-            fill="#1e1b4b"
-            stroke="#f59e0b"
-            strokeWidth="4"
-          />
-          <text
-            y="7"
-            textAnchor="middle"
-            fontSize="16"
-            fontWeight="bold"
-            letterSpacing="3"
-            fill="#fef08a"
-          >
-            MANGO TEACUPS
-          </text>
         </g>
       </g>
 
@@ -1036,7 +1013,7 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
       </g>
 
       {/* Victorian Triple Gas Lampposts */}
-      {[220, 1140, 1850, 2520].map((lx) => (
+      {[220, 1140, 1850].map((lx) => (
         <g key={`lamp-${lx}`} transform={`translate(${lx} 540)`}>
           <ellipse cx="0" cy="5" rx="110" ry="26" fill="url(#wpm-amber-glow)" />
           <ellipse cx="0" cy="2" rx="16" ry="5" fill="#1e293b" />
@@ -1090,6 +1067,115 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
           </g>
         </g>
       ))}
+
+      {/* ========================================================= */}
+      {/* 8. LION LEAP DROP TOWER (x=2500, y=540)                   */}
+      {/* ========================================================= */}
+      <g transform="translate(2500 540)">
+        <ellipse cx="0" cy="4" rx="100" ry="18" fill="#451a03" opacity="0.4" />
+        <rect x="-86" y="-22" width="172" height="24" rx="8" fill="#b45309" />
+        <rect x="-86" y="-22" width="172" height="8" rx="4" fill="#fbbf24" />
+        <rect x="-20" y="-470" width="40" height="450" fill="#e11d48" />
+        <rect x="-9" y="-470" width="18" height="450" fill="#fb7185" />
+        {Array.from({ length: 15 }, (_, i) => (
+          <g
+            key={i}
+            className="sm-twinkle"
+            style={{ "--sm-dur": "0.8s", "--sm-delay": `${-(i % 2) * 0.4}s` }}
+          >
+            <circle cx="-15" cy={-40 - i * 29} r="4" fill="#fef08a" />
+            <circle cx="15" cy={-40 - i * 29} r="4" fill="#fef08a" />
+          </g>
+        ))}
+        {/* Seat ring glides up the tower and drops back down. */}
+        <g
+          className="sm-glide"
+          style={{ "--sm-y": "-270px", "--sm-dur": "4.5s" }}
+        >
+          <rect
+            x="-78"
+            y="-152"
+            width="156"
+            height="12"
+            rx="6"
+            fill="#fbbf24"
+          />
+          {[-58, -20, 20, 58].map((sx, i) => (
+            <g key={sx} transform={`translate(${sx} -140)`}>
+              <circle
+                cy="-22"
+                r="10"
+                fill={["#f97316", "#fcd34d", "#ea580c", "#fbbf24"][i]}
+              />
+              <rect
+                x="-14"
+                y="-16"
+                width="28"
+                height="22"
+                rx="8"
+                fill="#14b8a6"
+              />
+              <path
+                d="M-10 -14 Q-12 0 -4 6 M10 -14 Q12 0 4 6"
+                stroke="#facc15"
+                strokeWidth="4"
+                fill="none"
+              />
+              <path
+                d="M-5 6 V18 M5 6 V18"
+                stroke="#334155"
+                strokeWidth="4"
+                strokeLinecap="round"
+              />
+            </g>
+          ))}
+        </g>
+        {/* Lion crown */}
+        <g transform="translate(0 -490)">
+          <path
+            d="M-50 6 L-38 -34 L-18 -8 L0 -44 L18 -8 L38 -34 L50 6 Z"
+            fill="#fbbf24"
+            stroke="#b45309"
+            strokeWidth="4"
+          />
+          {Array.from({ length: 10 }, (_, i) => {
+            const a = (i / 10) * Math.PI * 2;
+            return (
+              <circle
+                key={i}
+                cx={Math.cos(a) * 28}
+                cy={30 + Math.sin(a) * 28}
+                r="12"
+                fill="#ea580c"
+              />
+            );
+          })}
+          <circle cy="30" r="27" fill="#f97316" />
+          <circle cy="32" r="19" fill="#fcd34d" />
+          <circle cx="-7" cy="28" r="3" fill="#3b1d0a" />
+          <circle cx="7" cy="28" r="3" fill="#3b1d0a" />
+          <path
+            d="M-6 38 Q0 43 6 38"
+            stroke="#7c2d12"
+            strokeWidth="2.5"
+            fill="none"
+          />
+        </g>
+        <g className="sm-twinkle" style={{ "--sm-dur": "1.2s" }}>
+          <path
+            d="M-70 -430 l5 12 l12 5 l-12 5 l-5 12 l-5 -12 l-12 -5 l12 -5 Z"
+            fill="#fde047"
+          />
+          <path
+            d="M66 -330 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 Z"
+            fill="#fde047"
+          />
+        </g>
+      </g>
+
+      <RideQueueGate x={1010} y={598} icon="teacups" />
+      <RideQueueGate x={1640} y={600} icon="carousel" />
+      <RideQueueGate x={2410} y={598} icon="drop" />
     </g>
   );
 });
