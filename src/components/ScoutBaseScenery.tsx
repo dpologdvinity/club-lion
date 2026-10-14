@@ -16,53 +16,77 @@ const LASER_BEAMS: readonly { x1: number; x2: number }[] = [
   { x1: 1108, x2: 1280 },
 ];
 
-function RadarSweep({ seconds }: { seconds: number }) {
-  const angle = (seconds * 80) % 360;
+// Phase offsets turn the old Math.sin(seconds * k + phase) curves into CSS
+// animation delays: delay = -(phase + PI/2) / k lines the cycles back up.
+const RadarSweep = React.memo(function RadarSweep() {
   return (
-    <g transform={`translate(960 270) rotate(${angle})`}>
-      <line x1="0" y1="0" x2="0" y2="-140" stroke="#00f5d4" strokeWidth="3" />
-      <path
-        d="M0 0 L-40 -140 A140 140 0 0 1 0 -140 Z"
-        fill="url(#ssb-radar-sweep)"
-      />
+    <g transform="translate(960 270)">
+      <g className="sm-spin" style={{ "--sm-dur": "4.5s" }}>
+        {/* Invisible ring centres the spin box on the radar hub. */}
+        <circle r="150" fill="none" />
+        <line x1="0" y1="0" x2="0" y2="-140" stroke="#00f5d4" strokeWidth="3" />
+        <path
+          d="M0 0 L-40 -140 A140 140 0 0 1 0 -140 Z"
+          fill="url(#ssb-radar-sweep)"
+        />
+      </g>
     </g>
   );
-}
+});
 
-function RadarBlips({ seconds }: { seconds: number }) {
+const RadarBlips = React.memo(function RadarBlips() {
   return (
     <g transform="translate(960 270)">
       {BLIPS.map((blip, i) => (
         <circle
           key={`${blip.x}-${blip.y}`}
+          className="sm-twinkle"
           cx={blip.x}
           cy={blip.y}
           r="4.5"
           fill={blip.color}
-          opacity={0.4 + Math.sin(seconds * 4 + i * 1.5) * 0.6}
+          opacity={0.4 + Math.sin(i * 1.5) * 0.6}
+          style={{
+            "--sm-dur": `${Math.PI / 4}s`,
+            "--sm-delay": `${-(i * 1.5 + Math.PI / 2) / 4}s`,
+            "--sm-min": 0,
+          }}
         />
       ))}
     </g>
   );
-}
+});
 
-function TelemetryWave({ seconds }: { seconds: number }) {
-  const points = Array.from(
-    { length: 24 },
-    (_, i) =>
-      `L ${-120 + i * 10} ${-20 + Math.sin(seconds * 5 + i * 0.5) * 22}`,
-  ).join(" ");
+// One extra wavelength of trace slides left under a clip, like the old
+// sin(seconds * 5 + x * 0.05) wave travelling at 100px/s.
+const WAVE_LENGTH = (2 * Math.PI) / 0.05;
+const WAVE_POINTS = Array.from({ length: 49 }, (_, i) => {
+  const x = (i * WAVE_LENGTH) / 16;
+  return `${-120 + x} ${-20 + Math.sin(x * 0.05) * 22}`;
+}).join(" L ");
+
+const TelemetryWave = React.memo(function TelemetryWave() {
   return (
     <g transform="translate(560 240)">
-      <path
-        d={`M -120 -20 ${points}`}
-        fill="none"
-        stroke="#00f5d4"
-        strokeWidth="2.5"
-      />
+      <clipPath id="ssb-wave-clip">
+        <rect x="-120" y="-60" width="230" height="80" />
+      </clipPath>
+      <g clipPath="url(#ssb-wave-clip)">
+        <path
+          className="sm-drift"
+          d={`M ${WAVE_POINTS}`}
+          fill="none"
+          stroke="#00f5d4"
+          strokeWidth="2.5"
+          style={{
+            "--sm-dur": `${WAVE_LENGTH / 100}s`,
+            "--sm-dist": `${-WAVE_LENGTH}px`,
+          }}
+        />
+      </g>
     </g>
   );
-}
+});
 
 function CipherRows({ seconds }: { seconds: number }) {
   return (
@@ -84,7 +108,9 @@ function CipherRows({ seconds }: { seconds: number }) {
   );
 }
 
-function LedBanks({ seconds }: { seconds: number }) {
+const LedBanks = React.memo(function LedBanks() {
+  // Each lit LED sits over its dark socket and blinks off for about a third
+  // of a 0.75s cycle, like the old floor(seconds * 4 + offset) % 3 pattern.
   return (
     <g>
       {BANK_XS.map((rx, bankIdx) => (
@@ -92,20 +118,32 @@ function LedBanks({ seconds }: { seconds: number }) {
           {Array.from({ length: 6 }, (_, unit) => (
             <g key={unit} transform={`translate(0 ${-130 + unit * 36})`}>
               {Array.from({ length: 6 }, (_, led) => {
-                const active =
-                  Math.floor(seconds * 4 + bankIdx * 3 + unit * 2 + led) % 3 !==
-                  0;
+                const phase = (bankIdx * 3 + unit * 2 + led) % 3;
                 const ledColor =
                   led === 0 ? "#e74c3c" : led % 2 === 0 ? "#2ecc71" : "#f1c40f";
                 return (
-                  <circle
-                    key={led}
-                    cx={-45 + led * 18}
-                    cy="15"
-                    r="4"
-                    fill={active ? ledColor : "#2c3e50"}
-                    opacity={active ? 1 : 0.3}
-                  />
+                  <g key={led}>
+                    <circle
+                      cx={-45 + led * 18}
+                      cy="15"
+                      r="4"
+                      fill="#2c3e50"
+                      opacity={0.3}
+                    />
+                    <circle
+                      className="sm-flicker"
+                      cx={-45 + led * 18}
+                      cy="15"
+                      r="4"
+                      fill={ledColor}
+                      opacity={phase === 0 ? 0 : 1}
+                      style={{
+                        "--sm-dur": "0.75s",
+                        "--sm-delay": `${-(0.525 + phase / 4)}s`,
+                        "--sm-min": 0,
+                      }}
+                    />
+                  </g>
                 );
               })}
             </g>
@@ -114,85 +152,133 @@ function LedBanks({ seconds }: { seconds: number }) {
       ))}
     </g>
   );
-}
+});
 
-function ConsoleScreen({ seconds }: { seconds: number }) {
+const ConsoleScreen = React.memo(function ConsoleScreen() {
+  // Bars step through widths 40, 65, 90 and 115: a 115-wide bar slides right
+  // in four steps from behind the screen's left edge.
   return (
     <g>
-      {[0, 1, 2, 3].map((i) => (
-        <rect
-          key={i}
-          x="892"
-          y={508 + i * 5}
-          width={40 + (Math.floor(seconds * 3 + i * 2) % 4) * 25}
-          height="3"
-          fill="#20c997"
-        />
-      ))}
+      <clipPath id="ssb-console-clip">
+        <rect x="892" y="500" width="130" height="40" />
+      </clipPath>
+      <g clipPath="url(#ssb-console-clip)">
+        {[0, 1, 2, 3].map((i) => (
+          <rect
+            key={i}
+            className="sm-drift"
+            x="817"
+            y={508 + i * 5}
+            width="115"
+            height="3"
+            fill="#20c997"
+            style={{
+              "--sm-dur": `${4 / 3}s`,
+              "--sm-delay": `${-((i * 2) % 4) / 3}s`,
+              "--sm-dist": "100px",
+              animationTimingFunction: "steps(4, end)",
+            }}
+          />
+        ))}
+      </g>
     </g>
   );
-}
+});
 
-function ConsoleLasers({ seconds }: { seconds: number }) {
+const ConsoleLasers = React.memo(function ConsoleLasers() {
+  // Beams rested at 0.25 opacity and pulsed to 0.7; the group caps the peak.
   return (
-    <g>
+    <g opacity={0.7}>
       {LASER_BEAMS.map((beam, i) => (
         <line
           key={beam.x1}
+          className="sm-twinkle"
           x1={beam.x1}
           y1="486"
           x2={beam.x2}
           y2="720"
           stroke="#e67e22"
           strokeWidth="2"
-          opacity={0.25 + Math.max(0, Math.sin(seconds * 3 + i * 2)) * 0.45}
+          opacity={(0.25 + Math.max(0, Math.sin(i * 2)) * 0.45) / 0.7}
+          style={{
+            "--sm-dur": `${Math.PI / 3}s`,
+            "--sm-delay": `${-(i * 2 + Math.PI / 2) / 3}s`,
+            "--sm-min": 0.25 / 0.7,
+          }}
         />
       ))}
     </g>
   );
-}
+});
 
-function HoloProjection({ seconds }: { seconds: number }) {
-  const pulse = 0.5 + Math.sin(seconds * 2) * 0.25;
+const HOLO_PULSE = {
+  "--sm-dur": `${Math.PI / 2}s`,
+  "--sm-delay": `${-Math.PI / 2 / 2}s`,
+};
+
+const HoloProjection = React.memo(function HoloProjection() {
+  // Pulse swung 0.25 to 0.75; the groups cap each shape's peak.
   return (
     <g>
-      <polygon
-        points="1494,480 1440,330 1560,330 1506,480"
-        fill="#00bbf9"
-        opacity={0.1 + pulse * 0.1}
-      />
-      <ellipse
-        cx="1500"
-        cy="330"
-        rx="60"
-        ry="12"
-        fill="none"
-        stroke="#00bbf9"
-        strokeWidth="2"
-        opacity={pulse}
-      />
-      <circle
-        cx={1500 + Math.sin(seconds) * 40}
-        cy="400"
-        r="5"
+      <g opacity={0.175}>
+        <polygon
+          className="sm-twinkle"
+          points="1494,480 1440,330 1560,330 1506,480"
+          fill="#00bbf9"
+          opacity={0.15 / 0.175}
+          style={{ ...HOLO_PULSE, "--sm-min": 0.125 / 0.175 }}
+        />
+      </g>
+      <g opacity={0.75}>
+        <ellipse
+          className="sm-twinkle"
+          cx="1500"
+          cy="330"
+          rx="60"
+          ry="12"
+          fill="none"
+          stroke="#00bbf9"
+          strokeWidth="2"
+          opacity={0.5 / 0.75}
+          style={{ ...HOLO_PULSE, "--sm-min": 1 / 3 }}
+        />
+      </g>
+      {/* Turned a quarter so sm-bob's vertical swing runs left and right. */}
+      <g transform="rotate(-90 1500 400)">
+        <circle
+          className="sm-bob"
+          cx="1500"
+          cy="400"
+          r="5"
+          fill="#00f5d4"
+          style={{
+            "--sm-dur": `${Math.PI}s`,
+            "--sm-delay": `${-Math.PI / 2}s`,
+            "--sm-amp": "40px",
+          }}
+        />
+      </g>
+    </g>
+  );
+});
+
+const LaserScan = React.memo(function LaserScan() {
+  // Turned a quarter so sm-drift's sideways travel sweeps 220px down the floor.
+  return (
+    <g transform="translate(0 500) rotate(90)">
+      <rect
+        className="sm-drift"
+        x="0"
+        y="-1920"
+        width="3"
+        height="1920"
         fill="#00f5d4"
+        opacity="0.35"
+        style={{ "--sm-dur": `${220 / 60}s`, "--sm-dist": "220px" }}
       />
     </g>
   );
-}
-
-function LaserScan({ seconds }: { seconds: number }) {
-  return (
-    <rect
-      x="0"
-      y={500 + ((seconds * 60) % 220)}
-      width="1920"
-      height="3"
-      fill="#00f5d4"
-      opacity="0.35"
-    />
-  );
-}
+});
 
 const ScoutHQStatic = React.memo(function ScoutHQStatic() {
   return (
@@ -500,15 +586,16 @@ export function ScoutBaseScenery({
   return (
     <g className="scout-base-scenery">
       <ScoutHQStatic />
-      <LaserScan seconds={seconds} />
-      <ConsoleLasers seconds={seconds} />
-      <ConsoleScreen seconds={seconds} />
-      <RadarSweep seconds={seconds} />
-      <RadarBlips seconds={seconds} />
-      <TelemetryWave seconds={seconds} />
+      <LaserScan />
+      <ConsoleLasers />
+      <ConsoleScreen />
+      <RadarSweep />
+      <RadarBlips />
+      <TelemetryWave />
+      {/* The ticking hex counter is text, which CSS cannot animate. */}
       <CipherRows seconds={seconds} />
-      <LedBanks seconds={seconds} />
-      <HoloProjection seconds={seconds} />
+      <LedBanks />
+      <HoloProjection />
     </g>
   );
 }
