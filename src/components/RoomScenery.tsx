@@ -15,13 +15,22 @@ import { ScoutBaseScenery } from "./ScoutBaseScenery.tsx";
 import { SplashOasisEntryScenery } from "./SplashOasisEntryScenery.tsx";
 import { SplashOasisRiverScenery } from "./SplashOasisRiverScenery.tsx";
 
-type Scene = { width: number; Scenery: ComponentType<{ seconds: number }> };
+type Scene = {
+  width: number;
+  Scenery: ComponentType<{ seconds: number }>;
+  /** Some motion still follows game logic (paths, physics, text) and needs the shared clock. */
+  clock?: true;
+};
 
 /** Each room's illustrated scenery and the stage width its viewBox spans. */
 const ROOM_SCENERY: Partial<Record<PlaceId, Scene>> = {
   "downtown-plaza": { width: 2400, Scenery: DowntownPlazaScenery },
-  "club-pulse": { width: 1920, Scenery: ClubPulseScenery },
-  "wonder-park-entrance": { width: 2800, Scenery: WonderParkEntranceScenery },
+  "club-pulse": { width: 1920, Scenery: ClubPulseScenery, clock: true },
+  "wonder-park-entrance": {
+    width: 2800,
+    Scenery: WonderParkEntranceScenery,
+    clock: true,
+  },
   "wonder-park-midway": { width: 2800, Scenery: WonderParkMidwayScenery },
   "sunset-beach": { width: 2400, Scenery: SunsetBeachScenery },
   "coastal-pier": { width: 2400, Scenery: CoastalPierScenery },
@@ -29,9 +38,17 @@ const ROOM_SCENERY: Partial<Record<PlaceId, Scene>> = {
   "canyon-rapids": { width: 2400, Scenery: CanyonRapidsScenery },
   "pet-paradise": { width: 2400, Scenery: PetParadiseScenery },
   "penthouse-condo": { width: 1920, Scenery: PenthouseCondoScenery },
-  "secret-scout-base": { width: 1920, Scenery: ScoutBaseScenery },
-  "splash-oasis-entry": { width: 2800, Scenery: SplashOasisEntryScenery },
-  "splash-oasis-river": { width: 2800, Scenery: SplashOasisRiverScenery },
+  "secret-scout-base": { width: 1920, Scenery: ScoutBaseScenery, clock: true },
+  "splash-oasis-entry": {
+    width: 2800,
+    Scenery: SplashOasisEntryScenery,
+    clock: true,
+  },
+  "splash-oasis-river": {
+    width: 2800,
+    Scenery: SplashOasisRiverScenery,
+    clock: true,
+  },
 };
 
 export function RoomScenery({
@@ -42,8 +59,10 @@ export function RoomScenery({
   preview?: boolean;
 }) {
   const [seconds, setSeconds] = useState(0);
+  const scene = ROOM_SCENERY[place];
+  const clock = !preview && scene?.clock === true;
   useEffect(() => {
-    if (preview) return;
+    if (!clock) return;
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
     let last = 0;
@@ -68,8 +87,7 @@ export function RoomScenery({
       cancelAnimationFrame(frame);
       query.removeEventListener("change", update);
     };
-  }, [preview]);
-  const scene = ROOM_SCENERY[place];
+  }, [clock]);
   if (!scene) return null;
   const { width, Scenery } = scene;
   return (
