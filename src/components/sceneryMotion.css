@@ -1,0 +1,163 @@
+/*
+ * Ambient scenery motion that runs on the compositor instead of React.
+ * Put a class on an inner <g> (never on a <g> that already has a transform
+ * attribute: a CSS transform replaces it). Tune with custom properties:
+ *   --sm-dur   cycle length          (default per class)
+ *   --sm-delay phase offset          (negative values start mid-cycle)
+ *   --sm-amp   bob distance          --sm-deg   sway angle
+ *   --sm-dist  drift distance        --sm-scale pulse size
+ *   --sm-min   lowest opacity        --sm-origin rotation/scale origin
+ *   --sm-x / --sm-y  glide offset
+ */
+
+.sm-bob,
+.sm-sway,
+.sm-drift,
+.sm-glide,
+.sm-flicker,
+.sm-pulse,
+.sm-spin,
+.sm-twinkle {
+  animation-delay: var(--sm-delay, 0s);
+  animation-iteration-count: infinite;
+}
+
+.sm-sway,
+.sm-pulse,
+.sm-spin {
+  transform-box: fill-box;
+  transform-origin: var(--sm-origin, 50% 50%);
+}
+
+.sm-bob {
+  animation-name: sm-bob;
+  animation-duration: var(--sm-dur, 3s);
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+@keyframes sm-bob {
+  from {
+    transform: translateY(calc(var(--sm-amp, 6px) * -1));
+  }
+  to {
+    transform: translateY(var(--sm-amp, 6px));
+  }
+}
+
+.sm-sway {
+  --sm-origin: 50% 100%;
+  animation-name: sm-sway;
+  animation-duration: var(--sm-dur, 4s);
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+@keyframes sm-sway {
+  from {
+    transform: rotate(calc(var(--sm-deg, 3deg) * -1));
+  }
+  to {
+    transform: rotate(var(--sm-deg, 3deg));
+  }
+}
+
+/* Linear one-way travel. For endless clouds, draw two copies one --sm-dist apart. */
+.sm-drift {
+  animation-name: sm-drift;
+  animation-duration: var(--sm-dur, 60s);
+  animation-timing-function: linear;
+}
+@keyframes sm-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(var(--sm-dist, 2400px));
+  }
+}
+
+.sm-glide {
+  animation-name: sm-glide;
+  animation-duration: var(--sm-dur, 6s);
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+@keyframes sm-glide {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(var(--sm-x, 0px), var(--sm-y, 0px));
+  }
+}
+
+.sm-flicker {
+  animation-name: sm-flicker;
+  animation-duration: var(--sm-dur, 0.9s);
+  animation-timing-function: steps(1, end);
+}
+@keyframes sm-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0.82;
+  }
+  45% {
+    opacity: 0.95;
+  }
+  70% {
+    opacity: var(--sm-min, 0.75);
+  }
+}
+
+.sm-pulse {
+  animation-name: sm-pulse;
+  animation-duration: var(--sm-dur, 2s);
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+@keyframes sm-pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(var(--sm-scale, 1.08));
+  }
+}
+
+.sm-spin {
+  animation-name: sm-spin;
+  animation-duration: var(--sm-dur, 20s);
+  animation-timing-function: linear;
+}
+@keyframes sm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sm-twinkle {
+  animation-name: sm-twinkle;
+  animation-duration: var(--sm-dur, 2.4s);
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+@keyframes sm-twinkle {
+  from {
+    opacity: var(--sm-min, 0.35);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Map and card thumbnails stay still; reduced motion freezes everything. */
+.room-scenery-preview [class*="sm-"] {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .room-scenery [class*="sm-"] {
+    animation: none;
+  }
+}

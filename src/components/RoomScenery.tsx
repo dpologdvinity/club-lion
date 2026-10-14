@@ -1,5 +1,6 @@
 import { useEffect, useState, type ComponentType } from "react";
 import type { PlaceId } from "../game.ts";
+import "./sceneryMotion.css";
 import { DowntownPlazaScenery } from "./DowntownPlazaScenery.tsx";
 import { ClubPulseScenery } from "./ClubPulseScenery.tsx";
 import { WonderParkEntranceScenery } from "./WonderParkEntranceScenery.tsx";
@@ -73,7 +74,7 @@ export function RoomScenery({
   const { width, Scenery } = scene;
   return (
     <svg
-      className="room-scenery"
+      className={preview ? "room-scenery room-scenery-preview" : "room-scenery"}
       viewBox={`0 0 ${width} 720`}
       preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
       aria-hidden="true"
