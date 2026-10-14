@@ -7,6 +7,7 @@ import {
   type SledState,
 } from "./utils/sledPhysics.ts";
 import { sanitizeSocialGraph } from "./utils/socialGraph.ts";
+import { kartRaceCoins } from "./utils/kartRace.ts";
 import {
   STAMP_DEFINITIONS,
   evaluateStampUnlocks,
@@ -113,6 +114,8 @@ export type PlayerBase = {
   recentVisitors?: string[];
   riverSurfBest?: number;
   petCare?: PetCareState;
+  kartRacesFinished?: number;
+  kartBestLapMs?: number;
 };
 
 export type Player = PlayerBase & {
@@ -388,6 +391,18 @@ function restorePetCare(value: unknown): PetCareState {
   };
 }
 
+/** Lap times outside this window cannot come from a real race. */
+const KART_MIN_LAP_MS = 1000;
+const KART_MAX_LAP_MS = 10 * 60 * 1000;
+function isKartLapMs(value: unknown): value is number {
+  return (
+    typeof value === "number" &&
+    Number.isSafeInteger(value) &&
+    value >= KART_MIN_LAP_MS &&
+    value <= KART_MAX_LAP_MS
+  );
+}
+
 export function restorePlayer(raw: string | null): Player {
   if (!raw) return newPlayer();
   try {
@@ -500,6 +515,12 @@ export function restorePlayer(raw: string | null): Player {
           ),
         ),
       ],
+      ...(Number.isSafeInteger(p.kartRacesFinished) && p.kartRacesFinished > 0
+        ? { kartRacesFinished: p.kartRacesFinished }
+        : {}),
+      ...(isKartLapMs(p.kartBestLapMs)
+        ? { kartBestLapMs: p.kartBestLapMs }
+        : {}),
       ...(p.mangoRunBest === undefined
         ? {}
         : Number.isSafeInteger(p.mangoRunBest) && p.mangoRunBest >= 0
@@ -1161,4 +1182,38 @@ export function completeRiverSurf<T extends PlayerBase>(
     gamesPlayed: player.gamesPlayed + 1,
     riverSurfBest: Math.max(player.riverSurfBest ?? 0, Math.round(score)),
   } as T;
+}
+
+export type KartRaceResult = {
+  /** Which race this is for the player: kartRacesFinished + 1 when it started. */
+  raceNumber: number;
+  place: number;
+  bestLapMs: number | null;
+};
+
+/** Pays the placing coins once per race; replaying the same result is a no-op. */
+export function completeKartRace<T extends PlayerBase>(
+  player: T,
+  result: KartRaceResult,
+): T {
+  const finished = player.kartRacesFinished ?? 0;
+  const coins = kartRaceCoins(result.place);
+  if (
+    result.raceNumber !== finished + 1 ||
+    coins === 0 ||
+    !Number.isSafeInteger(player.coins + coins) ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
+  const lap = isKartLapMs(result.bestLapMs) ? result.bestLapMs : null;
+  const best = player.kartBestLapMs;
+  return {
+    ...player,
+    coins: player.coins + coins,
+    gamesPlayed: player.gamesPlayed + 1,
+    kartRacesFinished: finished + 1,
+    ...(lap !== null && (best === undefined || lap < best)
+      ? { kartBestLapMs: lap }
+      : {}),
+  };
 }

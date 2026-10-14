@@ -10,6 +10,8 @@ import {
   completeGame,
   completeMangoRun,
   completeSledRun,
+  completeKartRace,
+  evaluateStampUnlocks,
   completeBeeStop,
   completePawSteps,
   completeFruitCatch,
@@ -1186,4 +1188,107 @@ test("saves keep premium salon unlocks and the new look fields", async () => {
   assert.equal(restored.look.topId, "star_baby_tee");
   assert.equal(restored.look.lipId, "cherry");
   assert.equal(restored.look.hairStreak, "#ff3d9a");
+});
+
+test("kart races pay placing coins once per race and keep the best lap", () => {
+  const player = newPlayer();
+  const first = completeKartRace(player, {
+    raceNumber: 1,
+    place: 2,
+    bestLapMs: 7400,
+  });
+  assert.equal(first.coins, player.coins + 30);
+  assert.equal(first.kartRacesFinished, 1);
+  assert.equal(first.kartBestLapMs, 7400);
+  assert.equal(first.gamesPlayed, player.gamesPlayed + 1);
+  // The same finished race reported again (double tap, re-render) pays nothing.
+  assert.equal(
+    completeKartRace(first, { raceNumber: 1, place: 2, bestLapMs: 7400 }),
+    first,
+  );
+  const second = completeKartRace(first, {
+    raceNumber: 2,
+    place: 4,
+    bestLapMs: 9100,
+  });
+  assert.equal(second.coins, first.coins + 20);
+  assert.equal(second.kartBestLapMs, 7400);
+  const third = completeKartRace(second, {
+    raceNumber: 3,
+    place: 1,
+    bestLapMs: 6200,
+  });
+  assert.equal(third.coins, second.coins + 40);
+  assert.equal(third.kartBestLapMs, 6200);
+  for (const bad of [
+    { raceNumber: 3, place: 1, bestLapMs: 6000 },
+    { raceNumber: 5, place: 1, bestLapMs: 6000 },
+    { raceNumber: 4, place: 0, bestLapMs: 6000 },
+    { raceNumber: 4, place: 5, bestLapMs: 6000 },
+    { raceNumber: 4, place: 1.5, bestLapMs: 6000 },
+  ])
+    assert.equal(completeKartRace(third, bad), third);
+  const noLap = completeKartRace(third, {
+    raceNumber: 4,
+    place: 3,
+    bestLapMs: -5,
+  });
+  assert.equal(noLap.coins, third.coins + 25);
+  assert.equal(noLap.kartBestLapMs, 6200);
+  assert.equal(
+    completeKartRace(
+      { ...player, coins: Number.MAX_SAFE_INTEGER },
+      { raceNumber: 1, place: 1, bestLapMs: null },
+    ).coins,
+    Number.MAX_SAFE_INTEGER,
+  );
+});
+
+test("the first finished kart race earns the Speedway Rookie stamp", () => {
+  const player = newPlayer();
+  assert.ok(!evaluateStampUnlocks(player).includes("kart_first_race"));
+  const raced = completeKartRace(player, {
+    raceNumber: 1,
+    place: 4,
+    bestLapMs: null,
+  });
+  assert.ok(evaluateStampUnlocks(raced).includes("kart_first_race"));
+  const stamped = unlockStamp(raced, "kart_first_race");
+  assert.ok(!evaluateStampUnlocks(stamped).includes("kart_first_race"));
+});
+
+test("kart race progress survives saves, and old or bad saves still load", () => {
+  const raced = visitPlace(
+    completeKartRace(newPlayer(), { raceNumber: 1, place: 1, bestLapMs: 6800 }),
+    "lion-speedway",
+  );
+  const restored = restorePlayer(JSON.stringify(raced));
+  assert.equal(restored.kartRacesFinished, 1);
+  assert.equal(restored.kartBestLapMs, 6800);
+  assert.ok(restored.visited.includes("lion-speedway"));
+  const v2 = migratePlayerSave(raced);
+  assert.equal(migratePlayerSave(JSON.stringify(v2)).kartBestLapMs, 6800);
+  assert.equal(migratePlayerSave(JSON.stringify(v2)).kartRacesFinished, 1);
+  const legacy = { ...newPlayer(), coins: 410 };
+  const old = restorePlayer(JSON.stringify(legacy));
+  assert.equal(old.coins, 410);
+  assert.equal(old.kartRacesFinished, undefined);
+  assert.equal(old.kartBestLapMs, undefined);
+  for (const [races, lap] of [
+    [-1, 0],
+    [1.5, 999],
+    ["3", "7000"],
+    [null, 60 * 60 * 1000],
+  ]) {
+    const bad = restorePlayer(
+      JSON.stringify({
+        ...legacy,
+        kartRacesFinished: races,
+        kartBestLapMs: lap,
+      }),
+    );
+    assert.equal(bad.coins, 410);
+    assert.equal(bad.kartRacesFinished, undefined);
+    assert.equal(bad.kartBestLapMs, undefined);
+  }
 });

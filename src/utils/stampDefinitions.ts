@@ -288,6 +288,16 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     unlockHint: "Score 30 or more in Canyon Rapids river surfing.",
   },
   {
+    id: "kart_first_race",
+    name: "Speedway Rookie",
+    title: "Speedway Rookie",
+    category: "park_thrills",
+    description: "Raced the animal pride round Lion Speedway to the finish.",
+    icon: "🏎️",
+    rewardCoins: 25,
+    unlockHint: "Finish a kart race at Lion Speedway.",
+  },
+  {
     id: "server_host",
     name: "Lounge Host",
     title: "Lounge Host",
@@ -351,6 +361,7 @@ export function evaluateStampUnlocks(player: Player | PlayerV2): string[] {
     smoothie_chef: (player.smoothiesServed ?? 0) >= 5,
     sled_champion: (player.sledRunBest ?? 0) >= 50,
     river_surf_pro: (player.riverSurfBest ?? 0) >= 30,
+    kart_first_race: (player.kartRacesFinished ?? 0) >= 1,
   };
   return STAMP_DEFINITIONS.filter(
     (stamp) => eligible[stamp.id] && !isStampUnlocked(player, stamp.id),
