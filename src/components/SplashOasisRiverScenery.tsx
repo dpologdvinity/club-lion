@@ -213,7 +213,7 @@ function TubeRing({ color, rider }: { color: string; rider: boolean }) {
   );
 }
 
-function RiverPalm({
+const RiverPalm = memo(function RiverPalm({
   x,
   y,
   scale = 1,
@@ -224,7 +224,8 @@ function RiverPalm({
   y: number;
   scale?: number;
   lean?: 1 | -1;
-  sway: number;
+  /** Swing direction: -1 swings opposite to 1, like the old -sway. */
+  sway: 1 | -1;
 }) {
   const fronds = [-160, -122, -86, -50, -14, 22, 58];
   return (
@@ -257,36 +258,47 @@ function RiverPalm({
           />
         );
       })}
-      <g transform={`translate(-10 -280) rotate(${sway})`}>
-        {fronds.map((angle, i) => (
-          <g key={angle} transform={`rotate(${angle})`}>
-            <path
-              d="M0 0Q66-40 148 8Q72-12 0 0Z"
-              fill={i % 2 ? "#23805c" : "#2f9c6c"}
-            />
-            <path
-              d="M0 0Q66-40 148 8"
-              fill="none"
-              stroke="#17603f"
-              strokeWidth="3"
-            />
-            {[32, 62, 92, 120].map((fx) => (
+      <g transform="translate(-10 -280)">
+        <g
+          className="sm-sway"
+          style={{
+            "--sm-dur": `${Math.PI / 0.9}s`,
+            "--sm-delay": `${-((sway === 1 ? 0 : Math.PI) + Math.PI / 2) / 0.9}s`,
+            "--sm-origin": "50% 50%",
+          }}
+        >
+          {/* Invisible ring centres the sway box on the crown. */}
+          <circle r="170" fill="none" />
+          {fronds.map((angle, i) => (
+            <g key={angle} transform={`rotate(${angle})`}>
               <path
-                key={fx}
-                d={`M${fx} ${-17 + fx * 0.13}l11 20`}
-                stroke={i % 2 ? "#2f9c6c" : "#23805c"}
-                strokeWidth="6"
-                strokeLinecap="round"
+                d="M0 0Q66-40 148 8Q72-12 0 0Z"
+                fill={i % 2 ? "#23805c" : "#2f9c6c"}
               />
-            ))}
-          </g>
-        ))}
-        <circle cx="-6" cy="8" r="10" fill="#5b3a20" />
-        <circle cx="8" cy="10" r="9" fill="#6d4826" />
+              <path
+                d="M0 0Q66-40 148 8"
+                fill="none"
+                stroke="#17603f"
+                strokeWidth="3"
+              />
+              {[32, 62, 92, 120].map((fx) => (
+                <path
+                  key={fx}
+                  d={`M${fx} ${-17 + fx * 0.13}l11 20`}
+                  stroke={i % 2 ? "#2f9c6c" : "#23805c"}
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                />
+              ))}
+            </g>
+          ))}
+          <circle cx="-6" cy="8" r="10" fill="#5b3a20" />
+          <circle cx="8" cy="10" r="9" fill="#6d4826" />
+        </g>
       </g>
     </g>
   );
-}
+});
 
 function Fern({ x, y, s }: { x: number; y: number; s: number }) {
   return (
@@ -963,8 +975,183 @@ function ArrowSign({
   );
 }
 
+// Phase offsets turn the old Math.sin(seconds * k + phase) curves into CSS
+// animation delays: delay = -(phase + PI/2) / k lines the cycles back up.
+const RiverForeground = memo(function RiverForeground() {
+  return (
+    <>
+      {/* Waterfall spilling over the grotto mouth; tubes drift behind it */}
+      <path
+        d="M2408 138Q2470 128 2532 138L2548 412Q2470 424 2392 412Z"
+        fill="url(#sor-fall)"
+        opacity=".78"
+      />
+      {/* Each streak is turned to run along +x, carries one spare dash
+          period before its top, and slides down 44px every 0.2s under a clip:
+          the old dash offset of seconds * 220. */}
+      <clipPath id="sor-fall-streak-clip">
+        <rect x="0" y="-4" width="268.12" height="8" />
+      </clipPath>
+      {[2420, 2445, 2470, 2495, 2520].map((wx, i) => (
+        <g
+          key={wx}
+          transform={`translate(${wx} 142) rotate(${(Math.atan2(268, (i - 2) * 4) * 180) / Math.PI})`}
+          clipPath="url(#sor-fall-streak-clip)"
+        >
+          <path
+            className="sm-drift"
+            d="M-44 0H268.12"
+            stroke="#ffffff"
+            strokeWidth="4"
+            strokeDasharray="26 18"
+            strokeDashoffset={-i * 9}
+            opacity=".85"
+            style={{ "--sm-dur": "0.2s", "--sm-dist": "44px" }}
+          />
+        </g>
+      ))}
+      {[0, 1, 2, 3, 4].map((i) => (
+        <g
+          key={i}
+          className="sm-bob"
+          style={{
+            "--sm-dur": `${Math.PI / 4}s`,
+            "--sm-delay": `${-(i / 2 + Math.PI / 4)}s`,
+            "--sm-amp": "4px",
+          }}
+        >
+          <circle
+            className="sm-pulse"
+            cx={2390 + i * 40}
+            cy="408"
+            r={8 + (i % 2) * 5}
+            fill="#ffffff"
+            opacity=".45"
+            style={{
+              "--sm-dur": `${Math.PI / 1.6}s`,
+              "--sm-delay": `${-(i + Math.PI / 2) / 1.6}s`,
+              "--sm-scale": (12 + (i % 2) * 5) / (8 + (i % 2) * 5),
+            }}
+          />
+        </g>
+      ))}
+
+      <RiverPalm x={760} y={424} scale={0.78} sway={1} />
+      <RiverPalm x={1880} y={418} scale={0.84} lean={-1} sway={-1} />
+      <RiverPalm x={1160} y={396} scale={0.58} sway={-1} />
+
+      <Boardwalk />
+
+      <RiverPalm x={300} y={640} scale={1.1} sway={1} />
+      <RiverPalm x={2770} y={668} scale={1.2} lean={-1} sway={-1} />
+
+      <ArrowSign x={120} y={612} width={250} text="← SPLASH OASIS" />
+
+      <ForegroundLeaves />
+      {/* Hanging vines swaying from the canopy */}
+      {VINES.map((vine, i) => {
+        // Vines swing from their anchor so the tip travels about 14px.
+        const endX = vine.x;
+        const midX = vine.x + 10;
+        return (
+          <g
+            key={vine.x}
+            className="sm-sway"
+            style={{
+              "--sm-dur": `${Math.PI / 0.8}s`,
+              "--sm-delay": `${-(i * 1.1 + (3 * Math.PI) / 2) / 0.8}s`,
+              "--sm-deg": `${(Math.atan(14 / (vine.len - 30)) * 180) / Math.PI}deg`,
+              "--sm-origin": "50% 50%",
+            }}
+          >
+            {/* Invisible ring centres the sway box on the anchor. */}
+            <circle cx={vine.x} cy="30" r={vine.len} fill="none" />
+            <path
+              d={`M${vine.x} 30Q${midX} ${vine.len * 0.6} ${endX} ${vine.len}`}
+              fill="none"
+              stroke="#2f6e3f"
+              strokeWidth="4"
+            />
+            {[0.3, 0.5, 0.7, 0.9].map((t, j) => {
+              const lx =
+                (1 - t) ** 2 * vine.x + 2 * (1 - t) * t * midX + t * t * endX;
+              const ly =
+                (1 - t) ** 2 * 30 +
+                2 * (1 - t) * t * vine.len * 0.6 +
+                t * t * vine.len;
+              return (
+                <ellipse
+                  key={t}
+                  cx={lx + (j % 2 ? 8 : -8)}
+                  cy={ly}
+                  rx="9"
+                  ry="5"
+                  transform={`rotate(${j % 2 ? 30 : -30} ${lx} ${ly})`}
+                  fill={j % 2 ? "#3b9c66" : "#4caf5e"}
+                />
+              );
+            })}
+          </g>
+        );
+      })}
+      {[0, 1].map((i) => {
+        const flap = {
+          "--sm-dur": `${Math.PI / 18}s`,
+          "--sm-delay": `${-(Math.PI + 2 * i) / 18}s`,
+          "--sm-scale": "0.4, 1",
+        };
+        return (
+          <g key={i} transform={`translate(${900 + i * 900} ${300 + i * 40})`}>
+            <g
+              className="sm-bob"
+              style={{
+                "--sm-dur": `${Math.PI / 1.3}s`,
+                "--sm-delay": `${-(i + Math.PI / 2) / 1.3}s`,
+                "--sm-amp": "30px",
+              }}
+            >
+              {/* Turned a quarter so sm-bob's swing runs left and right. */}
+              <g transform="rotate(-90)">
+                <g
+                  className="sm-bob"
+                  style={{
+                    "--sm-dur": `${Math.PI / 0.5}s`,
+                    "--sm-delay": `${-(i * 3 + Math.PI / 2) / 0.5}s`,
+                    "--sm-amp": "120px",
+                  }}
+                >
+                  <g transform="rotate(90)">
+                    <ellipse
+                      className="sm-pulse"
+                      cx="-6"
+                      rx="8"
+                      ry="6"
+                      fill={i ? "#ffb43b" : "#ff7fb0"}
+                      style={flap}
+                    />
+                    <ellipse
+                      className="sm-pulse"
+                      cx="6"
+                      rx="8"
+                      ry="6"
+                      fill={i ? "#ffb43b" : "#ff7fb0"}
+                      style={flap}
+                    />
+                    <path d="M0-5V5" stroke="#3a2a1a" strokeWidth="2" />
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        );
+      })}
+    </>
+  );
+});
+
 export function SplashOasisRiverScenery({ seconds }: { seconds: number }) {
-  const sway = Math.sin(seconds * 0.9) * 3;
+  // Current dashes crawl along curved loops and tubes follow the river
+  // centerline, so both stay on seconds; the rest loops in CSS.
   const flow = seconds * 36;
   return (
     <>
@@ -1002,103 +1189,7 @@ export function SplashOasisRiverScenery({ seconds }: { seconds: number }) {
         );
       })}
 
-      {/* Waterfall spilling over the grotto mouth; tubes drift behind it */}
-      <path
-        d="M2408 138Q2470 128 2532 138L2548 412Q2470 424 2392 412Z"
-        fill="url(#sor-fall)"
-        opacity=".78"
-      />
-      {[2420, 2445, 2470, 2495, 2520].map((wx, i) => (
-        <path
-          key={wx}
-          d={`M${wx} 142L${wx + (i - 2) * 4} 410`}
-          stroke="#ffffff"
-          strokeWidth="4"
-          strokeDasharray="26 18"
-          strokeDashoffset={-seconds * 220 - i * 9}
-          opacity=".85"
-        />
-      ))}
-      {[0, 1, 2, 3, 4].map((i) => (
-        <circle
-          key={i}
-          cx={2390 + i * 40}
-          cy={412 - Math.abs(Math.sin(seconds * 2 + i)) * 8}
-          r={10 + (i % 2) * 5 + Math.sin(seconds * 1.6 + i) * 2}
-          fill="#ffffff"
-          opacity=".45"
-        />
-      ))}
-
-      <RiverPalm x={760} y={424} scale={0.78} sway={sway} />
-      <RiverPalm x={1880} y={418} scale={0.84} lean={-1} sway={-sway} />
-      <RiverPalm x={1160} y={396} scale={0.58} sway={-sway} />
-
-      <Boardwalk />
-
-      <RiverPalm x={300} y={640} scale={1.1} sway={sway} />
-      <RiverPalm x={2770} y={668} scale={1.2} lean={-1} sway={-sway} />
-
-      <ArrowSign x={120} y={612} width={250} text="← SPLASH OASIS" />
-
-      <ForegroundLeaves />
-      {/* Hanging vines swaying from the canopy */}
-      {VINES.map((vine, i) => {
-        const swing = Math.sin(seconds * 0.8 + i * 1.1) * 14;
-        const endX = vine.x + swing;
-        const midX = vine.x + swing * 0.4 + 10;
-        return (
-          <g key={vine.x}>
-            <path
-              d={`M${vine.x} 30Q${midX} ${vine.len * 0.6} ${endX} ${vine.len}`}
-              fill="none"
-              stroke="#2f6e3f"
-              strokeWidth="4"
-            />
-            {[0.3, 0.5, 0.7, 0.9].map((t, j) => {
-              const lx =
-                (1 - t) ** 2 * vine.x + 2 * (1 - t) * t * midX + t * t * endX;
-              const ly =
-                (1 - t) ** 2 * 30 +
-                2 * (1 - t) * t * vine.len * 0.6 +
-                t * t * vine.len;
-              return (
-                <ellipse
-                  key={t}
-                  cx={lx + (j % 2 ? 8 : -8)}
-                  cy={ly}
-                  rx="9"
-                  ry="5"
-                  transform={`rotate(${j % 2 ? 30 : -30} ${lx} ${ly})`}
-                  fill={j % 2 ? "#3b9c66" : "#4caf5e"}
-                />
-              );
-            })}
-          </g>
-        );
-      })}
-      {[0, 1].map((i) => {
-        const bx = 900 + i * 900 + Math.sin(seconds * 0.5 + i * 3) * 120;
-        const by = 300 + i * 40 + Math.sin(seconds * 1.3 + i) * 30;
-        const flap = 0.4 + Math.abs(Math.sin(seconds * 9 + i)) * 0.6;
-        return (
-          <g key={i} transform={`translate(${bx} ${by})`}>
-            <ellipse
-              cx="-6"
-              rx={8 * flap}
-              ry="6"
-              fill={i ? "#ffb43b" : "#ff7fb0"}
-            />
-            <ellipse
-              cx="6"
-              rx={8 * flap}
-              ry="6"
-              fill={i ? "#ffb43b" : "#ff7fb0"}
-            />
-            <path d="M0-5V5" stroke="#3a2a1a" strokeWidth="2" />
-          </g>
-        );
-      })}
+      <RiverForeground />
     </>
   );
 }
