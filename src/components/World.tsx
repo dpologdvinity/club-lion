@@ -766,7 +766,7 @@ export function World({
           <>
             <button
               className="room-action"
-              style={{ left: "21%", top: "72%" }}
+              style={{ left: "21%", top: "72%", right: "auto" }}
               onClick={() => navigate("penthouse-condo", { x: 960, y: 400 })}
               aria-label="Penthouse Elevator"
             >
@@ -774,7 +774,7 @@ export function World({
             </button>
             <button
               className="room-action"
-              style={{ left: "80%", top: "72%" }}
+              style={{ left: "80%", top: "72%", right: "auto" }}
               onClick={() => {
                 setPendingPortalSpawn({ x: 250, y: 600 });
                 setSpyPinOpen(true);

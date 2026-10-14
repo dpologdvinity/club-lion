@@ -3228,7 +3228,7 @@ svg {
   }
   .welcome {
     position: fixed;
-    top: 110px;
+    top: 136px;
     left: 8px;
     padding: 4px 10px;
     gap: 6px;
@@ -4884,12 +4884,23 @@ svg {
     animation: none;
   }
 }
+.room-hotspot,
+.camera-viewport-stage .room-action {
+  font-size: calc(14px / var(--camera-scale, 1));
+  min-height: calc(48px / var(--camera-scale, 1));
+  padding: 0 0.85em;
+  border-radius: 0.8em;
+  gap: 0.4em;
+  white-space: nowrap;
+}
 .room-hotspot {
+  z-index: 7;
   transform: translateX(-50%);
-  font-size: 24px;
-  padding: 14px 20px;
-  border-radius: 14px;
-  gap: 10px;
+}
+.room-hotspot svg,
+.camera-viewport-stage .room-action svg {
+  width: 1.1em;
+  height: 1.1em;
 }
 .room-hotspot:not(:disabled):active {
   transform: translateX(-50%) translateY(1px);
@@ -7713,5 +7724,34 @@ svg {
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
+  }
+}
+
+/* Touch screens: primary controls are at least 48px targets. */
+@media (pointer: coarse) {
+  .icon-button,
+  .sidebar-drawer-close,
+  .send-button,
+  .map-button {
+    min-width: 48px;
+    min-height: 48px;
+  }
+  .main-nav button,
+  .button-primary,
+  .button-secondary,
+  .chat-form input,
+  .style-button,
+  .text-button,
+  .arcade-back,
+  .room-action {
+    min-height: 48px;
+  }
+  .player-menu {
+    height: 48px;
+  }
+  /* Hover-revealed captions have no hover on touch, so show them. */
+  .destination-caption {
+    opacity: 1;
+    transform: none;
   }
 }

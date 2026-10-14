@@ -108,6 +108,8 @@ export function CameraViewport({
           width: manifest.stageWidth,
           height: manifest.stageHeight,
           transform: `translateX(${-cameraOffset * scale}px) scale(${scale})`,
+          // Lets labels inside the stage keep a steady on-screen size.
+          ["--camera-scale" as string]: scale,
         }}
       >
         {children}
