@@ -102,6 +102,11 @@ const WATER_RIDE_HOTSPOTS: Record<string, WaterRideId> = {
   "lazy-river-current": "river",
 };
 
+/** In-world avatar widths, large enough for the doll face to read. */
+const WORLD_AVATAR_SIZE = { map: 118, stage: 184 } as const;
+/** How far above the avatar's feet a hotspot label moves to clear the head. */
+const AVATAR_LABEL_LIFT = 330;
+
 export function World({
   player,
   place,
@@ -605,7 +610,7 @@ export function World({
             // A label in front of the avatar hides its face: lift it above the head.
             const coversAvatar =
               Math.abs(item.position.x - stagePosition.x) < 150 &&
-              top > stagePosition.y - 230 &&
+              top > stagePosition.y - AVATAR_LABEL_LIFT + 5 &&
               top < stagePosition.y + 30;
             return (
               <button
@@ -614,7 +619,7 @@ export function World({
                 tabIndex={-1}
                 style={{
                   left: item.position.x,
-                  top: coversAvatar ? stagePosition.y - 235 : top,
+                  top: coversAvatar ? stagePosition.y - AVATAR_LABEL_LIFT : top,
                 }}
                 onClick={() => hotspot(item.id)}
               >
@@ -983,7 +988,7 @@ export function World({
             <Avatar
               look={player.look}
               action={avatarAction}
-              size={manifest ? 132 : 84}
+              size={manifest ? WORLD_AVATAR_SIZE.stage : WORLD_AVATAR_SIZE.map}
               headBoost
             />
             <PetCompanion

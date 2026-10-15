@@ -1091,7 +1091,7 @@ export function renderLayer1HairBack(look: AvatarLook, p: string): string {
   return (
     `<g class="avatar-hair-back hair-${cls}">` +
     // Puffed out past the front pieces: long cuts get big doll volume
-    `<g transform="translate(60 26) scale(${BIG_VOLUME.has(style) ? "1.2 1.08" : "1.08 1.04"}) translate(-60 -26)">` +
+    `<g transform="translate(60 26) scale(${BIG_VOLUME.has(style) ? "1.1 1.05" : "1.04 1.02"}) translate(-60 -26)">` +
     inked(hairArt(style, hairColor, p).back, 1.1) +
     `</g>` +
     `</g>`

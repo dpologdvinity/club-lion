@@ -578,3 +578,13 @@ test("head boost swaps every head rig for the larger one", () => {
   assert.equal(count(boosted, RIG.headBoost), heads);
   assertValidSvg(boosted, "boosted");
 });
+
+test("doll head takes about two fifths of the standing figure", () => {
+  // Head art spans y 13 (crown) to 69 (chin); the rigs place it on the canvas
+  const [, , , scale, , ty] = RIG.head.slice(7, -1).split(" ").map(Number);
+  const crown = 13 * scale + ty;
+  const chin = 69 * scale + ty;
+  const feet = ANCHORS.Feet.y + 7;
+  const ratio = (chin - crown) / (feet - crown);
+  assert.ok(ratio > 0.33 && ratio < 0.45, `head ratio ${ratio}`);
+});

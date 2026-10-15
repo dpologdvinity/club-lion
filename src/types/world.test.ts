@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   validateAvatarLook,
   DEFAULT_AVATAR_LOOK,
+  STARTER_AVATAR_LOOK,
   CATALOG_ITEMS,
   EQUIP_SLOTS,
   isValidEquipSlot,
@@ -223,4 +224,10 @@ test("validateAvatarLook accepts the optional accessory fields and rejects bad o
     assert.equal(validateAvatarLook({ ...look, [field]: 7 }), false, field);
     assert.equal(validateAvatarLook({ ...look, [field]: "  " }), false, field);
   }
+});
+
+test("the starter doll look is a valid save that keeps the legacy outfit id", () => {
+  assert.equal(validateAvatarLook(STARTER_AVATAR_LOOK), true);
+  assert.equal(STARTER_AVATAR_LOOK.outfitId, DEFAULT_AVATAR_LOOK.outfitId);
+  assert.equal(STARTER_AVATAR_LOOK.topId, "holo_halter");
 });

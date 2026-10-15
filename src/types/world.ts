@@ -157,6 +157,15 @@ export const DEFAULT_AVATAR_LOOK: AvatarLook = {
   shoesId: "canvas_sneakers",
 };
 
+/** Look for players who have not styled their avatar yet: a Y2K doll outfit. */
+export const STARTER_AVATAR_LOOK: AvatarLook = {
+  ...DEFAULT_AVATAR_LOOK,
+  topId: "holo_halter",
+  bottomId: "flares_indigo",
+  lipId: "hot_pink",
+  jewelryId: "silver_hoops",
+};
+
 export function validateAvatarLook(look: unknown): look is AvatarLook {
   if (!look || typeof look !== "object") return false;
 

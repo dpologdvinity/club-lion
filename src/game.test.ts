@@ -42,7 +42,11 @@ import {
 } from "./utils/animalBand.ts";
 import { SHAPE_SORTER_COINS_PER_ROUND } from "./utils/shapeSorter.ts";
 import { MAX_CAKE_PHOTOS, newCake, type Cake } from "./utils/bakery.ts";
-import { DEFAULT_AVATAR_LOOK, DEFAULT_PET_STATE } from "./types/world.ts";
+import {
+  DEFAULT_AVATAR_LOOK,
+  DEFAULT_PET_STATE,
+  STARTER_AVATAR_LOOK,
+} from "./types/world.ts";
 import { serializeLayout, type PlacedFurniture } from "./utils/condoGrid.ts";
 
 test("a corrupt save safely starts a fresh adventure", () => {
@@ -677,7 +681,9 @@ test("migratePlayerSave cleanly upgrades v1 save to v2 without losing coins or i
   assert.equal(v2.pawStepsBest, 20);
   assert.equal(v2.fruitCatchBest, 80);
   assert.deepEqual(v2.claimed, ["home"]);
-  assert.deepEqual(v2.look, DEFAULT_AVATAR_LOOK);
+  // Players who never styled their avatar start in the doll look
+  assert.deepEqual(v2.look, STARTER_AVATAR_LOOK);
+  assert.equal(v2.look.outfitId, DEFAULT_AVATAR_LOOK.outfitId);
   assert.deepEqual(v2.pet, DEFAULT_PET_STATE);
   assert.equal(typeof v2.starRank, "number");
   assert.ok(v2.starRank >= 1);
@@ -1250,11 +1256,15 @@ test("dressAvatar allows free, owned, or already-worn pieces only", async () => 
   assert.equal(free.look.bottomId, "denim_mini");
   assert.equal(free.look.shoesId, "jelly_sandals");
 
-  const worn = dressAvatar(player, {
-    topId: "denim_jacket",
-    bottomId: "flares_indigo",
-    shoesId: "canvas_sneakers",
-  });
+  // The legacy default denim jacket stays wearable for players still in it
+  const worn = dressAvatar(
+    { ...player, look: DEFAULT_AVATAR_LOOK },
+    {
+      topId: "denim_jacket",
+      bottomId: "flares_indigo",
+      shoesId: "canvas_sneakers",
+    },
+  );
   assert.equal(
     worn.look.topId,
     "denim_jacket",

@@ -32,7 +32,11 @@ export const ANCHORS = {
 } as const;
 
 /** Head-and-shoulders crop of the canvas for close-up previews. */
-export const PORTRAIT_VIEWBOX = "10 -12 100 100";
+export const PORTRAIT_VIEWBOX = "6 -16 108 108";
+
+/** Doll face outline in head-art coordinates (see {@link RIG}). */
+export const DOLL_HEAD_PATH =
+  "M60 13 C77 13 87.6 23 87.8 37.6 C88 45 87.4 50.4 84.6 55 C80 61.8 70.4 67.4 62.6 69 C61.4 69.4 58.6 69.4 57.4 69 C49.6 67.4 40 61.8 35.4 55 C32.6 50.4 32 45 32.2 37.6 C32.4 23 43 13 60 13 Z";
 
 /**
  * Head, torso, and leg art is drawn on a shared 120×160 layout grid and
@@ -40,9 +44,10 @@ export const PORTRAIT_VIEWBOX = "10 -12 100 100";
  * slightly, the torso slims, and the legs stretch long onto chunky platforms.
  */
 export const RIG = {
-  head: "matrix(0.9 0 0 0.9 6 -4.3)",
-  /** The head rig scaled 1.15× about the chin (60, 56.5) so faces read at small world sizes. */
-  headBoost: "matrix(1.035 0 0 1.035 -2.1 -13.42)",
+  // Big doll head: head art at full size, its chin (60, 69) resting at y 57.5
+  head: "matrix(1 0 0 1 0 -11.5)",
+  /** The head rig scaled 1.2× about the chin so faces read at small world sizes. */
+  headBoost: "matrix(1.2 0 0 1.2 -12 -25.3)",
   torso: "matrix(0.86 0 0 1 8.4 -7.5)",
   legs: "matrix(0.86 0 0 1.32 8.4 -39.18)",
 } as const;

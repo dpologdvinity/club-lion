@@ -1,6 +1,7 @@
 import type { AvatarLook, EntityAction } from "../types/world.ts";
 import { DEFAULT_AVATAR_LOOK } from "../types/world.ts";
 import {
+  DOLL_HEAD_PATH,
   INK,
   MIRROR,
   RIGHT_ARM_DOWN,
@@ -117,8 +118,8 @@ function renderLayer0ShadowAndBoard(look: AvatarLook, action: string): string {
 /* -------------------------------------------------------------
  * Layer 2: Body Base (Skin tones, head, neck, torso, arms, legs)
  * ------------------------------------------------------------- */
-const HEAD_PATH =
-  "M60 13 C76.6 13 86.8 23.4 86.6 38.6 C86.5 46.4 85.4 51.8 81.8 56.4 C76.4 63 67 67.8 60 67.8 C53 67.8 43.6 63 38.2 56.4 C34.6 51.8 33.5 46.4 33.4 38.6 C33.2 23.4 43.4 13 60 13 Z";
+// Heart-shaped doll face: full cheeks at eye level, tiny pointed chin
+const HEAD_PATH = DOLL_HEAD_PATH;
 
 const LEG_PATH =
   "M49.4 99 L59 99 C59.2 108 58.2 118 56.6 131 L51.8 131 C50.8 118 49.2 108 49.4 99 Z";

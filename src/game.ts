@@ -71,6 +71,7 @@ import {
 import type { AvatarLook, EquipSlot, PetState } from "./types/world.ts";
 import {
   DEFAULT_AVATAR_LOOK,
+  STARTER_AVATAR_LOOK,
   DEFAULT_PET_STATE,
   validateAvatarLook,
   resolveHairStyle,
@@ -757,7 +758,7 @@ export function migratePlayerSave(save: unknown): PlayerV2 {
       : {};
   const look = validateAvatarLook(raw.look)
     ? (raw.look as AvatarLook)
-    : DEFAULT_AVATAR_LOOK;
+    : STARTER_AVATAR_LOOK;
   const pet =
     raw.pet && typeof raw.pet === "object"
       ? ({ ...DEFAULT_PET_STATE, ...(raw.pet as object) } as PetState)

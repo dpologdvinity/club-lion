@@ -8,7 +8,7 @@ import {
   findOption,
   type LipFinish,
 } from "../../types/avatarOptions.ts";
-import { INK, MIRROR, n, pt, type Point } from "./shared.ts";
+import { DOLL_HEAD_PATH, INK, MIRROR, n, pt, type Point } from "./shared.ts";
 
 /* -------------------------------------------------------------
  * Glam makeup presets per eye look
@@ -264,17 +264,18 @@ export function resolveMakeup(look: AvatarLook): ResolvedMakeup {
  * Layer 3: Glam Face (eyeshadow, winged liner, lashes, brows, lips)
  * Eyes are drawn for the viewer's left and mirrored for the right.
  * ------------------------------------------------------------- */
-const EYE_OUTER: Point = [37, 43.2];
-const EYE_INNER: Point = [55.4, 46.6];
-const LOWER_INNER: Point = [52.6, 50.2];
-const LOWER_OUTER: Point = [42.6, 50];
+const EYE_OUTER: Point = [35, 42.2];
+const EYE_INNER: Point = [55.6, 46.8];
+const LOWER_INNER: Point = [52.8, 49.8];
+const LOWER_OUTER: Point = [41.4, 49.4];
 
 /** Almond doll eye: a high arched upper lid over a gentle lower lid. */
 export function eyeGeometry(lid: EyeState) {
   const drop = lid === "closed" ? 0 : lid;
   // Heavy doll lid: a low, flat arch that rests over the top of the iris
-  const u1: Point = [39.8, 39.6 + drop * 6];
-  const u2: Point = [50.6, 38.8 + drop * 6.5];
+  // Heavy doll lid: a long, low arch over a narrow almond
+  const u1: Point = [38.8, 39.4 + drop * 5];
+  const u2: Point = [50.4, 38.8 + drop * 5.5];
   const lidCurve = `M${pt(EYE_OUTER)} C${pt(u1)} ${pt(u2)} ${pt(EYE_INNER)}`;
   return {
     u1,
@@ -332,9 +333,9 @@ function lashes(points: readonly Point[], down: boolean, scale = 1): string {
 
 /** Thin sculpted brow with a high arch and a tapered tail. */
 const BROW_PATH =
-  "M56 35.6 C54.4 31.8 50.4 28.8 45.6 28.4 C41.4 28.1 37.8 30 35 33.8 C38.4 31.8 41.8 31 45.4 31.2 C49.6 31.4 53.2 33.2 56 35.6 Z";
+  "M56.4 36.4 C55 31.2 50.6 27.6 45.2 27.2 C40.4 26.8 36 28.6 32.4 32.2 C36.6 30 40.6 29.6 44.8 30.2 C49.8 30.8 53.8 33.2 56.4 36.4 Z";
 
-const EYESHADOW_TOP = "L56.8 41.4 C53.8 32.4 42 32.2 35.8 39.8 Z";
+const EYESHADOW_TOP = "L57 41.4 C54.6 31.6 41.4 30.6 33.6 38.4 Z";
 
 /** Four-point twinkle centered on (x, y). */
 function twinkle(x: number, y: number, r: number, fill: string): string {
@@ -361,9 +362,9 @@ function renderEye(
   const geo = eyeGeometry(lid);
   const transform = side === "r" ? ` ${MIRROR}` : "";
   const browTransform =
-    `translate(0 ${n(browLift)})` +
+    `translate(0 ${n(browLift - 2.2)})` +
     (preset.browAngle ? ` rotate(${preset.browAngle} 39.4 34.4)` : "");
-  const brow = `<path d="${BROW_PATH}" fill="rgba(36, 18, 10, 0.95)" transform="${browTransform}" />`;
+  const brow = `<path d="${BROW_PATH}" fill="#4a2a1a" stroke="#2a1610" stroke-width="0.4" transform="${browTransform}" />`;
   const shadowFill = `url(#${p}-shadow)`;
   const lidSparkle =
     makeup.shadowSpecial === "holo"
@@ -400,7 +401,7 @@ function renderEye(
   ];
   // Heavy upper liner: thin at the tear duct, thick toward the flared wing
   const liner =
-    `M${n(EYE_INNER[0] + 0.5)} ${n(EYE_INNER[1] - 0.4)} C${n(geo.u2[0] + 0.4)} ${n(geo.u2[1] - 2.4)} ${n(geo.u1[0] - 0.6)} ${n(geo.u1[1] - 3.8)} ${n(ox - 1.4)} ${n(oy - 3.4)} ` +
+    `M${n(EYE_INNER[0] + 0.5)} ${n(EYE_INNER[1] - 0.4)} C${n(geo.u2[0] + 0.4)} ${n(geo.u2[1] - 3)} ${n(geo.u1[0] - 0.6)} ${n(geo.u1[1] - 4.6)} ${n(ox - 1.6)} ${n(oy - 4)} ` +
     `L${pt(wingTip)} L${n(ox - 0.4)} ${n(oy + 0.8)} C${pt(geo.u1)} ${pt(geo.u2)} ${pt(EYE_INNER)} Z`;
   const upperLashes = UPPER_LASHES.map(([t, dx, dy]) => {
     const [x, y] = cubicPoint(EYE_OUTER, geo.u1, geo.u2, EYE_INNER, t);
@@ -410,9 +411,9 @@ function renderEye(
     cubicPoint(EYE_INNER, LOWER_INNER, LOWER_OUTER, EYE_OUTER, t),
   );
   const gaze = preset.gazeUp ?? 0;
-  const irisR = 4.9 * (preset.irisScale ?? 1);
-  const irisX = 47;
-  const irisY = 45.2 + drop * 1.2 - gaze;
+  const irisR = 5.6 * (preset.irisScale ?? 1);
+  const irisX = 46.4;
+  const irisY = 45.6 + drop * 1.2 - gaze;
   const glintY = irisY - irisR * 0.42;
 
   // Graphic liner: a floating crease line plus a second parallel wing
@@ -467,7 +468,7 @@ function renderEye(
     `<path d="M${n(irisX - irisR * 0.62)} ${n(irisY + irisR * 0.3)} Q${irisX} ${n(irisY + irisR * 0.9)} ${n(irisX + irisR * 0.62)} ${n(irisY + irisR * 0.3)}" stroke="${makeup.iris[0]}" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.9" />` +
     `<circle cx="${irisX}" cy="${n(irisY)}" r="${n(irisR * 0.42)}" fill="#0c0503" />` +
     // Upper lid cast shadow
-    `<path d="${geo.lidCurve}" stroke="rgba(20, 8, 6, 0.42)" stroke-width="2.6" fill="none" />` +
+    `<path d="${geo.lidCurve}" stroke="rgba(20, 8, 6, 0.5)" stroke-width="3.4" fill="none" />` +
     // Big round catchlight plus a small sparkle
     `<circle cx="${n(irisX - irisR * 0.38)}" cy="${n(glintY)}" r="${n(irisR * 0.3)}" fill="#ffffff" />` +
     `<circle cx="${n(irisX + irisR * 0.42)}" cy="${n(irisY + irisR * 0.4)}" r="${n(irisR * 0.13)}" fill="#ffffff" opacity="0.92" />` +
@@ -502,6 +503,10 @@ const MOUTH_LINE =
 function lipFinishMarkup(finish: LipFinish, p: string): string {
   const gloss =
     // Wet-look highlight band and sparkle on the full lower lip
+    // Plump volume: lighter center on both lips
+    `<ellipse cx="60" cy="61.2" rx="4.4" ry="1.6" fill="#ffffff" opacity="0.28" />` +
+    `<ellipse cx="57.8" cy="56.6" rx="2" ry="0.9" fill="#ffffff" opacity="0.22" />` +
+    `<ellipse cx="62.2" cy="56.6" rx="2" ry="0.9" fill="#ffffff" opacity="0.22" />` +
     `<path d="M56.2 61.2 Q60 62.6 63.8 61.2 Q60 61.6 56.2 61.2 Z" fill="#ffffff" opacity="0.85" />` +
     `<ellipse cx="57.4" cy="60.4" rx="1.3" ry="0.5" fill="#ffffff" opacity="0.7" transform="rotate(-8 57.4 60.4)" />` +
     // Cupid's bow shine
@@ -540,7 +545,7 @@ function lipFinishMarkup(finish: LipFinish, p: string): string {
 
 function renderLips(makeup: ResolvedMakeup, p: string): string {
   // Overlined doll pout, scaled up around the mouth center
-  const tilt = ` transform="${makeup.preset.smirk ? "rotate(-5 60 58.8) " : ""}translate(60 59) scale(1.14) translate(-60 -59)"`;
+  const tilt = ` transform="${makeup.preset.smirk ? "rotate(-5 60 58.8) " : ""}translate(60 59.2) scale(1.26 1.22) translate(-60 -59)"`;
   return (
     `<g class="avatar-lips lip-${makeup.lipFinish}"${tilt}>` +
     `<path d="${LIP_LOWER}" fill="${makeup.lips}" />` +
@@ -783,10 +788,11 @@ function shadowStops(makeup: ResolvedMakeup): string {
       stop(1, "#ffd36e", 0)
     );
   }
+  // Metallic doll lid: rich color across the whole lid, softening at the brow
   return (
-    stop(0, makeup.shadow, 0.95) +
-    stop(0.55, makeup.shadow, 0.55) +
-    stop(1, makeup.shadow, 0)
+    stop(0, makeup.shadow, 1) +
+    stop(0.6, makeup.shadow, 0.85) +
+    stop(1, makeup.shadow, 0.15)
   );
 }
 
@@ -816,6 +822,12 @@ export function makeupDefs(p: string, look: AvatarLook): string {
         `<stop offset="1" stop-color="${makeup.blush}" stop-opacity="0" />` +
         `</radialGradient>`
       : "") +
+    `<radialGradient id="${p}-skin" cx="50%" cy="40%" r="62%">` +
+    `<stop offset="0" stop-color="#ffffff" stop-opacity="0.2" />` +
+    `<stop offset="0.45" stop-color="#ffffff" stop-opacity="0" />` +
+    `<stop offset="0.78" stop-color="#6e2814" stop-opacity="0" />` +
+    `<stop offset="1" stop-color="#6e2814" stop-opacity="0.3" />` +
+    `</radialGradient>` +
     `<linearGradient id="${p}-gloss" x1="0" y1="0" x2="0" y2="1">` +
     `<stop offset="0" stop-color="#ffffff" stop-opacity="0.5" />` +
     `<stop offset="0.6" stop-color="#ffffff" stop-opacity="0.12" />` +
@@ -828,23 +840,25 @@ export function makeupDefs(p: string, look: AvatarLook): string {
 
 /** Cheek blush, sculpting contour, and highlight drawn over the bare face. */
 function renderCheeks(p: string, withBlush: boolean): string {
-  const shade = "rgba(110, 45, 22, 0.08)";
+  const shade = "rgba(110, 45, 22, 0.1)";
   return (
-    // Airbrushed sculpting: cheekbone hollows, nose sides, and a soft chin
-    `<path d="M36.8 49.6 Q40.6 57.6 47.4 61.8" stroke="rgba(90, 35, 18, 0.12)" stroke-width="3.4" stroke-linecap="round" fill="none" />` +
-    `<path d="M83.2 49.6 Q79.4 57.6 72.6 61.8" stroke="rgba(90, 35, 18, 0.12)" stroke-width="3.4" stroke-linecap="round" fill="none" />` +
-    `<ellipse cx="57.6" cy="48.6" rx="1.6" ry="3.4" fill="${shade}" />` +
-    `<ellipse cx="62.4" cy="48.6" rx="1.6" ry="3.4" fill="${shade}" />` +
-    `<ellipse cx="60" cy="65.4" rx="3.6" ry="1.2" fill="rgba(255,255,255,0.22)" />` +
+    // Airbrushed skin: soft rim shading, bright forehead and nose, contoured cheeks
+    `<path d="${DOLL_HEAD_PATH}" fill="url(#${p}-skin)" />` +
+    `<ellipse cx="60" cy="25" rx="9" ry="5" fill="rgba(255,255,255,0.2)" />` +
+    `<path d="M35.6 50.4 Q40 58.6 48 63" stroke="rgba(90, 35, 18, 0.14)" stroke-width="3.6" stroke-linecap="round" fill="none" />` +
+    `<path d="M84.4 50.4 Q80 58.6 72 63" stroke="rgba(90, 35, 18, 0.14)" stroke-width="3.6" stroke-linecap="round" fill="none" />` +
+    `<ellipse cx="57.4" cy="48.6" rx="1.8" ry="3.6" fill="${shade}" />` +
+    `<ellipse cx="62.6" cy="48.6" rx="1.8" ry="3.6" fill="${shade}" />` +
+    `<ellipse cx="60" cy="66.6" rx="3" ry="1.1" fill="rgba(255,255,255,0.28)" />` +
     (withBlush
       ? `<g class="avatar-blush">` +
-        `<ellipse cx="43.4" cy="53.4" rx="5.6" ry="4.6" fill="url(#${p}-blush)" />` +
-        `<ellipse cx="76.6" cy="53.4" rx="5.6" ry="4.6" fill="url(#${p}-blush)" />` +
+        `<ellipse cx="42" cy="54" rx="7.4" ry="5.6" fill="url(#${p}-blush)" />` +
+        `<ellipse cx="78" cy="54" rx="7.4" ry="5.6" fill="url(#${p}-blush)" />` +
         `</g>`
       : "") +
     // High cheekbone strobing highlighter with tiny sparkle dots
-    `<ellipse cx="41.6" cy="49.8" rx="3.4" ry="1.2" fill="rgba(255,255,255,0.32)" transform="rotate(-22 41.6 49.8)" />` +
-    `<ellipse cx="78.4" cy="49.8" rx="3.4" ry="1.2" fill="rgba(255,255,255,0.32)" transform="rotate(22 78.4 49.8)" />` +
-    `<path d="M41 50.6 h0.01 M43 51.6 h0.01 M79 50.6 h0.01 M77 51.6 h0.01" stroke="#ffffff" stroke-width="0.9" stroke-linecap="round" opacity="0.9" />`
+    `<ellipse cx="40.6" cy="50" rx="3.8" ry="1.3" fill="rgba(255,255,255,0.36)" transform="rotate(-22 40.6 50)" />` +
+    `<ellipse cx="79.4" cy="50" rx="3.8" ry="1.3" fill="rgba(255,255,255,0.36)" transform="rotate(22 79.4 50)" />` +
+    `<path d="M40 51 h0.01 M42.2 52.2 h0.01 M80 51 h0.01 M77.8 52.2 h0.01" stroke="#ffffff" stroke-width="0.9" stroke-linecap="round" opacity="0.9" />`
   );
 }
