@@ -12,14 +12,44 @@ const PAW_KEYS: Record<string, string> = {
   Right: "ArrowRight",
 };
 
+// Logs every paw flash from page load, so a fast playback cannot finish between test steps.
+async function recordPaws(page: Page) {
+  await page.addInitScript(() => {
+    const flashes: string[] = [];
+    (window as unknown as { pawFlashes: string[] }).pawFlashes = flashes;
+    let lit = false;
+    new MutationObserver(() => {
+      const key = document.querySelector(".paw-key.lit");
+      if (key && !lit) flashes.push(key.getAttribute("aria-label")!);
+      lit = Boolean(key);
+    }).observe(document, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+  });
+}
+
 async function watchPaws(page: Page, count: number) {
-  const seen: string[] = [];
-  for (let index = 0; index < count; index++) {
-    const lit = page.locator(".paw-key.lit");
-    await lit.waitFor({ state: "attached", timeout: 10_000 });
-    seen.push((await lit.first().getAttribute("aria-label"))!);
-    await page.waitForFunction(() => !document.querySelector(".paw-key.lit"));
-  }
+  const before = await page.evaluate(
+    () => (window as unknown as { pawFlashes: string[] }).pawFlashes.length,
+  );
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as unknown as { pawFlashes: string[] }).pawFlashes.length,
+      ),
+    )
+    .toBeGreaterThanOrEqual(before + count);
+  const seen = await page.evaluate(
+    ([from, to]) =>
+      (window as unknown as { pawFlashes: string[] }).pawFlashes.slice(
+        from,
+        to,
+      ),
+    [before, before + count] as const,
+  );
+  await page.waitForFunction(() => !document.querySelector(".paw-key.lit"));
   await page.waitForFunction(
     () =>
       document.querySelector(".paw-key")?.getAttribute("aria-disabled") ===
@@ -356,6 +386,7 @@ test("the arcade and Bee Stop have no WCAG AA accessibility violations", async (
 test("Paw Steps pays for every finished round, then remembers the best score", async ({
   page,
 }) => {
+  await recordPaws(page);
   await page.goto("/");
   await page.getByRole("button", { name: "Games", exact: true }).click();
   await page.getByRole("button", { name: /Paw Steps/ }).click();

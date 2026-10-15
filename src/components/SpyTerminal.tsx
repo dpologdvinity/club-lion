@@ -400,20 +400,21 @@ function ClassifiedAgentCipher({
       >
         {puzzle.cipherText.split("").map((ch, i) => (
           <span key={i} className="spy-cipher-char-group">
-            <button
-              type="button"
-              disabled={ch === " " || solved}
-              className={`spy-cipher-char ${selectedCipherChar === ch ? "is-selected" : ""} ${puzzle.guesses[ch] ? "is-revealed" : ""}`}
-              aria-label={
-                ch === " "
-                  ? undefined
-                  : `Cipher letter ${ch}${puzzle.guesses[ch] ? `, decoded as ${puzzle.guesses[ch]}` : ", select to guess"}`
-              }
-              aria-pressed={ch === " " ? undefined : selectedCipherChar === ch}
-              onClick={() => ch !== " " && setSelectedCipherChar(ch)}
-            >
-              {ch === " " ? " " : ch}
-            </button>
+            {/* A word gap is not a control: a nameless button fails axe. */}
+            {ch === " " ? (
+              <span className="spy-cipher-space" aria-hidden="true" />
+            ) : (
+              <button
+                type="button"
+                disabled={solved}
+                className={`spy-cipher-char ${selectedCipherChar === ch ? "is-selected" : ""} ${puzzle.guesses[ch] ? "is-revealed" : ""}`}
+                aria-label={`Cipher letter ${ch}${puzzle.guesses[ch] ? `, decoded as ${puzzle.guesses[ch]}` : ", select to guess"}`}
+                aria-pressed={selectedCipherChar === ch}
+                onClick={() => setSelectedCipherChar(ch)}
+              >
+                {ch}
+              </button>
+            )}
             <span className="spy-cipher-guess" aria-hidden="true">
               {puzzle.guesses[ch] ?? (ch === " " ? "" : "_")}
             </span>

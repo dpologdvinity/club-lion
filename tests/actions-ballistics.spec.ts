@@ -98,7 +98,9 @@ test("wheel has no horizontal scrolling at the minimum supported width", async (
 test("toss lands at the clicked point once, survives rerenders, and clears splash", async ({
   page,
 }) => {
-  await page.clock.install();
+  // Paused, so the 700 ms flight and splash advance only through runFor.
+  await page.clock.install({ time: new Date("2026-10-03T12:00:00Z") });
+  await page.clock.pauseAt(new Date("2026-10-03T13:00:00Z"));
   await page
     .getByRole("button", { name: "Toss here", exact: true })
     .click({ position: { x: 220, y: 180 } });

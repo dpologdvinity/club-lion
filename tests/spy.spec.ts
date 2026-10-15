@@ -40,17 +40,19 @@ test("laser stages stay reachable, pay once, and stop their frame loop", async (
       String(stage),
     );
     expect(await pendingFrames(page)).toBe(0);
+    // Check focus before the extra input: clicking a move button focuses it.
+    if (stage < 3)
+      await expect(
+        page.getByRole("button", { name: "Next stage" }),
+      ).toBeFocused();
     await page
       .getByRole("button", { name: "Move right" })
       .click({ force: true });
     await expect(page.getByLabel("Completed puzzles")).toHaveText(
       String(stage),
     );
-    if (stage < 3) {
-      const next = page.getByRole("button", { name: "Next stage" });
-      await expect(next).toBeFocused();
-      await next.click();
-    }
+    if (stage < 3)
+      await page.getByRole("button", { name: "Next stage" }).click();
   }
   await expect(page.getByLabel("Coins")).toHaveText("310");
   await page.keyboard.press("Escape");

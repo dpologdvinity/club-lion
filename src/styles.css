@@ -6681,6 +6681,10 @@ svg {
   border-color: transparent;
   cursor: default;
 }
+.spy-cipher-space {
+  width: 26px;
+  height: 26px;
+}
 .spy-cipher-char.is-selected {
   border-color: #58ff9e;
   box-shadow: 0 0 6px #58ff9e88;

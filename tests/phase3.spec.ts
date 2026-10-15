@@ -67,7 +67,10 @@ test("world instruments modal plays notes via keys and clicks without audio erro
   const errors: string[] = [];
   page.on("pageerror", (err) => errors.push(err.message));
 
+  // A paused fake clock keeps the 150 ms key highlight on screen until the test is ready.
+  await page.clock.install({ time: new Date("2026-10-03T12:00:00Z") });
   await page.goto("/");
+  await page.clock.pauseAt(new Date("2026-10-03T13:00:00Z"));
   await page.getByRole("button", { name: "Games", exact: true }).click();
 
   const gamesDialog = page.getByRole("dialog");
@@ -117,7 +120,13 @@ test("waterhole angler fishing game casts line, reacts to bite, and updates caug
   const errors: string[] = [];
   page.on("pageerror", (err) => errors.push(err.message));
 
+  // Random wait pinned to its 1.2 s minimum, and a fake clock, so the 1 s strike window cannot expire mid-click.
+  await page.addInitScript(() => {
+    Math.random = () => 0;
+  });
+  await page.clock.install({ time: new Date("2026-10-03T12:00:00Z") });
   await page.goto("/");
+  await page.clock.pauseAt(new Date("2026-10-03T13:00:00Z"));
   await page.getByRole("button", { name: "Games", exact: true }).click();
 
   // Select Waterhole Angler
@@ -133,11 +142,12 @@ test("waterhole angler fishing game casts line, reacts to bite, and updates caug
   // Should enter waiting state
   await expect(anglerDialog.getByText("Waiting for a bite…")).toBeVisible();
 
-  // Wait for bite to trigger (random between 1.2s and 3.2s)
+  // The bite lands at 1.2 s; striking right away stays inside its 1 s window.
+  await page.clock.runFor(1200);
   const strikeButton = anglerDialog.getByRole("button", {
     name: "Strike & Reel!",
   });
-  await expect(strikeButton).toBeVisible({ timeout: 6000 });
+  await expect(strikeButton).toBeVisible();
   await strikeButton.click();
 
   // Should enter reeling state with tension bar and Reel button
@@ -149,9 +159,9 @@ test("waterhole angler fishing game casts line, reacts to bite, and updates caug
     const isReeling = await reelButton.isVisible().catch(() => false);
     if (!isReeling) break;
     await page.keyboard.down("Space");
-    await page.waitForTimeout(200);
+    await page.clock.runFor(200);
     await page.keyboard.up("Space");
-    await page.waitForTimeout(150);
+    await page.clock.runFor(150);
   }
 
   // Check that either result screen or game cycles cleanly back to idle
