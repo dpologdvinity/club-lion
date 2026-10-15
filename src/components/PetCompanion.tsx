@@ -1,7 +1,8 @@
 import type { JSX } from "react";
 import type { PetState } from "../types/world.ts";
 import type { LionColor } from "../game.ts";
-import { Lion } from "./Lion.tsx";
+import { PET_PROFILES, restorePetSpecies } from "../utils/petSpecies.ts";
+import { PetPicture } from "./PetSpeciesArt.tsx";
 
 export function PetCompanion({
   pet,
@@ -13,6 +14,7 @@ export function PetCompanion({
   heading?: "left" | "right";
 }): JSX.Element {
   const flip = heading === "left";
+  const species = restorePetSpecies(pet.species);
   const validColor: LionColor = ["gold", "sand", "copper", "rose"].includes(
     pet.color,
   )
@@ -22,7 +24,8 @@ export function PetCompanion({
   return (
     <div
       role="img"
-      aria-label={`${pet.name} the pet lion`}
+      aria-label={`${pet.name} the pet ${PET_PROFILES[species].label.toLowerCase()}`}
+      data-species={species}
       className={`pet-companion pet-companion-${pet.color} ${isTrotting ? "is-trotting" : "is-resting"}`}
       style={{
         width: 44,
@@ -31,7 +34,11 @@ export function PetCompanion({
         transform: flip ? "scaleX(-1)" : undefined,
       }}
     >
-      <Lion color={validColor} accessory={pet.accessory} />
+      <PetPicture
+        species={species}
+        color={validColor}
+        accessory={pet.accessory}
+      />
     </div>
   );
 }

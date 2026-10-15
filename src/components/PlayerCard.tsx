@@ -3,6 +3,7 @@ import { Heart, Star } from "lucide-react";
 import type { PlayerV2 } from "../game.ts";
 import { Avatar } from "./Avatar.tsx";
 import { Dialog } from "./Dialog.tsx";
+import { PetPicture } from "./PetSpeciesArt.tsx";
 
 const STARS_PER_LEVEL = 5;
 const MOOD_QUOTE_MAX_LENGTH = 60;
@@ -22,10 +23,12 @@ export function PlayerCard({
   player,
   onClose,
   onSaveMoodQuote,
+  onPickPet,
 }: {
   player: PlayerV2;
   onClose: () => void;
   onSaveMoodQuote: (moodQuote: string) => void;
+  onPickPet: () => void;
 }) {
   const [moodQuote, setMoodQuote] = useState(player.moodQuote);
   const level = Math.floor((player.starRank - 1) / STARS_PER_LEVEL) + 1;
@@ -51,7 +54,17 @@ export function PlayerCard({
         </div>
 
         <div className="player-card-pet">
+          <span className="player-card-pet-art" aria-hidden="true">
+            <PetPicture
+              species={player.pet.species}
+              color={player.color}
+              accessory={player.pet.accessory}
+            />
+          </span>
           <span className="player-card-pet-label">{player.pet.name}</span>
+          <button type="button" className="text-button" onClick={onPickPet}>
+            Pick your pet
+          </button>
           <div
             className="player-card-hearts"
             role="img"

@@ -28,6 +28,7 @@ import {
   completeFishingCatch,
   completeSpyPuzzle,
   applyPetCareAction,
+  choosePetSpecies,
   unlockSecretCatalogItem,
   unlockStamp,
   migratePlayerSave,
@@ -1568,4 +1569,44 @@ test("animal band and shape sorter progress survives a save and bad values are d
   assert.equal(tampered.animalBandSongs, undefined);
   assert.equal(tampered.shapeSorterRounds, undefined);
   assert.equal(tampered.coins, played.coins);
+});
+
+test("pet species survives V1 and V2 saves and unknown values fall back to lion", () => {
+  const bunny = {
+    ...DEFAULT_PET_STATE,
+    species: "bunny" as const,
+    name: "Hop",
+  };
+  const v2 = migratePlayerSave({ ...newPlayer(), pet: bunny });
+  assert.equal(v2.pet.species, "bunny");
+  assert.equal(migratePlayerSave(JSON.stringify(v2)).pet.species, "bunny");
+  const legacy = {
+    ...newPlayer(),
+    pet: { ...DEFAULT_PET_STATE, species: "wizard" },
+  };
+  assert.equal(migratePlayerSave(legacy).pet.species, "lion");
+  const { species: _species, ...unlabeled } = DEFAULT_PET_STATE;
+  assert.equal(
+    migratePlayerSave({ ...newPlayer(), pet: unlabeled }).pet.species,
+    "lion",
+  );
+  assert.equal(migratePlayerSave(newPlayer()).pet.species, "lion");
+});
+
+test("a V2 save with an unknown pet species restores as a lion cub", () => {
+  const current = migratePlayerSave(newPlayer());
+  const tampered = { ...current, pet: { ...current.pet, species: "dinosaur" } };
+  assert.equal(migratePlayerSave(tampered).pet.species, "lion");
+  assert.equal(migratePlayerSave(tampered).pet.name, "Leo");
+});
+
+test("choosePetSpecies swaps species, renames the pet and keeps its position", () => {
+  const player = migratePlayerSave(newPlayer());
+  const dragon = choosePetSpecies(player, "dragon");
+  assert.equal(dragon.pet.species, "dragon");
+  assert.equal(dragon.pet.name, "Ember");
+  assert.deepEqual(dragon.pet.position, player.pet.position);
+  assert.equal(choosePetSpecies(dragon, "dragon"), dragon);
+  assert.equal(choosePetSpecies(dragon, "lion").pet.name, "Leo");
+  assert.equal(player.pet.species, "lion");
 });

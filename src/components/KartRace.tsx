@@ -13,6 +13,8 @@ import {
 import { Avatar } from "./Avatar";
 import { AnimalFace, LionTrophy, SideKart } from "./kartArt.tsx";
 import type { AvatarLook } from "../types/world.ts";
+import type { PetSpecies } from "../utils/petSpecies.ts";
+import { PetSpeciesArt } from "./PetSpeciesArt.tsx";
 import type { KartRaceResult } from "../game.ts";
 import {
   BOOST_COOLDOWN_MS,
@@ -310,12 +312,51 @@ function TopKart({ color, zebra = false }: { color: string; zebra?: boolean }) {
   );
 }
 
+/** The lion keeps its tinted PNG; the other species are drawn as art. */
+function KartPet({
+  petColor,
+  petSpecies,
+  x,
+  y,
+  size,
+}: {
+  petColor: string;
+  petSpecies?: PetSpecies;
+  x: number;
+  y: number;
+  size: number;
+}) {
+  if (petSpecies && petSpecies !== "lion")
+    return (
+      <PetSpeciesArt
+        species={petSpecies}
+        className="kart-pet"
+        x={x}
+        y={y}
+        width={size}
+        height={size}
+      />
+    );
+  return (
+    <image
+      href={PET_SRC}
+      className={`kart-pet kart-pet-${petColor}`}
+      x={x}
+      y={y}
+      width={size}
+      height={size}
+    />
+  );
+}
+
 function PlayerDriver({
   look,
   petColor,
+  petSpecies,
 }: {
   look?: AvatarLook;
   petColor?: string;
+  petSpecies?: PetSpecies;
 }) {
   return (
     <g>
@@ -328,13 +369,12 @@ function PlayerDriver({
         preserveAspectRatio="xMidYMin slice"
       />
       {petColor && (
-        <image
-          href={PET_SRC}
-          className={`kart-pet kart-pet-${petColor}`}
-          x="12"
-          y="-34"
-          width="30"
-          height="30"
+        <KartPet
+          petColor={petColor}
+          petSpecies={petSpecies}
+          x={12}
+          y={-34}
+          size={30}
         />
       )}
     </g>
@@ -345,11 +385,13 @@ function PlayerDriver({
 function SeatedPlayer({
   look,
   petColor,
+  petSpecies,
   color,
   number = 1,
 }: {
   look?: AvatarLook;
   petColor?: string;
+  petSpecies?: PetSpecies;
   color: string;
   number?: number;
 }) {
@@ -365,13 +407,12 @@ function SeatedPlayer({
       />
       <SideKart color={color} number={number} />
       {petColor && (
-        <image
-          href={PET_SRC}
-          className={`kart-pet kart-pet-${petColor}`}
-          x="16"
-          y="-66"
-          width="38"
-          height="38"
+        <KartPet
+          petColor={petColor}
+          petSpecies={petSpecies}
+          x={16}
+          y={-66}
+          size={38}
         />
       )}
     </g>
@@ -412,6 +453,7 @@ function Confetti({ calm }: { calm: boolean }) {
 export function KartRace({
   look,
   petColor,
+  petSpecies,
   racesFinished,
   bestLapMs,
   colorId = "mango",
@@ -422,6 +464,8 @@ export function KartRace({
 }: {
   look?: AvatarLook;
   petColor?: string;
+  /** Species of the pet riding along; the lion when omitted. */
+  petSpecies?: PetSpecies;
   racesFinished: number;
   bestLapMs?: number;
   /** Saved garage choices; changes go back through onPrefs. */
@@ -624,7 +668,12 @@ export function KartRace({
         >
           <ellipse cy="6" rx="120" ry="14" fill="#000" opacity=".12" />
           <g className="kart-garage-kart">
-            <SeatedPlayer look={look} petColor={petColor} color={color} />
+            <SeatedPlayer
+              look={look}
+              petColor={petColor}
+              petSpecies={petSpecies}
+              color={color}
+            />
           </g>
         </svg>
         <div className="kart-swatches" role="group" aria-label="Kart color">
@@ -724,6 +773,7 @@ export function KartRace({
                     <SeatedPlayer
                       look={look}
                       petColor={petColor}
+                      petSpecies={petSpecies}
                       color={color}
                       number={rank}
                     />
@@ -891,7 +941,11 @@ export function KartRace({
                   <g transform={`rotate(${-turn})`}>
                     {index === 0 ? (
                       <>
-                        <PlayerDriver look={look} petColor={petColor} />
+                        <PlayerDriver
+                          look={look}
+                          petColor={petColor}
+                          petSpecies={petSpecies}
+                        />
                         {reduced && (
                           <circle
                             r="44"
