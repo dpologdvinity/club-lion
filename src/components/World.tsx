@@ -561,23 +561,30 @@ export function World({
             (item) =>
               item.type !== "instrument" || item.id === "lighthouse-foghorn",
           )
-          .map((item) => (
-            <button
-              key={item.id}
-              className="building-label room-hotspot"
-              tabIndex={-1}
-              style={{
-                left: item.position.x,
-                top:
-                  item.position.y -
-                  (item.id === "lighthouse-foghorn" ? 210 : 95),
-              }}
-              onClick={() => hotspot(item.id)}
-            >
-              {hotspotIcon(item.id)}
-              {hotspotLabels[item.id]} <ArrowUpRight size={17} />
-            </button>
-          ))}
+          .map((item) => {
+            const top =
+              item.position.y - (item.id === "lighthouse-foghorn" ? 210 : 95);
+            // A label in front of the avatar hides its face: lift it above the head.
+            const coversAvatar =
+              Math.abs(item.position.x - stagePosition.x) < 150 &&
+              top > stagePosition.y - 230 &&
+              top < stagePosition.y + 30;
+            return (
+              <button
+                key={item.id}
+                className="building-label room-hotspot"
+                tabIndex={-1}
+                style={{
+                  left: item.position.x,
+                  top: coversAvatar ? stagePosition.y - 235 : top,
+                }}
+                onClick={() => hotspot(item.id)}
+              >
+                {hotspotIcon(item.id)}
+                {hotspotLabels[item.id]} <ArrowUpRight size={17} />
+              </button>
+            );
+          })}
         {mangoToss && (
           <MangoToss
             origin={mangoToss.origin}

@@ -9889,3 +9889,82 @@ textarea {
     transform: translateY(-25%) scale(1.15);
   }
 }
+
+/* Phone and tablet pass: the floating chrome keeps 48px targets, stays
+   readable and never stacks on itself. */
+@media (pointer: coarse) {
+  .room-navigation .button-secondary {
+    min-height: 48px;
+  }
+  .avatar-button {
+    min-width: 48px;
+    min-height: 48px;
+  }
+  .game-back {
+    min-height: 48px;
+    margin: -12px 0 4px -7px;
+    font-size: 13px;
+  }
+  /* The 48px heading buttons make the heading taller; keep the greeting below it. */
+  .welcome {
+    top: 142px;
+  }
+  .room-navigation {
+    bottom: 88px;
+  }
+}
+@media (pointer: coarse) and (max-width: 590px) {
+  .room-navigation {
+    bottom: 80px;
+  }
+  .room-navigation .button-secondary,
+  .room-navigation-hint {
+    font-size: 13px;
+  }
+}
+@media (max-width: 640px) {
+  /* Bakery fits a phone screen without scrolling: smaller cake, 48px tools. */
+  .bakery {
+    gap: 8px;
+  }
+  .bakery-title {
+    display: none;
+  }
+  .bakery-main {
+    gap: 8px;
+  }
+  .bakery-stage {
+    max-width: min(400px, 26dvh);
+  }
+  .bakery-tools {
+    gap: 6px;
+  }
+  .bakery-row {
+    padding: 5px;
+  }
+  .bakery-option {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+  /* Three short scene banners fit without scrolling. */
+  .seek-place {
+    aspect-ratio: 5 / 2;
+  }
+}
+/* Portrait phones and tablets: the room bar and chat toolbar sit on a strip
+   below the stage instead of over the walkable ground and the avatar. */
+@media (orientation: portrait) and (max-width: 1279px) {
+  .camera-viewport {
+    height: calc(100% - 160px - env(safe-area-inset-bottom));
+    min-height: 0;
+  }
+  .room-navigation {
+    max-width: calc(100vw - 32px);
+  }
+}
+@media (orientation: portrait) and (max-width: 590px) {
+  .camera-viewport {
+    height: calc(100% - 146px - env(safe-area-inset-bottom));
+  }
+}
