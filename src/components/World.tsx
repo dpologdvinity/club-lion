@@ -762,6 +762,7 @@ export function World({
             <button
               className="room-action"
               onClick={() => onActivity("smoothie")}
+              style={{ top: "80px" }}
             >
               <Coffee size={18} /> Blend smoothies
             </button>

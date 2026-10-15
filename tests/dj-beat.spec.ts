@@ -90,6 +90,8 @@ test("DJ lanes receive focus, align with the hit line, and pass accessibility ch
     });
   expect(Math.abs(centers.note - centers.line)).toBeLessThan(3);
   await page.clock.resume();
+  // Beats keep scoring while axe scans, so a MISS label can appear mid-fade; reduced motion holds it at full opacity.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   expect(
     (
       await new AxeBuilder({ page })

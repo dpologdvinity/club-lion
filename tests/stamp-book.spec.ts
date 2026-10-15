@@ -1,6 +1,18 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { migratePlayerSave, newPlayer, SAVE_KEY } from "../src/game";
+import {
+  migratePlayerSave,
+  newPlayer,
+  SAVE_KEY,
+  STAMP_DEFINITIONS,
+} from "../src/game";
+
+// Counts come from the definitions, so adding a stamp never breaks the album test.
+const total = STAMP_DEFINITIONS.length;
+const collected = (count: number) =>
+  `Stamps Collected: ${count} / ${total} (${Math.round((count / total) * 100)}%)`;
+const inCategory = (category: string) =>
+  STAMP_DEFINITIONS.filter((stamp) => stamp.category === category).length;
 
 test("stamp album filters categories, supports keyboard tabs, traps focus, and fits mobile", async ({
   page,
@@ -13,19 +25,28 @@ test("stamp album filters categories, supports keyboard tabs, traps focus, and f
     exact: true,
   });
   await expect(album).toBeVisible();
-  await expect(album.getByText("Stamps Collected: 0 / 34 (0%)")).toBeVisible();
+  await expect(album.getByText(collected(0))).toBeVisible();
   await expect(album.getByRole("progressbar")).toHaveAttribute("value", "0");
-  await expect(album.getByRole("listitem")).toHaveCount(34);
+  await expect(album.getByRole("listitem")).toHaveCount(total);
   await expect(
     album.getByText("Find the coffee steam secret in Le Shop."),
   ).toBeVisible();
   await album.getByRole("tab", { name: "World Secrets", exact: true }).click();
-  await expect(album.getByRole("listitem")).toHaveCount(8);
+  await expect(album.getByRole("listitem")).toHaveCount(
+    inCategory("world_secrets"),
+  );
+  await page.keyboard.press("ArrowRight");
+  await expect(
+    album.getByRole("tab", { name: "Coastal Secrets", exact: true }),
+  ).toBeFocused();
+  await expect(album.getByRole("listitem")).toHaveCount(inCategory("secrets"));
   await page.keyboard.press("ArrowRight");
   await expect(
     album.getByRole("tab", { name: "Park Thrills", exact: true }),
   ).toBeFocused();
-  await expect(album.getByRole("listitem")).toHaveCount(7);
+  await expect(album.getByRole("listitem")).toHaveCount(
+    inCategory("park_thrills"),
+  );
   await page.keyboard.press("End");
   await expect(
     album.getByRole("tab", { name: "Arcade Mastery", exact: true }),
@@ -71,7 +92,7 @@ test("old saves backfill eligible stamps and preserve secret ownership through r
   await page.goto("/");
   await page.getByRole("button", { name: "Stamp Book", exact: true }).click();
   const album = page.getByRole("dialog", { name: "Savanna Stamp Book" });
-  await expect(album.getByText("Stamps Collected: 3 / 34 (9%)")).toBeVisible();
+  await expect(album.getByText(collected(3))).toBeVisible();
   await expect(album.getByText("Unlocked", { exact: true })).toHaveCount(3);
   await expect(
     album.getByText("Found the secret barista apron."),
@@ -86,7 +107,7 @@ test("old saves backfill eligible stamps and preserve secret ownership through r
     .toEqual(["secret_den", "catalog_barista", "fruit_catch_pro"]);
   await page.reload();
   await page.getByRole("button", { name: "Stamp Book", exact: true }).click();
-  await expect(album.getByText("Stamps Collected: 3 / 34 (9%)")).toBeVisible();
+  await expect(album.getByText(collected(3))).toBeVisible();
   expect(
     await page.evaluate(
       (key) => JSON.parse(localStorage.getItem(key)!).owned,
@@ -106,7 +127,7 @@ test("new progress unlocks stamps immediately and the award stays collected afte
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await page.getByRole("button", { name: "Close dialog" }).click();
   await page.getByRole("button", { name: "Stamp Book", exact: true }).click();
-  await expect(page.getByText("Stamps Collected: 1 / 34 (3%)")).toBeVisible();
+  await expect(page.getByText(collected(1))).toBeVisible();
   await page.getByRole("button", { name: "Close dialog" }).click();
   await page.getByRole("button", { name: "ID Card", exact: true }).click();
   await page
@@ -115,5 +136,5 @@ test("new progress unlocks stamps immediately and the award stays collected afte
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await page.getByRole("button", { name: "Close dialog" }).click();
   await page.getByRole("button", { name: "Stamp Book", exact: true }).click();
-  await expect(page.getByText("Stamps Collected: 1 / 34 (3%)")).toBeVisible();
+  await expect(page.getByText(collected(1))).toBeVisible();
 });

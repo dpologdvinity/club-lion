@@ -506,6 +506,12 @@ test("panoramic hoverboard speed, drawn trails and mango canvas share the logica
     Number(await page.locator(".your-character").getAttribute("data-stage-x")),
   ).toBe(start + 67.5);
   await expect(page.locator(".sparkle-particle").last()).toBeAttached();
+  // The avatar glides with an 850 ms CSS transition; measure only after it settles.
+  await page
+    .locator(".your-character")
+    .evaluate((el) =>
+      Promise.all(el.getAnimations().map((animation) => animation.finished)),
+    );
   const aligned = await page.evaluate(() => {
     const avatar = document
       .querySelector(".your-character .chibi-avatar")!
