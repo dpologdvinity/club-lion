@@ -11,7 +11,7 @@ Read `AGENTS.md` first (rules, commands, file map). This file is the current sta
 
 ## Repo state
 
-- `master` = `af54356` pushed to `origin/master` (https://github.com/dpologdvinity/club-lion, public).
+- `master` = `0600a04` (or later) pushed to `origin/master` (https://github.com/dpologdvinity/club-lion, public).
 - Done and merged: 13 illustrated rooms + Lion Speedway (kart race), installable offline PWA, smooth CSS scenery motion, phone/iPad layout, 5 amusement rides, 4 water rides, doll avatars rounds 1-4, Bubble Pop, Coloring Book, Mango Bakery, Hide & Seek, Animal Orchestra, Shape Sorter, room hotspots for games, picture-first room tiles, Canyon Rapids repaint, save fixes. ~673 unit tests.
 - Uncommitted in the main checkout (leave alone): `.github/workflows/playwright.yml`, `gallery/rooms-current/room-default.png`.
 
@@ -29,6 +29,22 @@ Read `AGENTS.md` first (rules, commands, file map). This file is the current sta
 | `test-hygiene`    | fix e2e tests that fail on plain master; 1 commit                                                                                                                                                                                                                                                           | check              |
 
 Editor diagnostics seen mid-flight (missing `./components/RoomMusic`, `PieceArt`, `balloonArch.ts`) are just unfinished agent files. Judge by `npm run verify` in each worktree.
+
+## Process changes (owner request, 2026-10-15)
+
+- Full browser suite runs on GitHub, not locally: `.github/workflows/playwright.yml` = `verify`, 4 e2e shards, PWA test, on every push/PR to `master`. Locally run only `npm run verify` and targeted `scripts/e2e.sh`. Watch with `gh run list`, `gh run view <id> --log-failed`.
+- Merge each branch as soon as its own checks pass. Do not batch. Keep at most about 4 parallel agents (8 overloaded the 12-core machine to load 50).
+- `pages.yml` is manual-only until the owner enables Pages; then restore its `push` trigger.
+- Room music is merged (`roomMusic.ts`, `RoomMusic.tsx`); follows the World speaker toggle.
+
+## Next steps for Codex (in order)
+
+1. Land the unmerged worktrees above, one at a time, as soon as each passes `npm run verify` (CI runs the rest).
+2. Reduce merge conflicts: split the shared registries so a new game or hotspot touches no shared file (per-game files for the `package.json` test list, `GameId`/cards in `GamesPanel.tsx`, hotspot tables in `World.tsx`, stamps in `stampDefinitions.ts`).
+3. Optional: open one PR per branch and `gh pr merge --auto --squash` so CI gates the merge.
+4. Harden `completeShapeSorterRound` and `completeAnimalBand` in `game.ts` (pay-once and overflow guards) with unit tests.
+5. Doll avatar: make it match `gallery/avatars/*.jpg`; fix accessory anchors.
+6. The shell hook that rewrites Bash calls blocked Claude agents (owner config); not an issue for Codex.
 
 ## Known test baseline (fail on plain master, likely not your regression)
 
