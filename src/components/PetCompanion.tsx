@@ -7,10 +7,13 @@ export function PetCompanion({
   pet,
   isTrotting,
   heading = "right",
+  side = "right",
 }: {
   pet: PetState;
   isTrotting: boolean;
   heading?: "left" | "right";
+  /** Which side of the avatar the pet trails on; flips away from scenery. */
+  side?: "left" | "right";
 }): JSX.Element {
   const flip = heading === "left";
   const validColor: LionColor = ["gold", "sand", "copper", "rose"].includes(
@@ -23,7 +26,7 @@ export function PetCompanion({
     <div
       role="img"
       aria-label={`${pet.name} the pet lion`}
-      className={`pet-companion pet-companion-${pet.color} ${isTrotting ? "is-trotting" : "is-resting"}`}
+      className={`pet-companion pet-companion-${pet.color} ${isTrotting ? "is-trotting" : "is-resting"}${side === "left" ? " pet-on-left" : ""}`}
       style={{
         width: 44,
         height: 44,

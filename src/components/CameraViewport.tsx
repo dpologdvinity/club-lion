@@ -10,13 +10,16 @@ export function CameraViewport({
   onWalk,
   onPortal,
   movementMultiplier = 1,
+  glideMs = 0,
 }: {
   manifest: RoomManifest;
   movementMultiplier?: number;
+  /** Camera pan time, matched to the avatar's glide so the view follows smoothly. */
+  glideMs?: number;
   avatarPos: { x: number; y: number };
   avatarHeading: "left" | "right";
   children: ReactNode;
-  onWalk: (x: number, y: number) => void;
+  onWalk: (x: number, y: number, mode?: "route" | "slide") => void;
   onPortal?: (targetRoomId: string, spawn: { x: number; y: number }) => void;
 }) {
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -97,6 +100,7 @@ export function CameraViewport({
             onWalk(
               avatarPos.x + delta[0] * movementMultiplier,
               avatarPos.y + delta[1] * movementMultiplier,
+              "slide",
             );
           }
         }}
@@ -108,6 +112,7 @@ export function CameraViewport({
           width: manifest.stageWidth,
           height: manifest.stageHeight,
           transform: `translateX(${-cameraOffset * scale}px) scale(${scale})`,
+          transition: `transform ${glideMs}ms cubic-bezier(0.2, 0.6, 0.4, 1)`,
           // Lets labels inside the stage keep a steady on-screen size.
           ["--camera-scale" as string]: scale,
         }}

@@ -71,5 +71,17 @@ export const clubPulseManifest: RoomManifest = {
       },
     },
   ],
+  obstacles: [
+    {
+      id: "bar-counter",
+      shape: "polygon",
+      points: [
+        [1724, 494],
+        [1898, 494],
+        [1900, 525],
+        [1720, 525],
+      ],
+    },
+  ],
   ambientAudioPreset: "club-pulse-house",
 };

@@ -42,4 +42,19 @@ export const petParadiseManifest: RoomManifest = {
     },
   ],
   ambientAudioPreset: "pet-spa-ambient",
+  obstacles: [
+    // Velvet cushion nest (x 528..752) sits on the floor at y ~568.
+    {
+      id: "cushion-nest",
+      shape: "polygon",
+      points: [
+        [536, 546],
+        [744, 546],
+        [752, 556],
+        [744, 566],
+        [536, 566],
+        [528, 556],
+      ],
+    },
+  ],
 };

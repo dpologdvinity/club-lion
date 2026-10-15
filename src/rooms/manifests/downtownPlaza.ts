@@ -131,5 +131,6 @@ export const downtownPlazaManifest: RoomManifest = {
       actionData: {},
     },
   ],
+  obstacles: [],
   ambientAudioPreset: "plaza-ambient",
 };

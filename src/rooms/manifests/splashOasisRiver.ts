@@ -36,4 +36,13 @@ export const splashOasisRiverManifest: RoomManifest = {
     },
   ],
   ambientAudioPreset: "tropical-splash-ambient",
+  obstacles: [
+    {
+      id: "tube-rentals-hut",
+      shape: "polygon",
+      points: [[1928, 562], [2172, 562], [2172, 568], [1928, 568]],
+    },
+    { id: "palm-1", shape: "ellipse", center: { x: 300, y: 640 }, rx: 12, ry: 6 },
+    { id: "palm-2", shape: "ellipse", center: { x: 2770, y: 668 }, rx: 13, ry: 7 },
+  ],
 };

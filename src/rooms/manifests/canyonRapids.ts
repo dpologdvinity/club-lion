@@ -35,4 +35,20 @@ export const canyonRapidsManifest: RoomManifest = {
     },
   ],
   ambientAudioPreset: "canyon-rapids-ambient",
+  obstacles: [
+    {
+      id: "river-edge",
+      shape: "polygon",
+      points: [[2, 541], [2398, 541], [2398, 550], [2, 550]],
+    },
+    { id: "pine-1", shape: "ellipse", center: { x: 300, y: 600 }, rx: 8, ry: 5 },
+    { id: "pine-2", shape: "ellipse", center: { x: 400, y: 584 }, rx: 7, ry: 4 },
+    { id: "pine-3", shape: "ellipse", center: { x: 2260, y: 598 }, rx: 8, ry: 5 },
+    { id: "cactus-1", shape: "ellipse", center: { x: 980, y: 612 }, rx: 9, ry: 5 },
+    { id: "cactus-2", shape: "ellipse", center: { x: 2050, y: 640 }, rx: 7, ry: 4 },
+    { id: "agave-1", shape: "ellipse", center: { x: 1180, y: 640 }, rx: 18, ry: 7, prop: "bush" },
+    { id: "agave-2", shape: "ellipse", center: { x: 1560, y: 668 }, rx: 18, ry: 7, prop: "bush" },
+    { id: "agave-3", shape: "ellipse", center: { x: 620, y: 690 }, rx: 18, ry: 7, prop: "bush" },
+    { id: "boulder", shape: "ellipse", center: { x: 860, y: 700 }, rx: 58, ry: 10 },
+  ],
 };

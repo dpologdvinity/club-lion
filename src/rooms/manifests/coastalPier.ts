@@ -31,4 +31,26 @@ export const coastalPierManifest: RoomManifest = {
     },
   ],
   ambientAudioPreset: "ocean-surf",
+  obstacles: [
+    {
+      id: "lighthouse",
+      shape: "polygon",
+      points: [[1845, 542], [2055, 542], [2055, 556], [1845, 556]],
+    },
+    {
+      id: "deck-bench",
+      shape: "polygon",
+      points: [[640, 542], [880, 542], [880, 552], [640, 552]],
+      prop: "bench",
+      seat: { x: 760, y: 550 },
+    },
+    {
+      id: "fishing-crate",
+      shape: "polygon",
+      points: [[1112, 542], [1178, 542], [1178, 552], [1112, 552]],
+    },
+    { id: "bollard-1", shape: "ellipse", center: { x: 560, y: 600 }, rx: 20, ry: 7 },
+    { id: "bollard-2", shape: "ellipse", center: { x: 1480, y: 600 }, rx: 20, ry: 7 },
+    { id: "bollard-3", shape: "ellipse", center: { x: 2280, y: 600 }, rx: 20, ry: 7 },
+  ],
 };
