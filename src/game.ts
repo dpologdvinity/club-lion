@@ -1148,7 +1148,8 @@ export function completeAnimalBand<T extends PlayerBase>(
     !Number.isSafeInteger(taps) ||
     taps < 1 ||
     taps > SONG_MAX_TAPS ||
-    songs >= ANIMAL_BAND_MAX_PAID_SONGS
+    songs >= ANIMAL_BAND_MAX_PAID_SONGS ||
+    !Number.isSafeInteger(player.coins + ANIMAL_BAND_COINS)
   )
     return player;
   return unlockStamp(
@@ -1171,6 +1172,7 @@ export function completeShapeSorterRound<T extends PlayerBase>(
     !Number.isSafeInteger(round) ||
     round < 1 ||
     round > SHAPE_SORTER_ROUNDS ||
+    (player.shapeSorterRounds ?? 0) >= SHAPE_SORTER_ROUNDS ||
     !Number.isSafeInteger(player.coins + SHAPE_SORTER_COINS_PER_ROUND)
   )
     return player;

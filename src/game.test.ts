@@ -44,7 +44,10 @@ import {
   ANIMAL_BAND_COINS,
   ANIMAL_BAND_MAX_PAID_SONGS,
 } from "./utils/animalBand.ts";
-import { SHAPE_SORTER_COINS_PER_ROUND } from "./utils/shapeSorter.ts";
+import {
+  SHAPE_SORTER_COINS_PER_ROUND,
+  SHAPE_SORTER_ROUNDS,
+} from "./utils/shapeSorter.ts";
 import {
   PICTURE_PUZZLE_COINS,
   PICTURE_PUZZLE_MAX_PAID,
@@ -1553,6 +1556,8 @@ test("an Animal Orchestra song pays once per song, stamps the first, and stops a
     animalBandSongs: ANIMAL_BAND_MAX_PAID_SONGS,
   };
   assert.equal(completeAnimalBand(full, 4), full);
+  const overflowing = { ...first, coins: Number.MAX_SAFE_INTEGER };
+  assert.equal(completeAnimalBand(overflowing, 4), overflowing);
 });
 
 test("a Shape Sorter round pays once and only the last round earns the stamp", () => {
@@ -1569,6 +1574,8 @@ test("a Shape Sorter round pays once and only the last round earns the stamp", (
   for (const bad of [0, 4, 1.5, Number.NaN]) {
     assert.equal(completeShapeSorterRound(round1, bad), round1);
   }
+  const completed = { ...round3, shapeSorterRounds: SHAPE_SORTER_ROUNDS };
+  assert.equal(completeShapeSorterRound(completed, 3), completed);
 });
 
 test("animal band and shape sorter progress survives a save and bad values are dropped", () => {
