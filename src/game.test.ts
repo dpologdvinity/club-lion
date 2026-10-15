@@ -1015,6 +1015,8 @@ test("foghorn stamp awards 40 coins once and persists alongside coastal visits",
   assert.deepEqual(unlocked.stamps, ["lighthouse_foghorn"]);
   assert.deepEqual(player, before);
   assert.equal(unlockStamp(unlocked, "lighthouse_foghorn"), unlocked);
+  const full = { ...player, coins: Number.MAX_SAFE_INTEGER };
+  assert.equal(unlockStamp(full, "lighthouse_foghorn"), full);
   const visited = visitPlace(
     visitPlace(unlocked, "sunset-beach"),
     "coastal-pier",
@@ -1564,6 +1566,7 @@ test("a Shape Sorter round pays once and only the last round earns the stamp", (
   const round1 = completeShapeSorterRound(newPlayer(), 1);
   assert.equal(round1.coins, 250 + SHAPE_SORTER_COINS_PER_ROUND);
   assert.equal(round1.shapeSorterRounds, 1);
+  assert.equal(completeShapeSorterRound(round1, 1), round1);
   assert.equal(round1.stamps?.length ?? 0, 0);
   const round3 = completeShapeSorterRound(
     completeShapeSorterRound(round1, 2),

@@ -1172,7 +1172,7 @@ export function completeShapeSorterRound<T extends PlayerBase>(
     !Number.isSafeInteger(round) ||
     round < 1 ||
     round > SHAPE_SORTER_ROUNDS ||
-    (player.shapeSorterRounds ?? 0) >= SHAPE_SORTER_ROUNDS ||
+    round <= (player.shapeSorterRounds ?? 0) ||
     !Number.isSafeInteger(player.coins + SHAPE_SORTER_COINS_PER_ROUND)
   )
     return player;
@@ -1180,7 +1180,7 @@ export function completeShapeSorterRound<T extends PlayerBase>(
     ...player,
     coins: player.coins + SHAPE_SORTER_COINS_PER_ROUND,
     gamesPlayed: player.gamesPlayed + 1,
-    shapeSorterRounds: (player.shapeSorterRounds ?? 0) + 1,
+    shapeSorterRounds: round,
   };
   return round === SHAPE_SORTER_ROUNDS
     ? unlockStamp(paid, "shape_sorter_star")
@@ -1400,7 +1400,12 @@ export function unlockStamp<T extends PlayerBase>(
   stampId: string,
 ): T {
   const stamp = STAMP_DEFINITIONS.find((stamp) => stamp.id === stampId);
-  if (!stamp || player.stamps?.includes(stampId)) return player;
+  if (
+    !stamp ||
+    player.stamps?.includes(stampId) ||
+    !Number.isSafeInteger(player.coins + (stamp.rewardCoins ?? 0))
+  )
+    return player;
   return {
     ...player,
     coins: player.coins + (stamp.rewardCoins ?? 0),

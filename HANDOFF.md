@@ -15,20 +15,11 @@ Read `AGENTS.md` first (rules, commands, file map). This file is the current sta
 - Done and merged: 13 illustrated rooms + Lion Speedway (kart race), installable offline PWA, smooth CSS scenery motion, phone/iPad layout, 5 amusement rides, 4 water rides, doll avatars rounds 1-4, Bubble Pop, Coloring Book, Mango Bakery, Hide & Seek, Animal Orchestra, Shape Sorter, Picture Puzzle, Balloon Parade, picture-first navigation, aquarium/rink, pet species, world collision, test hygiene, Canyon Rapids repaint, save fixes. 774 unit tests.
 - Uncommitted in the main checkout (leave alone): `.github/workflows/playwright.yml`, `gallery/rooms-current/room-default.png`.
 
-## Unmerged work in `.worktrees/` (Claude agents were mid-flight; check each with `git -C .worktrees/<name> status` and `log master..HEAD`)
+## Integration status
 
-| Worktree / branch | Task                                                                                                                                                                                                                                                                                                        | State when written |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `doll-avatar-5`   | much stronger Bratz-doll look: bigger head, huge eyes and plump glossy lips, airbrushed shading, big glossy hair, in-world scale-up. ALSO bug: in-world accessories (earrings etc.) are misplaced; they must be placed from the same anchors/RIG as head/body, including `headBoost`; add anchor unit tests | uncommitted edits  |
-| `world-collision` | solid obstacles in every room (fountain, rides, booths...), avatar and pet walk around them, bump reaction, 4 reacting props (fountain, benches, lamps, bushes), debug overlay `?debug=obstacles`                                                                                                           | uncommitted edits  |
-| `picture-nav-2`   | phone Map button opens full-screen grid of all destinations                                                                                                                                                                                                                                                 | uncommitted edits  |
-| `pets-species`    | choose pet species (lion, bunny, puppy, kitten, duckling, panda, unicorn, dragon)                                                                                                                                                                                                                           | uncommitted edits  |
-| `rooms-new`       | two new rooms: Lion Aquarium, Snowflake Rink                                                                                                                                                                                                                                                                | uncommitted edits  |
-| `room-music`      | procedural background music per room (Web Audio, quiet, after first gesture)                                                                                                                                                                                                                                | uncommitted edits  |
-| `games-puzzle`    | Picture Puzzle (jigsaw) and Balloon Parade                                                                                                                                                                                                                                                                  | uncommitted edits  |
-| `test-hygiene`    | fix e2e tests that fail on plain master; 1 commit                                                                                                                                                                                                                                                           | check              |
+All listed worktrees have landed and were removed: doll-avatar-5, world-collision, picture-nav-2, pets-species, rooms-new, room-music, games-puzzle, test-hygiene.
 
-Editor diagnostics seen mid-flight (missing `./components/RoomMusic`, `PieceArt`, `balloonArch.ts`) are just unfinished agent files. Judge by `npm run verify` in each worktree.
+Accessory head transforms already share `RIG.head` / `RIG.headBoost`, with regression coverage in `avatarSvg.test.ts`. Visual resemblance to the reference photographs still needs owner feedback.
 
 ## Process changes (owner request, 2026-10-15)
 
@@ -36,7 +27,7 @@ Editor diagnostics seen mid-flight (missing `./components/RoomMusic`, `PieceArt`
 - Merge each branch as soon as its own checks pass. Do not batch. Keep at most about 4 parallel agents (8 overloaded the 12-core machine to load 50).
 - `pages.yml` is manual-only until the owner enables Pages; then restore its `push` trigger.
 - Room music is merged (`roomMusic.ts`, `RoomMusic.tsx`); follows the World speaker toggle.
-- Merged and pushed in order: world collision, picture navigation, pet species, aquarium/rink rooms, Puzzle + Balloon Parade, and test hygiene. Reward follow-up now caps Shape Sorter at its three rounds and rejects Animal Orchestra coin overflow.
+- Merged and pushed in order: world collision, picture navigation, pet species, aquarium/rink rooms, Puzzle + Balloon Parade, and test hygiene. Reward follow-up rejects previously paid Shape Sorter rounds, Animal Orchestra coin overflow, and unsafe shared stamp bonuses.
 
 ## Next steps for Codex (in order)
 
@@ -44,7 +35,7 @@ Editor diagnostics seen mid-flight (missing `./components/RoomMusic`, `PieceArt`
 2. Optional: reduce merge conflicts by splitting shared game registries (test list, game cards, hotspots, stamps); this is deferred because it is structural work with no immediate product need.
 3. Optional: open one PR per branch and `gh pr merge --auto --squash` so CI gates the merge.
 4. Done: `completeShapeSorterRound` stops paying after all rounds; `completeAnimalBand` rejects coin overflow. Unit tests cover both.
-5. Doll avatar: make it match `gallery/avatars/*.jpg`; fix accessory anchors (not yet done).
+5. Doll avatar: get owner feedback on resemblance to `gallery/avatars/*.jpg`; accessory head rigs already have regression coverage.
 6. The shell hook that rewrites Bash calls blocked Claude agents (owner config); not an issue for Codex.
 
 ## Known test baseline (fail on plain master, likely not your regression)
@@ -53,7 +44,7 @@ Editor diagnostics seen mid-flight (missing `./components/RoomMusic`, `PieceArt`
 
 ## Known issues and follow-ups
 
-- Avatar still does not match the references; accessory placement bug (above).
+- Avatar visual resemblance needs owner feedback; shared accessory head transforms and boosted-head coverage are implemented.
 - Puzzle and Balloon Parade are implemented; other avatar visual-match/accessory-anchor work remains.
 - GitHub Actions for the latest push is pending; check `gh run list` / `gh run view` for browser results.
 - Animal art (parrot reads as duck, monkey as dog), sounds, drag on touch: never checked by the owner or on a real iPad. Playwright WebKit is not iPad Safari.
