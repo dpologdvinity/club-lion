@@ -15,6 +15,7 @@ import {
   sleeve,
 } from "./avatar/shared.ts";
 import { makeupDefs, renderLayer3GlamFace } from "./avatar/makeup.ts";
+import { renderBangles, renderNecklace } from "./avatar/accessories.ts";
 import {
   hairDefs,
   renderLayer1HairBack,
@@ -112,7 +113,7 @@ function renderLayer0ShadowAndBoard(look: AvatarLook, action: string): string {
  * Layer 2: Body Base (Skin tones, head, neck, torso, arms, legs)
  * ------------------------------------------------------------- */
 const HEAD_PATH =
-  "M60 13 C76.6 13 86.6 23.4 86.4 38.6 C86.3 45.6 84.8 50.6 81.4 55.2 C75.8 62.2 67.4 67.6 60 67.6 C52.6 67.6 44.2 62.2 38.6 55.2 C35.2 50.6 33.7 45.6 33.6 38.6 C33.4 23.4 43.4 13 60 13 Z";
+  "M60 13 C76.6 13 86.8 23.4 86.6 38.6 C86.5 46.4 85.4 51.8 81.8 56.4 C76.4 63 67 67.8 60 67.8 C53 67.8 43.6 63 38.2 56.4 C34.6 51.8 33.5 46.4 33.4 38.6 C33.2 23.4 43.4 13 60 13 Z";
 
 const LEG_PATH =
   "M49.4 99 L59 99 C59.2 108 58.2 118 56.6 131 L51.8 131 C50.8 118 49.2 108 49.4 99 Z";
@@ -290,6 +291,8 @@ function renderLayer7HeadwearAndEyewear(look: AvatarLook): string {
   return inked(parts.join("\n"), 1.1);
 }
 
+const INK_LINE = `stroke="${INK}" stroke-width="0.6" stroke-linejoin="round"`;
+
 /* -------------------------------------------------------------
  * Layer 7b: Jewelry (Earrings & Necklaces)
  * ------------------------------------------------------------- */
@@ -301,6 +304,8 @@ export function renderJewelry(look: AvatarLook): string {
     case "oversized_gold_hoops":
       art =
         `<g class="jewelry-hoops">` +
+        `<circle cx="34.4" cy="53" r="4.6" stroke="${INK}" stroke-width="2" fill="none" />` +
+        `<circle cx="85.6" cy="53" r="4.6" stroke="${INK}" stroke-width="2" fill="none" />` +
         `<circle cx="34.4" cy="53" r="4.6" stroke="#f4c542" stroke-width="1.2" fill="none" />` +
         `<circle cx="85.6" cy="53" r="4.6" stroke="#f4c542" stroke-width="1.2" fill="none" />` +
         `<path d="M32 49.5 A4.6 4.6 0 0 1 36.8 49.5" stroke="#fff8d4" stroke-width="0.8" fill="none" />` +
@@ -312,14 +317,38 @@ export function renderJewelry(look: AvatarLook): string {
     case "silver_bamboo_hoops":
       art =
         `<g class="jewelry-bamboo-hoops">` +
-        `<circle cx="34.4" cy="53" r="4.8" stroke="#d5dde8" stroke-width="1.4" fill="none" />` +
-        `<circle cx="85.6" cy="53" r="4.8" stroke="#d5dde8" stroke-width="1.4" fill="none" />` +
+        `<circle cx="34.4" cy="53" r="4.8" stroke="${INK}" stroke-width="2.3" fill="none" />` +
+        `<circle cx="85.6" cy="53" r="4.8" stroke="${INK}" stroke-width="2.3" fill="none" />` +
+        `<circle cx="34.4" cy="53" r="4.8" stroke="#d5dde8" stroke-width="1.4" stroke-dasharray="2.4 0.5" fill="none" />` +
+        `<circle cx="85.6" cy="53" r="4.8" stroke="#d5dde8" stroke-width="1.4" stroke-dasharray="2.4 0.5" fill="none" />` +
         `<circle cx="34.4" cy="57.8" r="0.9" fill="#ffffff" stroke="#9aa8b8" stroke-width="0.3" />` +
         `<circle cx="85.6" cy="57.8" r="0.9" fill="#ffffff" stroke="#9aa8b8" stroke-width="0.3" />` +
         `<circle cx="29.6" cy="53" r="0.8" fill="#ffffff" stroke="#9aa8b8" stroke-width="0.3" />` +
         `<circle cx="90.4" cy="53" r="0.8" fill="#ffffff" stroke="#9aa8b8" stroke-width="0.3" />` +
         `</g>`;
       break;
+    case "silver_hoops": {
+      // Big doll hoops hanging well below the jaw
+      const hoop =
+        `<circle cx="32.6" cy="57.4" r="6.6" stroke="${INK}" stroke-width="2.6" fill="none" />` +
+        `<circle cx="32.6" cy="57.4" r="6.6" stroke="#dfe6ee" stroke-width="1.6" fill="none" />` +
+        `<path d="M27 54.2 A6.6 6.6 0 0 1 29.8 51.4" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" fill="none" />`;
+      art = `<g class="jewelry-silver-hoops">${hoop}<g ${MIRROR}>${hoop}</g></g>`;
+      break;
+    }
+    case "gold_jhumkas": {
+      // Gold bell jhumkas: stud, dome, and a fringe of tiny beads
+      const bell =
+        `<circle cx="34.6" cy="48.6" r="1.3" fill="#f4c542" ${INK_LINE} />` +
+        `<path d="M34.6 49.8 L34.6 52" stroke="${INK}" stroke-width="0.6" />` +
+        `<path d="M29.8 58.6 Q34.6 48.8 39.4 58.6 Z" fill="#f4c542" ${INK_LINE} />` +
+        `<path d="M32 56.4 Q34.6 52 37.2 56.4" stroke="#fff1a8" stroke-width="0.5" fill="none" />` +
+        [30.6, 32.6, 34.6, 36.6, 38.6]
+          .map((x) => `<circle cx="${x}" cy="60" r="0.75" fill="#f4c542" />`)
+          .join("");
+      art = `<g class="jewelry-gold-jhumkas">${bell}<g ${MIRROR}>${bell}</g></g>`;
+      break;
+    }
     case "diamond_studs":
       art =
         `<g class="jewelry-studs">` +
@@ -450,7 +479,9 @@ export function generateAvatarLayersString(
     renderLayer5Outfit(look, act),
     rig("head", renderLayer6HairFront(look, p)),
     renderRaisedArm(look, act),
+    renderBangles(look, act),
     renderJewelry(look),
+    renderNecklace(look),
     rig("head", renderLayer7HeadwearAndEyewear(look)),
     renderLayer8Handheld(look, act),
   ]

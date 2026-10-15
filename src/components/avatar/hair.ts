@@ -1,5 +1,6 @@
 import type { AvatarLook, HairStyle } from "../../types/world.ts";
 import { resolveHairStyle } from "../../types/world.ts";
+import { HAIR_CLIPS, findOption } from "../../types/avatarOptions.ts";
 import { INK, MIRROR, escapeXml, inked, n } from "./shared.ts";
 
 /* -------------------------------------------------------------
@@ -67,8 +68,11 @@ function butterflyClip(
 function braid(d: string, color: string, bead: string, end: string): string {
   const [bx, by] = end.split(" ");
   return (
+    `<path d="${d}" stroke="${INK}" stroke-width="3.5" stroke-linecap="round" fill="none" />` +
     `<path d="${d}" stroke="${color}" stroke-width="2.6" stroke-linecap="round" fill="none" />` +
     `<path d="${d}" stroke="rgba(25,10,5,0.35)" stroke-width="2.6" stroke-dasharray="0.7 1.3" fill="none" />` +
+    // Gold cuffs spaced down the braid
+    `<path d="${d}" stroke="#f4c542" stroke-width="3" stroke-dasharray="1.6 20" stroke-dashoffset="-12" fill="none" />` +
     `<circle cx="${bx}" cy="${by}" r="1.5" fill="${bead}" stroke="rgba(0,0,0,0.25)" stroke-width="0.3" />` +
     `<circle cx="${Number(bx) - 0.5}" cy="${Number(by) - 0.5}" r="0.5" fill="#ffffff" opacity="0.8" />`
   );
@@ -932,24 +936,24 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
     case "blowout":
     default: {
       const mass =
-        "M60 5 C84 5 97 20 96 42 C95 56 98 67 103 76 C99 80.6 92 79.6 88.4 75 C87.6 79.6 82.4 82 77.6 80.4 L42.4 80.4 C37.6 82 32.4 79.6 31.6 75 C28 79.6 21 80.6 17 76 C22 67 25 56 24 42 C23 20 36 5 60 5 Z";
+        "M60 2 C86 2 99 18 98 40 C97 50 99 58 100.4 68 C101.4 76 102.6 84 105 87.6 C107 90.4 110 89.6 111.2 87 C112.4 84.6 116 85 117 88 C119 93 115 98 108 101 C101 104 92 104 84 104 L36 104 C28 104 19 104 12 101 C5 98 1 93 3 88 C4 85 7.6 84.6 8.8 87 C10 89.6 13 90.4 15 87.6 C17.4 84 18.6 76 19.6 68 C21 58 23 50 22 40 C21 18 34 2 60 2 Z";
       const cap =
         "M31 50 C27 24 41 6.6 60 6.6 C80 6.6 93.4 24 89.4 50 C87.8 42 86 36 82.8 31.6 C78 27.4 70.4 28 64.4 26.2 C59 24.6 55 23 52 21 C48.6 25 43.6 28.6 39.4 33 C36 37.4 34.4 43 34.2 50 C33.4 47.4 32 48 31 50 Z";
       const flipLeft =
-        "M34.4 40 C31.4 52 32.4 62 36 70.4 C37.4 74.6 35.6 78.8 31 79.8 C27.4 80.6 24 79 22.4 76.2 C27.2 76.8 30 75 29.4 70.4 C28.2 60 28.8 50 31.2 42 Z";
+        "M34.4 40 C31.6 52 32 66 30.4 78 C29.4 86 26 92 19 94 C15 95 11 94 8.6 91.6 C14 92 18.6 88.6 21 82 C24 72 27.6 58 28.2 50 C28.6 46 30 42 31.2 40 Z";
       const flipRight =
-        "M85.6 36 C89 48 87.4 60 84 70.4 C82.6 74.6 84.4 78.8 89 79.8 C92.6 80.6 96 79 97.6 76.2 C92.8 76.8 90 75 90.6 70.4 C91.8 60 91.6 48 89.4 38 Z";
+        "M85.6 40 C88.4 52 88 66 89.6 78 C90.6 86 94 92 101 94 C105 95 109 94 111.4 91.6 C106 92 101.4 88.6 99 82 C96 72 92.4 58 91.8 50 C91.4 46 90 42 88.8 40 Z";
       return {
         back:
           `<path d="${mass}" fill="${c}" />` +
           shade(mass) +
           strands([
-            "M27 50 C26 62 24 70 20 76",
-            "M93 50 C94 62 96 70 100 76",
-            "M32 56 C31 66 30 72 27 77.4",
-            "M88 56 C89 66 90 72 93 77.4",
+            "M27 50 C25 66 22 80 14 94",
+            "M93 50 C95 66 98 80 106 94",
+            "M34 60 C32 74 30 88 26 101",
+            "M86 60 C88 74 90 88 94 101",
           ]) +
-          glints(["M24.6 48 C24.2 56 23.2 64 20.8 71"]),
+          glints(["M24.4 48 C23.6 60 21.6 72 17.6 84"]),
         front:
           `<path d="${cap}" fill="${c}" />` +
           `<path d="${flipLeft}" fill="${c}" />` +
@@ -958,10 +962,10 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M52 15 C60 22 72 24.4 80 30",
             "M55 11.4 C66 16 80 18 86.6 31",
             "M50 16.4 C44 22 38.6 28 35.4 38",
-            "M32.2 50 C31.4 60 32.6 68 33.6 74",
-            "M87.8 50 C88.6 60 87.4 68 86.4 74",
+            "M32 50 C31 62 30 74 27 84",
+            "M88 50 C89 62 90 74 93 84",
           ]) +
-          glints(["M30.6 50 Q29.8 56 30.8 62"]) +
+          glints(["M30.4 50 C29.8 58 29.4 66 28 74"]) +
           shineRibbon(
             p,
             "M36 26 C44 12 76 11.4 85 24 C76 16.4 46 17 36.6 29 Z",
@@ -972,6 +976,22 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
   }
 }
 
+/** Long and curly cuts whose back hair puffs out wide like the doll art. */
+const BIG_VOLUME: ReadonlySet<HairStyle> = new Set([
+  "butterfly_waves",
+  "sleek_straight",
+  "side_swoop",
+  "half_up",
+  "mermaid_waves",
+  "big_curls",
+  "spiral_coils",
+  "crimped",
+  "box_braids",
+  "goddess_locs",
+  "fulani_braids",
+  "afro_halo",
+]);
+
 /* -------------------------------------------------------------
  * Layer 1: Hair Back
  * ------------------------------------------------------------- */
@@ -981,8 +1001,8 @@ export function renderLayer1HairBack(look: AvatarLook, p: string): string {
   const cls = style.replace(/_/g, "-");
   return (
     `<g class="avatar-hair-back hair-${cls}">` +
-    // Puffed out a little past the front pieces for big glam volume
-    `<g transform="translate(60 26) scale(1.08 1.04) translate(-60 -26)">` +
+    // Puffed out past the front pieces: long cuts get big doll volume
+    `<g transform="translate(60 26) scale(${BIG_VOLUME.has(style) ? "1.2 1.08" : "1.08 1.04"}) translate(-60 -26)">` +
     inked(hairArt(style, hairColor, p).back, 1.1) +
     `</g>` +
     `</g>`
@@ -994,14 +1014,14 @@ export function renderLayer1HairBack(look: AvatarLook, p: string): string {
  * ------------------------------------------------------------- */
 /** Band hugging the hairline from the part down to the temple. */
 const STREAK_BAND =
-  "M58.6 20.2 C56 21.6 52.4 22.8 48.4 24.2 C39.4 27.8 33.6 36 33 48 L29.4 48 C29.6 32.6 36.4 22.4 46.4 18.6 C50.8 16.8 54.6 15 57 13 Z";
+  "M58.6 20.2 C56 21.6 52.4 22.8 48.4 24.2 C39.4 27.8 33.6 36 33 48 L27.6 48 C27.4 31 35 19.6 45.6 15 C50.6 12.8 54.6 10.6 57.4 8.6 Z";
 
 /** Stripe down a long face-framing panel. */
 const STREAK_PANEL =
-  "M32.6 44 C31.4 54 33.6 60 32 68 C30.6 75 32.6 79 30.6 84 L28.4 83 C30 78 28.6 73 30 66 C31.4 58 29 52 30.4 44 Z";
+  "M33 44 C31.4 54 33.6 60 32 68 C30.6 75 32.6 79 30.6 86 L26 85 C28 79 26.4 73 27.6 66 C29 58 26.8 52 28 44 Z";
 
 const STREAK_FLIP =
-  "M33 44 C31 54 31.6 63 34.4 71 C35.4 74.4 34 77.8 30.4 78.6 C29 78.8 27.6 78.6 26.6 78 C29.6 77 31 75 30.6 71 C29.6 62 29.6 52 31 44 Z";
+  "M33 44 C31.4 54 31.6 66 30.2 78 C29.4 85 26.6 90.4 20.6 92.4 L18 90.6 C22.4 88.6 25 84 26.2 78 C27.6 66 27.8 54 28.6 44 Z";
 
 const STREAK_TENDRIL =
   "M36.6 29 C33.2 37 37.6 43.6 34.8 51.4 C32.8 57 35.8 61.6 33.6 66.6";
@@ -1103,8 +1123,48 @@ export function renderLayer6HairFront(look: AvatarLook, p: string): string {
     inked(hairArt(style, hairColor, p).front, 1.1) +
     renderHairStreak(style, look.hairStreak) +
     inked(renderBangs(look, hairColor), 1.1) +
+    renderHairClips(look) +
     `</g>`
   );
+}
+
+/** Clip spots along the part and hairline, viewer-left side (mirrored). */
+const CLIP_SPOTS = [
+  [53.2, 13.4, -15],
+  [43.6, 18.6, -35],
+  [35.8, 27.4, -60],
+] as const;
+
+const CLIP_COLORS = ["#c9a6ff", "#7fd3ff", "#ff9ad5"] as const;
+
+function star(x: number, y: number, r: number, fill: string): string {
+  const points = Array.from({ length: 10 }, (_, i) => {
+    const a = (Math.PI / 5) * i - Math.PI / 2;
+    const radius = i % 2 ? r * 0.45 : r;
+    return `${n(x + Math.cos(a) * radius)} ${n(y + Math.sin(a) * radius)}`;
+  });
+  return `<path d="M${points.join(" L")} Z" fill="${fill}" stroke="#2a1610" stroke-width="0.5" stroke-linejoin="round" />`;
+}
+
+/** Butterfly, star, or rhinestone clips pinned along the hairline. */
+export function renderHairClips(look: AvatarLook): string {
+  const id = findOption(HAIR_CLIPS, look.hairClipId)?.id;
+  if (!id || id === "none") return "";
+  const side = CLIP_SPOTS.map(([x, y, angle], i) => {
+    switch (id) {
+      case "butterfly_clips":
+        return butterflyClip(x, y, CLIP_COLORS[i], angle);
+      case "star_clips":
+        return star(x, y, 2.2, i % 2 ? "#fff1a8" : "#ffd34d");
+      default:
+        return (
+          `<rect x="${n(x - 2.6)}" y="${n(y - 0.8)}" width="5.2" height="1.6" rx="0.8" fill="#e6ecf5" stroke="#2a1610" stroke-width="0.5" transform="rotate(${angle} ${x} ${y})" />` +
+          `<circle cx="${n(x - 1.2)}" cy="${y}" r="0.45" fill="#ffffff" /><circle cx="${n(x + 0.6)}" cy="${y}" r="0.45" fill="#ffffff" />`
+        );
+    }
+  }).join("");
+  const inkedSide = inked(side, 0.45);
+  return `<g class="avatar-hair-clips clips-${id.replace(/_/g, "-")}">${inkedSide}<g ${MIRROR}>${inkedSide}</g></g>`;
 }
 
 /** Shared gradient for glossy hair shine ribbons. */

@@ -21,6 +21,9 @@ import {
   HAIR_STREAKS,
   HAIR_STYLE_OPTIONS,
   JEWELRY,
+  NECKLACES,
+  HAIR_CLIPS,
+  BRACELETS,
   LIP_COLORS,
   PIERCINGS,
   SKIN_TONE_OPTIONS,
@@ -272,6 +275,27 @@ export function SalonModal({
                 JEWELRY,
                 draft.jewelryId ?? "oversized_gold_hoops",
                 (jewelryId) => update({ jewelryId }),
+              )}
+              {pills(
+                "Necklaces & Chokers",
+                "necklace",
+                NECKLACES,
+                draft.necklaceId ?? "none",
+                (necklaceId) => update({ necklaceId }),
+              )}
+              {pills(
+                "Hair Clips",
+                "clips",
+                HAIR_CLIPS,
+                draft.hairClipId ?? "none",
+                (hairClipId) => update({ hairClipId }),
+              )}
+              {pills(
+                "Bangles",
+                "bracelet",
+                BRACELETS,
+                draft.braceletId ?? "none",
+                (braceletId) => update({ braceletId }),
               )}
             </>
           )}

@@ -283,9 +283,34 @@ export const JEWELRY = [
   { id: "rhinestone_choker", label: "Tennis Choker", price: 90 },
   { id: "layered_chains", label: "Layered Chains", price: 90 },
   { id: "butterfly_choker", label: "Butterfly Choker", price: 110 },
+  { id: "silver_hoops", label: "Big Silver Hoops" },
+  { id: "gold_jhumkas", label: "Gold Jhumka Earrings", price: 120 },
 ] as const satisfies readonly StyleOption[];
 
 export type JewelryStyle = (typeof JEWELRY)[number]["id"];
+
+/** Necklaces layer with earrings; saves made before necklaces have none. */
+export const NECKLACES = [
+  { id: "none", label: "None" },
+  { id: "diamond_choker", label: "Diamond Choker" },
+  { id: "pearl_choker", label: "Pearl Choker" },
+  { id: "cross_chain", label: "Cross Chain" },
+  { id: "heart_chain", label: "Heart Locket Chain", price: 90 },
+  { id: "gold_coin_layers", label: "Layered Gold Coins", price: 120 },
+] as const satisfies readonly StyleOption[];
+
+export const HAIR_CLIPS = [
+  { id: "none", label: "None" },
+  { id: "butterfly_clips", label: "Butterfly Clips" },
+  { id: "star_clips", label: "Star Clips" },
+  { id: "rhinestone_barrettes", label: "Rhinestone Barrettes", price: 80 },
+] as const satisfies readonly StyleOption[];
+
+export const BRACELETS = [
+  { id: "none", label: "None" },
+  { id: "gold_bangles", label: "Stacked Gold Bangles" },
+  { id: "rainbow_bangles", label: "Rainbow Jelly Bangles", price: 80 },
+] as const satisfies readonly StyleOption[];
 
 /* -------------------------------------------------------------
  * Bangs
@@ -375,6 +400,7 @@ export const TOPS = [
   { id: "tube_top_black", label: "Black Tube Top", free: true },
   { id: "lilac_halter", label: "Lilac Halter", free: true },
   { id: "heart_halter", label: "Heart Halter", free: true },
+  { id: "holo_halter", label: "Holo Tie Halter", free: true },
   { id: "denim_jacket", label: "Denim Jacket" },
   { id: "striped_tee", label: "Striped Tee" },
   { id: "cropped_puffer", label: "Cropped Puffer" },
@@ -387,6 +413,7 @@ export const TOPS = [
   { id: "varsity_crop", label: "Varsity Crop Jacket" },
   { id: "zip_crop_hoodie", label: "Zip Crop Hoodie" },
   { id: "barista_apron", label: "Barista Apron" },
+  { id: "pink_fur_jacket", label: "Pink Faux-Fur Jacket" },
 ] as const satisfies readonly ClothingOption[];
 
 export type TopId = (typeof TOPS)[number]["id"];
@@ -455,6 +482,9 @@ export type SalonCategory =
   | "hair"
   | "piercing"
   | "jewelry"
+  | "necklace"
+  | "clips"
+  | "bracelet"
   | "skin"
   | "bangs";
 
@@ -469,6 +499,9 @@ export const SALON_CATEGORY_OPTIONS: Readonly<
   hair: HAIR_STYLE_OPTIONS,
   piercing: PIERCINGS,
   jewelry: JEWELRY,
+  necklace: NECKLACES,
+  clips: HAIR_CLIPS,
+  bracelet: BRACELETS,
   skin: SKIN_TONE_OPTIONS,
   bangs: BANGS_OPTIONS,
 };

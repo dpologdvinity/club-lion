@@ -929,6 +929,9 @@ export function premiumIdsForLook(look: AvatarLook): string[] {
     ["hair", resolveHairStyle(look.hairId)],
     ["piercing", look.piercingId],
     ["jewelry", look.jewelryId],
+    ["necklace", look.necklaceId],
+    ["clips", look.hairClipId],
+    ["bracelet", look.braceletId],
     ["bangs", look.bangsId],
     ["skin", look.skinTone],
   ];

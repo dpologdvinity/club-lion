@@ -136,6 +136,9 @@ export type AvatarLook = {
   bangsId?: string;
   piercingId?: string;
   jewelryId?: string;
+  necklaceId?: string;
+  hairClipId?: string;
+  braceletId?: string;
   /** Streak dye color (hex); absent or empty means no streak. */
   hairStreak?: string;
   headwearId?: string;
@@ -184,6 +187,9 @@ export function validateAvatarLook(look: unknown): look is AvatarLook {
     hasOptionalString("bangsId") &&
     hasOptionalString("piercingId") &&
     hasOptionalString("jewelryId") &&
+    hasOptionalString("necklaceId") &&
+    hasOptionalString("hairClipId") &&
+    hasOptionalString("braceletId") &&
     (candidate.hairStreak === undefined ||
       typeof candidate.hairStreak === "string") &&
     hasOptionalString("headwearId") &&
@@ -354,6 +360,13 @@ export const CATALOG_ITEMS: readonly CatalogItem[] = [
     price: 190,
     slot: "top_outer",
     description: "Lilac knit with fluffy faux-fur trim.",
+  },
+  {
+    id: "pink_fur_jacket",
+    name: "Pink Faux-Fur Jacket",
+    price: 220,
+    slot: "top_outer",
+    description: "Cropped, fluffy, and extremely glam.",
   },
   {
     id: "butterfly_halter",

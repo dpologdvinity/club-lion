@@ -12,7 +12,15 @@ import {
   HAIR_STYLES,
   type AvatarLook,
 } from "../types/world.ts";
-import { PIERCINGS, JEWELRY, BANGS_OPTIONS } from "../types/avatarOptions.ts";
+import {
+  PIERCINGS,
+  JEWELRY,
+  BANGS_OPTIONS,
+  NECKLACES,
+  HAIR_CLIPS,
+  BRACELETS,
+} from "../types/avatarOptions.ts";
+import { newPlayer, salonLookCost } from "../game.ts";
 
 test("generateAvatarSvgString outputs stacked SVG layers in correct order", () => {
   const svg = generateAvatarSvgString(DEFAULT_AVATAR_LOOK, "idle");
@@ -441,4 +449,64 @@ test("portrait crop is a square around the head and shoulders", () => {
   assert.ok(x < head.x - 40 && x + w > head.x + 40, "hair fits across");
   assert.ok(y < 0 && y + h > ANCHORS.Neck.y + 20, "crown to shoulders");
   assert.ok(y + h < ANCHORS.Waist.y + 10, "stops above the legs");
+});
+
+test("necklaces, hair clips, and bangles render each option and nothing by default", () => {
+  const plain = generateAvatarSvgString(DEFAULT_AVATAR_LOOK, "idle");
+  for (const cls of [
+    "avatar-necklace",
+    "avatar-hair-clips",
+    "avatar-bangles",
+  ]) {
+    assert.ok(!plain.includes(cls), `old looks have no ${cls}`);
+  }
+  const groups = [
+    ["necklaceId", NECKLACES, "necklace"],
+    ["hairClipId", HAIR_CLIPS, "clips"],
+    ["braceletId", BRACELETS, "bangles"],
+  ] as const;
+  for (const [field, options, prefix] of groups) {
+    for (const { id } of options) {
+      for (const action of ["idle", "wave"]) {
+        const svg = generateAvatarSvgString(
+          { ...DEFAULT_AVATAR_LOOK, [field]: id },
+          action,
+        );
+        assertValidSvg(svg, `${field}/${id}/${action}`);
+        const cls = `${prefix}-${id.replace(/_/g, "-")}`;
+        assert.equal(svg.includes(cls), id !== "none", cls);
+      }
+    }
+    const unknown = generateAvatarSvgString({
+      ...DEFAULT_AVATAR_LOOK,
+      [field]: "mystery",
+    });
+    assert.ok(!unknown.includes(`${prefix}-mystery`), `${field} unknown`);
+  }
+});
+
+test("new earrings render and premium accessories cost coins", () => {
+  for (const id of ["silver_hoops", "gold_jhumkas"]) {
+    const svg = generateAvatarSvgString({
+      ...DEFAULT_AVATAR_LOOK,
+      jewelryId: id,
+    });
+    assert.ok(svg.includes(`jewelry-${id.replace(/_/g, "-")}`), id);
+  }
+  const player = { ...newPlayer(), owned: [] };
+  const look = {
+    ...DEFAULT_AVATAR_LOOK,
+    jewelryId: "gold_jhumkas",
+    necklaceId: "heart_chain",
+    hairClipId: "rhinestone_barrettes",
+    braceletId: "rainbow_bangles",
+  };
+  assert.equal(salonLookCost(player, look), 120 + 90 + 80 + 80);
+  assert.equal(
+    salonLookCost(player, {
+      ...DEFAULT_AVATAR_LOOK,
+      necklaceId: "cross_chain",
+    }),
+    0,
+  );
 });

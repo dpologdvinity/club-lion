@@ -12,7 +12,11 @@ import {
   SHOES,
   TOPS,
 } from "../../types/avatarOptions.ts";
-import { DEFAULT_AVATAR_LOOK, type AvatarLook } from "../../types/world.ts";
+import {
+  CATALOG_ITEMS,
+  DEFAULT_AVATAR_LOOK,
+  type AvatarLook,
+} from "../../types/world.ts";
 
 /** Counts open vs close tags per name, ignoring self-closing elements. */
 function unbalancedTags(markup: string): string[] {
@@ -197,4 +201,21 @@ test("moon-boot fluff merges into the shaft outline instead of stitching", () =>
   const plainTufts = tufts("none");
   assert.ok(inkedTufts.length >= 12);
   assert.equal(plainTufts.length, inkedTufts.length);
+});
+
+test("pink faux-fur jacket is a shop piece with merged fluffy edges", () => {
+  const item = CATALOG_ITEMS.find((i) => i.id === "pink_fur_jacket");
+  assert.equal(item?.slot, "top_outer");
+  assert.ok(!TOPS.find((t) => t.id === "pink_fur_jacket" && "free" in t));
+  assert.ok(TOPS.some((t) => t.id === "holo_halter" && "free" in t));
+  const outfit = renderLayer5Outfit({
+    ...DEFAULT_AVATAR_LOOK,
+    topId: "pink_fur_jacket",
+  });
+  const tufts = (stroke: string) =>
+    outfit.match(
+      new RegExp(`<circle[^>]*fill="#ff(c4de|d6e8)" stroke="${stroke}"`, "g"),
+    )?.length ?? 0;
+  assert.ok(tufts("#2a1610") >= 18);
+  assert.equal(tufts("none"), tufts("#2a1610"));
 });

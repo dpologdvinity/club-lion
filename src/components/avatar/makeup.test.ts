@@ -90,7 +90,7 @@ test("each makeup override changes the rendered face", () => {
 
 test("overrides resolve from the registry while absent ones keep preset colors", () => {
   const preset = resolveMakeup({ ...DEFAULT_AVATAR_LOOK });
-  assert.equal(preset.shadow, "#b8704c");
+  assert.equal(preset.shadow, "#b98ad6");
   assert.equal(preset.lipFinish, "gloss");
   assert.equal(preset.blush, "#ff5f86");
   assert.equal(preset.faceDetail, "none");

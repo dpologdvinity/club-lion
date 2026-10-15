@@ -259,7 +259,14 @@ const LEFT_LEG_GLITTER = [
 ] as const;
 
 const BOTTOM_ART: Record<BottomId, () => string> = {
-  flares_indigo: () => flares("#3f5f9e", "#f3c46b") + chainBelt(),
+  flares_indigo: () =>
+    flares("#3f5f9e", "#f3c46b") +
+    // Gold-embroidered swirls and frayed knee rips, drawn left and mirrored
+    `<path d="M51.4 106 q2.4 -1.6 3 1 q0.4 2.2 -1.8 2 M52 112 q-1.6 2.4 0.8 3.6 q2 0.6 2.2 -1.4" stroke="#f3c46b" stroke-width="0.6" stroke-linecap="round" fill="none" />` +
+    `<path d="M68.6 106 q-2.4 -1.6 -3 1 q-0.4 2.2 1.8 2 M68 112 q1.6 2.4 -0.8 3.6 q-2 0.6 -2.2 -1.4" stroke="#f3c46b" stroke-width="0.6" stroke-linecap="round" fill="none" />` +
+    `<path d="M51.6 119.4 q2 -1 4 0 q-2 1.6 -4 0 Z M64.4 121 q2 -1 4 0 q-2 1.6 -4 0 Z" fill="#c9daf2" />` +
+    `<path d="M51.8 119.4 h3.6 M64.6 121 h3.6" stroke="#ffffff" stroke-width="0.35" stroke-dasharray="0.4 0.4" />` +
+    chainBelt(),
   flares_light: () => flares("#8fb4e6", "#5f86c0") + chainBelt(),
   white_flares: () =>
     flares("#f6f3ee", "rgba(150,140,130,0.55)") +
@@ -271,7 +278,9 @@ const BOTTOM_ART: Record<BottomId, () => string> = {
     `<path d="M60 99 L60 107" stroke="#4a6fa8" stroke-width="0.6" />` +
     `<path d="M50.4 101.6 Q53.4 103.8 56 101.6 M64 101.6 Q66.6 103.8 69.6 101.6" stroke="#f3c46b" stroke-width="0.5" fill="none" />` +
     `<path d="M47 111.6 L73 111.6" stroke="#dbe7f7" stroke-width="0.7" stroke-dasharray="0.6 0.5" />` +
-    chainBelt(),
+    chainBelt() +
+    `<path d="M57.6 103.6 Q56.6 106 58.4 107.2" stroke="#dfe6ee" stroke-width="0.8" stroke-dasharray="1 0.5" fill="none" />` +
+    `<path d="M58.4 110.6 C56.2 109 56.4 107.2 57.6 107.2 C58 107.2 58.4 107.6 58.4 107.9 C58.4 107.6 58.8 107.2 59.2 107.2 C60.4 107.2 60.6 109 58.4 110.6 Z" fill="#e6ecf5" />`,
   pleated_lilac: () =>
     `<path d="${skirtPath(113, 4)}" fill="#b48be0" />` +
     pleats(113, 4, "rgba(60,30,90,0.3)") +
@@ -596,6 +605,46 @@ const TOP_ART: Record<TopId, TopArt> = {
       `<path d="M57.4 76 L57 81.6 M62.6 76 L63 81.6" stroke="#ffffff" stroke-width="0.6" stroke-linecap="round" />` +
       `<circle cx="57" cy="82" r="0.6" fill="#ff5fa2" /><circle cx="63" cy="82" r="0.6" fill="#ff5fa2" />` +
       `<path d="M50.4 87 C57 88.2 63 88.2 69.6 87 L69.4 88.8 C63 90 57 90 50.6 88.8 Z" fill="#8cbde6" />`,
+  },
+  holo_halter: {
+    sleeve: null,
+    markup: () =>
+      // Neck ties knotted into a bow behind the neck
+      `<path d="M54.6 77 L58.6 69.6 M65.4 77 L61.4 69.6" stroke="#c9b3f5" stroke-width="1" stroke-linecap="round" />` +
+      `<path d="M58.6 69.6 Q56.4 67.4 57.4 66.4 Q59 66.8 60 69 Q61 66.8 62.6 66.4 Q63.6 67.4 61.4 69.6" fill="#c9b3f5" />` +
+      `<path d="M52.4 76.6 C55.4 75.6 64.6 75.6 67.6 76.6 C69.6 80.4 69.8 84.4 68.8 88 C63 89.2 57 89.2 51.2 88 C50.2 84.4 50.4 80.4 52.4 76.6 Z" fill="#c9b3f5" />` +
+      // Holographic sheen bands
+      `<path d="M53.4 79.4 L58.8 77 L56.2 87.6 L52 87.2 Z" fill="rgba(127, 227, 255, 0.45)" />` +
+      `<path d="M60.6 77 L65 77.4 L63.4 88.6 L59 88.8 Z" fill="rgba(255, 154, 213, 0.45)" />` +
+      `<path d="M55.2 80.6 L57 78.8 M62.4 81 L63.6 79.2" stroke="#ffffff" stroke-width="0.9" stroke-linecap="round" />`,
+  },
+  pink_fur_jacket: {
+    sleeve: full("#ffc4de", 8, "rgba(220, 110, 160, 0.45)"),
+    markup: () => {
+      // Fluffy edges merge with the panel: outlines first, then fills
+      const tufts = (stroke: string) =>
+        [73.4, 76.4, 79.4, 82.4, 85.4, 88]
+          .map(
+            (y, i) =>
+              `<circle cx="${n(56 - (y - 73) * 0.03)}" cy="${y}" r="1.8" fill="#ffd6e8" ${stroke} />` +
+              `<circle cx="${n(48 + (i % 2) * 0.6)}" cy="${y}" r="1.7" fill="#ffc4de" ${stroke} />`,
+          )
+          .join("") +
+        [49.4, 52.4, 55.2]
+          .map(
+            (x) =>
+              `<circle cx="${x}" cy="89" r="1.7" fill="#ffc4de" ${stroke} />`,
+          )
+          .join("");
+      const panel = (stroke: string) =>
+        `<path d="${JACKET_PANEL}" fill="#ffc4de" ${stroke} />` + tufts(stroke);
+      const ink = `stroke="${INK}" stroke-width="1.4"`;
+      const side =
+        panel(ink) +
+        panel(`stroke="none"`) +
+        `<path d="M50 77 q1.4 3 0.4 6 M53 76 q1 3 0.2 6.4" stroke="rgba(220,110,160,0.45)" stroke-width="0.6" fill="none" />`;
+      return cropTank("#1f1b24") + side + `<g ${MIRROR}>${side}</g>`;
+    },
   },
   barista_apron: {
     sleeve: cap("#26222b", 6),

@@ -210,3 +210,17 @@ test("every closet piece that is not a free basic is sold in Le Shop", async () 
     }
   }
 });
+
+test("validateAvatarLook accepts the optional accessory fields and rejects bad ones", () => {
+  const look = {
+    ...DEFAULT_AVATAR_LOOK,
+    necklaceId: "pearl_choker",
+    hairClipId: "butterfly_clips",
+    braceletId: "gold_bangles",
+  };
+  assert.equal(validateAvatarLook(look), true);
+  for (const field of ["necklaceId", "hairClipId", "braceletId"]) {
+    assert.equal(validateAvatarLook({ ...look, [field]: 7 }), false, field);
+    assert.equal(validateAvatarLook({ ...look, [field]: "  " }), false, field);
+  }
+});
