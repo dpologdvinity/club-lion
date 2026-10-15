@@ -21,6 +21,12 @@ export const coastalPierManifest: RoomManifest = {
       triggerBounds: { x1: 0, y1: 520, x2: 140, y2: 660 },
       label: "Sunset Beach",
     },
+    {
+      targetRoomId: "lion-aquarium",
+      targetSpawn: { x: 280, y: 620 },
+      triggerBounds: { x1: 2260, y1: 520, x2: 2400, y2: 660 },
+      label: "Lion Aquarium",
+    },
   ],
   interactives: [
     {

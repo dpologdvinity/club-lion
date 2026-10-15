@@ -15,6 +15,8 @@ import { coastalPierManifest } from "./manifests/coastalPier.ts";
 import { mtMistBasecampManifest } from "./manifests/mtMistBasecamp.ts";
 import { petParadiseManifest } from "./manifests/petParadise.ts";
 import { lionSpeedwayManifest } from "./manifests/lionSpeedway.ts";
+import { lionAquariumManifest } from "./manifests/lionAquarium.ts";
+import { snowflakeRinkManifest } from "./manifests/snowflakeRink.ts";
 
 export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
   "mt-mist": mtMistBasecampManifest,
@@ -31,4 +33,6 @@ export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
   "canyon-rapids": canyonRapidsManifest,
   "pet-paradise": petParadiseManifest,
   "lion-speedway": lionSpeedwayManifest,
+  "lion-aquarium": lionAquariumManifest,
+  "snowflake-rink": snowflakeRinkManifest,
 };

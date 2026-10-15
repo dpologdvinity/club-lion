@@ -32,6 +32,8 @@ const PLACE_IDS = [
   "canyon-rapids",
   "pet-paradise",
   "lion-speedway",
+  "lion-aquarium",
+  "snowflake-rink",
 ] as const;
 
 const uniqueTracks = [

@@ -59,6 +59,7 @@ import {
   stopOceanSurf,
 } from "../utils/nauticalAudio.ts";
 import { SpyPinModal } from "./SpyPinModal.tsx";
+import { HotspotBurst } from "./HotspotBurst.tsx";
 import type { TimeOfDay } from "../utils/environmentalLighting.ts";
 import { playPropSound } from "../utils/interactiveProps.ts";
 import { useCompactLayout } from "./compactLayout";
@@ -218,6 +219,12 @@ export function World({
     null,
   );
   const [emotesOpen, setEmotesOpen] = useState(false);
+  const [burst, setBurst] = useState<{
+    id: number;
+    x: number;
+    y: number;
+    emojis: string[];
+  } | null>(null);
   // Room music is session-wide, so the speaker state survives travel.
   const [sound, setSound] = useState(isRoomMusicOn);
   const audio = useRef<AudioContext | null>(null);
@@ -254,6 +261,11 @@ export function World({
     const timer = window.setTimeout(() => setBubble(null), 6500);
     return () => window.clearTimeout(timer);
   }, [bubble]);
+  useEffect(() => {
+    if (!burst) return;
+    const timer = window.setTimeout(() => setBurst(null), 2200);
+    return () => window.clearTimeout(timer);
+  }, [burst]);
   useEffect(
     () => () => {
       void audio.current?.close().catch(() => {});
@@ -538,7 +550,55 @@ export function World({
     else if (id === "spy-terminal") onOpenSpy?.();
     else if (id === "river-surf-dock") onOpenRiverSurf?.();
     else if (id === "kart-race-gate") onOpenKartRace?.();
-    else if (id === "winner-podium" && manifest) {
+    else if (id === "aquarium-feed-fish") {
+      const at = manifest?.interactives.find(
+        (item) => item.id === id,
+      )?.position;
+      onUnlockStamp?.("aquarium_feeder");
+      if (at)
+        setBurst({
+          id: Date.now(),
+          x: at.x,
+          y: at.y - 120,
+          emojis: ["🐟", "💖", "🐠", "💖", "🐟"],
+        });
+      playPropSound("chime", sound ? undefined : null);
+      notify("Yum! The fish swarm to the snack. 🐟💖");
+    } else if (id === "aquarium-touch-pool") {
+      const at = manifest?.interactives.find(
+        (item) => item.id === id,
+      )?.position;
+      if (at)
+        setBurst({
+          id: Date.now(),
+          x: at.x,
+          y: at.y - 120,
+          emojis: ["⭐", "🦀", "💧"],
+        });
+      playPropSound("chime", sound ? undefined : null);
+      notify("Starfish says hi! The crab wiggles its claws. 🦀");
+    } else if (id === "rink-skate") {
+      onUnlockStamp?.("rink_spinner");
+      setAvatarAction("skate");
+      if (walkTimer.current) window.clearTimeout(walkTimer.current);
+      walkTimer.current = window.setTimeout(
+        () => setAvatarAction("idle"),
+        4000,
+      );
+      notify("Whee! Spin on the ice! ⛸️");
+    } else if (id === "rink-hot-cocoa") {
+      const at = manifest?.interactives.find(
+        (item) => item.id === id,
+      )?.position;
+      if (at)
+        setBurst({
+          id: Date.now(),
+          x: at.x,
+          y: at.y - 120,
+          emojis: ["☕", "💛", "♨️"],
+        });
+      notify("Hot cocoa with a toasty marshmallow! ☕");
+    } else if (id === "winner-podium" && manifest) {
       walk(
         (2020 / manifest.stageWidth) * 100,
         (600 / manifest.stageHeight) * 100,
@@ -587,10 +647,18 @@ export function World({
     "river-surf-dock": "River Surf Rapids",
     "kart-race-gate": "Race karts",
     "winner-podium": "Podium",
+    "aquarium-feed-fish": "Feed the fish",
+    "aquarium-touch-pool": "Touch pool",
+    "rink-skate": "Skate",
+    "rink-hot-cocoa": "Hot cocoa",
   };
   // Picture-first labels for hotspots, so pre-readers can spot them.
   const hotspotIcons: Record<string, string> = {
     "lighthouse-foghorn": "📯",
+    "aquarium-feed-fish": "🐟",
+    "aquarium-touch-pool": "🦀",
+    "rink-skate": "⛸️",
+    "rink-hot-cocoa": "☕",
     "sled-run-gate": "🛷",
     "coaster-ticket-gate": "🎢",
     "giant-ferris-wheel": "🎡",
@@ -1054,6 +1122,14 @@ export function World({
             </span>
           </button>
         ))}
+        {burst && (
+          <HotspotBurst
+            key={burst.id}
+            x={burst.x}
+            y={burst.y}
+            emojis={burst.emojis}
+          />
+        )}
         <div className="sparkle-trail-layer" aria-hidden="true">
           {sparkles.map((p) => (
             <span
@@ -1074,7 +1150,7 @@ export function World({
           ref={characterRef}
           data-stage-x={manifest ? stagePosition.x : undefined}
           data-stage-y={manifest ? stagePosition.y : undefined}
-          className={`world-character your-character${boardId ? " is-gliding" : ""}`}
+          className={`world-character your-character${boardId ? " is-gliding" : ""}${avatarAction === "skate" ? " is-skating" : ""}`}
           style={{
             left: `${position.x}%`,
             top: `${position.y}%`,
