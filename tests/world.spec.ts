@@ -1,3 +1,4 @@
+import { tapRoomPath } from "./room-paths";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
@@ -12,48 +13,20 @@ const PAW_KEYS: Record<string, string> = {
   Right: "ArrowRight",
 };
 
-// Logs every paw flash from page load, so a fast playback cannot finish between test steps.
-async function recordPaws(page: Page) {
-  await page.addInitScript(() => {
-    const flashes: string[] = [];
-    (window as unknown as { pawFlashes: string[] }).pawFlashes = flashes;
-    let lit = false;
-    new MutationObserver(() => {
-      const key = document.querySelector(".paw-key.lit");
-      if (key && !lit) flashes.push(key.getAttribute("aria-label")!);
-      lit = Boolean(key);
-    }).observe(document, {
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-  });
-}
-
+// Read the announced sequence, then wait until the game accepts input.
 async function watchPaws(page: Page, count: number) {
-  const before = await page.evaluate(
-    () => (window as unknown as { pawFlashes: string[] }).pawFlashes.length,
+  const announcement = page.getByRole("dialog").locator('[aria-live="polite"]');
+  await expect(announcement).toHaveText(
+    new RegExp(
+      `^Showing: (Up|Down|Left|Right)(, (Up|Down|Left|Right)){${count - 1}}$`,
+    ),
   );
-  await expect
-    .poll(() =>
-      page.evaluate(
-        () => (window as unknown as { pawFlashes: string[] }).pawFlashes.length,
-      ),
-    )
-    .toBeGreaterThanOrEqual(before + count);
-  const seen = await page.evaluate(
-    ([from, to]) =>
-      (window as unknown as { pawFlashes: string[] }).pawFlashes.slice(
-        from,
-        to,
-      ),
-    [before, before + count] as const,
-  );
-  await page.waitForFunction(() => !document.querySelector(".paw-key.lit"));
-  await page.waitForFunction(
-    () =>
-      document.querySelector(".paw-key")?.getAttribute("aria-disabled") ===
-      "false",
+  const seen = (await announcement.innerText())
+    .replace("Showing: ", "")
+    .split(", ");
+  await expect(page.locator(".paw-key").first()).toHaveAttribute(
+    "aria-disabled",
+    "false",
   );
   return seen;
 }
@@ -386,7 +359,6 @@ test("the arcade and Bee Stop have no WCAG AA accessibility violations", async (
 test("Paw Steps pays for every finished round, then remembers the best score", async ({
   page,
 }) => {
-  await recordPaws(page);
   await page.goto("/");
   await page.getByRole("button", { name: "Games", exact: true }).click();
   await page.getByRole("button", { name: /Paw Steps/ }).click();
@@ -420,6 +392,7 @@ test("Paw Steps pays for every finished round, then remembers the best score", a
     page.getByText("You repeated 1 round", { exact: false }),
   ).toBeVisible();
   await expect(page.locator(".wallet")).toHaveText("✦260");
+  await page.keyboard.press("Escape");
   await openAdventures(page);
   await expect(page.getByRole("button", { name: "Claim 50" })).toHaveCount(1);
   await page.reload();
@@ -827,12 +800,7 @@ test("coastal travel and the lighthouse foghorn award a persistent stamp once", 
   await expect(page.locator(".world-location h2")).toHaveText(
     "Coastal Pier & Boardwalk",
   );
-  const horn = paths.getByRole("button", {
-    name: "Sound Foghorn",
-    exact: true,
-  });
-  await horn.focus();
-  await page.keyboard.press("Enter");
+  await tapRoomPath(page, "Sound Foghorn", true);
   await expect(page.locator(".wallet")).toHaveText("✦290");
   await expect(page.getByRole("status")).toContainText(
     "BWWWOOOOMMM! 📯 The lighthouse foghorn echoes across the bay!",
@@ -840,17 +808,13 @@ test("coastal travel and the lighthouse foghorn award a persistent stamp once", 
   await page
     .getByRole("button", { name: "Turn sound on", exact: true })
     .click();
-  await horn.click();
+  await tapRoomPath(page, "Sound Foghorn", true);
   await expect(page.locator(".wallet")).toHaveText("✦290");
   await page
     .getByRole("button", { name: "Turn sound off", exact: true })
     .click();
-  await page.locator(".camera-viewport-ground").focus();
-  for (let step = 0; step < 37; step++) await page.keyboard.press("ArrowRight");
-  await page
-    .locator(".room-hotspot")
-    .filter({ hasText: "Sound Foghorn" })
-    .click();
+  // Use the activity list when collision-aware walking cannot reach the label.
+  await tapRoomPath(page, "Sound Foghorn", true);
   await expect(page.locator(".wallet")).toHaveText("✦290");
   await page.screenshot({
     path: `/tmp/club-lion-coastal-${test.info().project.name}.png`,
@@ -884,9 +848,7 @@ test("coastal travel and the lighthouse foghorn award a persistent stamp once", 
     .locator(".destination-card")
     .filter({ hasText: "Coastal Pier & Boardwalk" })
     .click();
-  await paths
-    .getByRole("button", { name: "Sound Foghorn", exact: true })
-    .click();
+  await tapRoomPath(page, "Sound Foghorn", true);
   await expect(page.locator(".wallet")).toHaveText("✦290");
   expect(errors).toEqual([]);
 });

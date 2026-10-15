@@ -1,3 +1,4 @@
+import { tapRoomPath } from "./room-paths";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -146,10 +147,7 @@ test("the sorter opens from its Downtown Plaza hotspot", async ({ page }) => {
     .getByRole("region", { name: "Lion world", exact: true })
     .getByRole("button", { name: "Downtown Plaza", exact: true })
     .click();
-  await page
-    .getByLabel("Room paths and activities")
-    .getByRole("button", { name: "Shape Sorter Safari", exact: true })
-    .click();
+  await tapRoomPath(page, "Shape Sorter Safari", true);
   await expect(
     page.getByRole("group", { name: "Shapes to sort" }),
   ).toBeVisible();

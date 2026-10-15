@@ -1,3 +1,4 @@
+import { tapRoomPath } from "./room-paths";
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
@@ -39,28 +40,24 @@ async function savedStamps(page: Page): Promise<string[]> {
 test("Lion Aquarium connects to Coastal Pier, and its hotspots respond", async ({
   page,
 }) => {
-  test.setTimeout(300_000);
   const errors: string[] = [];
   page.on("pageerror", (err) => errors.push(err.message));
 
   await page.goto("/");
   await openRoom(page, /^Coastal Pier & Boardwalk/);
-  const paths = page.getByLabel("Room paths and activities");
-  await paths.getByRole("button", { name: /Lion Aquarium/ }).click();
+  await tapRoomPath(page, /Lion Aquarium/);
   await expect(page.locator(".world-location h2")).toHaveText("Lion Aquarium");
   await expectAvatarOnScreen(page);
 
-  await paths
-    .getByRole("button", { name: "Feed the fish", exact: true })
-    .click();
+  await tapRoomPath(page, "Feed the fish", true);
   await expect(page.getByRole("status")).toContainText("Yum!");
   await expect.poll(() => savedStamps(page)).toContain("aquarium_feeder");
 
-  await paths.getByRole("button", { name: "Touch pool", exact: true }).click();
+  await tapRoomPath(page, "Touch pool", true);
   await expect(page.getByRole("status")).toContainText("Starfish");
   await expectAccessible(page);
 
-  await paths.getByRole("button", { name: /Coastal Pier/ }).click();
+  await tapRoomPath(page, /Coastal Pier/);
   await expect(page.locator(".world-location h2")).toHaveText(
     "Coastal Pier & Boardwalk",
   );
@@ -70,29 +67,27 @@ test("Lion Aquarium connects to Coastal Pier, and its hotspots respond", async (
 test("Snowflake Rink connects to Mt. Mist, and skating and cocoa respond", async ({
   page,
 }) => {
-  test.setTimeout(300_000);
   const errors: string[] = [];
   page.on("pageerror", (err) => errors.push(err.message));
 
   await page.goto("/");
   await openRoom(page, /^Mt\. Mist Alpine Basecamp/);
-  const paths = page.getByLabel("Room paths and activities");
-  await paths.getByRole("button", { name: /Snowflake Rink/ }).click();
+  await tapRoomPath(page, /Snowflake Rink/);
   await expect(page.locator(".world-location h2")).toHaveText("Snowflake Rink");
   await expectAvatarOnScreen(page);
 
-  await paths.getByRole("button", { name: "Skate", exact: true }).click();
+  await tapRoomPath(page, "Skate", true);
   await expect(page.locator(".your-character")).toHaveClass(/is-skating/);
   await expect.poll(() => savedStamps(page)).toContain("rink_spinner");
   await expect(page.locator(".your-character")).not.toHaveClass(/is-skating/, {
     timeout: 10_000,
   });
 
-  await paths.getByRole("button", { name: "Hot cocoa", exact: true }).click();
+  await tapRoomPath(page, "Hot cocoa", true);
   await expect(page.getByRole("status")).toContainText("Hot cocoa");
   await expectAccessible(page);
 
-  await paths.getByRole("button", { name: /Mt\. Mist/ }).click();
+  await tapRoomPath(page, /Mt\. Mist/);
   await expect(page.locator(".world-location h2")).toHaveText(
     "Mt. Mist Alpine Basecamp",
   );

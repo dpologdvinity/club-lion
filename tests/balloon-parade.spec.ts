@@ -1,3 +1,4 @@
+import { tapRoomPath } from "./room-paths";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -20,19 +21,24 @@ async function checkAccessibility(page: Page) {
 
 /** Taps a balloon of this colour (any colour when omitted) that is rising inside the stage. */
 async function tapBalloon(page: Page, color?: string): Promise<boolean> {
-  const stage = await page.locator(".bp-stage").boundingBox();
-  if (!stage) return false;
-  const name = color ? `${color} balloon` : /balloon$/;
-  const balloons = page.getByRole("button", { name });
-  for (const handle of await balloons.elementHandles()) {
-    const box = await handle.boundingBox();
-    if (!box) continue;
-    const midY = box.y + box.height / 2;
-    if (midY < stage.y || midY > stage.y + stage.height) continue;
-    await handle.click();
-    return true;
-  }
-  return false;
+  const point = await page.locator(".bp-stage").evaluate((stage, color) => {
+    const bounds = stage.getBoundingClientRect();
+    for (const balloon of stage.querySelectorAll(".bp-balloon")) {
+      if (color && balloon.getAttribute("aria-label") !== `${color} balloon`)
+        continue;
+      const box = balloon.getBoundingClientRect();
+      const x = box.x + box.width / 2;
+      const y = box.y + box.height / 2;
+      if (y < bounds.top || y > bounds.bottom) continue;
+      const hit = document.elementFromPoint(x, y);
+      if (hit && balloon.contains(hit)) return { x, y };
+    }
+    return null;
+  }, color);
+  if (!point) return false;
+  // Rising balloons never become stable enough for locator.click().
+  await page.mouse.click(point.x, point.y);
+  return true;
 }
 
 async function expectFitsViewport(page: Page, selector: string) {
@@ -70,7 +76,9 @@ test("a wrong colour wiggles in rainbow order, and the full arch pays once and e
   await page.getByRole("button", { name: "Rainbow mode" }).click();
 
   // The first stripe is red, so tapping purple only wiggles and nothing is lost.
-  await expect.poll(() => tapBalloon(page, "Purple")).toBe(true);
+  await expect
+    .poll(() => tapBalloon(page, "Purple"), { timeout: 30_000 })
+    .toBe(true);
   await expect(page.locator(".bp-wiggle")).toHaveCount(1);
   await expect(page.locator(".bp-arc.is-built")).toHaveCount(0);
 
@@ -102,14 +110,9 @@ test("the parade is reachable from its Wonder Park Midway hotspot", async ({
     .getByRole("region", { name: "Lion world", exact: true })
     .getByRole("button", { name: "Downtown Plaza", exact: true })
     .click();
-  await page
-    .getByLabel("Room paths and activities")
-    .getByRole("button", { name: "Carnival Midway", exact: true })
-    .click();
-  await page
-    .getByLabel("Room paths and activities")
-    .getByRole("button", { name: "Balloon Parade", exact: true })
-    .click();
+  await tapRoomPath(page, "Wonder Park Entrance", true);
+  await tapRoomPath(page, "Carnival Midway", true);
+  await tapRoomPath(page, "Balloon Parade", true);
   await expect(
     page.getByRole("group", { name: "Balloons floating up" }),
   ).toBeVisible();

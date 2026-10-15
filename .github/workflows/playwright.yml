@@ -6,9 +6,14 @@ on:
   pull_request:
     branches: [master]
   workflow_dispatch:
+    inputs:
+      specs:
+        description: "Optional space-separated Playwright test paths"
+        required: false
+        type: string
 
 concurrency:
-  group: tests-${{ github.ref }}
+  group: tests-${{ github.ref }}-${{ inputs.specs || 'full' }}
   cancel-in-progress: true
 
 jobs:
@@ -41,7 +46,9 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - name: Playwright shard ${{ matrix.shard }}
-        run: npx playwright test --shard=${{ matrix.shard }}
+        env:
+          E2E_SPECS: ${{ inputs.specs }}
+        run: npx playwright test $E2E_SPECS --shard=${{ matrix.shard }}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

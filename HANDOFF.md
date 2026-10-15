@@ -1,64 +1,33 @@
-# Handoff (2026-10-15, written by the Claude Code lead session)
+# Handoff (2026-10-15)
 
-Read `AGENTS.md` first (rules, commands, file map). This file is the current state. Delete or rewrite it as work lands.
+Read `AGENTS.md` for project rules, commands, and the code map.
 
-## Owner and intent
+## Current state
 
-- Owner: Kaitlyn (they/them not stated; use "the owner"). Building Club Lion for their ~3-year-old sister (also fun for them, 20). iPad/phone/laptop, Safari/Chrome PWA. No App Store.
-- Owner has given full authority to merge and push `master`. Do not ask permission for that. Do NOT enable GitHub Pages from an agent (blocked by the permission system): the owner turns it on in repo Settings, Pages, Source: GitHub Actions; `.github/workflows/pages.yml` is ready.
-- Owner wants (in order of recent emphasis): characters that really look like fashion dolls (reference images in `gallery/avatars/`), a more interactive world (solid fountains and props, reacting props), more games, rides, any pet, picture-first navigation for a non-reader, phone/iPad polish.
-- The owner dislikes slow progress and heavy process. Keep updates short and ship small.
+- All original worktrees landed in table order: doll-avatar-5, world-collision, picture-nav-2, pets-species, rooms-new, room-music, games-puzzle, test-hygiene.
+- Added aquarium/rink rooms, pet species, Picture Puzzle, Balloon Parade, picture navigation, collision-aware movement, and room music.
+- Reward follow-ups reject previously paid Shape Sorter rounds, Animal Orchestra coin overflow, and unsafe shared stamp bonuses.
+- Unit tests use native recursive discovery; new `src/**/*.test.ts` files need no package-script edits. Latest local verification passed 774 tests, typecheck, formatting, and production build.
+- Leave owner files alone: `.github/agents/`, `.github/hooks/`, `gallery/rooms-current/room-default.png`.
 
-## Repo state
+## Browser integration follow-up
 
-- `master` = `7a8b99b` pushed to `origin/master` (https://github.com/dpologdvinity/club-lion, public).
-- Done and merged: 13 illustrated rooms + Lion Speedway (kart race), installable offline PWA, smooth CSS scenery motion, phone/iPad layout, 5 amusement rides, 4 water rides, doll avatars rounds 1-4, Bubble Pop, Coloring Book, Mango Bakery, Hide & Seek, Animal Orchestra, Shape Sorter, Picture Puzzle, Balloon Parade, picture-first navigation, aquarium/rink, pet species, world collision, test hygiene, Canyon Rapids repaint, save fixes. 774 unit tests.
-- Uncommitted in the main checkout (leave alone): `.github/workflows/playwright.yml`, `gallery/rooms-current/room-default.png`.
+- Browser checks run on GitHub, per the owner. Run selected files with `gh workflow run playwright.yml -f specs="tests/x.spec.ts tests/y.spec.ts"`; normal pushes still run all four shards and the offline-PWA test.
+- Full run 38717162497 exposed 47 failures. Fixes cover mobile Map-sheet navigation, portal PIN/spawn behavior, focus restoration expectations, hidden phone headings, clock/axe interaction, moving balloon clicks, puzzle selection, Paw Steps timing, and camera-coordinate fixtures.
+- Hoverboard particles now use pixel positions with pixel velocities, preventing exaggerated drift in wide rooms.
+- Focused run 38720989413 passed verify, PWA, and three browser shards; the remaining two mobile obstacle failures were integer MouseEvent rounding at the setup target. Only setup tolerance changed; obstacle point/segment assertions remain strict.
+- Check the latest `master` GitHub Actions run for final full-suite results. Do not claim browser success from local verification alone.
 
-## Integration status
+## Remaining follow-ups
 
-All listed worktrees have landed and were removed: doll-avatar-5, world-collision, picture-nav-2, pets-species, rooms-new, room-music, games-puzzle, test-hygiene.
+- Doll accessory head transforms already share `RIG.head` / `RIG.headBoost`, with regression coverage in `avatarSvg.test.ts`. Visual resemblance to `gallery/avatars/` still needs owner feedback.
+- Optional structural work: split game cards, hotspot tables, and stamp definitions to reduce shared-file conflicts. Automatic test discovery already removes test-list conflicts.
+- Animal art, sounds, and touch dragging still need owner/real-iPad assessment. Playwright Chromium and WebKit do not replace real iPad Safari. BrowserStack was postponed.
+- The age-category / Toca Boca-style redesign requires brainstorming with the owner before implementation.
 
-Accessory head transforms already share `RIG.head` / `RIG.headBoost`, with regression coverage in `avatarSvg.test.ts`. Visual resemblance to the reference photographs still needs owner feedback.
+## Owner preferences and boundaries
 
-## Process changes (owner request, 2026-10-15)
-
-- Full browser suite runs on GitHub, not locally: `.github/workflows/playwright.yml` = `verify`, 4 e2e shards, PWA test, on every push/PR to `master`. Locally run only `npm run verify` and targeted `scripts/e2e.sh`. Watch with `gh run list`, `gh run view <id> --log-failed`.
-- Merge each branch as soon as its own checks pass. Do not batch. Keep at most about 4 parallel agents (8 overloaded the 12-core machine to load 50).
-- `pages.yml` is manual-only until the owner enables Pages; then restore its `push` trigger.
-- Room music is merged (`roomMusic.ts`, `RoomMusic.tsx`); follows the World speaker toggle.
-- Merged and pushed in order: world collision, picture navigation, pet species, aquarium/rink rooms, Puzzle + Balloon Parade, and test hygiene. Reward follow-up rejects previously paid Shape Sorter rounds, Animal Orchestra coin overflow, and unsafe shared stamp bonuses.
-
-## Next steps for Codex (in order)
-
-1. Completed: all listed worktrees were verified and integrated in table order; GitHub Actions runs the browser checks.
-2. Unit tests now use native recursive discovery, removing test-list merge conflicts. Optional remaining registry work: game cards, hotspots, stamps.
-3. Optional: open one PR per branch and `gh pr merge --auto --squash` so CI gates the merge.
-4. Done: `completeShapeSorterRound` stops paying after all rounds; `completeAnimalBand` rejects coin overflow. Unit tests cover both.
-5. Doll avatar: get owner feedback on resemblance to `gallery/avatars/*.jpg`; accessory head rigs already have regression coverage.
-6. The shell hook that rewrites Bash calls blocked Claude agents (owner config); not an issue for Codex.
-
-## Known test baseline (fail on plain master, likely not your regression)
-
-`stamp-book:5/58/98`, `friends:107`, `spy:30/115`, `world-phase2:197/308/347/431/489`, `phase3:75/125`, `dj-beat:12/77` (axe samples a fading label), `actions-ballistics:98`, `world:356`. The `test-hygiene` branch fixes many of these; rerun a suspect alone with `scripts/e2e.sh <spec>:<line> --project=<p>` before blaming a change. Under machine load 60 s timeouts are common.
-
-## Known issues and follow-ups
-
-- Avatar visual resemblance needs owner feedback; shared accessory head transforms and boosted-head coverage are implemented.
-- Puzzle and Balloon Parade are implemented; other avatar visual-match/accessory-anchor work remains.
-- GitHub Actions for the latest push is pending; check `gh run list` / `gh run view` for browser results.
-- Animal art (parrot reads as duck, monkey as dog), sounds, drag on touch: never checked by the owner or on a real iPad. Playwright WebKit is not iPad Safari.
-- `.nvmrc` (24) and `.npmrc` (engine-strict) were added; CI uses Node 22 in `pages.yml` and lts in `playwright.yml`.
-- Later: the age-category / Toca Boca-style redesign (brainstorm first), BrowserStack for real iPad testing (owner postponed).
-- Daydaze (adult nightlife idea) is a separate repo, `~/git/daydaze`. Do not touch it from here.
-
-## Integrating a worktree (what the lead did each time)
-
-1. `git -C .worktrees/<name> rebase master`. If it conflicts repeatedly, squash first (`git reset --soft $(git merge-base HEAD master)`, recommit), then rebase.
-2. `npm run verify` in the worktree; targeted `scripts/e2e.sh` for touched areas.
-3. In the main checkout: `git merge --ff-only feat/<name>`, `git push origin master`, `git worktree remove --force .worktrees/<name>`, `git branch -d feat/<name>`.
-4. Worktrees may contain a `node_modules` symlink to the main checkout; remove the symlink, never the target.
-
-## Using Codex here
-
-`codex` CLI is installed and logged in. Start it in `/home/kaitlyn/git/club-lion`; it reads `AGENTS.md`. Suggested first prompt: "Read AGENTS.md and HANDOFF.md. Finish the unmerged worktrees in order of the table, integrating one at a time per the protocol, then continue with the follow-ups." Use at most 6 CPU cores total.
+- Prioritize development speed; keep updates and tool output short. Integrate one branch at a time and avoid repeated exploration.
+- Merging and pushing `master` is authorized. Do not enable GitHub Pages or other public surfaces. `pages.yml` remains manual-only until the owner enables Pages.
+- `.nvmrc` selects Node 24; CI follows it.
+- Daydaze is a separate repo at `~/git/daydaze`; do not touch it from this task.

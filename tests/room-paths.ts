@@ -1,7 +1,7 @@
 import type { Locator, Page } from "@playwright/test";
 
 // Phones and tablets keep three exits in the room bar; the Map sheet lists every
-// destination and this room's activities. Returns the element that was tapped.
+// destination and this room's activities. Returns the activity's focus-return target.
 export async function tapRoomPath(
   page: Page,
   name: string | RegExp,
@@ -18,9 +18,14 @@ export async function tapRoomPath(
     return barButton;
   }
   await page.getByRole("button", { name: "Map", exact: true }).first().click();
+  const sheetName =
+    typeof name === "string" && exact
+      ? new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`)
+      : name;
   const sheetButton = page
     .getByRole("dialog")
-    .getByRole("button", { name, exact });
+    .getByRole("button", { name: sheetName });
   await sheetButton.click();
-  return sheetButton;
+  // Closing a map-launched activity restores focus to the persistent ground.
+  return page.locator(".world-ground");
 }

@@ -1,3 +1,4 @@
+import { tapRoomPath } from "./room-paths";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -17,10 +18,7 @@ async function goToPetParadise(page: Page) {
     .getByRole("region", { name: "Lion world", exact: true })
     .getByRole("button", { name: "Downtown Plaza", exact: true })
     .click();
-  await page
-    .getByLabel("Room paths and activities")
-    .getByRole("button", { name: "Pet Paradise", exact: true })
-    .click();
+  await tapRoomPath(page, "Pet Paradise", true);
   await expect(page.locator(".world-location h2")).toHaveText(/Pet Paradise/);
 }
 
@@ -108,10 +106,7 @@ test("the band opens from the Pet Paradise room and fits the screen", async ({
   page,
 }) => {
   await goToPetParadise(page);
-  await page
-    .getByLabel("Room paths and activities")
-    .getByRole("button", { name: "Animal Orchestra", exact: true })
-    .click();
+  await tapRoomPath(page, "Animal Orchestra", true);
   await expect(
     page.getByRole("button", { name: "Record a new song" }),
   ).toBeVisible();

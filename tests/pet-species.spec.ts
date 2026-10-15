@@ -1,3 +1,4 @@
+import { tapRoomPath } from "./room-paths";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
@@ -20,10 +21,7 @@ async function openPicker(page: Page) {
     .getByRole("dialog")
     .getByRole("button", { name: /Pet Paradise Nursery/ })
     .click();
-  await page
-    .locator(".room-hotspot")
-    .filter({ hasText: "Pick your pet" })
-    .click();
+  await tapRoomPath(page, "Pick your pet", true);
   const dialog = page.getByRole("dialog", { name: "Pick your pet" });
   await expect(dialog).toBeVisible();
   return dialog;
@@ -96,10 +94,7 @@ test("each species can be chosen and keeps its own care reaction", async ({
   }
   await page.keyboard.press("Escape");
 
-  await page
-    .locator(".room-navigation")
-    .getByRole("button", { name: "Grooming Spa", exact: true })
-    .click();
+  await tapRoomPath(page, "Grooming Spa", true);
   const care = page.getByRole("dialog", { name: "Pet Paradise Nursery" });
   await expect(
     care.locator(".pet-species-art.pet-species-panda"),

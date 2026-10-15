@@ -155,9 +155,7 @@ test("the Downtown Plaza café window opens the bakery", async ({ page }) => {
     .getByRole("button", { name: "Downtown Plaza", exact: true })
     .click();
   await tapRoomPath(page, "Mango Bakery", true);
-  await expect(
-    page.getByRole("heading", { name: /Mango Bakery/ }),
-  ).toBeVisible();
+  await expect(page.getByRole("group", { name: "Bakery mode" })).toBeVisible();
 });
 
 test("reduced motion keeps toppings still", async ({ page }) => {

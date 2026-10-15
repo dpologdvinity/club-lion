@@ -35,16 +35,18 @@ async function avatarStage(page: Page): Promise<Point> {
 
 /** Screen point for a stage point, using the camera offset and scale the viewport applies. */
 async function screenPoint(page: Page, stage: Point) {
-  const ground = await page.locator(".camera-viewport-ground").boundingBox();
-  if (!ground) throw new Error("ground not visible");
-  const offset = Number(
-    await page.locator(".camera-viewport").getAttribute("data-camera-offset"),
-  );
-  const scale = ground.height / plaza.stageHeight;
-  return {
-    x: ground.x + (stage.x - offset) * scale,
-    y: ground.y + stage.y * scale,
-  };
+  return page.locator(".camera-viewport").evaluate((viewport, point) => {
+    const ground = viewport.querySelector(".camera-viewport-ground");
+    const scene = viewport.querySelector<HTMLElement>(".camera-viewport-stage");
+    if (!ground || !scene) throw new Error("stage not visible");
+    const bounds = ground.getBoundingClientRect();
+    const scale = Number(scene.style.getPropertyValue("--camera-scale"));
+    const offset = Number(viewport.getAttribute("data-camera-offset"));
+    return {
+      x: bounds.x + (point.x - offset) * scale,
+      y: bounds.y + point.y * scale,
+    };
+  }, stage);
 }
 
 /** Records every avatar stage position while the avatar walks. */
@@ -88,7 +90,8 @@ async function settle(page: Page, target: Point) {
     .poll(
       async () => {
         const at = await avatarStage(page);
-        return Math.hypot(at.x - target.x, at.y - target.y) < 1;
+        // MouseEvent rounds CSS coordinates; zoomed-out rooms amplify that rounding.
+        return Math.hypot(at.x - target.x, at.y - target.y) < 2;
       },
       { timeout: 15000 },
     )

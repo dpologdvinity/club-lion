@@ -59,8 +59,9 @@ for (const { room, name, opened } of HOTSPOTS) {
       .locator(".room-hotspot")
       .filter({ hasText: name });
     await expect(stageHotspot.locator(".hotspot-icon")).toBeAttached();
-    const box = await stageHotspot.boundingBox();
-    expect(box!.height).toBeGreaterThanOrEqual(47.5);
+    await expect
+      .poll(async () => (await stageHotspot.boundingBox())?.height ?? 0)
+      .toBeGreaterThanOrEqual(47.5);
 
     // Keyboard and screen reader path: the room activity list, or on phones
     // the label on the stage (the bar keeps only three exits there).

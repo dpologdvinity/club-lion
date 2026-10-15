@@ -102,6 +102,9 @@ test("world instruments modal plays notes via keys and clicks without audio erro
   const a4Key = gamesDialog.getByRole("button", { name: "A4" });
   await expect(a4Key).toHaveClass(/instrument-key-active/);
 
+  // Axe schedules timers; resume the clock after checking the transient key highlights.
+  await page.clock.resume();
+
   // Verify accessibility
   const axeResults = await new AxeBuilder({ page })
     .include(".dialog")

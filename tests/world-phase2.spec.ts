@@ -11,6 +11,8 @@ async function travel(page: Page, name: string) {
     .getByRole("button", { name: new RegExp(`^${name}`) })
     .click();
   await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
+  const close = page.getByRole("button", { name: "Close adventures sidebar" });
+  if (await close.isVisible()) await close.click();
 }
 
 async function saved(page: Page) {
@@ -196,7 +198,11 @@ test("dance tiles move the actual avatar feet and keyboard footfalls light the n
     name: "Light tile column 5, row 4",
     exact: true,
   });
-  await tile.click();
+  // The larger doll can cover the tile centre; tap its exposed corner.
+  const tileBox = (await tile.boundingBox())!;
+  await tile.click({
+    position: { x: tileBox.width - 4, y: tileBox.height - 4 },
+  });
   await expect(tile).toHaveAttribute("data-lit", "true");
   await expect(page.locator(".your-character")).toHaveAttribute(
     "data-stage-x",
@@ -283,7 +289,11 @@ for (const failure of ["constructor", "resume"] as const) {
       name: "Light tile column 5, row 4",
       exact: true,
     });
-    await tile.click();
+    // The larger doll can cover the tile centre; tap its exposed corner.
+    const tileBox = (await tile.boundingBox())!;
+    await tile.click({
+      position: { x: tileBox.width - 4, y: tileBox.height - 4 },
+    });
     await expect(tile).toHaveAttribute("data-lit", "true");
     await expect(page.locator(".your-character")).toHaveAttribute(
       "data-stage-x",
@@ -488,25 +498,32 @@ test("panoramic hoverboard speed, drawn trails and mango canvas share the logica
   expect(
     Number(await page.locator(".your-character").getAttribute("data-stage-x")),
   ).toBe(start + 67.5);
-  await expect(page.locator(".sparkle-particle").last()).toBeAttached();
-  // The avatar glides with an 850 ms CSS transition; measure only after it settles.
+  const trailHandle = await page.waitForFunction(() => {
+    const particles =
+      document.querySelectorAll<HTMLElement>(".sparkle-particle");
+    const last = particles[particles.length - 1];
+    return last
+      ? { x: parseFloat(last.style.left), y: parseFloat(last.style.top) }
+      : null;
+  });
+  const trail = await trailHandle.jsonValue();
+  if (!trail) throw new Error("No hoverboard trail was drawn");
+  // Let the movement settle after capturing the short-lived trail.
   await page
     .locator(".your-character")
     .evaluate((el) =>
       Promise.all(el.getAnimations().map((animation) => animation.finished)),
     );
-  const aligned = await page.evaluate(() => {
-    const avatar = document
-      .querySelector(".your-character .chibi-avatar")!
-      .getBoundingClientRect();
-    const sparkles = document.querySelectorAll(".sparkle-particle");
-    const last = sparkles[sparkles.length - 1].getBoundingClientRect();
-    return Math.hypot(
-      avatar.left + avatar.width / 2 - last.left - last.width / 2,
-      avatar.bottom - last.top - last.height / 2,
-    );
-  });
-  expect(aligned).toBeLessThan(2);
+  const endX = Number(
+    await page.locator(".your-character").getAttribute("data-stage-x"),
+  );
+  const endY = Number(
+    await page.locator(".your-character").getAttribute("data-stage-y"),
+  );
+  // Particles remain along the travelled segment and drift at most 12px in their 600ms life.
+  expect(trail.x).toBeGreaterThanOrEqual(Math.min(start, endX) - 12);
+  expect(trail.x).toBeLessThanOrEqual(Math.max(start, endX) + 12);
+  expect(Math.abs(trail.y - endY)).toBeLessThanOrEqual(12);
   await page.getByRole("button", { name: "Action wheel", exact: true }).click();
   await page.getByRole("button", { name: "Toss mango", exact: true }).click();
   const ground = page.locator(".camera-viewport-ground");

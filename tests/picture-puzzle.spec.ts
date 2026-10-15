@@ -1,3 +1,4 @@
+import { tapRoomPath } from "./room-paths";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -71,7 +72,11 @@ test("a wrong spot boings and keeps the piece, and the right spot fills", async 
   await expect(piece(page, 2)).toBeVisible();
   await expect(page.locator(".wallet")).toHaveText("✦250");
 
-  await place(page, 2, 4);
+  // The wrong spot leaves this piece selected; tapping it again would deselect it.
+  await spot(page, 2, 4).click();
+  await expect(
+    page.getByRole("button", { name: "Spot 2 of 4, filled" }),
+  ).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -136,10 +141,7 @@ test("the puzzle is reachable from its Downtown Plaza hotspot", async ({
     .getByRole("region", { name: "Lion world", exact: true })
     .getByRole("button", { name: "Downtown Plaza", exact: true })
     .click();
-  await page
-    .getByLabel("Room paths and activities")
-    .getByRole("button", { name: "Picture Puzzle", exact: true })
-    .click();
+  await tapRoomPath(page, "Picture Puzzle", true);
   await expect(
     page.getByRole("group", { name: "Puzzle pieces" }),
   ).toBeVisible();

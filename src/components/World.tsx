@@ -299,8 +299,9 @@ export function World({
       const renderedPosition =
         stage && style
           ? {
-              x: (parseFloat(style.left) / stage.clientWidth) * 100,
-              y: (parseFloat(style.top) / stage.clientHeight) * 100,
+              // Particle velocity uses pixels per second, including in wide rooms.
+              x: parseFloat(style.left),
+              y: parseFloat(style.top),
             }
           : position;
       sparklesRef.current = generateSparkleStep(
@@ -1143,8 +1144,8 @@ export function World({
               key={p.id}
               className="sparkle-particle"
               style={{
-                left: `${p.x}%`,
-                top: `${p.y}%`,
+                left: `${p.x}px`,
+                top: `${p.y}px`,
                 width: `${p.size}px`,
                 height: `${p.size}px`,
                 backgroundColor: p.color,
@@ -1354,7 +1355,11 @@ export function World({
             place={place}
             onNavigate={(destination) => {
               setRoomSheetOpen(false);
-              navigate(destination);
+              const exit = manifest.portals.find(
+                (item) => item.targetRoomId === destination,
+              );
+              if (exit) portal(destination, exit.targetSpawn);
+              else navigate(destination);
             }}
           />
           <h3 className="map-activities-title">Things to do here</h3>
