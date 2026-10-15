@@ -1,4 +1,4 @@
-> Superseded by `docs/AGENT-GUIDE.md` and `AGENTS.md` (this file describes the earlier multi-model workflow).
+> Superseded by `AGENTS.md` and `HANDOFF.md` (this file describes the earlier multi-model workflow).
 
 # Club Lion: Multi-Agent Development & Integration Workflow
 
