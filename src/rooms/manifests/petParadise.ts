@@ -35,6 +35,12 @@ export const petParadiseManifest: RoomManifest = {
       actionData: {},
     },
     {
+      id: "pet-pick-pet",
+      type: "secret_clickable",
+      position: { x: 640, y: 420 },
+      actionData: {},
+    },
+    {
       id: "pet-animal-band",
       type: "game_launch",
       position: { x: 1700, y: 600 },

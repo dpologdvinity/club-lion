@@ -53,6 +53,7 @@ import {
   setKartPrefs,
   completeSpyPuzzle,
   applyPetCareAction,
+  choosePetSpecies,
   meetLion,
   unlockSecretCatalogItem,
   unlockStamp,
@@ -95,7 +96,9 @@ import { AccountModal } from "./components/AccountModal";
 import { ServerListModal } from "./components/ServerListModal";
 import { LOCAL_PLAYER_ID, useCustomServers } from "./useCustomServers";
 import { PetCareModal } from "./components/PetCareModal";
+import { PetPickerModal } from "./components/PetPickerModal";
 import { performPetCare } from "./utils/petCare";
+import { PET_PROFILES } from "./utils/petSpecies";
 import { LeaderboardModal } from "./components/LeaderboardModal";
 import { RooftopLounge } from "./components/RooftopLounge";
 import { ParkRide } from "./components/ParkRide";
@@ -125,6 +128,7 @@ type Panel =
   | "kart-race"
   | "servers"
   | "pet-care"
+  | "pet-picker"
   | "leaderboard"
   | "rooftop"
   | "ride"
@@ -487,6 +491,7 @@ export default function App() {
             onOpenRiverSurf={() => setPanel("river-surf")}
             onOpenKartRace={() => setPanel("kart-race")}
             onOpenPetCare={() => setPanel("pet-care")}
+            onOpenPetPicker={() => setPanel("pet-picker")}
             onOpenLeaderboard={() => setPanel("leaderboard")}
             onOpenRooftop={() => setPanel("rooftop")}
             onOpenRide={(id) => {
@@ -654,6 +659,7 @@ export default function App() {
             setPlayer((p) => ({ ...p, moodQuote }));
             notify("Status updated!");
           }}
+          onPickPet={() => setPanel("pet-picker")}
         />
       )}
       {panel === "catalog" && (
@@ -793,6 +799,7 @@ export default function App() {
           <KartRace
             look={player.look}
             petColor={player.pet?.color || player.color}
+            petSpecies={player.pet?.species}
             racesFinished={player.kartRacesFinished ?? 0}
             bestLapMs={player.kartBestLapMs}
             colorId={player.kartColor}
@@ -810,8 +817,21 @@ export default function App() {
           />
         </Dialog>
       )}
+      {panel === "pet-picker" && (
+        <PetPickerModal
+          species={player.pet.species}
+          color={player.color}
+          onPick={(species) => {
+            setPlayer((p) => choosePetSpecies(p, species));
+            notify(`Say hi to ${PET_PROFILES[species].petName}!`);
+          }}
+          onClose={closePanel}
+        />
+      )}
       {panel === "pet-care" && (
         <PetCareModal
+          petName={player.pet.name}
+          species={player.pet.species}
           lionColor={player.color}
           lionAccessory={player.accessory}
           petCare={player.petCare}
@@ -824,6 +844,7 @@ export default function App() {
               notify("🐾 Pampered Pride stamp unlocked!");
             }
           }}
+          onPickPet={() => setPanel("pet-picker")}
           onClose={closePanel}
         />
       )}
@@ -857,6 +878,7 @@ export default function App() {
         panel !== "river-surf" &&
         panel !== "kart-race" &&
         panel !== "pet-care" &&
+        panel !== "pet-picker" &&
         panel !== "leaderboard" &&
         panel !== "rooftop" &&
         panel !== "ride" && (

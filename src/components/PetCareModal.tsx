@@ -7,14 +7,18 @@ import {
   playPetSound,
 } from "../utils/petCare.ts";
 import { Heart, Sparkles } from "lucide-react";
-import { Lion } from "./Lion.tsx";
+import { PetPicture } from "./PetSpeciesArt.tsx";
 import type { LionColor } from "../game.ts";
+import { PET_PROFILES, type PetSpecies } from "../utils/petSpecies.ts";
 
 export type PetCareModalProps = {
+  petName: string;
+  species: PetSpecies;
   lionColor: LionColor;
   lionAccessory: string;
   petCare: PetCareState;
   onCare: (action: CareAction) => void;
+  onPickPet: () => void;
   onClose: () => void;
 };
 
@@ -26,13 +30,18 @@ const CARE_ACTIONS = [
 ] as const;
 
 export function PetCareModal({
+  petName,
+  species,
   lionColor,
   lionAccessory,
   petCare,
   onCare,
+  onPickPet,
   onClose,
 }: PetCareModalProps) {
   const [effectType, setEffectType] = useState<string | null>(null);
+  const [reaction, setReaction] = useState("");
+  const [care, setCare] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const effectTimer = useRef<number | undefined>(undefined);
 
@@ -43,6 +52,8 @@ export function PetCareModal({
     const newlyPampered =
       !isPetFullyPampered(petCare) && isPetFullyPampered(result.nextState);
     setEffectType(newlyPampered ? "hearts" : result.effectType);
+    setReaction(PET_PROFILES[species].reactions[action]);
+    setCare((count) => count + 1);
     if (soundEnabled) {
       const sounds = {
         wash: "bubble_pop",
@@ -73,10 +84,21 @@ export function PetCareModal({
         >
           Sound {soundEnabled ? "on" : "off"}
         </button>
+        <button
+          type="button"
+          className="button button-secondary"
+          onClick={onPickPet}
+        >
+          Pick your pet
+        </button>
         {/* Pet Avatar Area */}
         <div className="pet-avatar-section">
-          <div className="pet-avatar-container">
-            <Lion
+          <div
+            key={care}
+            className={`pet-avatar-container${care ? " pet-hop" : ""}`}
+          >
+            <PetPicture
+              species={species}
               color={lionColor}
               accessory={lionAccessory}
               className="pet-avatar"
@@ -102,25 +124,28 @@ export function PetCareModal({
                 className={`effect-particles effect-${effectType}`}
                 aria-hidden="true"
               >
-                {effectType === "bubbles" &&
-                  [...Array(5)].map((_, i) => (
-                    <span key={i} className="particle">
-                      ●
-                    </span>
-                  ))}
-                {effectType === "sparkle" &&
-                  [...Array(6)].map((_, i) => (
-                    <span key={i} className="particle">
-                      ✨
-                    </span>
-                  ))}
-                {effectType === "munch" && <span className="particle">😋</span>}
-                {effectType === "bounce" && (
-                  <span className="particle bounce-particle">🎉</span>
-                )}
+                {[
+                  ...Array(
+                    effectType === "bubbles"
+                      ? 5
+                      : effectType === "sparkle"
+                        ? 6
+                        : 1,
+                  ),
+                ].map((_, i) => (
+                  <span
+                    key={i}
+                    className={`particle${effectType === "bounce" ? " bounce-particle" : ""}`}
+                  >
+                    {reaction}
+                  </span>
+                ))}
               </div>
             )}
           </div>
+          <p className="pet-caption">
+            {petName} · {PET_PROFILES[species].label}
+          </p>
         </div>
 
         <p

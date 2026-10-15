@@ -91,6 +91,11 @@ import {
   type SalonCategory,
 } from "./types/avatarOptions.ts";
 import type { PetCareState, CareAction } from "./utils/petCare.ts";
+import {
+  PET_PROFILES,
+  restorePetSpecies,
+  type PetSpecies,
+} from "./utils/petSpecies.ts";
 import { DEFAULT_PET_CARE_STATE, performPetCare } from "./utils/petCare.ts";
 
 export * from "./types/world.ts";
@@ -418,6 +423,17 @@ function restoredRounds(value: unknown): number | null {
     : null;
 }
 
+/** Saved pets keep their fields; a missing or unknown species becomes a lion cub. */
+function restorePetState(value: unknown): PetState {
+  const saved = value && typeof value === "object" ? value : {};
+  const species = "species" in saved ? saved.species : undefined;
+  return {
+    ...DEFAULT_PET_STATE,
+    ...saved,
+    species: restorePetSpecies(species),
+  };
+}
+
 function restorePetCare(value: unknown): PetCareState {
   const saved =
     value && typeof value === "object"
@@ -742,7 +758,7 @@ export function migratePlayerSave(save: unknown): PlayerV2 {
       ...v1,
       version: 2,
       look: save.look,
-      pet: save.pet,
+      pet: restorePetState(save.pet),
       petCare: restorePetCare(save.petCare),
       starRank: save.starRank,
       moodQuote: save.moodQuote,
@@ -759,10 +775,7 @@ export function migratePlayerSave(save: unknown): PlayerV2 {
   const look = validateAvatarLook(raw.look)
     ? (raw.look as AvatarLook)
     : STARTER_AVATAR_LOOK;
-  const pet =
-    raw.pet && typeof raw.pet === "object"
-      ? ({ ...DEFAULT_PET_STATE, ...(raw.pet as object) } as PetState)
-      : DEFAULT_PET_STATE;
+  const pet = restorePetState(raw.pet);
   const petCare = restorePetCare(v1.petCare);
   const moodQuote =
     typeof raw.moodQuote === "string" && raw.moodQuote.trim()
@@ -1244,6 +1257,18 @@ export function completeSeekRound<T extends PlayerBase>(
     },
     SEEK_STAMPS[round.scene],
   );
+}
+
+/** Picking a species renames the pet to that species' default name. */
+export function choosePetSpecies<T extends { pet: PetState }>(
+  player: T,
+  species: PetSpecies,
+): T {
+  if (player.pet.species === species) return player;
+  return {
+    ...player,
+    pet: { ...player.pet, species, name: PET_PROFILES[species].petName },
+  };
 }
 
 export function applyPetCareAction<T extends PlayerBase>(

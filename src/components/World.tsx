@@ -111,6 +111,7 @@ type WorldProps = {
   onUnlockStamp?: (stampId: string) => void;
   onOpenRiverSurf?: () => void;
   onOpenPetCare?: () => void;
+  onOpenPetPicker?: () => void;
   onOpenLeaderboard?: () => void;
   onOpenRooftop?: () => void;
   onOpenKartRace?: () => void;
@@ -151,6 +152,7 @@ export function World({
   onUnlockStamp,
   onOpenRiverSurf,
   onOpenPetCare,
+  onOpenPetPicker,
   onOpenLeaderboard,
   onOpenRooftop,
   onOpenKartRace,
@@ -532,6 +534,7 @@ export function World({
     else if (Object.hasOwn(WATER_RIDE_HOTSPOTS, id))
       onRide?.(WATER_RIDE_HOTSPOTS[id]);
     else if (id === "pet-grooming-station") onOpenPetCare?.();
+    else if (id === "pet-pick-pet") onOpenPetPicker?.();
     else if (id === "spy-terminal") onOpenSpy?.();
     else if (id === "river-surf-dock") onOpenRiverSurf?.();
     else if (id === "kart-race-gate") onOpenKartRace?.();
@@ -576,6 +579,7 @@ export function World({
     "dump-bucket-fortress": "Splash under the Bucket",
     "lazy-river-current": "Float the Lazy River",
     "pet-grooming-station": "Grooming Spa",
+    "pet-pick-pet": "Pick your pet",
     "spy-terminal": "Launch Spy Terminal",
     "condo-furniture-editor": "Customize Furniture Grid",
     "condo-jukebox": "Grand Jukebox",
@@ -608,6 +612,7 @@ export function World({
     "dump-bucket-fortress": "🪣",
     "lazy-river-current": "🛶",
     "pet-grooming-station": "🛁",
+    "pet-pick-pet": "🐾",
     "spy-terminal": "💻",
     "condo-furniture-editor": "🛋️",
     "condo-jukebox": "🎵",

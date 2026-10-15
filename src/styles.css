@@ -7411,6 +7411,110 @@ svg {
   transform: scale(0.75);
 }
 
+/* Pet species art (PetSpeciesArt.tsx): blink and happy hop, frozen by reduced motion. */
+.pet-species-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.pet-avatar.pet-species-art {
+  width: 100%;
+  height: 100%;
+}
+.pet-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pet-blink 4.5s infinite;
+}
+@keyframes pet-blink {
+  0%,
+  94%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+.pet-hop {
+  animation: pet-hop 0.6s ease-out;
+}
+@keyframes pet-hop {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  30% {
+    transform: translateY(-18px) scale(0.96, 1.04);
+  }
+  60% {
+    transform: translateY(0) scale(1.06, 0.94);
+  }
+  80% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pet-species-art [class*="sm-"],
+  .pet-blink,
+  .pet-hop {
+    animation: none;
+  }
+}
+.pet-caption {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* Pick your pet sheet */
+.pet-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+.pet-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 96px;
+  min-height: 96px;
+  padding: 10px;
+  border: 3px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+.pet-tile[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.pet-tile:focus-visible {
+  outline: 3px solid var(--accent-dark);
+  outline-offset: 2px;
+}
+.pet-tile-art {
+  display: block;
+  width: 88px;
+  height: 88px;
+}
+.pet-tile-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.player-card-pet-art {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+}
+
 .heart-burst {
   position: absolute;
   width: 100%;

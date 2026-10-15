@@ -7,6 +7,7 @@ import {
   type BottomId,
   type ShoeId,
 } from "./avatarOptions.ts";
+import type { PetSpecies } from "../utils/petSpecies.ts";
 
 export type EquipSlot =
   | "hair_back"
@@ -216,7 +217,7 @@ export type PetMood =
 export type PetState = {
   id: string;
   name: string;
-  species: "lion";
+  species: PetSpecies;
   color: string;
   accessory?: string;
   position: { x: number; y: number };
