@@ -7,7 +7,7 @@ Stack: React 19, TypeScript strict, Vite 8, Node 22+. Saves are localStorage. De
 ## Commands
 
 - `npm run verify`: unit tests, typecheck, Prettier check, build. Run before every commit that changes code.
-- `npm test`: unit tests only (~5 s). Add new `*.test.ts` files to the `test` script in `package.json`.
+- `npm test`: unit tests only (~5 s). New `src/**/*.test.ts` files are discovered automatically.
 - `scripts/e2e.sh tests/x.spec.ts --project=desktop`: targeted Playwright on a private port, 1 worker, 6 cores, low priority. Never run the whole suite locally: GitHub Actions runs `verify`, the full e2e (4 shards) and the PWA test on every push and PR to `master` (`.github/workflows/playwright.yml`). Check results with `gh run list` / `gh run view`.
 - `npm run test:pwa`: offline-install test (needs a production build).
 - `npm run format`: Prettier.

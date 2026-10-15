@@ -32,7 +32,7 @@ Accessory head transforms already share `RIG.head` / `RIG.headBoost`, with regre
 ## Next steps for Codex (in order)
 
 1. Completed: all listed worktrees were verified and integrated in table order; GitHub Actions runs the browser checks.
-2. Optional: reduce merge conflicts by splitting shared game registries (test list, game cards, hotspots, stamps); this is deferred because it is structural work with no immediate product need.
+2. Unit tests now use native recursive discovery, removing test-list merge conflicts. Optional remaining registry work: game cards, hotspots, stamps.
 3. Optional: open one PR per branch and `gh pr merge --auto --squash` so CI gates the merge.
 4. Done: `completeShapeSorterRound` stops paying after all rounds; `completeAnimalBand` rejects coin overflow. Unit tests cover both.
 5. Doll avatar: get owner feedback on resemblance to `gallery/avatars/*.jpg`; accessory head rigs already have regression coverage.
