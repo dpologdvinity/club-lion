@@ -125,6 +125,12 @@ export const downtownPlazaManifest: RoomManifest = {
       actionData: {},
     },
     {
+      id: "plaza-picture-puzzle",
+      type: "game_launch",
+      position: { x: 1400, y: 560 },
+      actionData: {},
+    },
+    {
       id: "marble-lion-fountain",
       type: "secret_clickable",
       position: { x: 1200, y: 550 },

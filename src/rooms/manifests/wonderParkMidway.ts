@@ -54,6 +54,12 @@ export const wonderParkMidwayManifest: RoomManifest = {
       position: { x: 2200, y: 610 },
       actionData: { gameId: "fruit" },
     },
+    {
+      id: "midway-balloon-parade",
+      type: "game_launch",
+      position: { x: 1900, y: 600 },
+      actionData: {},
+    },
   ],
   ambientAudioPreset: "carnival-midway",
 };
