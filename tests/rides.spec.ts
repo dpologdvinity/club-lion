@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { tapRoomPath } from "./room-paths";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
 
@@ -22,10 +23,7 @@ async function openRide(page: Page, room: string, hotspot: string) {
   await expect(
     page.getByRole("heading", { name: room, exact: true }),
   ).toBeVisible();
-  await page
-    .locator(".room-navigation")
-    .getByRole("button", { name: hotspot })
-    .click();
+  await tapRoomPath(page, hotspot);
 }
 
 test("every park ride opens from its hotspot, cheers on taps and exits", async ({

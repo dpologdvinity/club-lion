@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
+import { tapRoomPath } from "./room-paths";
 
 test("nursery grooming is named, keyboard accessible, persistent, and silent by default", async ({
   page,
@@ -28,14 +29,11 @@ test("nursery grooming is named, keyboard accessible, persistent, and silent by 
     .getByRole("dialog")
     .getByRole("button", { name: /Pet Paradise Nursery/ })
     .click();
-  const opener = page
-    .locator(".room-navigation")
-    .getByRole("button", { name: "Grooming Spa", exact: true });
-  await expect(opener).toBeVisible();
   const hotspot = page
     .locator(".room-hotspot")
     .filter({ hasText: "Grooming Spa" });
   await expect(hotspot).toHaveCount(1);
+  const opener = hotspot;
   await hotspot.click();
   let dialog = page.getByRole("dialog", { name: "Pet Paradise Nursery" });
   await expect(dialog).toBeVisible();
@@ -110,10 +108,7 @@ test("nursery reduced motion and narrow layouts retain usable care controls", as
     .getByRole("dialog")
     .getByRole("button", { name: /Pet Paradise Nursery/ })
     .click();
-  await page
-    .locator(".room-navigation")
-    .getByRole("button", { name: "Grooming Spa", exact: true })
-    .click();
+  await tapRoomPath(page, "Grooming Spa", true);
   const dialog = page.getByRole("dialog", { name: "Pet Paradise Nursery" });
   await dialog.getByRole("button", { name: "Brush", exact: true }).click();
   await expect(page.locator(".effect-particles")).toBeHidden();

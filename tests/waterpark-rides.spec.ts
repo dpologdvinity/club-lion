@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
+import { tapRoomPath } from "./room-paths";
 
 // A controlled RAF queue plays a 30-second ride in a moment, like coaster.spec.ts.
 async function installFrames(page: Page) {
@@ -83,14 +84,12 @@ for (const ride of RIDES) {
       .getByRole("dialog")
       .getByRole("button", { name: /^Splash Oasis/ })
       .click();
-    const paths = page.locator(".room-navigation");
-    if (ride.river)
-      await paths.getByRole("button", { name: /Lazy River Oasis/ }).click();
+    if (ride.river) await tapRoomPath(page, /Lazy River Oasis/);
     const coinsBefore = await page.evaluate(
       (key) => JSON.parse(localStorage.getItem(key) ?? "{}").coins ?? 0,
       SAVE_KEY,
     );
-    await paths.getByRole("button", { name: ride.hotspot }).click();
+    await tapRoomPath(page, ride.hotspot);
 
     const dialog = page.getByRole("dialog", { name: `${ride.name} ride` });
     await expect(dialog).toBeVisible();

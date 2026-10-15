@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { tapRoomPath } from "./room-paths";
 
 // Phone-only layout checks: the floating chrome must not hide the avatar,
 // stack on itself or push game controls off a 390x844 screen.
@@ -67,10 +68,7 @@ for (const [room, game] of [
   test(`${game} fits a phone screen without scrolling`, async ({ page }) => {
     await page.goto("/");
     await travel(page, room);
-    await page
-      .locator(".room-navigation")
-      .getByRole("button", { name: game })
-      .click();
+    await tapRoomPath(page, game);
     const dialog = page.locator("dialog[open]");
     await expect(dialog).toBeVisible();
     await expect(dialog.locator(".bakery, .seek").first()).toBeVisible();
@@ -83,32 +81,25 @@ for (const [room, game] of [
     expect(back!.height).toBeGreaterThanOrEqual(48);
   });
 
-test("room travel tiles are big pictures that the strip can scroll to", async ({
+test("the phone room bar is a Map picture plus three exits, all 56px or more", async ({
   page,
 }) => {
   await page.goto("/");
   await travel(page, "Downtown Plaza");
   const bar = page.locator(".room-navigation");
   const tiles = bar.locator(".room-nav-tile");
-  expect(await tiles.count()).toBeGreaterThan(4);
+  expect(await tiles.count()).toBe(4);
+  await expect(bar.locator(".room-nav-map")).toHaveAccessibleName("Map");
   for (const icon of await tiles.locator(".room-nav-icon").all())
     await expect(icon).toHaveAttribute("aria-hidden", "true");
-  // Scroll each tile to the strip's left edge and check it fits inside the strip.
-  const reach = await bar.evaluate((el) =>
-    [...el.querySelectorAll<HTMLElement>(".room-nav-tile")].map((tile) => {
-      el.scrollLeft = tile.offsetLeft - 8;
-      const strip = el.getBoundingClientRect();
-      const box = tile.getBoundingClientRect();
-      return {
-        height: box.height,
-        inside: box.left >= strip.left - 1 && box.right <= strip.right + 1,
-      };
-    }),
-  );
-  for (const tile of reach) {
-    expect(tile.height).toBeGreaterThanOrEqual(56);
-    expect(tile.inside).toBe(true);
+  for (const tile of await tiles.all()) {
+    const found = (await tile.boundingBox())!;
+    expect(found.height).toBeGreaterThanOrEqual(56);
   }
+  // Downtown Plaza's first exits are the room's nearest neighbours.
+  await expect(bar.locator(".room-nav-tile").nth(1)).toHaveAccessibleName(
+    "Sunset Beach",
+  );
 });
 
 for (const [name, width, height] of [
@@ -130,4 +121,89 @@ for (const [name, width, height] of [
       const found = await hotspot.boundingBox();
       if (found) expect(overlaps(bar, found)).toBe(false);
     }
+  });
+
+for (const [name, width, height] of [
+  ["phone", 390, 844],
+  ["tablet", 820, 1180],
+] as const)
+  test(`${name}: every destination is one Map tap away in a picture grid`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height });
+    await page.goto("/");
+    await travel(page, "Downtown Plaza");
+    await page.getByRole("button", { name: "Map", exact: true }).click();
+    const sheet = page.getByRole("dialog");
+    await expect(sheet).toHaveClass(/map-sheet/);
+    const tiles = sheet.locator(".map-destination");
+    await expect(tiles).toHaveCount(19);
+    await expect(sheet.locator(".map-destination.selected")).toContainText(
+      "Downtown Plaza",
+    );
+    const frame = (await sheet.boundingBox())!;
+    for (const tile of await tiles.all()) {
+      await tile.evaluate((el) => el.scrollIntoView({ block: "nearest" }));
+      const found = (await tile.boundingBox())!;
+      expect(found.width).toBeGreaterThanOrEqual(88);
+      expect(found.height).toBeGreaterThanOrEqual(88);
+      expect(found.x).toBeGreaterThanOrEqual(frame.x - 1);
+      expect(found.x + found.width).toBeLessThanOrEqual(
+        frame.x + frame.width + 1,
+      );
+      expect(found.y).toBeGreaterThanOrEqual(frame.y - 1);
+      expect(found.y + found.height).toBeLessThanOrEqual(
+        frame.y + frame.height + 1,
+      );
+    }
+    for (const icon of await tiles.locator(".map-icon").all())
+      await expect(icon).toHaveAttribute("aria-hidden", "true");
+    // This room's activities sit under the destinations, one tap away too.
+    const activities = sheet.locator(".map-activity");
+    expect(await activities.count()).toBeGreaterThan(0);
+    for (const tile of await activities.all()) {
+      await tile.evaluate((el) => el.scrollIntoView({ block: "nearest" }));
+      const found = (await tile.boundingBox())!;
+      expect(found.width).toBeGreaterThanOrEqual(88);
+      expect(found.height).toBeGreaterThanOrEqual(88);
+    }
+  });
+
+test("the Map sheet closes with Escape and returns focus to the Map button", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await travel(page, "Downtown Plaza");
+  await page.getByRole("button", { name: "Map", exact: true }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.locator(".room-navigation .room-nav-map")).toBeFocused();
+});
+
+for (const [name, width, height] of [
+  ["phone", 390, 844],
+  ["tablet", 820, 1180],
+] as const)
+  test(`${name}: ground labels stay inside the stage and clear of the avatar`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height });
+    await page.goto("/");
+    await travel(page, "Downtown Plaza");
+    const avatar = await box(page, ".your-character .chibi-avatar");
+    const camera = await box(page, ".camera-viewport");
+    const onStage = (r: Box) =>
+      r.x + r.width / 2 > camera.x &&
+      r.x + r.width / 2 < camera.x + camera.width &&
+      r.y + r.height / 2 > camera.y &&
+      r.y + r.height / 2 < camera.y + camera.height;
+    let checked = 0;
+    for (const label of await page.locator(".room-hotspot").all()) {
+      const found = await label.boundingBox();
+      if (!found || !onStage(found)) continue;
+      checked += 1;
+      expect(overlaps(found, avatar), await label.textContent()).toBe(false);
+    }
+    expect(checked).toBeGreaterThan(0);
   });

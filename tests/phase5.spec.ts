@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { openHeaderSettings } from "./header";
+import { tapRoomPath } from "./room-paths";
 
 test("Sunset Beach and Coastal Pier allow travel, lighthouse foghorn activation, and Foghorn Mariner stamp unlock", async ({
   page,
@@ -18,25 +19,15 @@ test("Sunset Beach and Coastal Pier allow travel, lighthouse foghorn activation,
   await mapDialog.getByRole("button", { name: /^Sunset Beach/ }).click();
   await expect(page.locator(".world-location h2")).toHaveText("Sunset Beach");
 
-  // Navigate to Coastal Pier & Boardwalk via room-navigation
-  const paths = page.getByLabel("Room paths and activities");
-  const pierPortalBtn = paths.getByRole("button", {
-    name: /Coastal Pier & Boardwalk/,
-  });
-  await expect(pierPortalBtn).toBeVisible();
-  await pierPortalBtn.click();
+  // Navigate to Coastal Pier & Boardwalk via the room paths
+  await tapRoomPath(page, /Coastal Pier & Boardwalk/);
 
   await expect(page.locator(".world-location h2")).toHaveText(
     "Coastal Pier & Boardwalk",
   );
 
   // Sound the lighthouse foghorn via room-navigation button
-  const foghornBtn = paths.getByRole("button", {
-    name: "Sound Foghorn",
-    exact: true,
-  });
-  await expect(foghornBtn).toBeVisible();
-  await foghornBtn.click();
+  await tapRoomPath(page, "Sound Foghorn", true);
 
   // Verify toast notification
   await expect(
@@ -87,13 +78,7 @@ test("Mt. Mist Alpine Basecamp launches Sled Run minigame with steering, jumping
   );
 
   // Open Sled Run Race via room-navigation
-  const paths = page.getByLabel("Room paths and activities");
-  const sledGateBtn = paths.getByRole("button", {
-    name: "Sled Run Race",
-    exact: true,
-  });
-  await expect(sledGateBtn).toBeVisible();
-  await sledGateBtn.click();
+  await tapRoomPath(page, "Sled Run Race", true);
 
   // Verify Sled Run modal is displayed
   const sledDialog = page.getByRole("dialog");
@@ -144,13 +129,7 @@ test("Canyon Rapids launches River Surf minigame with trick controls and score t
   await expect(page.locator(".world-location h2")).toHaveText("Canyon Rapids");
 
   // Open River Surf Rapids via room-navigation
-  const paths = page.getByLabel("Room paths and activities");
-  const surfBtn = paths.getByRole("button", {
-    name: "River Surf Rapids",
-    exact: true,
-  });
-  await expect(surfBtn).toBeVisible();
-  await surfBtn.click();
+  await tapRoomPath(page, "River Surf Rapids", true);
 
   const surfDialog = page.getByRole("dialog");
   await expect(surfDialog).toBeVisible();
@@ -208,13 +187,7 @@ test("Pet Paradise Nursery provides grooming care actions and awards Pampered Pr
   );
 
   // Open Grooming Spa via room-navigation
-  const paths = page.getByLabel("Room paths and activities");
-  const spaBtn = paths.getByRole("button", {
-    name: "Grooming Spa",
-    exact: true,
-  });
-  await expect(spaBtn).toBeVisible();
-  await spaBtn.click();
+  await tapRoomPath(page, "Grooming Spa", true);
 
   const spaDialog = page.getByRole("dialog", {
     name: "Pet Paradise Nursery",

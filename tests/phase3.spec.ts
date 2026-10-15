@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
+import { tapRoomPath } from "./room-paths";
 
 test("world navigation reaches Splash Oasis and Lazy River with animated scenery and clean returns", async ({
   page,
@@ -28,11 +29,7 @@ test("world navigation reaches Splash Oasis and Lazy River with animated scenery
   await expect(stage.getByText("DUMP BUCKET FORTRESS").first()).toBeVisible();
 
   // Navigate to Lazy River via room-navigation portal button
-  const riverPortalBtn = page
-    .locator(".room-navigation")
-    .getByRole("button", { name: /Lazy River Oasis/ });
-  await expect(riverPortalBtn).toBeVisible();
-  await riverPortalBtn.click();
+  await tapRoomPath(page, /Lazy River Oasis/);
 
   await expect(
     page.getByRole("heading", { name: "Lazy River Oasis", exact: true }),
@@ -40,22 +37,14 @@ test("world navigation reaches Splash Oasis and Lazy River with animated scenery
   await expect(stage.getByText("TUBE RENTALS")).toBeVisible();
 
   // Navigate back to Splash Oasis
-  const oasisPortalBtn = page
-    .locator(".room-navigation")
-    .getByRole("button", { name: /Splash Oasis/ });
-  await expect(oasisPortalBtn).toBeVisible();
-  await oasisPortalBtn.click();
+  await tapRoomPath(page, /Splash Oasis/);
 
   await expect(
     page.getByRole("heading", { name: "Splash Oasis", exact: true }),
   ).toBeVisible();
 
   // Return to Downtown Plaza
-  const downtownPortalBtn = page
-    .locator(".room-navigation")
-    .getByRole("button", { name: /Downtown Plaza/ });
-  await expect(downtownPortalBtn).toBeVisible();
-  await downtownPortalBtn.click();
+  await tapRoomPath(page, /Downtown Plaza/);
 
   await expect(
     page.getByRole("heading", { name: "Downtown Plaza", exact: true }),
