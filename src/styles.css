@@ -659,6 +659,111 @@ svg {
   right: 11%;
   top: 40%;
 }
+/* Room hotspot feedback: emoji float up from the hotspot and fade out. */
+.hotspot-burst {
+  position: absolute;
+  z-index: 6;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.hotspot-burst-emoji {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 28px;
+  line-height: 1;
+  animation: hotspot-burst-rise 1.8s ease-out both;
+}
+@keyframes hotspot-burst-rise {
+  0% {
+    transform: translate(-50%, 0) scale(0.4);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -10px) scale(1.15);
+  }
+  100% {
+    transform: translate(-50%, -90px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Rink skate hotspot: the avatar spins with snow spray and sparkles under the feet. */
+.chibi-avatar.action-skate {
+  animation: rink-spin 0.9s linear infinite;
+}
+@keyframes rink-spin {
+  0% {
+    transform: scaleX(1) translateY(0);
+  }
+  25% {
+    transform: scaleX(0.2) translateY(-4px);
+  }
+  50% {
+    transform: scaleX(-1) translateY(0);
+  }
+  75% {
+    transform: scaleX(-0.2) translateY(-4px);
+  }
+  100% {
+    transform: scaleX(1) translateY(0);
+  }
+}
+.your-character.is-skating::before,
+.your-character.is-skating::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  pointer-events: none;
+}
+.your-character.is-skating::before {
+  bottom: -6px;
+  width: 96px;
+  height: 22px;
+  background: radial-gradient(circle, #fff 0 2px, transparent 3px) 0 0 / 11px
+    11px;
+  opacity: 0.9;
+  animation: rink-spray 0.5s linear infinite;
+}
+@keyframes rink-spray {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 11px 11px;
+  }
+}
+.your-character.is-skating::after {
+  content: "✨ ✨";
+  top: -8px;
+  white-space: nowrap;
+  font-size: 18px;
+  animation: rink-sparkle 0.8s ease-in-out infinite alternate;
+}
+@keyframes rink-sparkle {
+  from {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hotspot-burst-emoji,
+  .chibi-avatar.action-skate,
+  .your-character.is-skating::before,
+  .your-character.is-skating::after {
+    animation: none;
+  }
+  .hotspot-burst-emoji {
+    opacity: 1;
+  }
+}
 .sparkle-trail-layer {
   position: absolute;
   inset: 0;
@@ -5192,6 +5297,12 @@ svg {
 }
 .scene-speedway {
   background: #7cc46a;
+}
+.scene-aquarium {
+  background: #2a7fa8;
+}
+.scene-rink {
+  background: #dce9f5;
 }
 .camera-world {
   aspect-ratio: auto;

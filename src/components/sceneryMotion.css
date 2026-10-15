@@ -11,6 +11,7 @@
  */
 
 .sm-bob,
+.sm-travel,
 .sm-sway,
 .sm-drift,
 .sm-glide,
@@ -72,6 +73,21 @@
   }
   to {
     transform: translateX(var(--sm-dist, 2400px));
+  }
+}
+
+/* One-way vertical travel: falling snow or rising bubbles. --sm-dist is signed (negative rises). */
+.sm-travel {
+  animation-name: sm-travel;
+  animation-duration: var(--sm-dur, 8s);
+  animation-timing-function: linear;
+}
+@keyframes sm-travel {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(var(--sm-dist, 720px));
   }
 }
 

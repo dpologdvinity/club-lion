@@ -347,6 +347,27 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     unlockHint: "Finish a kart race at Lion Speedway.",
   },
   {
+    id: "aquarium_feeder",
+    name: "Fish Feeder",
+    title: "Fish Feeder",
+    category: "world_secrets",
+    description:
+      "Fed the Lion Aquarium fish and watched them swarm to the snack.",
+    icon: "🐟",
+    rewardCoins: 10,
+    unlockHint: "Feed the fish at the Lion Aquarium.",
+  },
+  {
+    id: "rink_spinner",
+    name: "Ice Spinner",
+    title: "Ice Spinner",
+    category: "park_thrills",
+    description: "Pulled a spinning skate pose on the Snowflake Rink ice.",
+    icon: "⛸️",
+    rewardCoins: 15,
+    unlockHint: "Skate at the Snowflake Rink.",
+  },
+  {
     id: "seek_savanna",
     name: "Savanna Spotter",
     category: "arcade_mastery",

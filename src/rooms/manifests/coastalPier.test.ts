@@ -19,7 +19,7 @@ test("Coastal Pier is a registered boardwalk in the coastal district", () => {
   ]);
   assert.equal(ROOM_MANIFESTS["coastal-pier"], m);
   assert.ok(PLACES.some((p) => p.id === m.id && p.imageClass === "scene-pier"));
-  assert.equal(m.portals.length, 1);
+  assert.equal(m.portals.length, 2);
   assert.equal(m.portals[0].targetRoomId, "sunset-beach");
   assert.deepEqual(m.portals[0].triggerBounds, {
     x1: 0,

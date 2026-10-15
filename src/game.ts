@@ -115,7 +115,9 @@ export type PlaceId =
   | "mt-mist"
   | "canyon-rapids"
   | "pet-paradise"
-  | "lion-speedway";
+  | "lion-speedway"
+  | "lion-aquarium"
+  | "snowflake-rink";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -341,6 +343,18 @@ export const PLACES: {
     name: "Lion Speedway",
     subtitle: "Start your engines & race the pride",
     imageClass: "scene-speedway",
+  },
+  {
+    id: "lion-aquarium",
+    name: "Lion Aquarium",
+    subtitle: "Glass tunnel, big fish & a touch pool",
+    imageClass: "scene-aquarium",
+  },
+  {
+    id: "snowflake-rink",
+    name: "Snowflake Rink",
+    subtitle: "Skate under the Christmas lights",
+    imageClass: "scene-rink",
   },
 ];
 
