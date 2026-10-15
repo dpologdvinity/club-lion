@@ -4573,6 +4573,14 @@ svg {
   font-weight: 700;
   white-space: nowrap;
 }
+.salon-price .coin-label {
+  gap: 3px;
+}
+.salon-price .coin-icon {
+  width: 14px;
+  height: 14px;
+  font-size: 8px;
+}
 
 .salon-swatches .color-option {
   width: 62px;
@@ -5437,6 +5445,60 @@ svg {
   white-space: nowrap;
   color: var(--muted);
   font-size: 12px;
+}
+/* Picture tiles: a badge the pre-reader can pick by, the name under it. The
+   strip scrolls sideways with snap points; the fade hints there is more. */
+.room-navigation {
+  scroll-snap-type: x proximity;
+  mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 calc(100% - 36px),
+    transparent
+  );
+}
+.room-navigation .room-nav-tile {
+  flex: 0 0 auto;
+  width: 92px;
+  min-height: 64px;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 6px 7px;
+  border-radius: 18px;
+  font-size: 11px;
+  line-height: 1.15;
+  text-align: center;
+  scroll-snap-align: start;
+  transition: transform 120ms ease;
+}
+.room-navigation .room-nav-tile:active {
+  transform: scale(0.96);
+}
+.room-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff6e0;
+  font-size: 24px;
+  line-height: 1;
+}
+.room-nav-caption {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .room-navigation .room-nav-tile {
+    transition: none;
+  }
+  .room-navigation .room-nav-tile:active {
+    transform: none;
+  }
 }
 .downtown-label {
   top: 47%;
@@ -9956,7 +10018,7 @@ textarea {
    below the stage instead of over the walkable ground and the avatar. */
 @media (orientation: portrait) and (max-width: 1279px) {
   .camera-viewport {
-    height: calc(100% - 160px - env(safe-area-inset-bottom));
+    height: calc(100% - 192px - env(safe-area-inset-bottom));
     min-height: 0;
   }
   .room-navigation {
@@ -9965,6 +10027,6 @@ textarea {
 }
 @media (orientation: portrait) and (max-width: 590px) {
   .camera-viewport {
-    height: calc(100% - 146px - env(safe-area-inset-bottom));
+    height: calc(100% - 184px - env(safe-area-inset-bottom));
   }
 }

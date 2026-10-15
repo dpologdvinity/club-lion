@@ -82,3 +82,52 @@ for (const [room, game] of [
       .boundingBox();
     expect(back!.height).toBeGreaterThanOrEqual(48);
   });
+
+test("room travel tiles are big pictures that the strip can scroll to", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await travel(page, "Downtown Plaza");
+  const bar = page.locator(".room-navigation");
+  const tiles = bar.locator(".room-nav-tile");
+  expect(await tiles.count()).toBeGreaterThan(4);
+  for (const icon of await tiles.locator(".room-nav-icon").all())
+    await expect(icon).toHaveAttribute("aria-hidden", "true");
+  // Scroll each tile to the strip's left edge and check it fits inside the strip.
+  const reach = await bar.evaluate((el) =>
+    [...el.querySelectorAll<HTMLElement>(".room-nav-tile")].map((tile) => {
+      el.scrollLeft = tile.offsetLeft - 8;
+      const strip = el.getBoundingClientRect();
+      const box = tile.getBoundingClientRect();
+      return {
+        height: box.height,
+        inside: box.left >= strip.left - 1 && box.right <= strip.right + 1,
+      };
+    }),
+  );
+  for (const tile of reach) {
+    expect(tile.height).toBeGreaterThanOrEqual(56);
+    expect(tile.inside).toBe(true);
+  }
+});
+
+for (const [name, width, height] of [
+  ["phone", 390, 844],
+  ["tablet", 820, 1180],
+] as const)
+  test(`${name} room bar never covers the avatar or ground hotspots`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height });
+    await page.goto("/");
+    await travel(page, "Downtown Plaza");
+    const avatar = await box(page, ".your-character .chibi-avatar");
+    const bar = await box(page, ".room-navigation");
+    const camera = await box(page, ".camera-viewport");
+    expect(camera.y + camera.height).toBeLessThanOrEqual(bar.y + 1);
+    expect(overlaps(bar, avatar)).toBe(false);
+    for (const hotspot of await page.locator(".room-hotspot").all()) {
+      const found = await hotspot.boundingBox();
+      if (found) expect(overlaps(bar, found)).toBe(false);
+    }
+  });

@@ -64,7 +64,8 @@ export function SalonModal({
     option.price !== undefined &&
     !player.owned.includes(premiumId(category, option.id)) ? (
       <span className="salon-price">
-        <span className="sr-only"> premium, </span>✦{option.price}
+        <span className="sr-only"> premium, </span>
+        <Coin amount={option.price} />
         <span className="sr-only"> coins</span>
       </span>
     ) : null;

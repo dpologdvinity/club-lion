@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Check, Lock } from "lucide-react";
 import { Dialog } from "./Dialog";
 import { Avatar } from "./Avatar";
+import { Coin } from "./Lion";
 import {
   CATALOG_ITEMS,
   canWearClothing,
@@ -124,8 +125,8 @@ export function ClosetModal({
                       {option.label}
                       {!wearable && price !== undefined && (
                         <span className="salon-price">
-                          <span className="sr-only"> — in Le Shop for</span> ✦
-                          {price}
+                          <span className="sr-only"> — in Le Shop for</span>
+                          <Coin amount={price} />
                         </span>
                       )}
                     </button>

@@ -919,5 +919,9 @@ test("the room paths bar stays one row in rooms with many exits", async ({
   const paths = page.getByLabel("Room paths and activities");
   await expect(paths).toBeVisible();
   const box = await paths.boundingBox();
-  expect(box!.height).toBeLessThan(80);
+  expect(box!.height).toBeLessThan(120);
+  // Picture tiles stay in one strip that scrolls sideways instead of wrapping.
+  expect(await paths.evaluate((el) => getComputedStyle(el).flexWrap)).toBe(
+    "nowrap",
+  );
 });

@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { NEIGHBORS, PLACES, type PlaceId, type PlayerV2 } from "../game";
 import { ROOM_MANIFESTS } from "../rooms/registry";
+import { portalIcon } from "../rooms/placeIcons";
 import type { RoomManifest } from "../rooms/types";
 import { clampToWalkable } from "../rooms/camera";
 import { CameraViewport } from "./CameraViewport";
@@ -477,12 +478,37 @@ export function World({
     "kart-race-gate": "Race karts",
     "winner-podium": "Podium",
   };
-  // Picture-first labels for game hotspots, so pre-readers can spot them.
+  // Picture-first labels for hotspots, so pre-readers can spot them.
   const hotspotIcons: Record<string, string> = {
+    "lighthouse-foghorn": "📯",
+    "sled-run-gate": "🛷",
+    "coaster-ticket-gate": "🎢",
+    "giant-ferris-wheel": "🎡",
+    "park-map-kiosk": "🗺️",
+    "spinning-mango-teacups": "🥭",
+    "grand-golden-carousel": "🎠",
+    "sunshine-flume": "💦",
+    "lion-leap-tower": "🗼",
+    "midway-game-booth": "🍎",
     "cafe-bakery-window": "🎂",
     "plaza-bubble-cart": "🫧",
     "plaza-coloring-easel": "🖍️",
     "beach-seek-lookout": "🔍",
+    "club-pulse-dj-booth": "🎧",
+    "club-pulse-dance-floor": "💃",
+    "marble-lion-fountain": "⛲",
+    "speed-slides": "🛝",
+    "tsunami-wave-pool": "🌊",
+    "dump-bucket-fortress": "🪣",
+    "lazy-river-current": "🛶",
+    "pet-grooming-station": "🛁",
+    "spy-terminal": "💻",
+    "condo-furniture-editor": "🛋️",
+    "condo-jukebox": "🎵",
+    "surveillance-holo-map": "🛰️",
+    "river-surf-dock": "🏄",
+    "kart-race-gate": "🏎️",
+    "winner-podium": "🏆",
   };
   const hotspotIcon = (id: string) =>
     hotspotIcons[id] && (
@@ -976,20 +1002,25 @@ export function World({
           {manifest.portals.map((p) => (
             <button
               key={p.targetRoomId}
-              className="button-secondary"
+              className="button-secondary room-nav-tile"
               onClick={() => portal(p.targetRoomId, p.targetSpawn)}
             >
-              {p.label} <ArrowUpRight size={14} />
+              <span className="room-nav-icon" aria-hidden="true">
+                {portalIcon(p.targetRoomId)}
+              </span>
+              <span className="room-nav-caption">{p.label}</span>
             </button>
           ))}
           {manifest.interactives.map((item) => (
             <button
               key={item.id}
-              className="button-secondary"
+              className="button-secondary room-nav-tile"
               onClick={() => hotspot(item.id)}
             >
-              {hotspotIcon(item.id)}
-              {hotspotLabels[item.id]}
+              <span className="room-nav-icon" aria-hidden="true">
+                {hotspotIcons[item.id] ?? "✨"}
+              </span>
+              <span className="room-nav-caption">{hotspotLabels[item.id]}</span>
             </button>
           ))}
           <span className="room-navigation-hint">
