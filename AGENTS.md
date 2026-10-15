@@ -8,7 +8,7 @@ Stack: React 19, TypeScript strict, Vite 8, Node 22+. Saves are localStorage. De
 
 - `npm run verify`: unit tests, typecheck, Prettier check, build. Run before every commit that changes code.
 - `npm test`: unit tests only (~5 s). Add new `*.test.ts` files to the `test` script in `package.json`.
-- `scripts/e2e.sh tests/x.spec.ts --project=desktop`: targeted Playwright on a private port, 1 worker, 6 cores, low priority. Do not run the whole suite on a busy machine.
+- `scripts/e2e.sh tests/x.spec.ts --project=desktop`: targeted Playwright on a private port, 1 worker, 6 cores, low priority. Never run the whole suite locally: GitHub Actions runs `verify`, the full e2e (4 shards) and the PWA test on every push and PR to `master` (`.github/workflows/playwright.yml`). Check results with `gh run list` / `gh run view`.
 - `npm run test:pwa`: offline-install test (needs a production build).
 - `npm run format`: Prettier.
 
@@ -34,6 +34,6 @@ Stack: React 19, TypeScript strict, Vite 8, Node 22+. Saves are localStorage. De
 
 - One task per worktree: `git worktree add .worktrees/<name> -b feat/<name> master`. Never commit to master from a worktree.
 - At most 6 of 12 CPU cores: `taskset -c 0-5 nice -n 10` for heavy commands, Playwright 1-2 workers (`scripts/e2e.sh` does this).
-- Finish a task as ONE commit (`git reset --soft $(git merge-base HEAD master)` then commit), `npm run verify` green. Integrate one branch at a time: rebase on master, resolve conflicts (usually `package.json` test script, `World.tsx`, `GamesPanel.tsx`, `game.ts`, `stampDefinitions.ts`, `styles.css`: keep both sides), verify, targeted e2e, `git merge --ff-only`, push, remove worktree and branch.
+- Finish a task as ONE commit (`git reset --soft $(git merge-base HEAD master)` then commit), `npm run verify` green. Merge each branch as soon as its own checks pass (do not wait; waiting makes branches drift and conflict). Integrate one branch at a time: rebase on master, resolve conflicts (usually `package.json` test script, `World.tsx`, `GamesPanel.tsx`, `game.ts`, `stampDefinitions.ts`, `styles.css`: keep both sides), verify, targeted e2e, `git merge --ff-only`, push, remove worktree and branch.
 - Clean up: stop dev servers, delete `.tmp-*` files and temp folders. Do not use `pkill -f` or `ps | grep` patterns that match your own shell.
 - The owner allows merging and pushing `master`. Do not enable GitHub Pages or other public surfaces from an agent session; ask the owner.
