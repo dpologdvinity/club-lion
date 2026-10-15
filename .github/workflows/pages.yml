@@ -4,8 +4,7 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [master]
+  # Manual only until Pages is enabled; then add `push: branches: [master]` back.
   workflow_dispatch:
 
 permissions:
