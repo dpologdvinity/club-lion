@@ -140,7 +140,7 @@ export function SalonModal({
     >
       <div className="salon">
         <div className="salon-preview" aria-hidden="true">
-          <Avatar look={draft} size={132} />
+          <Avatar look={draft} size={160} framing="portrait" />
         </div>
         <div className="salon-controls">
           <div className="catalog-tabs" role="group" aria-label="Salon menu">

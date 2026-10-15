@@ -133,3 +133,42 @@ test("wavy cuts get glossy glints on the wave crests", () => {
     );
   }
 });
+
+test("curly cuts merge into one inked silhouette instead of separate bubbles", () => {
+  for (const id of ["big_curls", "spiral_coils"]) {
+    const { back, front } = render({ hairId: id, hairColor: "#4a3728" });
+    for (const [layer, svg] of [
+      ["back", back],
+      ["front", front],
+    ] as const) {
+      const inkedDiscs =
+        svg.match(/class="curl-discs"[^>]*stroke="#2a1610"/g) ?? [];
+      const plainDiscs =
+        svg.match(/class="curl-discs"[^>]*stroke="none"/g) ?? [];
+      assert.ok(inkedDiscs.length > 0, `${id} ${layer} outlines`);
+      assert.equal(plainDiscs.length, inkedDiscs.length, `${id} ${layer}`);
+      // Every outline is drawn before the first fill covers the inner edges
+      assert.ok(
+        svg.lastIndexOf('stroke="#2a1610" stroke-width="2.2"') <
+          svg.indexOf('stroke="none"'),
+        `${id} ${layer} outlines first`,
+      );
+    }
+  }
+});
+
+test("long glam cuts carry glossy highlight bands", () => {
+  for (const id of [
+    "blowout",
+    "high_pony",
+    "butterfly_waves",
+    "sleek_straight",
+    "side_swoop",
+    "half_up",
+    "blunt_bob",
+    "mermaid_waves",
+  ]) {
+    const { back, front } = render({ hairId: id });
+    assert.ok(`${back}${front}`.includes("hair-glints"), id);
+  }
+});

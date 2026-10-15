@@ -1,12 +1,14 @@
 import React from "react";
 import type { AvatarLook, EntityAction } from "../types/world.ts";
 import { DEFAULT_AVATAR_LOOK } from "../types/world.ts";
-import { generateAvatarLayersString } from "./avatarSvg.ts";
+import { PORTRAIT_VIEWBOX, generateAvatarLayersString } from "./avatarSvg.ts";
 
 export interface AvatarProps extends React.SVGProps<SVGSVGElement> {
   look?: AvatarLook;
   action?: EntityAction | string;
   size?: number;
+  /** "portrait" crops to head and shoulders so the face reads large. */
+  framing?: "full" | "portrait";
 }
 
 /**
@@ -20,17 +22,20 @@ export const Avatar = React.memo(function Avatar({
   look = DEFAULT_AVATAR_LOOK,
   action = "idle",
   size,
+  framing = "full",
   width,
   height,
   className = "",
   style,
   ...props
 }: AvatarProps) {
+  const portrait = framing === "portrait";
   const renderWidth = size ?? width ?? 120;
+  // The portrait crop is square; the full figure is 120 × 160
   const renderHeight =
     size !== undefined
-      ? Math.round((Number(size) * 160) / 120)
-      : (height ?? 160);
+      ? Math.round((Number(size) * (portrait ? 1 : 160)) / (portrait ? 1 : 120))
+      : (height ?? (portrait ? 120 : 160));
 
   // Gradient and clip IDs must be unique per instance on the page
   const idPrefix = `av${React.useId()}`;
@@ -41,15 +46,15 @@ export const Avatar = React.memo(function Avatar({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 120 160"
+      viewBox={portrait ? PORTRAIT_VIEWBOX : "0 0 120 160"}
       width={renderWidth}
       height={renderHeight}
-      className={`chibi-avatar action-${action} ${className}`.trim()}
+      className={`chibi-avatar action-${action}${portrait ? " framing-portrait" : ""} ${className}`.trim()}
       role="img"
       aria-label={props["aria-label"] || "Chibi avatar"}
       style={{
         display: "inline-block",
-        overflow: "visible",
+        overflow: portrait ? "hidden" : "visible",
         verticalAlign: "middle",
         ...style,
       }}

@@ -1,6 +1,6 @@
 import type { AvatarLook, HairStyle } from "../../types/world.ts";
 import { resolveHairStyle } from "../../types/world.ts";
-import { MIRROR, escapeXml, inked, n } from "./shared.ts";
+import { INK, MIRROR, escapeXml, inked, n } from "./shared.ts";
 
 /* -------------------------------------------------------------
  * Hairstyles: each cut provides a back mass and a face-framing front
@@ -22,7 +22,7 @@ function strands(paths: readonly string[], opacity = 0.26): string {
 }
 
 /** Glossy curved glints on wave crests, drawn on the viewer-left and mirrored. */
-function glints(paths: readonly string[]): string {
+function glints(paths: readonly string[], mirrored = true): string {
   const left = paths
     .map(
       (d) =>
@@ -30,7 +30,7 @@ function glints(paths: readonly string[]): string {
         `<path d="${d}" stroke="#ffffff" stroke-width="0.9" stroke-linecap="round" fill="none" />`,
     )
     .join("");
-  return `<g class="hair-glints">${left}<g ${MIRROR}>${left}</g></g>`;
+  return `<g class="hair-glints">${left}${mirrored ? `<g ${MIRROR}>${left}</g>` : ""}</g>`;
 }
 
 /** Glossy shine ribbon: a soft gradient band plus crisp specular streaks. */
@@ -102,16 +102,64 @@ function fluffy(
 
 type Curl = readonly [number, number, number];
 
-/** Glossy ringlet curls with a spiral and a highlight on each. */
-function curls(list: readonly Curl[], c: string): string {
-  return list
+/** Spirals and highlights for every curl, merged into two paths. */
+function curlDetails(list: readonly Curl[]): string {
+  const spirals = list
     .map(
       ([cx, cy, r]) =>
-        `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${c}" />` +
-        `<path d="M${n(cx - r * 0.6)} ${n(cy + r * 0.1)} C${n(cx - r * 0.5)} ${n(cy - r * 0.7)} ${n(cx + r * 0.7)} ${n(cy - r * 0.6)} ${n(cx + r * 0.55)} ${n(cy + r * 0.2)} C${n(cx + r * 0.4)} ${n(cy + r * 0.7)} ${n(cx - r * 0.3)} ${n(cy + r * 0.5)} ${n(cx - r * 0.1)} ${n(cy)}" stroke="rgba(25,10,5,0.28)" stroke-width="0.8" fill="none" />` +
-        `<path d="M${n(cx - r * 0.55)} ${n(cy - r * 0.35)} Q${n(cx - r * 0.2)} ${n(cy - r * 0.8)} ${n(cx + r * 0.3)} ${n(cy - r * 0.7)}" stroke="rgba(255,255,255,0.5)" stroke-width="0.9" stroke-linecap="round" fill="none" />`,
+        `M${n(cx - r * 0.6)} ${n(cy + r * 0.1)} C${n(cx - r * 0.5)} ${n(cy - r * 0.7)} ${n(cx + r * 0.7)} ${n(cy - r * 0.6)} ${n(cx + r * 0.55)} ${n(cy + r * 0.2)} C${n(cx + r * 0.4)} ${n(cy + r * 0.7)} ${n(cx - r * 0.3)} ${n(cy + r * 0.5)} ${n(cx - r * 0.1)} ${n(cy)}`,
     )
-    .join("");
+    .join(" ");
+  const highlights = list
+    .filter((_, i) => i % 2 === 0)
+    .map(
+      ([cx, cy, r]) =>
+        `M${n(cx - r * 0.55)} ${n(cy - r * 0.35)} Q${n(cx - r * 0.2)} ${n(cy - r * 0.8)} ${n(cx + r * 0.3)} ${n(cy - r * 0.7)}`,
+    )
+    .join(" ");
+  return (
+    `<path d="${spirals}" stroke="rgba(25,10,5,0.38)" stroke-width="0.8" fill="none" />` +
+    `<path d="${highlights}" stroke="rgba(255,255,255,0.7)" stroke-width="0.9" stroke-linecap="round" fill="none" />`
+  );
+}
+
+/**
+ * Curls merged into one fluffy silhouette with the base shape: every
+ * outline is drawn first and every fill on top, so only the outer edge is
+ * inked instead of each curl reading as a separate bubble. Mirrored. The
+ * discs share one path per pass to keep the node count low.
+ */
+function curlCloud(list: readonly Curl[], c: string, base = ""): string {
+  const disc = list
+    .map(
+      ([cx, cy, r]) =>
+        `M${n(cx - r)} ${n(cy)} a${n(r)} ${n(r)} 0 1 0 ${n(r * 2)} 0 a${n(r)} ${n(r)} 0 1 0 ${n(-r * 2)} 0 Z`,
+    )
+    .join(" ");
+  const pass = (stroke: string) =>
+    (base ? `<path d="${base}" fill="${c}" ${stroke} />` : "") +
+    `<path class="curl-discs" d="${disc}" fill="${c}" ${stroke} />` +
+    `<path class="curl-discs" d="${disc}" ${MIRROR} fill="${c}" ${stroke} />`;
+  const details = curlDetails(list);
+  return (
+    pass(`stroke="${INK}" stroke-width="2.2"`) +
+    pass(`stroke="none"`) +
+    details +
+    `<g ${MIRROR}>${details}</g>`
+  );
+}
+
+/** Springy ringlets: columns of small curls wobbling down from `y0` to `y1`. */
+function ringlets(
+  columns: readonly (readonly [number, number, number])[],
+  r: number,
+): Curl[] {
+  return columns.flatMap(([x, y0, y1]) =>
+    Array.from(
+      { length: Math.floor((y1 - y0) / (r * 1.2)) + 1 },
+      (_, i) => [x + (i % 2 ? 1.1 : -1.1), y0 + i * r * 1.2, r] as const,
+    ),
+  );
 }
 
 /** Vertical zigzag polyline used for crimped texture. */
@@ -156,7 +204,13 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M78 8 C88 16 90 30 90 44 C90 58 94 70 91 84",
             "M74 14 C80 26 80 40 84 54 C87 64 89 74 88 86",
           ]) +
-          `<path d="M84 18 C88 30 88 44 92 58" stroke="rgba(255,255,255,0.35)" stroke-width="1.4" stroke-linecap="round" fill="none" />`,
+          glints(
+            [
+              "M83 12 C88 22 89 36 90.4 48 C91.4 58 93.4 66 92.6 76",
+              "M77 20 C80 30 80.6 40 83 52",
+            ],
+            false,
+          ),
         front:
           `<path d="${cap}" fill="${c}" />` +
           strands([
@@ -292,7 +346,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M34 21 C42 11.6 78 11.6 86 21 C78 16.6 42 16.6 34 23.4 Z",
             "M41 16.4 Q60 9.6 79 16.4",
           ) +
-          `<path d="M30.6 46 C30.4 52 31.4 57 33 61" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" stroke-linecap="round" fill="none" />`,
+          glints(["M30.6 44 C30.4 51 31.4 57 33 61"]),
       };
     }
     case "space_buns": {
@@ -336,7 +390,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
     }
     case "sleek_straight": {
       const mass =
-        "M60 7 C82 7 93 22 92.4 40 C92 60 93 84 92.6 106 C78 109.4 42 109.4 27.4 106 C27 84 28 60 27.6 40 C27 22 38 7 60 7 Z";
+        "M60 6 C83 6 94.6 21 93.8 40 C93.4 60 95 84 93.6 100 C92.6 106 88 110 82 110.6 Q71 108.4 60 110.6 Q49 108.4 38 110.6 C32 110 27.4 106 26.4 100 C25 84 26.6 60 26.2 40 C25.4 21 37 6 60 6 Z";
       const panel =
         "M34.2 40 C32.6 54 33 70 33.8 86 C34.2 93 34.6 99 35 103.4 C32.4 104.4 29.8 104.4 27.8 103.6 C27.4 92 27.4 78 27.8 62 C28.2 50 29.4 42 31.4 37 Z";
       return {
@@ -349,7 +403,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M46 72 L45.8 107.6",
             "M74 72 L74.2 107.6",
           ]) +
-          `<path d="M89 46 L89.4 100" stroke="rgba(255,255,255,0.3)" stroke-width="1.6" stroke-linecap="round" />`,
+          glints(["M29.4 56 C28.8 70 29 86 30.4 100"]),
         front:
           `<path d="${MIDDLE_PART_CAP}" fill="${c}" />` +
           `<path d="${panel}" fill="${c}" />` +
@@ -360,9 +414,8 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M31 48 L31.2 100",
             "M89 48 L88.8 100",
           ]) +
-          // Glassy vertical shine down both panels
-          `<path d="M30.4 54 L30.6 92" stroke="rgba(255,255,255,0.45)" stroke-width="1.1" stroke-linecap="round" />` +
-          `<path d="M89.6 54 L89.4 92" stroke="rgba(255,255,255,0.45)" stroke-width="1.1" stroke-linecap="round" />` +
+          // Glassy shine bands down both panels
+          glints(["M30.6 50 C30.2 62 30.4 76 31.4 90"]) +
           shineRibbon(
             p,
             "M36 26 C44 13 76 13 84 26 C76 18.6 44 18.6 36 28 Z",
@@ -391,17 +444,9 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
         [57, 9, 8.2],
       ];
       return {
-        back:
-          `<path d="${mass}" fill="${c}" />` +
-          curls(backCurls, c) +
-          `<g ${MIRROR}>${curls(backCurls, c)}</g>` +
-          shade(mass, 0.18),
+        back: curlCloud(backCurls, c, mass) + shade(mass, 0.18),
         front:
-          `<path d="${SIDE_PART_CAP}" fill="${c}" />` +
-          curls(topCurls, c) +
-          `<g ${MIRROR}>${curls(topCurls, c)}</g>` +
-          curls(sideCurls, c) +
-          `<g ${MIRROR}>${curls(sideCurls, c)}</g>` +
+          curlCloud([...topCurls, ...sideCurls], c, SIDE_PART_CAP) +
           shineRibbon(
             p,
             "M40 22 C47 14 73 14 80 22 C73 18 47 18 40 24 Z",
@@ -462,7 +507,8 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
         back:
           `<path d="${mass}" fill="${c}" />` +
           shade(mass) +
-          strands(["M27 50 C26 62 25 70 21 76", "M93 50 C94 62 95 70 99 76"]),
+          strands(["M27 50 C26 62 25 70 21 76", "M93 50 C94 62 95 70 99 76"]) +
+          glints(["M25.4 50 C25 58 24 66 21.6 72"]),
         front:
           `<path d="${cap}" fill="${c}" />` +
           `<path d="${flip}" fill="${c}" />` +
@@ -479,6 +525,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
           `<ellipse cx="60" cy="12.2" rx="5.2" ry="2.2" fill="#b48be0" />` +
           `<path d="M55.4 12.2 Q57 10.6 58.4 12.2 Q60 10.6 61.6 12.2 Q63 10.6 64.6 12.2" stroke="#e2d0ff" stroke-width="0.7" fill="none" />` +
           `<path d="M37 30 C34 38 37.6 43.6 35 51" stroke="${c}" stroke-width="1.6" stroke-linecap="round" fill="none" />` +
+          glints(["M30.6 50 Q29.8 58 31 66"]) +
           shineRibbon(
             p,
             "M39 24 C47 15.4 73 15.4 81 24 C73 19.6 47 19.6 39 26 Z",
@@ -614,7 +661,8 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M29 58 C28 72 29 84 27.6 93",
             "M91 58 C92 72 91 84 92.4 93",
             "M36 70 L35.4 92",
-          ]),
+          ]) +
+          glints(["M30 54 C29.4 66 29.6 78 30.4 90"]),
         front:
           `<path d="${cap}" fill="${c}" />` +
           `<path d="${leftPanel}" fill="${c}" />` +
@@ -626,6 +674,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M31.6 50 C31 62 31.4 74 32 86",
           ]) +
           `<path d="M42.6 17 L41.2 11" stroke="rgba(25,10,5,0.3)" stroke-width="0.7" />` +
+          glints(["M30.8 52 C30.2 62 30.4 74 31.4 84"], false) +
           shineRibbon(
             p,
             "M46 18 C56 12 74 13 84 22 C74 17.4 58 17 48 21.4 Z",
@@ -665,7 +714,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
     }
     case "mermaid_waves": {
       const mass =
-        "M60 6 C83 6 95 22 94 42 C93 56 98 66 95.6 80 C93.6 92 99 104 96 118 C93.6 128 98 134 94 140 C88 144 82 141 79 137 C75 141 68 141 66 137 L54 137 C52 141 45 141 41 137 C38 141 32 144 26 140 C22 134 26.4 128 24 118 C21 104 26.4 92 24.4 80 C22 66 27 56 26 42 C25 22 37 6 60 6 Z";
+        "M60 6 C83 6 95 22 94 42 C97 50 101 56 99 64 C97 72 92 76 95 84 C98 92 102 98 99 106 C96 114 92 118 95 126 C97 132 96 136 93 140 Q87 145 81 139 Q75 145 68 138 L52 138 Q45 145 39 139 Q33 145 27 140 C24 136 23 132 25 126 C28 118 24 114 21 106 C18 98 22 92 25 84 C28 76 23 72 21 64 C19 56 23 50 26 42 C25 22 37 6 60 6 Z";
       const wave =
         "M34.4 40 C32 50 35.8 57 33.4 66 C31.2 74 35.2 80 32.6 89 C30.4 97 34 102 31.4 110 C30 114 26.4 114.6 24.6 112 C27.4 106 24.4 100 26.4 92 C28.4 84 25 78 27 70 C29 62 25.4 54 27.8 45 C28.6 42 30.4 39 31.2 37.6 Z";
       const sparkles =
@@ -683,6 +732,11 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M92 60 C95 74 90 86 93 100 C95 112 91 124 93 136",
             "M34 80 C31 92 35 104 33 118 C32 126 34 132 33 137",
             "M86 80 C89 92 85 104 87 118 C88 126 86 132 87 137",
+          ]) +
+          glints([
+            "M22.4 60 Q21 64 22.6 69",
+            "M22.2 100 Q20.8 104 22.6 109",
+            "M33 74 C31 82 34 90 32 98",
           ]) +
           sparkles,
         front:
@@ -829,32 +883,21 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
     case "spiral_coils": {
       const mass =
         "M60 6 C84 6 97 22 96 44 C95 58 98 70 96 86 C94 98 97 108 94 116 C90 120 84 118 80 114 L40 114 C36 118 30 120 26 116 C23 108 26 98 24 86 C22 70 25 58 24 44 C23 22 36 6 60 6 Z";
-      const coilList: readonly Curl[] = [
-        [32, 54, 5.2],
-        [88, 54, 5.2],
-        [28, 72, 5.6],
-        [92, 72, 5.6],
-        [34, 90, 5.8],
-        [86, 90, 5.8],
-        [30, 108, 5.2],
-        [90, 108, 5.2],
-      ];
       return {
         back:
-          `<path d="${mass}" fill="${c}" />` +
-          shade(mass, 0.22) +
-          curls(coilList, c),
-        front:
-          `<path d="${SIDE_PART_CAP}" fill="${c}" />` +
-          curls(
-            [
-              [34, 42, 4.8],
-              [86, 42, 4.8],
-              [36, 62, 5.0],
-              [84, 62, 5.0],
-            ],
+          curlCloud(
+            ringlets(
+              [
+                [25.8, 48, 112],
+                [32.6, 60, 112],
+              ],
+              3.8,
+            ),
             c,
-          ) +
+            mass,
+          ) + shade(mass, 0.22),
+        front:
+          curlCloud(ringlets([[32.8, 40, 78]], 3.4), c, SIDE_PART_CAP) +
           shineRibbon(
             p,
             "M36 26 C44 13 76 13 84 26 C76 18.6 44 18.6 36 28 Z",
@@ -905,7 +948,8 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M93 50 C94 62 96 70 100 76",
             "M32 56 C31 66 30 72 27 77.4",
             "M88 56 C89 66 90 72 93 77.4",
-          ]),
+          ]) +
+          glints(["M24.6 48 C24.2 56 23.2 64 20.8 71"]),
         front:
           `<path d="${cap}" fill="${c}" />` +
           `<path d="${flipLeft}" fill="${c}" />` +
@@ -1072,9 +1116,9 @@ export function hairDefs(p: string): string {
     `<stop offset="1" stop-color="#ffffff" stop-opacity="0" />` +
     `</linearGradient>` +
     `<linearGradient id="${p}-mermaid" x1="0" y1="0" x2="1" y2="1">` +
-    `<stop offset="0" stop-color="#ff9ad5" stop-opacity="0.28" />` +
-    `<stop offset="0.5" stop-color="#7fe9ff" stop-opacity="0.22" />` +
-    `<stop offset="1" stop-color="#b48be0" stop-opacity="0.3" />` +
+    `<stop offset="0" stop-color="#ff9ad5" stop-opacity="0.2" />` +
+    `<stop offset="0.5" stop-color="#7fe9ff" stop-opacity="0.14" />` +
+    `<stop offset="1" stop-color="#b48be0" stop-opacity="0.22" />` +
     `</linearGradient>`
   );
 }

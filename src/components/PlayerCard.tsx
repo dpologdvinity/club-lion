@@ -46,7 +46,7 @@ export function PlayerCard({
     <Dialog title="Player ID Card" onClose={onClose}>
       <div className="player-card">
         <div className="player-card-avatar">
-          <Avatar look={player.look} size={140} />
+          <Avatar look={player.look} size={168} framing="portrait" />
           <p className="player-card-name">{player.name}</p>
         </div>
 

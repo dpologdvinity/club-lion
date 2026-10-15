@@ -183,3 +183,18 @@ test("legs and footwear share the long-leg rig so platforms land on the ground",
   const [, , , scaleY] = shoeRig.slice(7, -1).split(" ").map(Number);
   assert.ok(6.6 * scaleY > 8.5);
 });
+
+test("moon-boot fluff merges into the shaft outline instead of stitching", () => {
+  const boots = renderLayer4Footwear({
+    ...DEFAULT_AVATAR_LOOK,
+    shoesId: "moon_boots",
+  });
+  const tufts = (stroke: string) =>
+    boots.match(
+      new RegExp(`<circle[^>]*fill="#fff5fb" stroke="${stroke}"`, "g"),
+    ) ?? [];
+  const inkedTufts = tufts("#2a1610");
+  const plainTufts = tufts("none");
+  assert.ok(inkedTufts.length >= 12);
+  assert.equal(plainTufts.length, inkedTufts.length);
+});

@@ -61,8 +61,13 @@ export function ClosetModal({
       wide
     >
       <div className="salon closet">
-        <div className="salon-preview" aria-hidden="true">
-          <Avatar look={{ ...player.look, ...outfit }} size={132} />
+        <div className="salon-preview closet-preview" aria-hidden="true">
+          <Avatar
+            look={{ ...player.look, ...outfit }}
+            size={160}
+            framing="portrait"
+          />
+          <Avatar look={{ ...player.look, ...outfit }} size={84} />
         </div>
         <div className="salon-controls">
           <div

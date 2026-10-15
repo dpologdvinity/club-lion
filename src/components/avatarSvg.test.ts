@@ -4,6 +4,7 @@ import {
   generateAvatarSvgString,
   SKIN_TONE_COLORS,
   ANCHORS,
+  PORTRAIT_VIEWBOX,
 } from "./avatarSvg.ts";
 import {
   DEFAULT_AVATAR_LOOK,
@@ -413,4 +414,31 @@ test("renders all bangs options distinctly", () => {
       assert.ok(svg.includes(cls), `Should include ${cls}`);
     }
   }
+});
+
+test("headwear and eyewear wear the doll ink outline", () => {
+  for (const headwearId of [
+    "explorer_fedora",
+    "retro_neon_visor",
+    "golden_mane_wreath",
+    "mystery_hat",
+  ]) {
+    const svg = generateAvatarSvgString({ ...DEFAULT_AVATAR_LOOK, headwearId });
+    const hat = svg.slice(svg.indexOf("avatar-headwear"));
+    assert.ok(hat.includes('stroke="#2a1610"'), headwearId);
+  }
+  for (const eyewearId of ["sunshine_shades", "mystery_specs"]) {
+    const svg = generateAvatarSvgString({ ...DEFAULT_AVATAR_LOOK, eyewearId });
+    const frames = svg.slice(svg.indexOf("avatar-eyewear"));
+    assert.ok(frames.includes('stroke="#2a1610"'), eyewearId);
+  }
+});
+
+test("portrait crop is a square around the head and shoulders", () => {
+  const [x, y, w, h] = PORTRAIT_VIEWBOX.split(" ").map(Number);
+  assert.equal(w, h);
+  const head = ANCHORS.HeadCenter;
+  assert.ok(x < head.x - 40 && x + w > head.x + 40, "hair fits across");
+  assert.ok(y < 0 && y + h > ANCHORS.Neck.y + 20, "crown to shoulders");
+  assert.ok(y + h < ANCHORS.Waist.y + 10, "stops above the legs");
 });

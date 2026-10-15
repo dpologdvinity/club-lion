@@ -7,6 +7,7 @@ import {
   RIGHT_ARM_WAVE,
   LEFT_ARM_HIP,
   armMarkup,
+  inked,
   n,
   resolveSkinTone,
   rig,
@@ -25,7 +26,12 @@ import {
   sleeveSpecFor,
 } from "./avatar/clothes.ts";
 
-export { SKIN_TONE_COLORS, ANCHORS, resolveSkinTone } from "./avatar/shared.ts";
+export {
+  SKIN_TONE_COLORS,
+  ANCHORS,
+  PORTRAIT_VIEWBOX,
+  resolveSkinTone,
+} from "./avatar/shared.ts";
 
 /* -------------------------------------------------------------
  * Shared gradients & clip paths (IDs are prefixed per avatar)
@@ -192,26 +198,38 @@ function renderRaisedArm(look: AvatarLook, action: string): string {
  * ------------------------------------------------------------- */
 function renderLayer7HeadwearAndEyewear(look: AvatarLook): string {
   const parts: string[] = [];
+  const ink = (width: number) =>
+    `stroke="${INK}" stroke-width="${width}" stroke-linejoin="round"`;
 
-  // Eyewear (eyes centered at 48 / 72, y 45)
+  // Eyewear frames the almond eyes (centered near 47 / 73, y 45)
   if (look.eyewearId) {
     if (look.eyewearId === "sunshine_shades") {
+      const lens =
+        "M35.8 39 C40.6 36.2 52.2 36.4 56.8 39.8 C57.2 46.4 54 52.2 47.4 52.4 C40.2 52.4 36 47 35.8 39 Z";
+      const glare =
+        `<path d="M39.4 41.4 L45.2 39.6 M41 46.6 L50.4 39.8" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" opacity="0.8" />` +
+        `<circle cx="52.6" cy="47.6" r="0.7" fill="#ffffff" opacity="0.85" />`;
       parts.push(
         `<g class="avatar-eyewear eyewear-sunshine-shades">` +
-          // Oversized Y2K tinted shades with gold rims
-          `<path d="M35.6 38.6 C40 36.8 52 37 56.4 39.4 C56.6 45 54 51.6 47.4 51.6 C40.6 51.6 36 46.6 35.6 38.6 Z" fill="rgba(255, 95, 162, 0.72)" stroke="#f4c542" stroke-width="0.8" />` +
-          `<path d="M84.4 38.6 C80 36.8 68 37 63.6 39.4 C63.4 45 66 51.6 72.6 51.6 C79.4 51.6 84 46.6 84.4 38.6 Z" fill="rgba(255, 95, 162, 0.72)" stroke="#f4c542" stroke-width="0.8" />` +
-          `<path d="M56.4 40.6 Q60 38.6 63.6 40.6" stroke="#f4c542" stroke-width="1" fill="none" />` +
-          `<path d="M38.6 41 L44.4 39.8 M66 41.4 L70.8 40" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" opacity="0.75" />` +
-          `<path d="M40 46 L48 40.2" stroke="#ffffff" stroke-width="0.6" stroke-linecap="round" opacity="0.5" />` +
+          // Oversized Y2K shield shades: tinted lenses in a gold rim and ink line
+          `<path d="${lens}" fill="rgba(255, 79, 160, 0.62)" ${ink(1.2)} />` +
+          `<path d="${lens}" ${MIRROR} fill="rgba(255, 79, 160, 0.62)" ${ink(1.2)} />` +
+          `<path d="${lens}" fill="none" stroke="#f4c542" stroke-width="0.5" />` +
+          `<path d="${lens}" ${MIRROR} fill="none" stroke="#f4c542" stroke-width="0.5" />` +
+          `<path d="M56.6 40.6 Q60 38.4 63.4 40.6" stroke="${INK}" stroke-width="2" fill="none" />` +
+          `<path d="M56.6 40.6 Q60 38.4 63.4 40.6" stroke="#f4c542" stroke-width="0.9" fill="none" />` +
+          glare +
+          `<g ${MIRROR}>${glare}</g>` +
           `</g>`,
       );
     } else {
+      const rim = `<circle cx="47" cy="45" r="7.6" fill="rgba(255,255,255,0.12)" ${ink(1.3)} />`;
       parts.push(
         `<g class="avatar-eyewear eyewear-generic">` +
-          `<circle cx="48" cy="45" r="7.4" stroke="#2c3e50" stroke-width="1.2" fill="rgba(255,255,255,0.08)" />` +
-          `<circle cx="72" cy="45" r="7.4" stroke="#2c3e50" stroke-width="1.2" fill="rgba(255,255,255,0.08)" />` +
-          `<line x1="55.4" y1="44" x2="64.6" y2="44" stroke="#2c3e50" stroke-width="1.2" />` +
+          rim +
+          `<g ${MIRROR}>${rim}</g>` +
+          `<path d="M54.6 43.6 Q60 41.4 65.4 43.6" stroke="${INK}" stroke-width="1.3" fill="none" />` +
+          `<path d="M42.4 41 Q44.6 39 47.4 39.2 M72.6 39.2 Q75.4 39 77.6 41" stroke="#ffffff" stroke-width="0.9" stroke-linecap="round" opacity="0.75" fill="none" />` +
           `</g>`,
       );
     }
@@ -222,41 +240,54 @@ function renderLayer7HeadwearAndEyewear(look: AvatarLook): string {
     if (look.headwearId === "explorer_fedora") {
       parts.push(
         `<g class="avatar-headwear headwear-explorer-fedora">` +
-          `<ellipse cx="60" cy="17" rx="38" ry="6.4" fill="#c56a2c" />` +
-          `<path d="M39 16 C41 0 50 -2 60 -2 C70 -2 79 0 81 16 Z" fill="#e08a46" />` +
-          `<path d="M39.6 14 Q60 17.4 80.4 14" stroke="#5a2f12" stroke-width="3" fill="none" />` +
-          `<circle cx="47" cy="14.6" r="1.8" fill="#f4c542" />` +
+          `<path d="M22 18.6 C22 12.6 98 12.6 98 18.6 C98 23.4 22 23.4 22 18.6 Z" fill="#c56a2c" ${ink(1.3)} />` +
+          `<path d="M39 17 C40 1 50 -2.4 60 -2.4 C70 -2.4 80 1 81 17 C70 19.4 50 19.4 39 17 Z" fill="#e08a46" ${ink(1.3)} />` +
+          // Pinched crown crease and a glossy highlight
+          `<path d="M54 -1.6 Q60 3 66 -1.6" stroke="rgba(90,40,10,0.45)" stroke-width="1" fill="none" />` +
+          `<path d="M44.4 12 C44.6 6 47 2 51 0.4" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" opacity="0.6" fill="none" />` +
+          `<path d="M39.6 13.6 Q60 17 80.4 13.6 L80.8 17 Q60 20.4 39.2 17 Z" fill="#5a2f12" />` +
+          `<rect x="45.4" y="13.2" width="3.6" height="3.6" rx="0.8" fill="#f4c542" ${ink(0.6)} />` +
           `</g>`,
       );
     } else if (look.headwearId === "retro_neon_visor") {
       parts.push(
         `<g class="avatar-headwear headwear-retro-neon-visor">` +
-          `<path d="M30 25 Q60 30 90 25 L86 19.6 Q60 24.4 34 19.6 Z" fill="#ff007f" />` +
-          `<path d="M26 26 Q60 33 94 26 L88 31 Q60 39 32 31 Z" fill="rgba(0, 240, 255, 0.75)" stroke="#00f0ff" stroke-width="1" />` +
+          `<path d="M30 25 Q60 30 90 25 L86 19.6 Q60 24.4 34 19.6 Z" fill="#ff007f" ${ink(1.1)} />` +
+          `<path d="M26 26 Q60 33 94 26 L88 31.4 Q60 39 32 31.4 Z" fill="rgba(0, 240, 255, 0.7)" ${ink(1.1)} />` +
+          `<path d="M34 29.4 Q48 33 58 33.6" stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity="0.8" fill="none" />` +
+          `<circle cx="87.6" cy="22.6" r="1.4" fill="#ffffff" ${ink(0.5)} />` +
           `</g>`,
       );
     } else if (look.headwearId === "golden_mane_wreath") {
+      // Golden tiara: a curved band with leaf points and a center gem
+      const leaf = (x: number, y: number, angle: number) =>
+        `<ellipse cx="${x}" cy="${y}" rx="1.7" ry="3.2" fill="#f4c542" transform="rotate(${angle} ${x} ${y})" />`;
       parts.push(
         `<g class="avatar-headwear headwear-golden-mane-wreath">` +
-          `<path d="M30 22 Q60 12 90 22" stroke="#f39c12" stroke-width="2" fill="none" />` +
-          `<circle cx="38" cy="18.6" r="2.6" fill="#f1c40f" />` +
-          `<circle cx="48.4" cy="15.4" r="2.6" fill="#f1c40f" />` +
-          `<circle cx="60" cy="14" r="3.1" fill="#f1c40f" />` +
-          `<circle cx="71.6" cy="15.4" r="2.6" fill="#f1c40f" />` +
-          `<circle cx="82" cy="18.6" r="2.6" fill="#f1c40f" />` +
+          `<path d="M31 23.4 Q60 11.4 89 23.4 L88 26 Q60 14.6 32 26 Z" fill="#f39c12" />` +
+          leaf(38, 16.6, -40) +
+          leaf(47.4, 12.4, -20) +
+          leaf(72.6, 12.4, 20) +
+          leaf(82, 16.6, 40) +
+          `<path d="M60 3.6 L64 11.6 L60 15.6 L56 11.6 Z" fill="#f4c542" />` +
+          `<circle cx="60" cy="11.4" r="2.4" fill="#ff4f94" />` +
+          `<circle cx="59.2" cy="10.6" r="0.8" fill="#ffffff" />` +
+          `<path d="M36 21.4 Q48 16.4 56 15.4" stroke="#fff4b8" stroke-width="0.8" stroke-linecap="round" fill="none" />` +
           `</g>`,
       );
     } else {
       parts.push(
         `<g class="avatar-headwear headwear-generic">` +
-          `<ellipse cx="60" cy="15" rx="34" ry="7" fill="#e74c3c" />` +
+          `<path d="M24 16.4 C24 10.4 96 10.4 96 16.4 C96 21 24 21 24 16.4 Z" fill="#e74c3c" />` +
           `<path d="M38 14 C42 2 50 0 60 0 C70 0 78 2 82 14 Z" fill="#c0392b" />` +
+          `<path d="M45 10 C46.4 5 50 2.6 54 2" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" opacity="0.55" fill="none" />` +
           `</g>`,
       );
     }
   }
 
-  return parts.join("\n");
+  // Unstroked solid shapes get the doll's ink outline too
+  return inked(parts.join("\n"), 1.1);
 }
 
 /* -------------------------------------------------------------

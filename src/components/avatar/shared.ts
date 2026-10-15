@@ -31,6 +31,9 @@ export const ANCHORS = {
   Feet: { x: 60, y: 146 },
 } as const;
 
+/** Head-and-shoulders crop of the canvas for close-up previews. */
+export const PORTRAIT_VIEWBOX = "10 -12 100 100";
+
 /**
  * Head, torso, and leg art is drawn on a shared 120×160 layout grid and
  * placed onto the doll proportions by these transforms: the head shrinks

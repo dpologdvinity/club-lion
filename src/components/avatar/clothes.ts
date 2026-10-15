@@ -12,6 +12,7 @@ import {
   LEFT_ARM_HIP,
   MIRROR,
   RIGHT_ARM_DOWN,
+  INK,
   handMarkup,
   inked,
   n,
@@ -51,7 +52,7 @@ function platformSole(color: string, stripe?: string, height = 6.6): string {
     )
     .join("");
   return (
-    `<rect x="46.4" y="139" width="15.2" height="${height}" rx="2.2" fill="${color}" stroke="rgba(60,30,50,0.22)" stroke-width="0.4" />` +
+    `<rect x="46.4" y="139" width="15.2" height="${height}" rx="2.2" fill="${color}" />` +
     `<path d="M47.2 140.2 L60.8 140.2" stroke="rgba(255,255,255,0.4)" stroke-width="0.6" stroke-linecap="round" />` +
     (stripe
       ? `<rect x="46.6" y="${n(139 + height * 0.42)}" width="14.8" height="1.2" fill="${stripe}" />`
@@ -62,7 +63,7 @@ function platformSole(color: string, stripe?: string, height = 6.6): string {
 
 const SHOE_ART: Record<ShoeId, (skin: string) => string> = {
   canvas_sneakers: () =>
-    `<path d="M48.4 132 C48.4 128.6 51 127.2 54 127.2 C57 127.2 59.6 128.6 59.6 132 L60 139.4 L48 139.4 Z" fill="#fff6fb" stroke="rgba(80,40,60,0.2)" stroke-width="0.5" />` +
+    `<path d="M48.4 132 C48.4 128.6 51 127.2 54 127.2 C57 127.2 59.6 128.6 59.6 132 L60 139.4 L48 139.4 Z" fill="#fff6fb" />` +
     `<path d="M48.2 135.2 C50.4 133.2 57.6 133.2 59.8 135.2 L60 139.4 L48 139.4 Z" fill="#ff5fa2" />` +
     `<path d="M51.4 129.6 L56.6 129.6 M51.2 131.4 L56.8 131.4" stroke="#ff5fa2" stroke-width="0.6" stroke-linecap="round" />` +
     platformSole("#ffffff", "#ff9fcb"),
@@ -84,7 +85,7 @@ const SHOE_ART: Record<ShoeId, (skin: string) => string> = {
     platformSole("#16121a", "#ff5fa2"),
   skate_shoes: () =>
     `<path d="M51.6 127.4 Q54 124 56.4 127.4 Z" fill="#3a3f4a" />` +
-    `<path d="M47.6 133 C47 128.6 50.4 126.8 54 126.8 C57.6 126.8 61 128.6 60.4 133 L60.8 139.6 L47.2 139.6 Z" fill="#c9ced8" stroke="rgba(30,30,40,0.3)" stroke-width="0.5" />` +
+    `<path d="M47.6 133 C47 128.6 50.4 126.8 54 126.8 C57.6 126.8 61 128.6 60.4 133 L60.8 139.6 L47.2 139.6 Z" fill="#c9ced8" />` +
     `<path d="M47.4 135.4 C50 133.6 58 133.6 60.6 135.4 L60.8 139.6 L47.2 139.6 Z" fill="#3a3f4a" />` +
     `<path d="M48.6 133.6 Q53 131 58.4 134.4" stroke="#4aa3ff" stroke-width="1.2" stroke-linecap="round" fill="none" />` +
     `<path d="M51.6 129 L56.4 129 M51.4 130.8 L56.6 130.8" stroke="#ffffff" stroke-width="0.7" stroke-linecap="round" />` +
@@ -103,26 +104,37 @@ const SHOE_ART: Record<ShoeId, (skin: string) => string> = {
     `<rect x="47" y="138.8" width="14" height="6.8" rx="1.8" fill="#9b6fff" />` +
     `<path d="M48 140.2 L60 140.2" stroke="rgba(255,255,255,0.55)" stroke-width="0.7" stroke-linecap="round" />`,
   moon_boots: () => {
-    const fluff = [117, 121, 125, 129, 133, 137]
-      .map(
-        (y, i) =>
-          `<circle cx="${n(47.8 - i * 0.12)}" cy="${y}" r="1.2" fill="#fff5fb" stroke="none" />` +
-          `<circle cx="${n(59.8 + i * 0.12)}" cy="${y}" r="1.2" fill="#fff5fb" stroke="none" />`,
-      )
-      .join("");
-    return (
-      `<path d="M48 117 L59.6 117 C60 124 60.4 132 60.6 139.6 L47 139.6 C47.2 132 47.6 124 48 117 Z" fill="#fff5fb" />` +
-      fluff +
-      `<path d="M50 121 Q51 128 50.4 136 M54 120 Q55 128 54.4 137 M58 121 Q58.6 128 58.2 136" stroke="rgba(220,150,190,0.35)" stroke-width="0.7" fill="none" />` +
+    // Fuzzy edges merge with the shaft: all outlines first, then all fills,
+    // so only the outer silhouette is inked instead of each tuft.
+    const ink = `stroke="${INK}" stroke-width="1.6"`;
+    const shaft = (stroke: string) =>
+      `<path d="M48 117 L59.6 117 C60 124 60.4 132 60.6 139.6 L47 139.6 C47.2 132 47.6 124 48 117 Z" fill="#fff5fb" ${stroke} />` +
+      [118, 121.4, 124.8, 128.2, 131.6, 135]
+        .map(
+          (y, i) =>
+            `<circle cx="${n(47.9 - i * 0.12)}" cy="${y}" r="1.6" fill="#fff5fb" ${stroke} />` +
+            `<circle cx="${n(59.7 + i * 0.12)}" cy="${y}" r="1.6" fill="#fff5fb" ${stroke} />`,
+        )
+        .join("");
+    const cuff = (stroke: string) =>
       [48, 50.3, 52.6, 54.9, 57.2, 59.5]
-        .map((x) => `<circle cx="${x}" cy="117" r="1.7" fill="#ffc4e1" />`)
-        .join("") +
+        .map(
+          (x) =>
+            `<circle cx="${x}" cy="117" r="1.9" fill="#ffc4e1" ${stroke} />`,
+        )
+        .join("");
+    return (
+      shaft(ink) +
+      shaft(`stroke="none"`) +
+      `<path d="M50 121 Q51 128 50.4 136 M54 120 Q55 128 54.4 137 M58 121 Q58.6 128 58.2 136" stroke="rgba(220,150,190,0.35)" stroke-width="0.7" fill="none" />` +
+      cuff(ink) +
+      cuff(`stroke="none"`) +
       `<circle cx="48.6" cy="114.8" r="1.6" fill="#ff8fc2" />` +
       platformSole("#e9e4ef", "#ffc4e1", 6)
     );
   },
   knee_boots: () =>
-    `<path d="M50.4 110 L58 110 C58.2 118 58.8 125 59.8 131 L60.2 139.6 L47.8 139.6 L48.2 131 C49.6 124 50.2 118 50.4 110 Z" fill="#fbfbfd" stroke="rgba(40,30,60,0.18)" stroke-width="0.5" />` +
+    `<path d="M50.4 110 L58 110 C58.2 118 58.8 125 59.8 131 L60.2 139.6 L47.8 139.6 L48.2 131 C49.6 124 50.2 118 50.4 110 Z" fill="#fbfbfd" />` +
     `<path d="M51.8 112.4 C51.8 120 51.4 127 50.4 134" stroke="#d9dbe6" stroke-width="1.6" stroke-linecap="round" fill="none" />` +
     `<path d="M52.4 113 C52.4 119 52 125 51.2 131" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" fill="none" />` +
     `<rect x="50.2" y="110" width="8" height="1.6" rx="0.8" fill="#d9dbe6" />` +
