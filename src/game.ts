@@ -28,6 +28,15 @@ import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
 import { MAX_SMOOTHIE_COINS } from "./utils/smoothieRecipes.ts";
 import { BUBBLE_POP_MAX_SCORE, bubblePopCoins } from "./utils/bubblePop.ts";
 import {
+  ANIMAL_BAND_COINS,
+  ANIMAL_BAND_MAX_PAID_SONGS,
+  SONG_MAX_TAPS,
+} from "./utils/animalBand.ts";
+import {
+  SHAPE_SORTER_COINS_PER_ROUND,
+  SHAPE_SORTER_ROUNDS,
+} from "./utils/shapeSorter.ts";
+import {
   restoreColoringBook,
   saveColoringPage,
   type ColoringBookSave,
@@ -153,6 +162,10 @@ export type PlayerBase = {
   kartMode?: KartMode;
   bubblePopBest?: number;
   coloringBook?: ColoringBookSave;
+  /** Animal Orchestra songs that have paid out. */
+  animalBandSongs?: number;
+  /** Shape Sorter rounds finished. */
+  shapeSorterRounds?: number;
 };
 
 export type Player = PlayerBase & {
@@ -572,6 +585,14 @@ export function restorePlayer(raw: string | null): Player {
         const coloringBook = restoreColoringBook(p.coloringBook);
         return coloringBook ? { coloringBook } : {};
       })(),
+      ...(Number.isSafeInteger(p.animalBandSongs) &&
+      p.animalBandSongs >= 0 &&
+      p.animalBandSongs <= ANIMAL_BAND_MAX_PAID_SONGS
+        ? { animalBandSongs: p.animalBandSongs }
+        : {}),
+      ...(Number.isSafeInteger(p.shapeSorterRounds) && p.shapeSorterRounds >= 0
+        ? { shapeSorterRounds: p.shapeSorterRounds }
+        : {}),
       ...(p.mangoRunBest === undefined
         ? {}
         : Number.isSafeInteger(p.mangoRunBest) && p.mangoRunBest >= 0
@@ -1064,6 +1085,53 @@ export function completeBubblePop<T extends PlayerBase>(
     gamesPlayed: player.gamesPlayed + 1,
     bubblePopBest: Math.max(player.bubblePopBest ?? 0, score),
   };
+}
+
+/** Pays a recorded Animal Orchestra song once, up to a cap; the first song earns a stamp. */
+export function completeAnimalBand<T extends PlayerBase>(
+  player: T,
+  taps: number,
+): T {
+  const songs = player.animalBandSongs ?? 0;
+  if (
+    !Number.isSafeInteger(taps) ||
+    taps < 1 ||
+    taps > SONG_MAX_TAPS ||
+    songs >= ANIMAL_BAND_MAX_PAID_SONGS
+  )
+    return player;
+  return unlockStamp(
+    {
+      ...player,
+      coins: player.coins + ANIMAL_BAND_COINS,
+      gamesPlayed: player.gamesPlayed + 1,
+      animalBandSongs: songs + 1,
+    },
+    "animal_band_maestro",
+  );
+}
+
+/** Pays a finished Shape Sorter round once; the last round also earns its stamp. */
+export function completeShapeSorterRound<T extends PlayerBase>(
+  player: T,
+  round: number,
+): T {
+  if (
+    !Number.isSafeInteger(round) ||
+    round < 1 ||
+    round > SHAPE_SORTER_ROUNDS ||
+    !Number.isSafeInteger(player.coins + SHAPE_SORTER_COINS_PER_ROUND)
+  )
+    return player;
+  const paid = {
+    ...player,
+    coins: player.coins + SHAPE_SORTER_COINS_PER_ROUND,
+    gamesPlayed: player.gamesPlayed + 1,
+    shapeSorterRounds: (player.shapeSorterRounds ?? 0) + 1,
+  };
+  return round === SHAPE_SORTER_ROUNDS
+    ? unlockStamp(paid, "shape_sorter_star")
+    : paid;
 }
 
 /** Saves a coloring page; finishing one unlocks its stamp through evaluateStampUnlocks. */

@@ -15,6 +15,8 @@ import { ColoringBook } from "./ColoringBook";
 import type { PageFills } from "../utils/coloringBook.ts";
 import { MangoBakery } from "./MangoBakery";
 import { HideAndSeekSafari } from "./HideAndSeekSafari";
+import { AnimalBand } from "./AnimalBand";
+import { ShapeSorter } from "./ShapeSorter";
 import { PAW_STEPS_COINS_PER_ROUND } from "../game";
 import type { PlayerV2 } from "../game.ts";
 
@@ -33,7 +35,9 @@ export type GameId =
   | "bubble-pop"
   | "coloring-book"
   | "bakery"
-  | "seek";
+  | "seek"
+  | "animal-band"
+  | "shape-sorter";
 
 export function GamesPanel({
   player,
@@ -53,6 +57,8 @@ export function GamesPanel({
   onColorPage,
   onServeCake,
   onCompleteSeek,
+  onCompleteAnimalBand,
+  onCompleteShapeSorter,
   onClose,
 }: {
   player: PlayerV2;
@@ -81,6 +87,8 @@ export function GamesPanel({
   onColorPage?: (pageId: string, fills: PageFills, finish: boolean) => void;
   onServeCake?: ComponentProps<typeof MangoBakery>["onServe"];
   onCompleteSeek?: ComponentProps<typeof HideAndSeekSafari>["onComplete"];
+  onCompleteAnimalBand?: (taps: number) => void;
+  onCompleteShapeSorter?: (round: number) => void;
   onClose: () => void;
 }) {
   const [picked, setPicked] = useState<GameId | null>(initialGame);
@@ -125,7 +133,9 @@ export function GamesPanel({
           picked === "bubble-pop" ||
           picked === "coloring-book" ||
           picked === "bakery" ||
-          picked === "seek") && (
+          picked === "seek" ||
+          picked === "animal-band" ||
+          picked === "shape-sorter") && (
           <button className="game-back" onClick={backToMenu}>
             <ArrowLeft size={14} /> All games
           </button>
@@ -196,6 +206,14 @@ export function GamesPanel({
           <HideAndSeekSafari
             bestMs={player.seekBestMs}
             onComplete={onCompleteSeek ?? (() => {})}
+          />
+        )}
+        {picked === "animal-band" && (
+          <AnimalBand onFinish={(taps) => onCompleteAnimalBand?.(taps)} />
+        )}
+        {picked === "shape-sorter" && (
+          <ShapeSorter
+            onRoundDone={(round) => onCompleteShapeSorter?.(round)}
           />
         )}
         {picked === "memory" && (
@@ -276,6 +294,22 @@ export function GamesPanel({
             best: player.seekRounds ?? 0,
           },
           {
+            id: "animal-band",
+            name: "Animal Orchestra",
+            art: "🦁 🦓 🦒",
+            description: "Tap an animal to play its sound. Record a tiny song.",
+            reward: "Earn 4 coins the first time you play a song back",
+            best: player.animalBandSongs ?? 0,
+          },
+          {
+            id: "shape-sorter",
+            name: "Shape Sorter Safari",
+            art: "🔺 ⭕ 🟦",
+            description: "Drop each shape into the animal it fits.",
+            reward: "Earn 5 coins a round and a star stamp",
+            best: player.shapeSorterRounds ?? 0,
+          },
+          {
             id: "dj-beat-drop",
             name: "DJ Beat Drop",
             art: "🎧 🎵 🦁",
@@ -347,7 +381,11 @@ export function GamesPanel({
                   ? `Orders served ${game.best}`
                   : game.id === "seek"
                     ? `Rounds found ${game.best}`
-                    : `Best ${game.best}`}
+                    : game.id === "animal-band"
+                      ? `Songs played ${game.best}`
+                      : game.id === "shape-sorter"
+                        ? `Rounds sorted ${game.best}`
+                        : `Best ${game.best}`}
               </span>
             )}
           </span>

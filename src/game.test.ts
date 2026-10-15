@@ -18,6 +18,8 @@ import {
   completePawSteps,
   completeFruitCatch,
   completeBubblePop,
+  completeAnimalBand,
+  completeShapeSorterRound,
   colorPage,
   completeDJBeatDrop,
   completeSmoothieOrder,
@@ -34,6 +36,11 @@ import {
 } from "./game.ts";
 import { SPY_PUZZLE_MAX_COINS } from "./utils/spyPuzzles.ts";
 import { BUBBLE_POP_MAX_SCORE } from "./utils/bubblePop.ts";
+import {
+  ANIMAL_BAND_COINS,
+  ANIMAL_BAND_MAX_PAID_SONGS,
+} from "./utils/animalBand.ts";
+import { SHAPE_SORTER_COINS_PER_ROUND } from "./utils/shapeSorter.ts";
 import { MAX_CAKE_PHOTOS, newCake, type Cake } from "./utils/bakery.ts";
 import { DEFAULT_AVATAR_LOOK, DEFAULT_PET_STATE } from "./types/world.ts";
 import { serializeLayout, type PlacedFurniture } from "./utils/condoGrid.ts";
@@ -1504,4 +1511,61 @@ test("kart colour and Fast mode are remembered, validated, and optional", () => 
     assert.equal(bad.kartColor, undefined);
     assert.equal(bad.kartMode, undefined);
   }
+});
+
+test("an Animal Orchestra song pays once per song, stamps the first, and stops at the cap", () => {
+  const first = completeAnimalBand(newPlayer(), 6);
+  assert.equal(first.coins, 250 + ANIMAL_BAND_COINS + 15);
+  assert.equal(first.animalBandSongs, 1);
+  assert.equal(first.gamesPlayed, 1);
+  assert.deepEqual(first.stamps, ["animal_band_maestro"]);
+  const second = completeAnimalBand(first, 10);
+  assert.equal(second.coins, first.coins + ANIMAL_BAND_COINS);
+  assert.equal(second.animalBandSongs, 2);
+  assert.deepEqual(second.stamps, ["animal_band_maestro"]);
+  for (const bad of [0, 11, 2.5, Number.NaN]) {
+    assert.equal(completeAnimalBand(first, bad), first);
+  }
+  const full = {
+    ...first,
+    animalBandSongs: ANIMAL_BAND_MAX_PAID_SONGS,
+  };
+  assert.equal(completeAnimalBand(full, 4), full);
+});
+
+test("a Shape Sorter round pays once and only the last round earns the stamp", () => {
+  const round1 = completeShapeSorterRound(newPlayer(), 1);
+  assert.equal(round1.coins, 250 + SHAPE_SORTER_COINS_PER_ROUND);
+  assert.equal(round1.shapeSorterRounds, 1);
+  assert.equal(round1.stamps?.length ?? 0, 0);
+  const round3 = completeShapeSorterRound(
+    completeShapeSorterRound(round1, 2),
+    3,
+  );
+  assert.equal(round3.shapeSorterRounds, 3);
+  assert.deepEqual(round3.stamps, ["shape_sorter_star"]);
+  for (const bad of [0, 4, 1.5, Number.NaN]) {
+    assert.equal(completeShapeSorterRound(round1, bad), round1);
+  }
+});
+
+test("animal band and shape sorter progress survives a save and bad values are dropped", () => {
+  const played = completeShapeSorterRound(
+    completeAnimalBand(newPlayer(), 3),
+    1,
+  );
+  const restored = restorePlayer(JSON.stringify(played));
+  assert.equal(restored.animalBandSongs, 1);
+  assert.equal(restored.shapeSorterRounds, 1);
+  assert.equal(restored.coins, played.coins);
+  const tampered = restorePlayer(
+    JSON.stringify({
+      ...played,
+      animalBandSongs: ANIMAL_BAND_MAX_PAID_SONGS + 1,
+      shapeSorterRounds: -2,
+    }),
+  );
+  assert.equal(tampered.animalBandSongs, undefined);
+  assert.equal(tampered.shapeSorterRounds, undefined);
+  assert.equal(tampered.coins, played.coins);
 });

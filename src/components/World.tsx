@@ -412,6 +412,8 @@ export function World({
     else if (id === "plaza-bubble-cart") onActivity("bubble-pop");
     else if (id === "plaza-coloring-easel") onActivity("coloring-book");
     else if (id === "beach-seek-lookout") onActivity("seek");
+    else if (id === "pet-animal-band") onActivity("animal-band");
+    else if (id === "plaza-shape-sorter") onActivity("shape-sorter");
     else if (id === "park-map-kiosk") onMap();
     else if (id === "club-pulse-dance-floor") {
       walk(50, 75);
@@ -462,6 +464,8 @@ export function World({
     "plaza-bubble-cart": "Bubble Pop",
     "plaza-coloring-easel": "Coloring Book",
     "beach-seek-lookout": "Hide & Seek Safari",
+    "pet-animal-band": "Animal Orchestra",
+    "plaza-shape-sorter": "Shape Sorter Safari",
     "club-pulse-dj-booth": "DJ Booth · DJ Beat Drop",
     "club-pulse-dance-floor": "Step onto the dance floor",
     "marble-lion-fountain": "Visit the lion fountain",
@@ -509,6 +513,8 @@ export function World({
     "river-surf-dock": "🏄",
     "kart-race-gate": "🏎️",
     "winner-podium": "🏆",
+    "pet-animal-band": "🎶",
+    "plaza-shape-sorter": "🔺",
   };
   const hotspotIcon = (id: string) =>
     hotspotIcons[id] && (

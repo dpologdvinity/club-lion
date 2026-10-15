@@ -374,6 +374,25 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     unlockHint: "Finish a Hide & Seek Safari round in the jungle.",
   },
   {
+    id: "animal_band_maestro",
+    name: "Animal Maestro",
+    category: "arcade_mastery",
+    description: "Recorded a song with the animal band and heard it play back.",
+    icon: "🎶",
+    rewardCoins: 15,
+    unlockHint: "Record a song in the Animal Orchestra and play it through.",
+  },
+  {
+    id: "shape_sorter_star",
+    name: "Shape Star",
+    category: "arcade_mastery",
+    description:
+      "Sorted every shape into the animal holes in all three rounds.",
+    icon: "🔺",
+    rewardCoins: 15,
+    unlockHint: "Finish all three rounds of Shape Sorter Safari.",
+  },
+  {
     id: "server_host",
     name: "Lounge Host",
     title: "Lounge Host",

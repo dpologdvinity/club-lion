@@ -43,6 +43,8 @@ import {
   completePawSteps,
   completeFruitCatch,
   completeBubblePop,
+  completeAnimalBand,
+  completeShapeSorterRound,
   colorPage,
   completeFishingCatch,
   recordFashionShowResult,
@@ -980,6 +982,12 @@ export default function App() {
                 }}
                 onCompleteBubblePop={(score) =>
                   setPlayer((p) => completeBubblePop(p, score))
+                }
+                onCompleteAnimalBand={(taps) =>
+                  setPlayer((p) => completeAnimalBand(p, taps))
+                }
+                onCompleteShapeSorter={(round) =>
+                  setPlayer((p) => completeShapeSorterRound(p, round))
                 }
                 onColorPage={(pageId, fills, finish) =>
                   setPlayer((p) => colorPage(p, pageId, fills, finish))

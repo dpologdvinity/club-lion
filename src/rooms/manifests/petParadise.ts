@@ -34,6 +34,12 @@ export const petParadiseManifest: RoomManifest = {
       position: { x: 1200, y: 400 },
       actionData: {},
     },
+    {
+      id: "pet-animal-band",
+      type: "game_launch",
+      position: { x: 1700, y: 600 },
+      actionData: {},
+    },
   ],
   ambientAudioPreset: "pet-spa-ambient",
 };
