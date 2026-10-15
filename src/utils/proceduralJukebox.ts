@@ -84,7 +84,10 @@ function getAudioContextClass(): typeof AudioContext | undefined {
   );
 }
 
-function whiteNoiseBuffer(ctx: AudioContext, seconds: number): AudioBuffer {
+export function whiteNoiseBuffer(
+  ctx: AudioContext,
+  seconds: number,
+): AudioBuffer {
   const length = Math.max(1, Math.floor(ctx.sampleRate * seconds));
   const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
   const data = buffer.getChannelData(0);

@@ -86,6 +86,7 @@ import { SalonModal } from "./components/SalonModal";
 import { ClosetModal } from "./components/ClosetModal";
 import { FriendsPanel } from "./components/FriendsPanel";
 import { AudioControls } from "./components/AudioControls";
+import { RoomMusic } from "./components/RoomMusic";
 import { LightingControls } from "./components/LightingControls";
 import { JukeboxModal } from "./components/JukeboxModal";
 import { Condo } from "./components/Condo";
@@ -462,6 +463,7 @@ export default function App() {
           </p>
         )}
         <div className="game-layout">
+          <RoomMusic place={place} />
           <World
             key={`${serverSession.activeServer?.id ?? "local"}:${place}`}
             spawn={spawn}

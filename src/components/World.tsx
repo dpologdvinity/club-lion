@@ -54,6 +54,7 @@ import type { TimeOfDay } from "../utils/environmentalLighting.ts";
 import { playPropSound } from "../utils/interactiveProps.ts";
 import { RIDE_HOTSPOTS, type ParkRideId } from "../utils/parkRides.ts";
 import type { WaterRideId } from "../utils/waterRides.ts";
+import { isRoomMusicOn, setRoomMusicOn } from "../utils/roomMusicPlayer.ts";
 
 const BOARD_SPEED_MULTIPLIER = 1.5;
 const WALK_DURATION_MS = 850;
@@ -178,7 +179,8 @@ export function World({
     null,
   );
   const [emotesOpen, setEmotesOpen] = useState(false);
-  const [sound, setSound] = useState(false);
+  // Room music is session-wide, so the speaker state survives travel.
+  const [sound, setSound] = useState(isRoomMusicOn);
   const audio = useRef<AudioContext | null>(null);
   useEffect(() => {
     if (!sound || manifest?.ambientAudioPreset !== "ocean-surf") return;
@@ -550,7 +552,11 @@ export function World({
             title={sound ? "Turn sound off" : "Turn sound on"}
             aria-label={sound ? "Turn sound off" : "Turn sound on"}
             aria-pressed={sound}
-            onClick={() => setSound((s) => !s)}
+            onClick={() => {
+              const next = !sound;
+              setSound(next);
+              setRoomMusicOn(next);
+            }}
           >
             {sound ? <Volume2 size={18} /> : <VolumeX size={18} />}
           </button>
