@@ -36,5 +36,43 @@ export const penthouseCondoManifest: RoomManifest = {
       actionData: { action: "open_jukebox" },
     },
   ],
+  obstacles: [
+    {
+      id: "jukebox",
+      shape: "polygon",
+      points: [
+        [746, 452],
+        [854, 452],
+        [854, 484],
+        [746, 484],
+      ],
+    },
+    {
+      id: "sofa",
+      shape: "polygon",
+      points: [
+        [1434, 520],
+        [1726, 520],
+        [1726, 562],
+        [1434, 562],
+      ],
+    },
+    {
+      id: "floor-lamp",
+      shape: "ellipse",
+      center: { x: 420, y: 562 },
+      rx: 14,
+      ry: 7,
+      prop: "lamp",
+    },
+    {
+      id: "plant-pot",
+      shape: "ellipse",
+      center: { x: 1830, y: 574 },
+      rx: 24,
+      ry: 6,
+      prop: "bush",
+    },
+  ],
   ambientAudioPreset: "penthouse-lofi-chill",
 };

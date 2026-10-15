@@ -55,5 +55,67 @@ export const wonderParkMidwayManifest: RoomManifest = {
       actionData: { gameId: "fruit" },
     },
   ],
+  obstacles: [
+    {
+      id: "teacup-platform",
+      shape: "ellipse",
+      center: { x: 700, y: 570 },
+      rx: 250,
+      ry: 28,
+    },
+    {
+      id: "carousel-platform",
+      shape: "ellipse",
+      center: { x: 1500, y: 555 },
+      rx: 250,
+      ry: 15,
+    },
+    {
+      id: "popcorn-cart",
+      shape: "polygon",
+      points: [
+        [1080, 544],
+        [1160, 544],
+        [1160, 562],
+        [1080, 562],
+      ],
+    },
+    {
+      id: "game-booth",
+      shape: "polygon",
+      points: [
+        [2064, 548],
+        [2336, 548],
+        [2336, 566],
+        [2064, 566],
+      ],
+    },
+    {
+      id: "lion-tower-base",
+      shape: "polygon",
+      points: [
+        [2414, 544],
+        [2586, 544],
+        [2586, 562],
+        [2414, 562],
+      ],
+    },
+    {
+      id: "lamp-1",
+      shape: "ellipse",
+      center: { x: 220, y: 548 },
+      rx: 12,
+      ry: 7,
+      prop: "lamp",
+    },
+    {
+      id: "lamp-2",
+      shape: "ellipse",
+      center: { x: 1850, y: 548 },
+      rx: 12,
+      ry: 7,
+      prop: "lamp",
+    },
+  ],
   ambientAudioPreset: "carnival-midway",
 };

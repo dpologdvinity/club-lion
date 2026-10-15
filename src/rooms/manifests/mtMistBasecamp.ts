@@ -31,4 +31,17 @@ export const mtMistBasecampManifest: RoomManifest = {
     },
   ],
   ambientAudioPreset: "alpine-wind",
+  obstacles: [
+    // Lodge front base (x 685..1195); its walls sit on the walkable top edge.
+    {
+      id: "lodge",
+      shape: "polygon",
+      points: [
+        [685, 541],
+        [1195, 541],
+        [1195, 556],
+        [685, 556],
+      ],
+    },
+  ],
 };

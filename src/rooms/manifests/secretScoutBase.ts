@@ -41,5 +41,17 @@ export const secretScoutBaseManifest: RoomManifest = {
       actionData: {},
     },
   ],
+  obstacles: [
+    {
+      id: "spy-console",
+      shape: "polygon",
+      points: [
+        [800, 544],
+        [1120, 544],
+        [1120, 560],
+        [800, 560],
+      ],
+    },
+  ],
   ambientAudioPreset: "spy-hq-ambient",
 };

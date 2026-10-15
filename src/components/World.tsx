@@ -28,7 +28,16 @@ import { NEIGHBORS, PLACES, type PlaceId, type PlayerV2 } from "../game";
 import { ROOM_MANIFESTS } from "../rooms/registry";
 import { portalIcon } from "../rooms/placeIcons";
 import type { RoomManifest } from "../rooms/types";
-import { clampToWalkable } from "../rooms/camera";
+import { roomFrameFor } from "../rooms/roomSpace";
+import {
+  planClickWalk,
+  planKeyboardStep,
+  legDurations,
+} from "../utils/walkPlan.ts";
+import { ObstacleDebugOverlay } from "./ObstacleDebugOverlay";
+import { WorldProp } from "./WorldProp";
+import { playBoing } from "../utils/worldPropSounds.ts";
+import { benchAtPoint, petSideFor } from "../utils/worldProps.ts";
 import { CameraViewport } from "./CameraViewport";
 import { SafeRoomScenery } from "./SafeRoomScenery";
 import { GlobalLightingOverlay } from "./GlobalLightingOverlay";
@@ -58,6 +67,18 @@ import { isRoomMusicOn, setRoomMusicOn } from "../utils/roomMusicPlayer.ts";
 
 const BOARD_SPEED_MULTIPLIER = 1.5;
 const WALK_DURATION_MS = 850;
+const KEY_STEP_MS = 220;
+const BUMP_THROTTLE_MS = 600;
+const BUMP_KEYFRAMES: Keyframe[] = [
+  { transform: "scale(1, 1)" },
+  { transform: "scale(1.12, 0.86)", offset: 0.3 },
+  { transform: "scale(0.94, 1.08)", offset: 0.6 },
+  { transform: "scale(1, 1)" },
+];
+/** `?debug=obstacles` draws solid scenery and collision rings. */
+const SHOW_OBSTACLE_DEBUG =
+  typeof window !== "undefined" &&
+  new URLSearchParams(window.location.search).get("debug") === "obstacles";
 
 const EMOTE_SYMBOLS: Record<EmoteId, string> = {
   heart: "❤️",
@@ -172,6 +193,11 @@ export function World({
   } | null>(null);
   const [tossPending, setTossPending] = useState(false);
   const walkTimer = useRef<number | null>(null);
+  const lastBump = useRef(-Infinity);
+  const avatarBodyRef = useRef<HTMLDivElement>(null);
+  const [glideMs, setGlideMs] = useState(WALK_DURATION_MS);
+  const sitAfterWalk = useRef(false);
+  const [seatedOn, setSeatedOn] = useState<string | null>(null);
   const [sparkles, setSparkles] = useState<SparkleParticle[]>([]);
   const sparklesRef = useRef<SparkleParticle[]>([]);
   const characterRef = useRef<HTMLDivElement>(null);
@@ -298,35 +324,93 @@ export function World({
     }
   };
 
-  const walk = (x: number, y: number) => {
-    const speedMultiplier = boardId ? BOARD_SPEED_MULTIPLIER : 1;
-    const clamped = manifest
-      ? clampToWalkable(
-          {
-            x: (x / 100) * manifest.stageWidth,
-            y: (y / 100) * manifest.stageHeight,
-          },
-          manifest.walkablePolygon,
-        )
-      : null;
-    const targetX =
-      clamped && manifest
-        ? (clamped.x / manifest.stageWidth) * 100
-        : Math.max(12, Math.min(88, x));
-    const targetY =
-      clamped && manifest
-        ? (clamped.y / manifest.stageHeight) * 100
-        : Math.max(57, Math.min(89, y));
-    setAvatarHeading(targetX < position.x ? "left" : "right");
-    setPosition({ x: targetX, y: targetY });
-    setIsTrotting(true);
-    setAvatarAction("walk");
+  const frame = roomFrameFor(place, manifest);
+  const toSpace = (point: { x: number; y: number }) => ({
+    x: point.x * frame.scale.x,
+    y: point.y * frame.scale.y,
+  });
+  const toPercent = (point: { x: number; y: number }) => ({
+    x: point.x / frame.scale.x,
+    y: point.y / frame.scale.y,
+  });
+  const petSide = petSideFor(
+    toSpace(position),
+    frame.space,
+    frame.petRadius,
+    frame.petOffset,
+  );
+  // Glide through each route leg in turn; each leg is one CSS transition.
+  const glideLegs = (
+    from: { x: number; y: number },
+    legs: { x: number; y: number }[],
+    totalMs: number,
+  ) => {
     if (walkTimer.current) window.clearTimeout(walkTimer.current);
-    walkTimer.current = window.setTimeout(() => {
-      setIsTrotting(false);
-      setAvatarAction("idle");
-    }, WALK_DURATION_MS / speedMultiplier);
+    const durations = legDurations(toSpace(from), legs.map(toSpace), totalMs);
+    let previousX = from.x;
+    const end = legs.at(-1);
+    const runLeg = (index: number) => {
+      const next = legs[index];
+      if (!next) {
+        walkTimer.current = null;
+        setIsTrotting(false);
+        const bench = end
+          ? benchAtPoint(toSpace(end), frame.space.obstacles)
+          : undefined;
+        const sitting = sitAfterWalk.current || !!bench;
+        sitAfterWalk.current = false;
+        setAvatarAction(sitting ? "sit" : "idle");
+        setSeatedOn(sitting ? (bench?.id ?? null) : null);
+        return;
+      }
+      setAvatarHeading(next.x < previousX ? "left" : "right");
+      previousX = next.x;
+      setGlideMs(durations[index]);
+      setPosition(next);
+      setIsTrotting(true);
+      setAvatarAction("walk");
+      walkTimer.current = window.setTimeout(
+        () => runLeg(index + 1),
+        durations[index],
+      );
+    };
+    runLeg(0);
+  };
+  // Tapping a bench walks to its seat, then the avatar sits.
+  const sitOnBench = (seat: { x: number; y: number }) => {
+    const percent = toPercent(seat);
+    walk(percent.x, percent.y);
+    sitAfterWalk.current = true;
+  };
+  const bumpAvatar = () => {
+    const now = performance.now();
+    if (now - lastBump.current < BUMP_THROTTLE_MS) return;
+    lastBump.current = now;
+    if (!reducedMotion)
+      avatarBodyRef.current?.animate(BUMP_KEYFRAMES, {
+        duration: 360,
+        easing: "ease-out",
+      });
+    playBoing(sound ? undefined : null);
+  };
+
+  const walk = (x: number, y: number, mode: "route" | "slide" = "route") => {
+    const speedMultiplier = boardId ? BOARD_SPEED_MULTIPLIER : 1;
+    const target = toSpace({ x, y });
+    sitAfterWalk.current = false;
+    setSeatedOn(null);
+    const plan =
+      mode === "slide"
+        ? planKeyboardStep(toSpace(position), target, frame.space, frame.radius)
+        : planClickWalk(toSpace(position), target, frame.space, frame.radius);
+    if (plan.bump) bumpAvatar();
+    if (plan.legs.length === 0) return;
     chime();
+    glideLegs(
+      position,
+      plan.legs.map(toPercent),
+      (mode === "slide" ? KEY_STEP_MS : WALK_DURATION_MS) / speedMultiplier,
+    );
   };
   const keyboardWalk = (event: KeyboardEvent<HTMLButtonElement>) => {
     const directions: Record<string, [number, number]> = {
@@ -346,6 +430,7 @@ export function World({
       walk(
         position.x + delta[0] * speedMultiplier,
         position.y + delta[1] * speedMultiplier,
+        "slide",
       );
     }
   };
@@ -395,7 +480,7 @@ export function World({
     navigate("secret-scout-base", pendingPortalSpawn);
     notify("Clearance accepted. Welcome to Secret Scout HQ, Agent.");
   };
-  const stageWalk = (x: number, y: number) => {
+  const stageWalk = (x: number, y: number, mode?: "route" | "slide") => {
     if (!manifest) return;
     if (tossPending) {
       setMangoToss({
@@ -404,7 +489,11 @@ export function World({
       });
       setTossPending(false);
     } else
-      walk((x / manifest.stageWidth) * 100, (y / manifest.stageHeight) * 100);
+      walk(
+        (x / manifest.stageWidth) * 100,
+        (y / manifest.stageHeight) * 100,
+        mode,
+      );
   };
   const hotspot = (id: string) => {
     if (id === "lighthouse-foghorn") {
@@ -586,6 +675,7 @@ export function World({
         heading={avatarHeading}
         onWalk={stageWalk}
         onPortal={portal}
+        glideMs={glideMs}
         board={!!boardId}
         timeOfDay={timeOfDay}
         reducedMotion={reducedMotion}
@@ -628,6 +718,21 @@ export function World({
               </button>
             );
           })}
+        {SHOW_OBSTACLE_DEBUG && <ObstacleDebugOverlay frame={frame} />}
+        {frame.space.obstacles.map(
+          (obstacle) =>
+            obstacle.prop && (
+              <WorldProp
+                key={obstacle.id}
+                obstacle={obstacle}
+                unit={frame.unit}
+                avatar={toSpace(position)}
+                seated={seatedOn === obstacle.id}
+                soundOn={sound}
+                onSit={sitOnBench}
+              />
+            ),
+        )}
         {mangoToss && (
           <MangoToss
             origin={mangoToss.origin}
@@ -963,6 +1068,7 @@ export function World({
             left: `${position.x}%`,
             top: `${position.y}%`,
             cursor: onOpenCard ? "pointer" : undefined,
+            transition: `left ${glideMs}ms cubic-bezier(0.2, 0.6, 0.4, 1), top ${glideMs}ms cubic-bezier(0.2, 0.6, 0.4, 1)`,
           }}
           onClick={(e) => {
             if (onOpenCard) {
@@ -984,7 +1090,7 @@ export function World({
           {bubble?.id === "you" && (
             <span className="speech-bubble">{bubble.text}</span>
           )}
-          <div className="avatar-with-companion">
+          <div className="avatar-with-companion" ref={avatarBodyRef}>
             <Avatar
               look={player.look}
               action={avatarAction}
@@ -1002,6 +1108,7 @@ export function World({
               }}
               isTrotting={isTrotting}
               heading={avatarHeading}
+              side={petSide}
             />
           </div>
           <span className="character-name your-name">
@@ -1162,6 +1269,7 @@ function WorldStage({
   heading,
   onWalk,
   onPortal,
+  glideMs,
   board,
   timeOfDay,
   reducedMotion,
@@ -1171,8 +1279,9 @@ function WorldStage({
   imageClass: string;
   avatarPos: { x: number; y: number };
   heading: "left" | "right";
-  onWalk: (x: number, y: number) => void;
+  onWalk: (x: number, y: number, mode?: "route" | "slide") => void;
   onPortal: (target: string, spawn: { x: number; y: number }) => void;
+  glideMs: number;
   board: boolean;
   timeOfDay: TimeOfDay;
   reducedMotion: boolean;
@@ -1194,6 +1303,7 @@ function WorldStage({
           onWalk={onWalk}
           onPortal={onPortal}
           movementMultiplier={board ? BOARD_SPEED_MULTIPLIER : 1}
+          glideMs={glideMs}
         >
           {children}
         </CameraViewport>

@@ -55,4 +55,48 @@ export const splashOasisEntryManifest: RoomManifest = {
     },
   ],
   ambientAudioPreset: "tropical-splash-ambient",
+  obstacles: [
+    {
+      id: "wave-pool",
+      shape: "polygon",
+      points: [
+        [431, 541],
+        [1369, 541],
+        [1358, 548],
+        [1296, 574],
+        [1159, 601],
+        [900, 616],
+        [640, 601],
+        [443, 549],
+      ],
+    },
+    {
+      id: "lifeguard-leg-w",
+      shape: "ellipse",
+      center: { x: 1358, y: 598 },
+      rx: 6,
+      ry: 4,
+    },
+    {
+      id: "lifeguard-leg-e",
+      shape: "ellipse",
+      center: { x: 1442, y: 598 },
+      rx: 6,
+      ry: 4,
+    },
+    {
+      id: "foot-shower",
+      shape: "ellipse",
+      center: { x: 250, y: 606 },
+      rx: 14,
+      ry: 6,
+    },
+    {
+      id: "splash-pad-fortress",
+      shape: "ellipse",
+      center: { x: 1900, y: 580 },
+      rx: 214,
+      ry: 30,
+    },
+  ],
 };

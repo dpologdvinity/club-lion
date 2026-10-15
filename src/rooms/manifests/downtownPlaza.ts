@@ -131,5 +131,16 @@ export const downtownPlazaManifest: RoomManifest = {
       actionData: {},
     },
   ],
+  obstacles: [
+    // Only the basin front enters the walking strip; keep the central arrival clear.
+    {
+      id: "fountain-basin",
+      shape: "ellipse",
+      center: { x: 1200, y: 567 },
+      rx: 210,
+      ry: 6,
+      prop: "fountain",
+    },
+  ],
   ambientAudioPreset: "plaza-ambient",
 };
