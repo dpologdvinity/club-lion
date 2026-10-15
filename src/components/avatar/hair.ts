@@ -23,12 +23,16 @@ function strands(paths: readonly string[], opacity = 0.26): string {
 }
 
 /** Glossy curved glints on wave crests, drawn on the viewer-left and mirrored. */
-function glints(paths: readonly string[], mirrored = true): string {
+function glints(
+  paths: readonly string[],
+  mirrored = true,
+  core = "#ffffff",
+): string {
   const left = paths
     .map(
       (d) =>
         `<path d="${d}" stroke="rgba(255,255,255,0.4)" stroke-width="2.4" stroke-linecap="round" fill="none" />` +
-        `<path d="${d}" stroke="#ffffff" stroke-width="0.9" stroke-linecap="round" fill="none" />`,
+        `<path d="${d}" stroke="${core}" stroke-width="0.9" stroke-linecap="round" fill="none" />`,
     )
     .join("");
   return `<g class="hair-glints">${left}${mirrored ? `<g ${MIRROR}>${left}</g>` : ""}</g>`;
@@ -188,6 +192,46 @@ function zigzagMane(bottom: number, amp: number): string {
   return (
     `M60 5 C84 5 96 20 94 44 ${right.join(" ")} ` +
     `L${n(60)} ${n(bottom + 2)} ${left.join(" ")} L26 44 C24 20 36 5 60 5 Z`
+  );
+}
+
+/** Swirled baby hairs laid along the hairline, viewer-left and mirrored. */
+function babyHairs(
+  c: string,
+  spots: readonly (readonly [number, number])[],
+): string {
+  const swirl = spots
+    .map(
+      ([x, y]) =>
+        `M${n(x + 2.2)} ${n(y - 1.6)} q-2.6 -0.2 -2.8 1.8 q-0.2 1.8 1.6 1.8 q1.2 0 1 -1.2`,
+    )
+    .join(" ");
+  const left =
+    `<path d="${swirl}" stroke="${INK}" stroke-width="1.5" stroke-linecap="round" fill="none" />` +
+    `<path d="${swirl}" stroke="${c}" stroke-width="0.8" stroke-linecap="round" fill="none" />`;
+  return `<g class="baby-hairs">${left}<g ${MIRROR}>${left}</g></g>`;
+}
+
+/** One braid strand: inked edge, plait texture, and gold cuffs. */
+function braidStroke(d: string, c: string, width = 2.6): string {
+  return (
+    `<path d="${d}" stroke="${INK}" stroke-width="${width + 0.9}" stroke-linecap="round" fill="none" />` +
+    `<path d="${d}" stroke="${c}" stroke-width="${width}" stroke-linecap="round" fill="none" />` +
+    `<path d="${d}" stroke="rgba(25,10,5,0.35)" stroke-width="${width}" stroke-dasharray="0.7 1.3" fill="none" />` +
+    `<path d="${d}" stroke="#f4c542" stroke-width="${width + 0.4}" stroke-dasharray="1.6 14" stroke-dashoffset="-6" fill="none" />`
+  );
+}
+
+/** Braids coiled into a round bun on the crown. */
+function braidedBun(c: string): string {
+  const ring = (r: number) =>
+    `M${n(60 - r)} 1 a${r} ${r} 0 1 0 ${n(r * 2)} 0 a${r} ${r} 0 1 0 ${n(-r * 2)} 0`;
+  return (
+    `<circle cx="60" cy="1" r="11.6" fill="${c}" stroke="${INK}" stroke-width="1.1" />` +
+    braidStroke(ring(9.8), c, 3) +
+    braidStroke(ring(5.8), c, 3) +
+    `<circle cx="60" cy="1" r="2.4" fill="${c}" stroke="${INK}" stroke-width="0.8" />` +
+    `<path d="M53 -5 Q57 -9.4 63 -8.6" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" stroke-linecap="round" fill="none" />`
   );
 }
 
@@ -427,20 +471,49 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
           ),
       };
     }
+    case "braided_topknot": {
+      const braids = hairArt("box_braids", c, p);
+      const up = [
+        "M44 25 C47 18 52 13 55.4 10",
+        "M51.4 21.6 C53.4 16 56 12.6 58 10.6",
+      ];
+      const swept = up.map((d) => braidStroke(d, c, 2.2)).join("");
+      return {
+        back: braids.back + braidedBun(c),
+        front:
+          braids.front +
+          swept +
+          `<g ${MIRROR}>${swept}</g>` +
+          babyHairs(c, [
+            [46.4, 27.6],
+            [39.2, 32.4],
+          ]),
+      };
+    }
     case "big_curls": {
       const mass =
-        "M60 4 C86 4 101 22 100 44 C99.6 60 103 74 98 86 C92 92 80 90 76 84 L44 84 C40 90 28 92 22 86 C17 74 20.4 60 20 44 C19 22 34 4 60 4 Z";
+        "M60 0 C88 0 104 20 104 46 C104 70 106 96 96 116 C88 122 72 122 60 120 C48 122 32 122 24 116 C14 96 16 70 16 46 C16 20 32 0 60 0 Z";
+      // Curl cloud framing the whole upper body, from the crown to the hips
       const backCurls: readonly Curl[] = [
-        [21, 50, 8],
-        [20, 64, 8.4],
-        [23, 78, 8],
-        [31, 87, 7],
+        [54, 1, 8.6],
+        [42, 5, 8.6],
+        [30, 15, 8.6],
+        [21, 29, 9],
+        [16, 44, 9.4],
+        [14.4, 60, 9.6],
+        [15, 76, 9.6],
+        [18, 92, 9.4],
+        [24, 106, 9],
+        [34, 114, 8.4],
+        [46, 118, 7.8],
       ];
       const sideCurls: readonly Curl[] = [
         [32, 38, 6.4],
         [29.6, 50, 6.8],
         [29.6, 62, 6.8],
         [31.6, 73.4, 6.2],
+        [31, 84.4, 6],
+        [33.4, 95, 5.6],
       ];
       const topCurls: readonly Curl[] = [
         [36, 22, 7.4],
@@ -448,9 +521,24 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
         [57, 9, 8.2],
       ];
       return {
-        back: curlCloud(backCurls, c, mass) + shade(mass, 0.18),
+        back:
+          curlCloud(backCurls, c, mass) +
+          shade(mass, 0.18) +
+          glints(
+            [
+              "M10 52 C8.4 62 8.6 72 10.4 82",
+              "M14 94 C16.6 102 21 108 27 112",
+              "M24 22 C28 14 34 9 41 7",
+            ],
+            true,
+            "rgba(255,255,255,0.55)",
+          ),
         front:
           curlCloud([...topCurls, ...sideCurls], c, SIDE_PART_CAP) +
+          babyHairs(c, [
+            [41.6, 32.6],
+            [36.6, 39.4],
+          ]) +
           shineRibbon(
             p,
             "M40 22 C47 14 73 14 80 22 C73 18 47 18 40 24 Z",
@@ -936,7 +1024,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
     case "blowout":
     default: {
       const mass =
-        "M60 2 C86 2 99 18 98 40 C97 50 99 58 100.4 68 C101.4 76 102.6 84 105 87.6 C107 90.4 110 89.6 111.2 87 C112.4 84.6 116 85 117 88 C119 93 115 98 108 101 C101 104 92 104 84 104 L36 104 C28 104 19 104 12 101 C5 98 1 93 3 88 C4 85 7.6 84.6 8.8 87 C10 89.6 13 90.4 15 87.6 C17.4 84 18.6 76 19.6 68 C21 58 23 50 22 40 C21 18 34 2 60 2 Z";
+        "M 60 2 C 86 2 99 18 98 40 C 97 50 98.61 58 97.98 68 C 97.26 76 96.64 84 97.89 87.6 C 98.92 90.4 101.6 89.6 103.26 87 C 104.91 84.6 107.88 85 107.88 88 C 108.08 93 104 98 98.4 101 C 92.8 104 85.6 104 79.2 104 L 40.8 104 C 34.4 104 27.2 104 21.6 101 C 16 98 11.92 93 12.12 88 C 12.12 85 15.09 84.6 16.74 87 C 18.4 89.6 21.08 90.4 22.11 87.6 C 23.36 84 22.74 76 22.02 68 C 21.39 58 23 50 22 40 C 21 18 34 2 60 2 Z";
       const cap =
         "M31 50 C27 24 41 6.6 60 6.6 C80 6.6 93.4 24 89.4 50 C87.8 42 86 36 82.8 31.6 C78 27.4 70.4 28 64.4 26.2 C59 24.6 55 23 52 21 C48.6 25 43.6 28.6 39.4 33 C36 37.4 34.4 43 34.2 50 C33.4 47.4 32 48 31 50 Z";
       const flipLeft =
@@ -987,6 +1075,7 @@ const BIG_VOLUME: ReadonlySet<HairStyle> = new Set([
   "spiral_coils",
   "crimped",
   "box_braids",
+  "braided_topknot",
   "goddess_locs",
   "fulani_braids",
   "afro_halo",
@@ -1150,6 +1239,29 @@ function star(x: number, y: number, r: number, fill: string): string {
 export function renderHairClips(look: AvatarLook): string {
   const id = findOption(HAIR_CLIPS, look.hairClipId)?.id;
   if (!id || id === "none") return "";
+  if (id === "tiara") {
+    // Crystal tiara resting on the crown in front of the hair
+    const peaks = [
+      [46, 15.4, 3.4],
+      [53, 11.6, 4.6],
+      [60, 10.2, 6.2],
+      [67, 11.6, 4.6],
+      [74, 15.4, 3.4],
+    ] as const;
+    return (
+      `<g class="avatar-hair-clips clips-tiara">` +
+      `<path d="M41 19.6 Q60 10.4 79 19.6 L78.4 21.8 Q60 12.8 41.6 21.8 Z" fill="#f4c542" stroke="${INK}" stroke-width="0.6" stroke-linejoin="round" />` +
+      peaks
+        .map(
+          ([x, y, h]) =>
+            `<path d="M${n(x - 1.8)} ${n(y + 1.6)} L${x} ${n(y - h)} L${n(x + 1.8)} ${n(y + 1.6)} Z" fill="#f4c542" stroke="${INK}" stroke-width="0.6" stroke-linejoin="round" />` +
+            `<circle cx="${x}" cy="${n(y - h * 0.3)}" r="${x === 60 ? 1.6 : 0.9}" fill="${x === 60 ? "#ff5fa2" : "#e6f4ff"}" stroke="${INK}" stroke-width="0.4" />`,
+        )
+        .join("") +
+      `<path d="M47 16.8 Q53 13.8 58 13" stroke="#fff4b8" stroke-width="0.7" stroke-linecap="round" fill="none" />` +
+      `</g>`
+    );
+  }
   const side = CLIP_SPOTS.map(([x, y, angle], i) => {
     switch (id) {
       case "butterfly_clips":

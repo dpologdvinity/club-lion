@@ -41,6 +41,8 @@ export const PORTRAIT_VIEWBOX = "10 -12 100 100";
  */
 export const RIG = {
   head: "matrix(0.9 0 0 0.9 6 -4.3)",
+  /** The head rig scaled 1.15× about the chin (60, 56.5) so faces read at small world sizes. */
+  headBoost: "matrix(1.035 0 0 1.035 -2.1 -13.42)",
   torso: "matrix(0.86 0 0 1 8.4 -7.5)",
   legs: "matrix(0.86 0 0 1.32 8.4 -39.18)",
 } as const;

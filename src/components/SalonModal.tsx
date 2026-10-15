@@ -24,6 +24,7 @@ import {
   NECKLACES,
   HAIR_CLIPS,
   BRACELETS,
+  BAGS,
   LIP_COLORS,
   PIERCINGS,
   SKIN_TONE_OPTIONS,
@@ -296,6 +297,9 @@ export function SalonModal({
                 BRACELETS,
                 draft.braceletId ?? "none",
                 (braceletId) => update({ braceletId }),
+              )}
+              {pills("Bags", "bag", BAGS, draft.bagId ?? "none", (bagId) =>
+                update({ bagId }),
               )}
             </>
           )}

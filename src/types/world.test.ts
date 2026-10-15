@@ -219,7 +219,7 @@ test("validateAvatarLook accepts the optional accessory fields and rejects bad o
     braceletId: "gold_bangles",
   };
   assert.equal(validateAvatarLook(look), true);
-  for (const field of ["necklaceId", "hairClipId", "braceletId"]) {
+  for (const field of ["necklaceId", "hairClipId", "braceletId", "bagId"]) {
     assert.equal(validateAvatarLook({ ...look, [field]: 7 }), false, field);
     assert.equal(validateAvatarLook({ ...look, [field]: "  " }), false, field);
   }

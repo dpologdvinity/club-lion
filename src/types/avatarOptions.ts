@@ -304,6 +304,13 @@ export const HAIR_CLIPS = [
   { id: "butterfly_clips", label: "Butterfly Clips" },
   { id: "star_clips", label: "Star Clips" },
   { id: "rhinestone_barrettes", label: "Rhinestone Barrettes", price: 80 },
+  { id: "tiara", label: "Crystal Tiara", price: 100 },
+] as const satisfies readonly StyleOption[];
+
+export const BAGS = [
+  { id: "none", label: "None" },
+  { id: "gold_mini_bag", label: "Gold Shoulder Bag" },
+  { id: "pink_heart_bag", label: "Pink Heart Bag", price: 90 },
 ] as const satisfies readonly StyleOption[];
 
 export const BRACELETS = [
@@ -347,6 +354,7 @@ export const HAIR_STYLE_OPTIONS = [
   { id: "half_up", label: "Half-Up Flip" },
   { id: "pigtails", label: "Bubble Pigtails" },
   { id: "topknot", label: "Topknot & Tendrils" },
+  { id: "braided_topknot", label: "Braided Topknot" },
   { id: "messy_bun", label: "Messy Claw-Clip Bun" },
   { id: "pixie_spikes", label: "Spiky Pixie" },
   { id: "side_swoop", label: "Side Swoop" },
@@ -485,6 +493,7 @@ export type SalonCategory =
   | "necklace"
   | "clips"
   | "bracelet"
+  | "bag"
   | "skin"
   | "bangs";
 
@@ -502,6 +511,7 @@ export const SALON_CATEGORY_OPTIONS: Readonly<
   necklace: NECKLACES,
   clips: HAIR_CLIPS,
   bracelet: BRACELETS,
+  bag: BAGS,
   skin: SKIN_TONE_OPTIONS,
   bangs: BANGS_OPTIONS,
 };

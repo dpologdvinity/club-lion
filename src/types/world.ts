@@ -139,6 +139,7 @@ export type AvatarLook = {
   necklaceId?: string;
   hairClipId?: string;
   braceletId?: string;
+  bagId?: string;
   /** Streak dye color (hex); absent or empty means no streak. */
   hairStreak?: string;
   headwearId?: string;
@@ -190,6 +191,7 @@ export function validateAvatarLook(look: unknown): look is AvatarLook {
     hasOptionalString("necklaceId") &&
     hasOptionalString("hairClipId") &&
     hasOptionalString("braceletId") &&
+    hasOptionalString("bagId") &&
     (candidate.hairStreak === undefined ||
       typeof candidate.hairStreak === "string") &&
     hasOptionalString("headwearId") &&

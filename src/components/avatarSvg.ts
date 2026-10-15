@@ -10,12 +10,17 @@ import {
   inked,
   n,
   resolveSkinTone,
+  RIG,
   rig,
   rightArmFor,
   sleeve,
 } from "./avatar/shared.ts";
 import { makeupDefs, renderLayer3GlamFace } from "./avatar/makeup.ts";
-import { renderBangles, renderNecklace } from "./avatar/accessories.ts";
+import {
+  renderBag,
+  renderBangles,
+  renderNecklace,
+} from "./avatar/accessories.ts";
 import {
   hairDefs,
   renderLayer1HairBack,
@@ -456,6 +461,8 @@ export interface AvatarSvgOptions {
   className?: string;
   /** Unique prefix for gradient/clip IDs when several avatars share a page. */
   idPrefix?: string;
+  /** Slightly larger head for small in-world sizes. */
+  headBoost?: boolean;
 }
 
 /**
@@ -465,11 +472,12 @@ export function generateAvatarLayersString(
   look: AvatarLook = DEFAULT_AVATAR_LOOK,
   action: EntityAction | string = "idle",
   idPrefix?: string,
+  headBoost = false,
 ): string {
   const act = typeof action === "string" ? action : "idle";
   const p = sanitizeIdPrefix(idPrefix ?? `av${hashLook(look)}`);
 
-  return [
+  const layers = [
     `<defs>${makeupDefs(p, look)}${hairDefs(p)}</defs>`,
     renderLayer0ShadowAndBoard(look, act),
     rig("head", renderLayer1HairBack(look, p)),
@@ -480,6 +488,7 @@ export function generateAvatarLayersString(
     rig("head", renderLayer6HairFront(look, p)),
     renderRaisedArm(look, act),
     renderBangles(look, act),
+    renderBag(look),
     renderJewelry(look),
     renderNecklace(look),
     rig("head", renderLayer7HeadwearAndEyewear(look)),
@@ -487,6 +496,13 @@ export function generateAvatarLayersString(
   ]
     .filter((layer) => layer.length > 0)
     .join("\n");
+  // Every head-rigged group (hair, face, ears, earrings, hats) swaps to the boosted head
+  return headBoost
+    ? layers.replaceAll(
+        `transform="${RIG.head}"`,
+        `transform="${RIG.headBoost}"`,
+      )
+    : layers;
 }
 
 /**
@@ -506,6 +522,7 @@ export function generateAvatarSvgString(
     look,
     action,
     options?.idPrefix,
+    options?.headBoost,
   );
 
   return (

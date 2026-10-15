@@ -939,6 +939,7 @@ export function World({
               look={player.look}
               action={avatarAction}
               size={manifest ? 132 : 84}
+              headBoost
             />
             <PetCompanion
               pet={{

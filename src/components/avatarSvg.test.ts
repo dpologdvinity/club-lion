@@ -19,7 +19,9 @@ import {
   NECKLACES,
   HAIR_CLIPS,
   BRACELETS,
+  BAGS,
 } from "../types/avatarOptions.ts";
+import { RIG } from "./avatar/shared.ts";
 import { newPlayer, salonLookCost } from "../game.ts";
 
 test("generateAvatarSvgString outputs stacked SVG layers in correct order", () => {
@@ -509,4 +511,70 @@ test("new earrings render and premium accessories cost coins", () => {
     }),
     0,
   );
+});
+
+test("shoulder bags render every option and price the premium one", () => {
+  for (const { id } of BAGS) {
+    const svg = generateAvatarSvgString({ ...DEFAULT_AVATAR_LOOK, bagId: id });
+    assertValidSvg(svg, id);
+    assert.equal(
+      svg.includes(`bag-${id.replace(/_/g, "-")}`),
+      id !== "none",
+      id,
+    );
+  }
+  const player = { ...newPlayer(), owned: [] };
+  assert.equal(
+    salonLookCost(player, {
+      ...DEFAULT_AVATAR_LOOK,
+      bagId: "pink_heart_bag",
+      hairClipId: "tiara",
+    }),
+    90 + 100,
+  );
+});
+
+test("braided topknot and big curls carry doll details", () => {
+  const knot = generateAvatarSvgString({
+    ...DEFAULT_AVATAR_LOOK,
+    hairId: "braided_topknot",
+  });
+  assert.ok(knot.includes("hair-braided-topknot"));
+  assert.ok(knot.includes("baby-hairs"), "baby hairs at the hairline");
+  assert.ok(knot.includes('stroke="#f4c542"'), "gold braid cuffs");
+  const curls = generateAvatarSvgString({
+    ...DEFAULT_AVATAR_LOOK,
+    hairId: "big_curls",
+  });
+  assert.ok(curls.includes("baby-hairs"));
+  assert.ok(curls.includes("rgba(255,255,255,0.55)"), "grey shine bands");
+  const tiara = generateAvatarSvgString({
+    ...DEFAULT_AVATAR_LOOK,
+    hairClipId: "tiara",
+  });
+  assert.ok(tiara.includes("clips-tiara"));
+});
+
+test("metallic tops sparkle with star glints", () => {
+  for (const topId of ["holo_halter", "sequin_tube"]) {
+    const svg = generateAvatarSvgString({ ...DEFAULT_AVATAR_LOOK, topId });
+    assert.ok(svg.includes("fabric-glint"), topId);
+  }
+});
+
+test("head boost swaps every head rig for the larger one", () => {
+  const look: AvatarLook = {
+    ...DEFAULT_AVATAR_LOOK,
+    jewelryId: "silver_hoops",
+    headwearId: "explorer_fedora",
+  };
+  const plain = generateAvatarSvgString(look, "walk");
+  const boosted = generateAvatarSvgString(look, "walk", { headBoost: true });
+  const count = (svg: string, matrix: string) =>
+    svg.split(`transform="${matrix}"`).length - 1;
+  const heads = count(plain, RIG.head);
+  assert.ok(heads >= 6, "hair, body head, face, hair front, earrings, hat");
+  assert.equal(count(boosted, RIG.head), 0);
+  assert.equal(count(boosted, RIG.headBoost), heads);
+  assertValidSvg(boosted, "boosted");
 });

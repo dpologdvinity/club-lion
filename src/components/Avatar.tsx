@@ -9,6 +9,8 @@ export interface AvatarProps extends React.SVGProps<SVGSVGElement> {
   size?: number;
   /** "portrait" crops to head and shoulders so the face reads large. */
   framing?: "full" | "portrait";
+  /** Slightly larger head so faces stay readable at small world sizes. */
+  headBoost?: boolean;
 }
 
 /**
@@ -23,6 +25,7 @@ export const Avatar = React.memo(function Avatar({
   action = "idle",
   size,
   framing = "full",
+  headBoost = false,
   width,
   height,
   className = "",
@@ -40,8 +43,8 @@ export const Avatar = React.memo(function Avatar({
   // Gradient and clip IDs must be unique per instance on the page
   const idPrefix = `av${React.useId()}`;
   const innerLayers = React.useMemo(() => {
-    return generateAvatarLayersString(look, action, idPrefix);
-  }, [look, action, idPrefix]);
+    return generateAvatarLayersString(look, action, idPrefix, headBoost);
+  }, [look, action, idPrefix, headBoost]);
 
   return (
     <svg

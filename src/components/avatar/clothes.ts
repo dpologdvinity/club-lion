@@ -34,6 +34,32 @@ function dashed(id: string): string {
 const FOOT =
   "M51.8 129 L56.6 129 C57.8 132.4 59.6 135.4 60 139.2 L48 139.2 C48.6 135.4 50.6 132.4 51.8 129 Z";
 
+/** Four-point star glints for metallic and sequin fabrics. */
+function starGlints(
+  points: readonly (readonly [number, number, number])[],
+): string {
+  return points
+    .map(([x, y, r]) => {
+      const q = r * 0.28;
+      return `<path class="fabric-glint" d="M${n(x)} ${n(y - r)} L${n(x + q)} ${n(y - q)} L${n(x + r)} ${n(y)} L${n(x + q)} ${n(y + q)} L${n(x)} ${n(y + r)} L${n(x - q)} ${n(y + q)} L${n(x - r)} ${n(y)} L${n(x - q)} ${n(y - q)} Z" fill="#ffffff" />`;
+    })
+    .join("");
+}
+
+/** Iridescent diagonal bands (cyan, pink, mint) across a metallic top. */
+function holoBands(top: number, bottom: number): string {
+  return [
+    ["rgba(127, 227, 255, 0.45)", 52.6],
+    ["rgba(255, 154, 213, 0.45)", 58.4],
+    ["rgba(163, 255, 214, 0.35)", 63.6],
+  ]
+    .map(
+      ([fill, x]) =>
+        `<path d="M${x} ${top} L${Number(x) + 4.2} ${top} L${Number(x) + 2} ${bottom} L${Number(x) - 2.2} ${bottom} Z" fill="${fill}" />`,
+    )
+    .join("");
+}
+
 /** Sparkle specks for glitter finishes. */
 function glitter(points: readonly (readonly [number, number])[]): string {
   return points
@@ -579,7 +605,13 @@ const TOP_ART: Record<TopId, TopArt> = {
     sleeve: null,
     markup: () =>
       `<path d="${TUBE_BODY}" fill="#e9a3d8" />` +
+      holoBands(76.6, 88) +
       sparkleDots([78, 80.4, 82.8, 85.2], 51.6, 68.4, 2) +
+      starGlints([
+        [54.6, 79.2, 1.6],
+        [65.2, 82.6, 1.3],
+        [59.6, 86, 1],
+      ]) +
       `<path d="M50.6 76.8 C55 75.6 65 75.6 69.4 76.8" stroke="#f9d6ef" stroke-width="0.8" fill="none" />`,
   },
   varsity_crop: {
@@ -613,10 +645,15 @@ const TOP_ART: Record<TopId, TopArt> = {
       `<path d="M54.6 77 L58.6 69.6 M65.4 77 L61.4 69.6" stroke="#c9b3f5" stroke-width="1" stroke-linecap="round" />` +
       `<path d="M58.6 69.6 Q56.4 67.4 57.4 66.4 Q59 66.8 60 69 Q61 66.8 62.6 66.4 Q63.6 67.4 61.4 69.6" fill="#c9b3f5" />` +
       `<path d="M52.4 76.6 C55.4 75.6 64.6 75.6 67.6 76.6 C69.6 80.4 69.8 84.4 68.8 88 C63 89.2 57 89.2 51.2 88 C50.2 84.4 50.4 80.4 52.4 76.6 Z" fill="#c9b3f5" />` +
-      // Holographic sheen bands
-      `<path d="M53.4 79.4 L58.8 77 L56.2 87.6 L52 87.2 Z" fill="rgba(127, 227, 255, 0.45)" />` +
-      `<path d="M60.6 77 L65 77.4 L63.4 88.6 L59 88.8 Z" fill="rgba(255, 154, 213, 0.45)" />` +
-      `<path d="M55.2 80.6 L57 78.8 M62.4 81 L63.6 79.2" stroke="#ffffff" stroke-width="0.9" stroke-linecap="round" />`,
+      // Holographic sheen bands and glitter glints
+      holoBands(77, 88.6) +
+      `<path d="M55.2 80.6 L57 78.8 M62.4 81 L63.6 79.2" stroke="#ffffff" stroke-width="0.9" stroke-linecap="round" />` +
+      starGlints([
+        [55.4, 84.4, 1.4],
+        [64.8, 79.8, 1.6],
+        [61, 86.4, 0.9],
+      ]) +
+      `<circle cx="53.6" cy="82" r="0.35" fill="#ffffff" /><circle cx="66.2" cy="85.6" r="0.35" fill="#ffffff" />`,
   },
   pink_fur_jacket: {
     sleeve: full("#ffc4de", 8, "rgba(220, 110, 160, 0.45)"),

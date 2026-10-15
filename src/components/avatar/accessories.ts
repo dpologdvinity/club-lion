@@ -1,5 +1,10 @@
 import type { AvatarLook } from "../../types/world.ts";
-import { BRACELETS, NECKLACES, findOption } from "../../types/avatarOptions.ts";
+import {
+  BAGS,
+  BRACELETS,
+  NECKLACES,
+  findOption,
+} from "../../types/avatarOptions.ts";
 import {
   INK,
   LEFT_ARM_HIP,
@@ -106,6 +111,34 @@ export function renderBangles(look: AvatarLook, action: string): string {
     // The right stack rides along with the waving arm animation
     `<g class="avatar-right-bangles">${bangleStack(rightArmFor(action), colors)}</g>` +
     bangleStack(LEFT_ARM_HIP, colors) +
+    `</g>`
+  );
+}
+
+/* -------------------------------------------------------------
+ * Shoulder bags: strap over the hip-hand shoulder, bag at the hip
+ * ------------------------------------------------------------- */
+const BAG_ART: Record<string, string> = {
+  gold_mini_bag:
+    `<path d="M71 95 C71 93.4 72.2 92.8 73.6 92.8 L79.2 92.8 C80.6 92.8 81.6 93.6 81.6 95 L81.6 99.6 C81.6 100.6 80.8 101.2 79.8 101.2 L72.8 101.2 C71.8 101.2 71 100.6 71 99.6 Z" fill="#f4c542" />` +
+    `<path d="M71 95 C71 93.4 72.2 92.8 73.6 92.8 L79.2 92.8 C80.6 92.8 81.6 93.6 81.6 95 L81.4 97.2 L71.2 97.2 Z" fill="#d9a52c" />` +
+    `<rect x="75" y="96.2" width="2.8" height="2" rx="0.4" fill="#ff5fa2" />` +
+    `<path d="M72.4 99.6 L76 99.6" stroke="#fff4b8" stroke-width="0.6" stroke-linecap="round" />`,
+  pink_heart_bag:
+    `<path d="M76.2 102 C70.6 98.6 70.4 94.4 72.8 93.4 C74.4 92.8 75.6 93.6 76.2 94.8 C76.8 93.6 78 92.8 79.6 93.4 C82 94.4 81.8 98.6 76.2 102 Z" fill="#ff7eb6" />` +
+    `<path d="M73.2 95.4 Q73.8 94.4 74.8 94.6" stroke="#ffffff" stroke-width="0.7" stroke-linecap="round" fill="none" />` +
+    `<circle cx="76.2" cy="95.8" r="0.7" fill="#f4c542" />`,
+};
+
+export function renderBag(look: AvatarLook): string {
+  const id = findOption(BAGS, look.bagId)?.id;
+  if (!id || id === "none") return "";
+  const strap = "M66.6 65 C70.6 72 73.6 82 74.4 93";
+  return (
+    `<g class="avatar-bag bag-${id.replace(/_/g, "-")}">` +
+    `<path d="${strap}" stroke="${INK}" stroke-width="1.6" fill="none" />` +
+    `<path d="${strap}" stroke="#f4c542" stroke-width="0.8" stroke-dasharray="1 0.4" fill="none" />` +
+    inked(BAG_ART[id], 0.7) +
     `</g>`
   );
 }
