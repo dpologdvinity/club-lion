@@ -15,7 +15,8 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 - Browser checks run on GitHub, per the owner. Run selected files with `gh workflow run playwright.yml -f specs="tests/x.spec.ts tests/y.spec.ts"`; normal pushes still run all four shards and the offline-PWA test.
 - Full run 38717162497 exposed 47 failures. Fixes cover mobile Map-sheet navigation, portal PIN/spawn behavior, focus restoration expectations, hidden phone headings, clock/axe interaction, moving balloon clicks, puzzle selection, Paw Steps timing, and camera-coordinate fixtures.
 - Hoverboard particles now use pixel positions with pixel velocities, preventing exaggerated drift in wide rooms.
-- Focused run 38720989413 passed verify, PWA, and three browser shards; the remaining two mobile obstacle failures were integer MouseEvent rounding at the setup target. Only setup tolerance changed; obstacle point/segment assertions remain strict.
+- Full run 38777758561 passed three browser shards; only stale phone map counts and a camera-frame timing assertion remained. Phone-layout run 38779101103 now passes verify, PWA, and all four browser shards.
+- MouseEvent rounding in zoomed-out rooms required a 2-stage-pixel setup tolerance; obstacle point/segment assertions remain strict. Phone label geometry is checked atomically after layout settles.
 - Check the latest `master` GitHub Actions run for final full-suite results. Do not claim browser success from local verification alone.
 
 ## Remaining follow-ups

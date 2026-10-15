@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { tapRoomPath } from "./room-paths";
+import { PLACES } from "../src/game";
 
 // Phone-only layout checks: the floating chrome must not hide the avatar,
 // stack on itself or push game controls off a 390x844 screen.
@@ -137,7 +138,7 @@ for (const [name, width, height] of [
     const sheet = page.getByRole("dialog");
     await expect(sheet).toHaveClass(/map-sheet/);
     const tiles = sheet.locator(".map-destination");
-    await expect(tiles).toHaveCount(19);
+    await expect(tiles).toHaveCount(PLACES.length);
     await expect(sheet.locator(".map-destination.selected")).toContainText(
       "Downtown Plaza",
     );
@@ -191,19 +192,40 @@ for (const [name, width, height] of [
     await page.setViewportSize({ width, height });
     await page.goto("/");
     await travel(page, "Downtown Plaza");
-    const avatar = await box(page, ".your-character .chibi-avatar");
-    const camera = await box(page, ".camera-viewport");
-    const onStage = (r: Box) =>
-      r.x + r.width / 2 > camera.x &&
-      r.x + r.width / 2 < camera.x + camera.width &&
-      r.y + r.height / 2 > camera.y &&
-      r.y + r.height / 2 < camera.y + camera.height;
-    let checked = 0;
-    for (const label of await page.locator(".room-hotspot").all()) {
-      const found = await label.boundingBox();
-      if (!found || !onStage(found)) continue;
-      checked += 1;
-      expect(overlaps(found, avatar), await label.textContent()).toBe(false);
-    }
-    expect(checked).toBeGreaterThan(0);
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const avatar = document
+            .querySelector(".your-character .chibi-avatar")
+            ?.getBoundingClientRect();
+          const camera = document
+            .querySelector(".camera-viewport")
+            ?.getBoundingClientRect();
+          if (!avatar || !camera) return ["Room is not ready"];
+          const labels = [...document.querySelectorAll(".room-hotspot")].filter(
+            (label) => {
+              const r = label.getBoundingClientRect();
+              return (
+                r.x + r.width / 2 > camera.x &&
+                r.x + r.width / 2 < camera.right &&
+                r.y + r.height / 2 > camera.y &&
+                r.y + r.height / 2 < camera.bottom
+              );
+            },
+          );
+          if (!labels.length) return ["No on-stage hotspots"];
+          return labels
+            .filter((label) => {
+              const r = label.getBoundingClientRect();
+              return (
+                r.left < avatar.right &&
+                r.right > avatar.left &&
+                r.top < avatar.bottom &&
+                r.bottom > avatar.top
+              );
+            })
+            .map((label) => label.textContent);
+        }),
+      )
+      .toEqual([]);
   });
