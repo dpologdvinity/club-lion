@@ -99,6 +99,7 @@ import { ParkRide } from "./components/ParkRide";
 import { PARK_RIDES, type ParkRideId } from "./utils/parkRides";
 import { WaterRide } from "./components/WaterRide";
 import { WATER_RIDE_STAMPS, type WaterRideId } from "./utils/waterRides.ts";
+import { COMPACT_LAYOUT } from "./components/compactLayout";
 
 type Panel =
   | "map"
@@ -125,9 +126,6 @@ type Panel =
   | "rooftop"
   | "ride"
   | null;
-
-// Matches the compact header and drawer breakpoint in styles.css.
-const COMPACT_LAYOUT = "(max-width: 1279px)";
 
 export default function App() {
   const { player, setPlayer, saveError: playerSaveError } = usePlayer();
@@ -862,6 +860,7 @@ export default function App() {
             title={titles[panel][0]}
             subtitle={titles[panel][1]}
             onClose={closePanel}
+            className={panel === "map" ? "map-sheet" : ""}
             wide={
               panel === "shop" ||
               panel === "map" ||

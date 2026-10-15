@@ -52,6 +52,9 @@ import {
 import { SpyPinModal } from "./SpyPinModal.tsx";
 import type { TimeOfDay } from "../utils/environmentalLighting.ts";
 import { playPropSound } from "../utils/interactiveProps.ts";
+import { useCompactLayout } from "./compactLayout";
+import { Dialog } from "./Dialog";
+import { WorldMap } from "./Panels";
 import { RIDE_HOTSPOTS, type ParkRideId } from "../utils/parkRides.ts";
 import type { WaterRideId } from "../utils/waterRides.ts";
 
@@ -160,6 +163,9 @@ export function World({
   const [avatarHeading, setAvatarHeading] = useState<"left" | "right">("right");
   const [isTrotting, setIsTrotting] = useState(false);
   const [actionWheelOpen, setActionWheelOpen] = useState(false);
+  const compact = useCompactLayout();
+  // Phones: the bar's Map opens this sheet, which also lists this room's activities.
+  const [roomSheetOpen, setRoomSheetOpen] = useState(false);
   const [mangoToss, setMangoToss] = useState<{
     origin: { x: number; y: number };
     target: { x: number; y: number };
@@ -999,34 +1005,54 @@ export function World({
       </WorldStage>
       {manifest && (
         <div className="room-navigation" aria-label="Room paths and activities">
-          {manifest.portals.map((p) => (
+          {compact && (
             <button
-              key={p.targetRoomId}
-              className="button-secondary room-nav-tile"
-              onClick={() => portal(p.targetRoomId, p.targetSpawn)}
+              type="button"
+              className="button-secondary room-nav-tile room-nav-map"
+              onClick={() => setRoomSheetOpen(true)}
             >
               <span className="room-nav-icon" aria-hidden="true">
-                {portalIcon(p.targetRoomId)}
+                🗺️
               </span>
-              <span className="room-nav-caption">{p.label}</span>
+              <span className="sr-only">Map</span>
             </button>
-          ))}
-          {manifest.interactives.map((item) => (
-            <button
-              key={item.id}
-              className="button-secondary room-nav-tile"
-              onClick={() => hotspot(item.id)}
-            >
-              <span className="room-nav-icon" aria-hidden="true">
-                {hotspotIcons[item.id] ?? "✨"}
-              </span>
-              <span className="room-nav-caption">{hotspotLabels[item.id]}</span>
-            </button>
-          ))}
-          <span className="room-navigation-hint">
-            Click the ground or use arrow keys to explore. Paths at the edges
-            lead to the next room.
-          </span>
+          )}
+          {/* Phones keep the three nearest exits; the Map sheet lists the rest. */}
+          {(compact ? manifest.portals.slice(0, 3) : manifest.portals).map(
+            (p) => (
+              <button
+                key={p.targetRoomId}
+                className="button-secondary room-nav-tile"
+                onClick={() => portal(p.targetRoomId, p.targetSpawn)}
+              >
+                <span className="room-nav-icon" aria-hidden="true">
+                  {portalIcon(p.targetRoomId)}
+                </span>
+                <span className="room-nav-caption">{p.label}</span>
+              </button>
+            ),
+          )}
+          {!compact &&
+            manifest.interactives.map((item) => (
+              <button
+                key={item.id}
+                className="button-secondary room-nav-tile"
+                onClick={() => hotspot(item.id)}
+              >
+                <span className="room-nav-icon" aria-hidden="true">
+                  {hotspotIcons[item.id] ?? "✨"}
+                </span>
+                <span className="room-nav-caption">
+                  {hotspotLabels[item.id]}
+                </span>
+              </button>
+            ))}
+          {!compact && (
+            <span className="room-navigation-hint">
+              Click the ground or use arrow keys to explore. Paths at the edges
+              lead to the next room.
+            </span>
+          )}
         </div>
       )}
       <div className="chat-toolbar">
@@ -1098,11 +1124,49 @@ export function World({
         >
           <PawPrint size={22} fill="currentColor" />
         </button>
-        <button className="map-button" aria-label="Map" onClick={onMap}>
-          <Map size={19} fill="currentColor" strokeWidth={1.5} />
-          <span>Map</span>
-        </button>
+        {!(compact && manifest) && (
+          <button className="map-button" aria-label="Map" onClick={onMap}>
+            <Map size={19} fill="currentColor" strokeWidth={1.5} />
+            <span>Map</span>
+          </button>
+        )}
       </div>
+      {roomSheetOpen && manifest && (
+        <Dialog
+          title="A whole little world"
+          subtitle="Where will your paws take you next?"
+          onClose={() => setRoomSheetOpen(false)}
+          className="map-sheet"
+        >
+          <WorldMap
+            place={place}
+            onNavigate={(destination) => {
+              setRoomSheetOpen(false);
+              navigate(destination);
+            }}
+          />
+          <h3 className="map-activities-title">Things to do here</h3>
+          <div className="map-activities">
+            {manifest.interactives.map((item) => (
+              <button
+                key={item.id}
+                className="button-secondary map-activity"
+                onClick={() => {
+                  setRoomSheetOpen(false);
+                  hotspot(item.id);
+                }}
+              >
+                <span className="room-nav-icon" aria-hidden="true">
+                  {hotspotIcons[item.id] ?? "✨"}
+                </span>
+                <span className="room-nav-caption">
+                  {hotspotLabels[item.id]}
+                </span>
+              </button>
+            ))}
+          </div>
+        </Dialog>
+      )}
       <ActionWheel
         isOpen={actionWheelOpen}
         onClose={() => setActionWheelOpen(false)}

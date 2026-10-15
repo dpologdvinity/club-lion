@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { tapRoomPath } from "./room-paths";
 
 async function openBakery(page: Page) {
   await page.getByRole("button", { name: "Games", exact: true }).click();
@@ -153,10 +154,7 @@ test("the Downtown Plaza café window opens the bakery", async ({ page }) => {
     .getByRole("region", { name: "Lion world", exact: true })
     .getByRole("button", { name: "Downtown Plaza", exact: true })
     .click();
-  await page
-    .getByLabel("Room paths and activities")
-    .getByRole("button", { name: "Mango Bakery", exact: true })
-    .click();
+  await tapRoomPath(page, "Mango Bakery", true);
   await expect(
     page.getByRole("heading", { name: /Mango Bakery/ }),
   ).toBeVisible();

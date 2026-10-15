@@ -2,6 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY, migratePlayerSave, newPlayer } from "../src/game";
 import { INGREDIENTS, RECIPES } from "../src/utils/smoothieRecipes";
+import { tapRoomPath } from "./room-paths";
 
 async function travel(page: Page, name: string) {
   await page.getByRole("button", { name: "Map", exact: true }).click();
@@ -61,10 +62,7 @@ test("map, room paths and illustrated previews share saved destinations without 
   await page.reload();
   expect((await saved(page)).visited).toEqual(visits);
   await travel(page, "Downtown Plaza");
-  await page
-    .locator(".room-navigation")
-    .getByRole("button", { name: "Wonder Park Entrance", exact: true })
-    .click();
+  await tapRoomPath(page, "Wonder Park Entrance", true);
   await expect(page.locator(".your-character")).toHaveAttribute(
     "data-stage-x",
     "2500",
@@ -73,18 +71,12 @@ test("map, room paths and illustrated previews share saved destinations without 
   await expect(
     page.getByRole("heading", { name: "Wonder Park Entrance", exact: true }),
   ).toBeVisible();
-  await page
-    .locator(".room-navigation")
-    .getByRole("button", { name: "Carnival Midway", exact: true })
-    .click();
+  await tapRoomPath(page, "Carnival Midway", true);
   await expect(page.locator(".your-character")).toHaveAttribute(
     "data-stage-x",
     "100",
   );
-  await page
-    .locator(".room-navigation")
-    .getByRole("button", { name: "Wonder Park Entrance", exact: true })
-    .click();
+  await tapRoomPath(page, "Wonder Park Entrance", true);
   await expect(page.locator(".your-character")).toHaveAttribute(
     "data-stage-x",
     "2650",
@@ -351,10 +343,7 @@ test("the real DJ booth saves its scored reward once and returns to arcade and r
   await page.goto("/");
   await page.clock.pauseAt(new Date("2026-10-03T13:00:00Z"));
   await travel(page, "Club Pulse");
-  const opener = page
-    .locator(".room-navigation")
-    .getByRole("button", { name: "DJ Booth · DJ Beat Drop", exact: true });
-  await opener.click();
+  const opener = await tapRoomPath(page, "DJ Booth · DJ Beat Drop", true);
   await expect(page.locator("dialog[open]")).toHaveCount(1);
   const before = await saved(page);
   const feetBefore = await page
@@ -391,11 +380,8 @@ test("coaster launches from the park and arcade without paying an unfinished rid
 }) => {
   await page.goto("/");
   await travel(page, "Wonder Park Entrance");
-  const opener = page
-    .locator(".room-navigation")
-    .getByRole("button", { name: "Ride Savanna Screamer", exact: true });
   const before = await saved(page);
-  await opener.click();
+  const opener = await tapRoomPath(page, "Ride Savanna Screamer", true);
   await expect(
     page.getByRole("button", { name: "Start ride", exact: true }),
   ).toBeVisible();
@@ -461,10 +447,7 @@ test("panoramas, dance floor and activity dialogs retain accessibility and reduc
       ).violations,
     ).toEqual([]);
   }
-  await page
-    .locator(".room-navigation")
-    .getByRole("button", { name: "DJ Booth · DJ Beat Drop", exact: true })
-    .click();
+  await tapRoomPath(page, "DJ Booth · DJ Beat Drop", true);
   expect(
     (
       await new AxeBuilder({ page })

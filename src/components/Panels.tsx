@@ -18,6 +18,7 @@ import {
 } from "../game";
 import { SafeRoomScenery } from "./SafeRoomScenery";
 import { ROOM_MANIFESTS } from "../rooms/registry";
+import { PLACE_ICONS } from "../rooms/placeIcons";
 import { Coin, Lion } from "./Lion";
 
 export function WorldMap({
@@ -35,6 +36,9 @@ export function WorldMap({
           key={destination.id}
           onClick={() => onNavigate(destination.id)}
         >
+          <span className="map-icon" aria-hidden="true">
+            {PLACE_ICONS[destination.id]}
+          </span>
           <span className={`scene map-image ${destination.imageClass}`}>
             {ROOM_MANIFESTS[destination.id] && (
               <SafeRoomScenery place={destination.id} preview />

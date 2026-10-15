@@ -1,5 +1,6 @@
 import { test, expect, type Locator, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { tapRoomPath } from "./room-paths";
 
 const HOTSPOTS = [
   {
@@ -29,8 +30,7 @@ async function goTo(page: Page, room: string) {
     .getByRole("region", { name: "Lion world", exact: true })
     .getByRole("button", { name: "Downtown Plaza", exact: true })
     .click();
-  if (room !== "Downtown Plaza")
-    await paths(page).getByRole("button", { name: room, exact: true }).click();
+  if (room !== "Downtown Plaza") await tapRoomPath(page, room, true);
   await expect(page.locator(".world-location h2")).toHaveText(room);
 }
 
@@ -62,8 +62,12 @@ for (const { room, name, opened } of HOTSPOTS) {
     const box = await stageHotspot.boundingBox();
     expect(box!.height).toBeGreaterThanOrEqual(47.5);
 
-    // Keyboard and screen reader path: the room activity list.
-    const listed = paths(page).getByRole("button", { name, exact: true });
+    // Keyboard and screen reader path: the room activity list, or on phones
+    // the label on the stage (the bar keeps only three exits there).
+    const compact = (page.viewportSize()?.width ?? 1440) < 1280;
+    const listed = compact
+      ? stageHotspot
+      : paths(page).getByRole("button", { name, exact: true });
     await listed.focus();
     await page.keyboard.press("Enter");
     await expectGameThenClose(page, listed, opened(page));

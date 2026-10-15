@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
 import { openHeaderSettings } from "./header";
+import { tapRoomPath } from "./room-paths";
 
 test("header audio controls and procedural jukebox modal play tracks and adjust volume", async ({
   page,
@@ -83,11 +84,7 @@ test("luxury penthouse condo customization allows furniture placement, rotation,
   ).toBeVisible();
 
   // Open Condo Furniture Grid Customizer
-  const editFurnitureBtn = page
-    .locator(".room-navigation button")
-    .filter({ hasText: /Furniture Grid/ });
-  await expect(editFurnitureBtn).toBeVisible();
-  await editFurnitureBtn.click();
+  await tapRoomPath(page, /Furniture Grid/);
 
   const condoDialog = page.getByRole("dialog");
   await expect(condoDialog).toBeVisible();
@@ -153,11 +150,7 @@ test("secret scout base spy terminal launches and allows laser grid and cipher d
   ).toBeVisible();
 
   // Trigger Secret Scout HQ entrance via room navigation
-  const scoutPortalBtn = page
-    .locator(".room-navigation button")
-    .filter({ hasText: "Secret Scout HQ" });
-  await expect(scoutPortalBtn).toBeVisible();
-  await scoutPortalBtn.click();
+  await tapRoomPath(page, /Secret Scout/);
 
   // Verify Phone Booth PIN keypad modal appears
   const pinDialog = page.getByRole("dialog");
@@ -178,11 +171,7 @@ test("secret scout base spy terminal launches and allows laser grid and cipher d
   ).toBeVisible();
 
   // Launch Spy Terminal
-  const spyTerminalBtn = page
-    .locator(".room-navigation button")
-    .filter({ hasText: "Spy Terminal" });
-  await expect(spyTerminalBtn).toBeVisible();
-  await spyTerminalBtn.click();
+  await tapRoomPath(page, "Spy Terminal");
 
   const terminalDialog = page.getByRole("dialog");
   await expect(terminalDialog).toBeVisible();

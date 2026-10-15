@@ -10030,3 +10030,130 @@ textarea {
     height: calc(100% - 184px - env(safe-area-inset-bottom));
   }
 }
+
+/* Phones and tablets: the Map opens a full-screen picture grid of every
+   destination (3 columns at 390px, 4 at 820px); the current room is marked. */
+.map-icon {
+  display: none;
+}
+@media (max-width: 1279px) {
+  .dialog.map-sheet {
+    width: 100vw;
+    height: 100dvh;
+    max-height: none;
+    border: none;
+    border-radius: 0;
+  }
+  .map-sheet .map-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    padding: 4px 16px 24px;
+  }
+  .map-sheet .map-destination,
+  .map-sheet .map-destination:first-child {
+    grid-column: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 96px;
+    padding: 8px 4px;
+    background: #fffdf9;
+    text-align: center;
+  }
+  .map-sheet .map-destination.selected {
+    background: #e6edd8;
+  }
+  .map-sheet .map-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff6e0;
+    font-size: 26px;
+    line-height: 1;
+  }
+  .map-sheet .map-image,
+  .map-sheet .map-destination-copy > small,
+  .map-sheet .map-destination-copy > svg {
+    display: none;
+  }
+  .map-sheet .map-destination-copy {
+    flex-direction: column;
+    gap: 4px;
+    padding: 0;
+  }
+  .map-sheet .map-destination-copy strong {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 1.15;
+  }
+}
+@media (max-width: 590px) {
+  .map-sheet .map-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+/* Compact room bar: Map picture plus three exits, no scrolling strip. */
+@media (max-width: 1279px) {
+  .room-navigation {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .room-navigation .room-nav-tile {
+    width: 80px;
+  }
+  .room-navigation .room-nav-map {
+    width: 56px;
+    min-height: 56px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+  .room-navigation .room-nav-map .room-nav-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+  }
+}
+/* Phone Map sheet: this room's activities under the destination grid. */
+.map-activities-title {
+  margin: 4px 16px 8px;
+  font-size: 15px;
+}
+.map-activities {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 16px 24px;
+}
+.map-activity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 96px;
+  padding: 8px 4px;
+  border-radius: 16px;
+  background: #fffdf9;
+  font-size: 12px;
+  line-height: 1.15;
+  text-align: center;
+}
+.map-activity .room-nav-icon {
+  width: 48px;
+  height: 48px;
+  font-size: 26px;
+}
+@media (max-width: 590px) {
+  .map-activities {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

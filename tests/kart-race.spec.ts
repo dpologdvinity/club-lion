@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { tapRoomPath } from "./room-paths";
 
 // A controlled RAF queue drives the real race loop without a 30-second wait.
 async function installFrames(page: Page) {
@@ -78,10 +79,7 @@ test("race round Lion Speedway, reach the podium and get paid exactly once", asy
   await expect(page.locator(".world-location h2")).toHaveText("Lion Speedway");
   const before = await saved(page);
 
-  await page
-    .getByLabel("Room paths and activities")
-    .getByRole("button", { name: "Race karts", exact: true })
-    .click();
+  await tapRoomPath(page, "Race karts", true);
   const dialog = page.getByRole("dialog", { name: "Lion Speedway" });
   await expect(
     dialog.getByRole("button", { name: "Start race" }),
@@ -146,10 +144,7 @@ test("race round Lion Speedway, reach the podium and get paid exactly once", asy
     .getByRole("dialog")
     .getByRole("button", { name: /^Lion Speedway/ })
     .click();
-  await page
-    .getByLabel("Room paths and activities")
-    .getByRole("button", { name: "Race karts", exact: true })
-    .click();
+  await tapRoomPath(page, "Race karts", true);
   await expect(
     page.getByRole("button", { name: "Cherry kart" }),
   ).toHaveAttribute("aria-pressed", "true");
@@ -166,13 +161,12 @@ test("Downtown Plaza and Lion Speedway connect, and the podium strikes a pose", 
     .getByRole("dialog")
     .getByRole("button", { name: /^Downtown Plaza/ })
     .click();
-  const paths = page.getByLabel("Room paths and activities");
-  await paths.getByRole("button", { name: /Lion Speedway/ }).click();
+  await tapRoomPath(page, /Lion Speedway/);
   await expect(page.locator(".world-location h2")).toHaveText("Lion Speedway");
-  await paths.getByRole("button", { name: "Podium", exact: true }).click();
+  await tapRoomPath(page, "Podium", true);
   await expect(page.locator(".your-character .speech-bubble")).toContainText(
     "🏆",
   );
-  await paths.getByRole("button", { name: /Downtown Plaza/ }).click();
+  await tapRoomPath(page, /Downtown Plaza/);
   await expect(page.locator(".world-location h2")).toHaveText("Downtown Plaza");
 });
