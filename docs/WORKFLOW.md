@@ -1,3 +1,5 @@
+> Superseded by `docs/AGENT-GUIDE.md` and `AGENTS.md` (this file describes the earlier multi-model workflow).
+
 # Club Lion: Multi-Agent Development & Integration Workflow
 
 This document defines the official multi-agent operating architecture for Club Lion. All agents (Antigravity, Codex, Claude Code, and future models) must strictly follow this protocol.

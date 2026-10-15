@@ -1,76 +1,50 @@
-# Repository Guidelines
+# Club Lion
 
-## Project Structure & Module Organization
+Browser game for kids 3+ (the owner's ~3-year-old sister, plus the owner, 20). Plays on iPad, phone and laptop in Safari/Chrome as an installable PWA. No App Store. Illustrated 2D SVG rooms, Bratz-style fashion-doll avatars, rides, a kart race and mini games. Say "doll" in UI copy, identifiers and comments; never use the brand name. The age-category / Toca Boca-style redesign is planned for later; do not start it without a brainstorm with the owner.
 
-Club Lion is a React, TypeScript, and Vite browser game. `src/App.tsx` composes the interface; `src/components/` contains reusable UI and minigames. Keep progression, purchases, and save validation in `src/game.ts`, persistence in `src/usePlayer.ts`, and shared styles in `src/styles.css`.
+Stack: React 19, TypeScript strict, Vite 8, Node 22+. Save data is localStorage. Details and gotchas: `docs/AGENT-GUIDE.md` (read it before multi-file work). Design: `DESIGN.md`. Interaction rules: `UX-CONTRACT.md`. Keep interface claims accurate and preserve font licenses in `public/fonts/`.
 
-Unit tests live in `src/game.test.ts`; browser tests live in `tests/world.spec.ts`. Artwork and licensed fonts belong in `public/assets/` and `public/fonts/`. Consult `DESIGN.md` for visual decisions and `UX-CONTRACT.md` for interaction requirements.
+## Commands
 
-## Build, Test, and Development Commands
+- `npm run verify`: unit tests + typecheck + Prettier check + build. Run before every commit that changes code.
+- `npm test`: unit tests only (~5 s). Add new `*.test.ts` files to the `test` script in `package.json`.
+- `scripts/e2e.sh tests/x.spec.ts --project=desktop`: targeted Playwright on a private port, 1 worker, 6 cores, low priority. Never run the whole suite on a busy machine.
+- `npm run test:pwa`: offline-install test (needs a production build).
+- `npm run format`: Prettier. Screenshots go in `gallery/`; do not Read images you do not need (they cost tokens).
 
-Use Node.js 22.18 or newer. Install dependencies with `npm ci`.
+## Code rules
 
-- `npm run dev`: start the development server at `http://localhost:5173`.
-- `npm run typecheck`: check strict TypeScript types.
-- `npm test`: run game-state tests with Node's built-in test runner.
-- `npm run verify`: run all unit tests, typecheck, format check, and production build in one command.
-- `npm run test:e2e`: run Playwright Chromium tests at desktop and mobile sizes; install the browser first with `npx playwright install chromium`.
-- `npm run format:check` / `npm run format`: check or apply Prettier formatting to configured files.
-- `npm run build`: typecheck and generate production files in `dist/`.
-- `npm run preview`: serve the production build locally.
+- No `any`, no `as` casts (except `as const`), no global `JSX` namespace (`import type { JSX } from "react"`). Validate persisted data on load; new save fields are optional and old saves must still load (add a unit test).
+- Logic in pure `src/utils/*.ts` with tests; UI in `src/components/`; saves and rewards in `src/game.ts`. Rewards pay once (guard against double taps and re-renders).
+- Room scenery: SVG in `src/components/<Room>Scenery.tsx`, registered in `ROOM_SCENERY` (`RoomScenery.tsx`). Animate with the `sm-*` CSS classes (`sceneryMotion.css`), not React state. `clock: true` only if motion must follow game logic. Wrap static layers in `memo`.
+- Audio is procedural Web Audio only (shared bus in `src/utils/audioBus.ts`); no audio files.
+- Kid UX: touch targets 48 px or more, pictures before words, no fail states, big icon buttons, `prefers-reduced-motion` respected, axe-clean.
+- Library or framework docs: use Context7 (resolve the library id first). Skip it for general programming and refactors.
+- Match the surrounding code; Conventional Commits; end commits with `Implementer: <model> (claude code)`.
 
-## Coding Style & Naming Conventions
+## Working with parallel agents
 
-Follow Prettier defaults: two-space indentation, double quotes, and semicolons. Use PascalCase component filenames, camelCase functions, `use`-prefixed hooks, and kebab-case CSS classes. Reuse shared components, design tokens, and domain helpers. Keep TypeScript strict; validate persisted data before using it.
+- One task per git worktree: `git worktree add .worktrees/<name> -b feat/<name> master`. Never commit to master from a worktree.
+- CPU limit: at most 6 of 12 cores total. Prefix heavy commands with `taskset -c 0-5 nice -n 10`; Playwright 1-2 workers.
+- Finish by squashing to ONE commit (`git reset --soft $(git merge-base HEAD master)`), `npm run verify`, then report the sha. The lead rebases, re-verifies, fast-forwards master and pushes. Do not push.
+- Clean up when done: stop dev servers, delete `.tmp-*` files and your tmp folder, remove merged worktrees and branches.
+- Never use `pkill -f` or `ps | grep` patterns that match your own shell command line.
+- The owner has granted full authority to merge and push `master` in this repo. Actions that create public surfaces (for example enabling GitHub Pages) can be blocked by the permission system; do not work around a block, tell the owner.
 
-## Testing Guidelines
+<!-- caveman-begin -->
+Respond terse like smart caveman. All technical substance stay. Only fluff die.
 
-Name unit tests `*.test.ts` and browser tests `*.spec.ts`. Protect coin balances, one-time rewards, purchase ownership, and save round trips. Exercise changed interactions, keyboard navigation, dialog focus, persistence, and mobile layouts; browser tests also use axe accessibility checks. No numeric coverage threshold is configured. Inside task worktrees, Implementers and Reviewers run `npm test` (~100ms) to verify logic. Full verification (`npm run verify` + `test:e2e`) is executed once by the Verifier at the integration merge gate.
+Rules:
+- Drop: articles (a/an/the), filler (just/really/basically), pleasantries, hedging
+- Fragments OK. Short synonyms. Technical terms exact. Code unchanged.
+- Pattern: [thing] [action] [reason]. [next step].
+- Not: "Sure! I'd be happy to help you with that."
+- Yes: "Bug in auth middleware. Fix:"
 
-## Commit & Pull Request Guidelines
+Switch level: /caveman lite|full|ultra|wenyan-lite|wenyan-full|wenyan-ultra
+Stop: "stop caveman" or "normal mode"
 
-Use focused Conventional Commits, matching history: `feat: add illustrated savanna` or `fix: restore dialog focus`. Commit meaningful increments often. PRs should explain the resulting behavior, list validation results, link relevant issues, and include desktop/mobile screenshots for visual changes. Highlight save-format changes. Exclude secrets, `node_modules/`, and generated build/test artifacts.
+Auto-Clarity: drop caveman for security warnings, irreversible actions, user confused. Resume after.
 
-### Multi-Agent Operating Roles & Lifecycle
-
-Club Lion uses a 4-role development lifecycle (documented fully in [`docs/WORKFLOW.md`](docs/WORKFLOW.md)). All models (`gemini-3.8-flash`, `gpt-6.1-sol`, `claude-sonnet-5`) are equal peers and can execute any role:
-
-1. **Orchestrator (Phase level)**: Assigns tasks, creates isolated worktrees with `PROMPT.md`, manages the merge queue, squashes verified worktrees into `master`, prunes branches, and updates `docs/TASK-TRACKER.md`.
-2. **Implementer (Task level)**: Develops inside `.worktrees/<task-name>` with RED-GREEN TDD, deletes `PROMPT.md`, and commits with `Implementer: <model> (<agent>)`.
-3. **Reviewer (Task level)**: Audits commits in the worktree. Exercises judgment to either make minor fixes directly and commit, or write a new `PROMPT.md` for the Implementer.
-4. **Verifier (Integration level)**: Pre-merge integration specialist. Rebases the candidate worktree onto latest `master`, resolves merge conflicts (e.g. `package.json` test scripts, shared types, CSS), and runs `npm run verify` + `npm run test:e2e` to ensure 100% green tests before `master` is touched.
-
-### Merge Train Protocol
-- The Verifier rebases Worktree $N$ onto `master`, resolves conflicts, and runs verification.
-- The Orchestrator squashes Worktree $N$ into `master` as a single Conventional Commit, deletes the worktree/branch, and updates `docs/TASK-TRACKER.md`.
-- The Verifier immediately rebases Worktree $N+1$ onto the updated `master`.
-- Repeat until all worktrees are integrated.
-
-### Mandatory Commit & Attribution Standards
-
-#### Standard Worktree Commits (Implementer / Reviewer):
-```text
-<type>(<scope>): <summary>
-
-Implementer: <model> (<agent>)
-```
-
-#### Squashed Integration Commits on `master` (Orchestrator):
-```text
-<type>(<scope>): <summary>
-
-<bulleted list of feature capabilities, changes, and test additions>
-
-Implementer: <model> (<agent>)
-Reviewer: <model> (<agent>)
-Verifier: <model> (<agent>)
-Assigner: <model> (<agent>)
-```
-*Standard agent/model identifiers:*
-- `gpt-6.1-sol (codex)`
-- `claude-sonnet-5 (claude code)`
-- `gemini-3.8-flash (antigravity)`
-
-## Architecture & Agent Notes
-
-The game is local single-player; progress uses localStorage. Keep interface claims accurate and preserve font licenses. All audio effects and instruments must use procedural Web Audio API synthesis ($0 infrastructure, zero external MP3 assets). For library, framework, SDK, API, CLI, or cloud-service documentation, use Context7: resolve the library ID first, then query each relevant concept separately. Skip Context7 for general programming, business logic, refactoring, and code review.
+Boundaries: code/commits/PRs written normal.
+<!-- caveman-end -->
