@@ -11,8 +11,8 @@ Read `AGENTS.md` first (rules, commands, file map). This file is the current sta
 
 ## Repo state
 
-- `master` = `0600a04` (or later) pushed to `origin/master` (https://github.com/dpologdvinity/club-lion, public).
-- Done and merged: 13 illustrated rooms + Lion Speedway (kart race), installable offline PWA, smooth CSS scenery motion, phone/iPad layout, 5 amusement rides, 4 water rides, doll avatars rounds 1-4, Bubble Pop, Coloring Book, Mango Bakery, Hide & Seek, Animal Orchestra, Shape Sorter, room hotspots for games, picture-first room tiles, Canyon Rapids repaint, save fixes. ~673 unit tests.
+- `master` = `7a8b99b` pushed to `origin/master` (https://github.com/dpologdvinity/club-lion, public).
+- Done and merged: 13 illustrated rooms + Lion Speedway (kart race), installable offline PWA, smooth CSS scenery motion, phone/iPad layout, 5 amusement rides, 4 water rides, doll avatars rounds 1-4, Bubble Pop, Coloring Book, Mango Bakery, Hide & Seek, Animal Orchestra, Shape Sorter, Picture Puzzle, Balloon Parade, picture-first navigation, aquarium/rink, pet species, world collision, test hygiene, Canyon Rapids repaint, save fixes. 774 unit tests.
 - Uncommitted in the main checkout (leave alone): `.github/workflows/playwright.yml`, `gallery/rooms-current/room-default.png`.
 
 ## Unmerged work in `.worktrees/` (Claude agents were mid-flight; check each with `git -C .worktrees/<name> status` and `log master..HEAD`)
@@ -36,14 +36,15 @@ Editor diagnostics seen mid-flight (missing `./components/RoomMusic`, `PieceArt`
 - Merge each branch as soon as its own checks pass. Do not batch. Keep at most about 4 parallel agents (8 overloaded the 12-core machine to load 50).
 - `pages.yml` is manual-only until the owner enables Pages; then restore its `push` trigger.
 - Room music is merged (`roomMusic.ts`, `RoomMusic.tsx`); follows the World speaker toggle.
+- Merged and pushed in order: world collision, picture navigation, pet species, aquarium/rink rooms, Puzzle + Balloon Parade, and test hygiene. Reward follow-up now caps Shape Sorter at its three rounds and rejects Animal Orchestra coin overflow.
 
 ## Next steps for Codex (in order)
 
-1. Land the unmerged worktrees above, one at a time, as soon as each passes `npm run verify` (CI runs the rest).
-2. Reduce merge conflicts: split the shared registries so a new game or hotspot touches no shared file (per-game files for the `package.json` test list, `GameId`/cards in `GamesPanel.tsx`, hotspot tables in `World.tsx`, stamps in `stampDefinitions.ts`).
+1. Completed: all listed worktrees were verified and integrated in table order; GitHub Actions runs the browser checks.
+2. Optional: reduce merge conflicts by splitting shared game registries (test list, game cards, hotspots, stamps); this is deferred because it is structural work with no immediate product need.
 3. Optional: open one PR per branch and `gh pr merge --auto --squash` so CI gates the merge.
-4. Harden `completeShapeSorterRound` and `completeAnimalBand` in `game.ts` (pay-once and overflow guards) with unit tests.
-5. Doll avatar: make it match `gallery/avatars/*.jpg`; fix accessory anchors.
+4. Done: `completeShapeSorterRound` stops paying after all rounds; `completeAnimalBand` rejects coin overflow. Unit tests cover both.
+5. Doll avatar: make it match `gallery/avatars/*.jpg`; fix accessory anchors (not yet done).
 6. The shell hook that rewrites Bash calls blocked Claude agents (owner config); not an issue for Codex.
 
 ## Known test baseline (fail on plain master, likely not your regression)
@@ -53,8 +54,8 @@ Editor diagnostics seen mid-flight (missing `./components/RoomMusic`, `PieceArt`
 ## Known issues and follow-ups
 
 - Avatar still does not match the references; accessory placement bug (above).
-- `completeShapeSorterRound` pays every call (only the component guards double pay); `completeAnimalBand` lacks the coin-overflow guard. Harden both in `game.ts` with tests.
-- Phone room bar: before `picture-nav-2` lands it is a sideways strip that cuts off buttons.
+- Puzzle and Balloon Parade are implemented; other avatar visual-match/accessory-anchor work remains.
+- GitHub Actions for the latest push is pending; check `gh run list` / `gh run view` for browser results.
 - Animal art (parrot reads as duck, monkey as dog), sounds, drag on touch: never checked by the owner or on a real iPad. Playwright WebKit is not iPad Safari.
 - `.nvmrc` (24) and `.npmrc` (engine-strict) were added; CI uses Node 22 in `pages.yml` and lts in `playwright.yml`.
 - Later: the age-category / Toca Boca-style redesign (brainstorm first), BrowserStack for real iPad testing (owner postponed).
