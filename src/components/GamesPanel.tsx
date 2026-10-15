@@ -17,6 +17,8 @@ import { MangoBakery } from "./MangoBakery";
 import { HideAndSeekSafari } from "./HideAndSeekSafari";
 import { AnimalBand } from "./AnimalBand";
 import { ShapeSorter } from "./ShapeSorter";
+import { PicturePuzzle } from "./PicturePuzzle";
+import { BalloonParade } from "./BalloonParade";
 import { PAW_STEPS_COINS_PER_ROUND } from "../game";
 import type { PlayerV2 } from "../game.ts";
 
@@ -37,7 +39,9 @@ export type GameId =
   | "bakery"
   | "seek"
   | "animal-band"
-  | "shape-sorter";
+  | "shape-sorter"
+  | "picture-puzzle"
+  | "balloon-parade";
 
 export function GamesPanel({
   player,
@@ -59,6 +63,8 @@ export function GamesPanel({
   onCompleteSeek,
   onCompleteAnimalBand,
   onCompleteShapeSorter,
+  onCompletePicturePuzzle,
+  onCompleteBalloonRainbow,
   onClose,
 }: {
   player: PlayerV2;
@@ -89,6 +95,8 @@ export function GamesPanel({
   onCompleteSeek?: ComponentProps<typeof HideAndSeekSafari>["onComplete"];
   onCompleteAnimalBand?: (taps: number) => void;
   onCompleteShapeSorter?: (round: number) => void;
+  onCompletePicturePuzzle?: (pieces: number) => void;
+  onCompleteBalloonRainbow?: () => void;
   onClose: () => void;
 }) {
   const [picked, setPicked] = useState<GameId | null>(initialGame);
@@ -135,7 +143,9 @@ export function GamesPanel({
           picked === "bakery" ||
           picked === "seek" ||
           picked === "animal-band" ||
-          picked === "shape-sorter") && (
+          picked === "shape-sorter" ||
+          picked === "picture-puzzle" ||
+          picked === "balloon-parade") && (
           <button className="game-back" onClick={backToMenu}>
             <ArrowLeft size={14} /> All games
           </button>
@@ -215,6 +225,14 @@ export function GamesPanel({
           <ShapeSorter
             onRoundDone={(round) => onCompleteShapeSorter?.(round)}
           />
+        )}
+        {picked === "picture-puzzle" && (
+          <PicturePuzzle
+            onPictureDone={(pieces) => onCompletePicturePuzzle?.(pieces)}
+          />
+        )}
+        {picked === "balloon-parade" && (
+          <BalloonParade onRainbowDone={() => onCompleteBalloonRainbow?.()} />
         )}
         {picked === "memory" && (
           <MemorySafari
@@ -310,6 +328,24 @@ export function GamesPanel({
             best: player.shapeSorterRounds ?? 0,
           },
           {
+            id: "picture-puzzle",
+            name: "Picture Puzzle",
+            art: "🧩 🦁 🎡",
+            description:
+              "Drag each piece to its spot. Big pictures, big pieces.",
+            reward: "Earn 5–12 coins a picture and a star stamp",
+            best: player.picturePuzzles ?? 0,
+          },
+          {
+            id: "balloon-parade",
+            name: "Balloon Parade",
+            art: "🎈 🌈 🎈",
+            description:
+              "Pop the balloons. Pop them in rainbow order for an arch.",
+            reward: "Earn 10 coins for each rainbow arch",
+            best: player.balloonRainbows ?? 0,
+          },
+          {
             id: "dj-beat-drop",
             name: "DJ Beat Drop",
             art: "🎧 🎵 🦁",
@@ -385,7 +421,11 @@ export function GamesPanel({
                       ? `Songs played ${game.best}`
                       : game.id === "shape-sorter"
                         ? `Rounds sorted ${game.best}`
-                        : `Best ${game.best}`}
+                        : game.id === "picture-puzzle"
+                          ? `Pictures finished ${game.best}`
+                          : game.id === "balloon-parade"
+                            ? `Rainbows built ${game.best}`
+                            : `Best ${game.best}`}
               </span>
             )}
           </span>

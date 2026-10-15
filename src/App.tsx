@@ -45,6 +45,8 @@ import {
   completeBubblePop,
   completeAnimalBand,
   completeShapeSorterRound,
+  completePicturePuzzle,
+  completeBalloonRainbow,
   colorPage,
   completeFishingCatch,
   recordFashionShowResult,
@@ -1011,6 +1013,12 @@ export default function App() {
                 }
                 onCompleteShapeSorter={(round) =>
                   setPlayer((p) => completeShapeSorterRound(p, round))
+                }
+                onCompletePicturePuzzle={(pieces) =>
+                  setPlayer((p) => completePicturePuzzle(p, pieces))
+                }
+                onCompleteBalloonRainbow={() =>
+                  setPlayer((p) => completeBalloonRainbow(p))
                 }
                 onColorPage={(pageId, fills, finish) =>
                   setPlayer((p) => colorPage(p, pageId, fills, finish))

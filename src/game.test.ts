@@ -14,6 +14,8 @@ import {
   completeRiverSurf,
   setKartPrefs,
   evaluateStampUnlocks,
+  completePicturePuzzle,
+  completeBalloonRainbow,
   completeBeeStop,
   completePawSteps,
   completeFruitCatch,
@@ -33,6 +35,7 @@ import {
   unlockStamp,
   migratePlayerSave,
   SHOP_ITEMS,
+  STAMP_DEFINITIONS,
   type Player,
 } from "./game.ts";
 import { SPY_PUZZLE_MAX_COINS } from "./utils/spyPuzzles.ts";
@@ -42,6 +45,14 @@ import {
   ANIMAL_BAND_MAX_PAID_SONGS,
 } from "./utils/animalBand.ts";
 import { SHAPE_SORTER_COINS_PER_ROUND } from "./utils/shapeSorter.ts";
+import {
+  PICTURE_PUZZLE_COINS,
+  PICTURE_PUZZLE_MAX_PAID,
+} from "./utils/picturePuzzle.ts";
+import {
+  BALLOON_RAINBOW_COINS,
+  BALLOON_MAX_PAID_RAINBOWS,
+} from "./utils/balloonParade.ts";
 import { MAX_CAKE_PHOTOS, newCake, type Cake } from "./utils/bakery.ts";
 import {
   DEFAULT_AVATAR_LOOK,
@@ -1619,4 +1630,62 @@ test("choosePetSpecies swaps species, renames the pet and keeps its position", (
   assert.equal(choosePetSpecies(dragon, "dragon"), dragon);
   assert.equal(choosePetSpecies(dragon, "lion").pet.name, "Leo");
   assert.equal(player.pet.species, "lion");
+});
+
+test("a Picture Puzzle pays once per finish and only the nine-piece picture earns the stamp", () => {
+  const four = completePicturePuzzle(newPlayer(), 4);
+  assert.equal(four.coins, 250 + PICTURE_PUZZLE_COINS[4]);
+  assert.equal(four.picturePuzzles, 1);
+  assert.equal(four.stamps?.length ?? 0, 0);
+  const nine = completePicturePuzzle(completePicturePuzzle(four, 6), 9);
+  assert.equal(nine.picturePuzzles, 3);
+  assert.deepEqual(nine.stamps, ["picture_puzzle_star"]);
+  for (const bad of [0, 5, 9.5, Number.NaN]) {
+    assert.equal(completePicturePuzzle(four, bad), four);
+  }
+  const capped = { ...four, picturePuzzles: PICTURE_PUZZLE_MAX_PAID };
+  assert.equal(completePicturePuzzle(capped, 4), capped);
+});
+
+test("a Balloon Parade rainbow pays once and the first arch earns its stamp", () => {
+  const first = completeBalloonRainbow(newPlayer());
+  const stampCoins =
+    STAMP_DEFINITIONS.find((stamp) => stamp.id === "balloon_rainbow")
+      ?.rewardCoins ?? 0;
+  assert.equal(first.coins, 250 + BALLOON_RAINBOW_COINS + stampCoins);
+  assert.equal(first.balloonRainbows, 1);
+  assert.deepEqual(first.stamps, ["balloon_rainbow"]);
+  const second = completeBalloonRainbow(first);
+  assert.equal(second.balloonRainbows, 2);
+  assert.equal(second.coins, first.coins + BALLOON_RAINBOW_COINS);
+  assert.deepEqual(second.stamps, ["balloon_rainbow"]);
+  const capped = { ...first, balloonRainbows: BALLOON_MAX_PAID_RAINBOWS };
+  assert.equal(completeBalloonRainbow(capped), capped);
+});
+
+test("picture puzzle and balloon progress survives a save and bad values are dropped", () => {
+  const played = completeBalloonRainbow(completePicturePuzzle(newPlayer(), 6));
+  const restored = restorePlayer(JSON.stringify(played));
+  assert.equal(restored.picturePuzzles, 1);
+  assert.equal(restored.balloonRainbows, 1);
+  assert.equal(restored.coins, played.coins);
+  const tampered = restorePlayer(
+    JSON.stringify({
+      ...played,
+      picturePuzzles: PICTURE_PUZZLE_MAX_PAID + 1,
+      balloonRainbows: -1,
+    }),
+  );
+  assert.equal(tampered.picturePuzzles, undefined);
+  assert.equal(tampered.balloonRainbows, undefined);
+  assert.equal(tampered.coins, played.coins);
+});
+
+test("a save from before these games loads with no progress for them", () => {
+  const old = restorePlayer(
+    JSON.stringify({ ...newPlayer(), picturePuzzles: undefined }),
+  );
+  assert.equal(old.picturePuzzles, undefined);
+  assert.equal(old.balloonRainbows, undefined);
+  assert.equal(old.coins, 250);
 });

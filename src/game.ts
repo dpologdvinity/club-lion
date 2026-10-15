@@ -37,6 +37,15 @@ import {
   SHAPE_SORTER_ROUNDS,
 } from "./utils/shapeSorter.ts";
 import {
+  PICTURE_PUZZLE_COINS,
+  PICTURE_PUZZLE_MAX_PAID,
+  isPieceCount,
+} from "./utils/picturePuzzle.ts";
+import {
+  BALLOON_MAX_PAID_RAINBOWS,
+  BALLOON_RAINBOW_COINS,
+} from "./utils/balloonParade.ts";
+import {
   restoreColoringBook,
   saveColoringPage,
   type ColoringBookSave,
@@ -174,6 +183,10 @@ export type PlayerBase = {
   animalBandSongs?: number;
   /** Shape Sorter rounds finished. */
   shapeSorterRounds?: number;
+  /** Picture Puzzle pictures finished. */
+  picturePuzzles?: number;
+  /** Balloon Parade rainbow arches finished. */
+  balloonRainbows?: number;
 };
 
 export type Player = PlayerBase & {
@@ -623,6 +636,16 @@ export function restorePlayer(raw: string | null): Player {
         : {}),
       ...(Number.isSafeInteger(p.shapeSorterRounds) && p.shapeSorterRounds >= 0
         ? { shapeSorterRounds: p.shapeSorterRounds }
+        : {}),
+      ...(Number.isSafeInteger(p.picturePuzzles) &&
+      p.picturePuzzles >= 0 &&
+      p.picturePuzzles <= PICTURE_PUZZLE_MAX_PAID
+        ? { picturePuzzles: p.picturePuzzles }
+        : {}),
+      ...(Number.isSafeInteger(p.balloonRainbows) &&
+      p.balloonRainbows >= 0 &&
+      p.balloonRainbows <= BALLOON_MAX_PAID_RAINBOWS
+        ? { balloonRainbows: p.balloonRainbows }
         : {}),
       ...(p.mangoRunBest === undefined
         ? {}
@@ -1160,6 +1183,46 @@ export function completeShapeSorterRound<T extends PlayerBase>(
   return round === SHAPE_SORTER_ROUNDS
     ? unlockStamp(paid, "shape_sorter_star")
     : paid;
+}
+
+/** Pays a finished Picture Puzzle once, by piece count; the nine-piece picture also earns its stamp. */
+export function completePicturePuzzle<T extends PlayerBase>(
+  player: T,
+  pieces: number,
+): T {
+  const finished = player.picturePuzzles ?? 0;
+  if (
+    !isPieceCount(pieces) ||
+    finished >= PICTURE_PUZZLE_MAX_PAID ||
+    !Number.isSafeInteger(player.coins + PICTURE_PUZZLE_COINS[pieces])
+  )
+    return player;
+  const paid = {
+    ...player,
+    coins: player.coins + PICTURE_PUZZLE_COINS[pieces],
+    gamesPlayed: player.gamesPlayed + 1,
+    picturePuzzles: finished + 1,
+  };
+  return pieces === 9 ? unlockStamp(paid, "picture_puzzle_star") : paid;
+}
+
+/** Pays a finished rainbow arch once; the first arch also earns its stamp. */
+export function completeBalloonRainbow<T extends PlayerBase>(player: T): T {
+  const rainbows = player.balloonRainbows ?? 0;
+  if (
+    rainbows >= BALLOON_MAX_PAID_RAINBOWS ||
+    !Number.isSafeInteger(player.coins + BALLOON_RAINBOW_COINS)
+  )
+    return player;
+  return unlockStamp(
+    {
+      ...player,
+      coins: player.coins + BALLOON_RAINBOW_COINS,
+      gamesPlayed: player.gamesPlayed + 1,
+      balloonRainbows: rainbows + 1,
+    },
+    "balloon_rainbow",
+  );
 }
 
 /** Saves a coloring page; finishing one unlocks its stamp through evaluateStampUnlocks. */
