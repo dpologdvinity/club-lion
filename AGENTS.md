@@ -20,7 +20,8 @@ Stack: React 19, TypeScript strict, Vite 8, Node 22+. Saves are localStorage. De
 - `src/rooms/manifests/*.ts` per-room stage, hotspots, portals, walkable area; `src/rooms/registry.ts`.
 - `src/components/*Scenery.tsx` SVG rooms; table `ROOM_SCENERY` in `RoomScenery.tsx`; motion classes `sm-*` in `sceneryMotion.css`.
 - `src/components/avatar/*` + `Avatar.tsx` doll avatar; look fields in `src/types/world.ts`.
-- `src/games/catalog.ts`: arcade cards, progress labels, and `GameId`; `src/components/GamesPanel.tsx` renders the games. New game: pure logic in `src/utils/`, component, `completeX` in `game.ts`, card in the catalogue, stamp in `stampDefinitions.ts`, room hotspot with `label`, `icon`, and typed `actionData.gameId`, unit test + `tests/<game>.spec.ts`.
+- `src/games/catalog.ts`: arcade cards, progress labels, and `GameId`; `src/components/GamesPanel.tsx` renders the games. New game: pure logic in `src/utils/`, component, `completeX` in `game.ts`, card in the catalogue, stamp metadata in `src/stamps/catalog.ts`, room hotspot with `label`, `icon`, and typed `actionData.gameId`, unit test + `tests/<game>.spec.ts`.
+- `src/stamps/catalog.ts`: stamp metadata; `src/utils/stampDefinitions.ts`: unlock checks and eligibility, with compatible re-exports.
 - Tests: `src/**/*.test.ts` (node:test) and `tests/*.spec.ts` (Playwright desktop 1440x1000, mobile 390x844).
 
 ## Code rules

@@ -22,7 +22,7 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 ## Remaining follow-ups
 
 - Doll accessory head transforms already share `RIG.head` / `RIG.headBoost`, with regression coverage in `avatarSvg.test.ts`. Visual resemblance to `gallery/avatars/` still needs owner feedback.
-- Registry follow-up: arcade cards, progress labels, and derived game IDs are in `src/games/catalog.ts`. Room manifests own hotspot labels, icons, and typed game launch IDs; adding these no longer needs World UI tables. Automatic test discovery removes test-list conflicts. Stamp-definition extraction remains optional structural work.
+- Registry follow-up: arcade cards, progress labels, and derived game IDs are in `src/games/catalog.ts`. Room manifests own hotspot labels, icons, and typed game launch IDs; adding these no longer needs World UI tables. Automatic test discovery removes test-list conflicts. Stamp metadata is now separate in `src/stamps/catalog.ts`; unlock evaluation and compatible exports remain in `src/utils/stampDefinitions.ts`.
 - Animal art, sounds, and touch dragging still need owner/real-iPad assessment. Playwright Chromium and WebKit do not replace real iPad Safari. BrowserStack was postponed.
 - The age-category / Toca Boca-style redesign requires brainstorming with the owner before implementation.
 
