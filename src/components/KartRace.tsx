@@ -63,7 +63,7 @@ const DRIVER_NAMES: Record<KartDriver, string> = {
   giraffe: "Giraffe",
   hippo: "Hippo",
 };
-const PET_SRC = `${import.meta.env.BASE_URL}assets/lion-chibi-living-cub.png`;
+const PET_SRC = `${import.meta.env.BASE_URL}assets/lion-chibi-living-cub.webp`;
 const TRACK_D = trackPath();
 
 type Phase = "garage" | "race" | "podium";
