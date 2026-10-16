@@ -11087,3 +11087,11 @@ textarea {
     margin-left: calc(min(64px, 17%) / -2);
   }
 }
+
+.panel-load-error {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+}

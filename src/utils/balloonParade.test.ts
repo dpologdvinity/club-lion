@@ -2,7 +2,6 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   BALLOON_COLORS,
-  BALLOON_MAX_PAID_RAINBOWS,
   RAINBOW_ORDER,
   SURPRISES,
   isBalloonColor,
@@ -80,8 +79,4 @@ test("only known colour ids pass validation", () => {
   assert.equal(isBalloonColor("purple"), true);
   for (const value of ["pink", "", 3, null, undefined])
     assert.equal(isBalloonColor(value), false, String(value));
-});
-
-test("the paid arch cap is a sensible positive number", () => {
-  assert.ok(BALLOON_MAX_PAID_RAINBOWS > 0);
 });

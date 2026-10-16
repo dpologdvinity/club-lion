@@ -39,10 +39,7 @@ import {
   type Player,
 } from "./game.ts";
 import { BUBBLE_POP_MAX_SCORE } from "./utils/bubblePop.ts";
-import { ANIMAL_BAND_MAX_PAID_SONGS } from "./utils/animalBand.ts";
 import { SHAPE_SORTER_ROUNDS } from "./utils/shapeSorter.ts";
-import { PICTURE_PUZZLE_MAX_PAID } from "./utils/picturePuzzle.ts";
-import { BALLOON_MAX_PAID_RAINBOWS } from "./utils/balloonParade.ts";
 import { MAX_CAKE_PHOTOS, newCake, type Cake } from "./utils/bakery.ts";
 import {
   DEFAULT_AVATAR_LOOK,
@@ -1237,7 +1234,7 @@ test("kart colour and Fast mode are remembered, validated, and optional", () => 
   }
 });
 
-test("an Animal Orchestra song counts once per song, stamps the first, and stops at the cap", () => {
+test("an Animal Orchestra song counts once per song, stamps the first, and never overflows", () => {
   const first = completeAnimalBand(newPlayer(), 6);
   assert.equal(first.animalBandSongs, 1);
   assert.equal(first.gamesPlayed, 1);
@@ -1250,7 +1247,7 @@ test("an Animal Orchestra song counts once per song, stamps the first, and stops
   }
   const full = {
     ...first,
-    animalBandSongs: ANIMAL_BAND_MAX_PAID_SONGS,
+    animalBandSongs: Number.MAX_SAFE_INTEGER,
   };
   assert.equal(completeAnimalBand(full, 4), full);
 });
@@ -1284,7 +1281,7 @@ test("animal band and shape sorter progress survives a save and bad values are d
   const tampered = restorePlayer(
     JSON.stringify({
       ...played,
-      animalBandSongs: ANIMAL_BAND_MAX_PAID_SONGS + 1,
+      animalBandSongs: 2.5,
       shapeSorterRounds: -2,
     }),
   );
@@ -1342,7 +1339,7 @@ test("a Picture Puzzle pays once per finish and only the nine-piece picture earn
   for (const bad of [0, 5, 9.5, Number.NaN]) {
     assert.equal(completePicturePuzzle(four, bad), four);
   }
-  const capped = { ...four, picturePuzzles: PICTURE_PUZZLE_MAX_PAID };
+  const capped = { ...four, picturePuzzles: Number.MAX_SAFE_INTEGER };
   assert.equal(completePicturePuzzle(capped, 4), capped);
 });
 
@@ -1353,7 +1350,7 @@ test("a Balloon Parade rainbow counts once and the first arch earns its stamp", 
   const second = completeBalloonRainbow(first);
   assert.equal(second.balloonRainbows, 2);
   assert.deepEqual(second.stamps, ["balloon_rainbow"]);
-  const capped = { ...first, balloonRainbows: BALLOON_MAX_PAID_RAINBOWS };
+  const capped = { ...first, balloonRainbows: Number.MAX_SAFE_INTEGER };
   assert.equal(completeBalloonRainbow(capped), capped);
 });
 
@@ -1365,7 +1362,7 @@ test("picture puzzle and balloon progress survives a save and bad values are dro
   const tampered = restorePlayer(
     JSON.stringify({
       ...played,
-      picturePuzzles: PICTURE_PUZZLE_MAX_PAID + 1,
+      picturePuzzles: 2.5,
       balloonRainbows: -1,
     }),
   );
@@ -1539,4 +1536,21 @@ test("kart races count once per race and keep the best lap", () => {
   });
   assert.equal(noLap.kartRacesFinished, 4);
   assert.equal(noLap.kartBestLapMs, 6200);
+});
+
+test("songs, puzzles and rainbows keep counting past the old payout caps", () => {
+  const busy = {
+    ...newPlayer(),
+    animalBandSongs: 25,
+    picturePuzzles: 60,
+    balloonRainbows: 30,
+  };
+  assert.equal(completeAnimalBand(busy, 4).animalBandSongs, 26);
+  assert.equal(completePicturePuzzle(busy, 4).picturePuzzles, 61);
+  assert.equal(completeBalloonRainbow(busy).balloonRainbows, 31);
+  const restored = restorePlayer(
+    JSON.stringify({ ...busy, animalBandSongs: 99, picturePuzzles: 99 }),
+  );
+  assert.equal(restored.animalBandSongs, 99);
+  assert.equal(restored.picturePuzzles, 99);
 });

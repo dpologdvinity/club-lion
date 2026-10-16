@@ -24,8 +24,6 @@ export const PICTURES = [
 export type PictureId = (typeof PICTURES)[number]["id"];
 
 export const PICTURE_PUZZLE_ROUNDS = PICTURES.length;
-/** Finishes stop counting after this many, so replaying cannot pile up. */
-export const PICTURE_PUZZLE_MAX_PAID = 60;
 
 export function isPieceCount(value: unknown): value is PieceCount {
   return PIECE_COUNTS.some((count) => count === value);

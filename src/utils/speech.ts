@@ -8,7 +8,7 @@ export function spokenText(message: string): string {
     .trim();
 }
 
-/** Reads short messages aloud for children who cannot read yet; silent when sound effects are muted. */
+/** Reads short messages aloud for children who cannot read yet, queued so none cut each other off; silent when sound effects are muted. */
 export function speak(message: string, bus: AudioBus = getSharedAudioBus()) {
   const synth = globalThis.speechSynthesis;
   const text = spokenText(message);
@@ -20,7 +20,6 @@ export function speak(message: string, bus: AudioBus = getSharedAudioBus()) {
     bus.isSfxMuted()
   )
     return;
-  synth.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.rate = 0.95;
   utterance.pitch = 1.2;

@@ -32,7 +32,7 @@ export function SledRun({
 }: {
   look?: AvatarLook;
   best?: number;
-  onComplete: (coinsEarned: number, result: SledState) => void;
+  onComplete: (score: number, result: SledState) => void;
 }) {
   const [phase, setPhase] = useState<Phase>("ready");
   const [state, setState] = useState(INITIAL_STATE);

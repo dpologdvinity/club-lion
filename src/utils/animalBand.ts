@@ -17,8 +17,6 @@ export type AnimalId = (typeof ANIMALS)[number]["id"];
 export const SONG_MAX_TAPS = 10;
 /** Every fifth tap bursts into hearts and stars. */
 export const BURST_EVERY = 5;
-/** Songs stop paying after this many, so replaying cannot pile up. */
-export const ANIMAL_BAND_MAX_PAID_SONGS = 25;
 
 /** Appends one tap to a song; a full song stays as it is. */
 export function addToSong(

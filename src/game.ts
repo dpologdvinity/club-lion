@@ -25,16 +25,9 @@ export {
 } from "./utils/stampDefinitions.ts";
 import { BEE_STOP_MAX_SCORE } from "./beeStop.ts";
 import { BUBBLE_POP_MAX_SCORE } from "./utils/bubblePop.ts";
-import {
-  ANIMAL_BAND_MAX_PAID_SONGS,
-  SONG_MAX_TAPS,
-} from "./utils/animalBand.ts";
+import { SONG_MAX_TAPS } from "./utils/animalBand.ts";
 import { SHAPE_SORTER_ROUNDS } from "./utils/shapeSorter.ts";
-import {
-  PICTURE_PUZZLE_MAX_PAID,
-  isPieceCount,
-} from "./utils/picturePuzzle.ts";
-import { BALLOON_MAX_PAID_RAINBOWS } from "./utils/balloonParade.ts";
+import { isPieceCount } from "./utils/picturePuzzle.ts";
 import {
   restoreColoringBook,
   saveColoringPage,
@@ -594,22 +587,16 @@ export function restorePlayer(raw: string | null): Player {
         const coloringBook = restoreColoringBook(p.coloringBook);
         return coloringBook ? { coloringBook } : {};
       })(),
-      ...(Number.isSafeInteger(p.animalBandSongs) &&
-      p.animalBandSongs >= 0 &&
-      p.animalBandSongs <= ANIMAL_BAND_MAX_PAID_SONGS
+      ...(Number.isSafeInteger(p.animalBandSongs) && p.animalBandSongs >= 0
         ? { animalBandSongs: p.animalBandSongs }
         : {}),
       ...(Number.isSafeInteger(p.shapeSorterRounds) && p.shapeSorterRounds >= 0
         ? { shapeSorterRounds: p.shapeSorterRounds }
         : {}),
-      ...(Number.isSafeInteger(p.picturePuzzles) &&
-      p.picturePuzzles >= 0 &&
-      p.picturePuzzles <= PICTURE_PUZZLE_MAX_PAID
+      ...(Number.isSafeInteger(p.picturePuzzles) && p.picturePuzzles >= 0
         ? { picturePuzzles: p.picturePuzzles }
         : {}),
-      ...(Number.isSafeInteger(p.balloonRainbows) &&
-      p.balloonRainbows >= 0 &&
-      p.balloonRainbows <= BALLOON_MAX_PAID_RAINBOWS
+      ...(Number.isSafeInteger(p.balloonRainbows) && p.balloonRainbows >= 0
         ? { balloonRainbows: p.balloonRainbows }
         : {}),
       ...(p.mangoRunBest === undefined
@@ -1036,7 +1023,7 @@ export function completeFruitCatch<T extends PlayerBase>(
   } as T;
 }
 
-/** Pays a finished Bubble Pop challenge once, by score, and keeps the best. */
+/** Counts a finished Bubble Pop challenge once and keeps the best score. */
 export function completeBubblePop<T extends PlayerBase>(
   player: T,
   score: number,
@@ -1050,7 +1037,7 @@ export function completeBubblePop<T extends PlayerBase>(
   };
 }
 
-/** Pays a recorded Animal Orchestra song once, up to a cap; the first song earns a stamp. */
+/** Counts a recorded Animal Orchestra song once; the first song earns a stamp. */
 export function completeAnimalBand<T extends PlayerBase>(
   player: T,
   taps: number,
@@ -1060,7 +1047,7 @@ export function completeAnimalBand<T extends PlayerBase>(
     !Number.isSafeInteger(taps) ||
     taps < 1 ||
     taps > SONG_MAX_TAPS ||
-    songs >= ANIMAL_BAND_MAX_PAID_SONGS
+    !Number.isSafeInteger(songs + 1)
   )
     return player;
   return unlockStamp(
@@ -1073,7 +1060,7 @@ export function completeAnimalBand<T extends PlayerBase>(
   );
 }
 
-/** Pays a finished Shape Sorter round once; the last round also earns its stamp. */
+/** Counts a finished Shape Sorter round once; the last round also earns its stamp. */
 export function completeShapeSorterRound<T extends PlayerBase>(
   player: T,
   round: number,
@@ -1095,13 +1082,13 @@ export function completeShapeSorterRound<T extends PlayerBase>(
     : paid;
 }
 
-/** Pays a finished Picture Puzzle once, by piece count; the nine-piece picture also earns its stamp. */
+/** Counts a finished Picture Puzzle once; the nine-piece picture also earns its stamp. */
 export function completePicturePuzzle<T extends PlayerBase>(
   player: T,
   pieces: number,
 ): T {
   const finished = player.picturePuzzles ?? 0;
-  if (!isPieceCount(pieces) || finished >= PICTURE_PUZZLE_MAX_PAID)
+  if (!isPieceCount(pieces) || !Number.isSafeInteger(finished + 1))
     return player;
   const paid = {
     ...player,
@@ -1111,10 +1098,10 @@ export function completePicturePuzzle<T extends PlayerBase>(
   return pieces === 9 ? unlockStamp(paid, "picture_puzzle_star") : paid;
 }
 
-/** Pays a finished rainbow arch once; the first arch also earns its stamp. */
+/** Counts a finished rainbow arch once; the first arch also earns its stamp. */
 export function completeBalloonRainbow<T extends PlayerBase>(player: T): T {
   const rainbows = player.balloonRainbows ?? 0;
-  if (rainbows >= BALLOON_MAX_PAID_RAINBOWS) return player;
+  if (!Number.isSafeInteger(rainbows + 1)) return player;
   return unlockStamp(
     {
       ...player,
@@ -1169,7 +1156,7 @@ export function completeSmoothieOrder<T extends PlayerBase>(player: T): T {
   } as T;
 }
 
-/** Serves a cake once: free play pays a flat treat, orders pay by their stars. */
+/** Serves a cake once and keeps its photo. */
 export function completeBakeryServe<T extends PlayerBase>(
   player: T,
   cake: Cake,
@@ -1184,7 +1171,7 @@ export function completeBakeryServe<T extends PlayerBase>(
   };
 }
 
-/** Pays a finished Hide & Seek Safari round and stamps its scene once. */
+/** Counts a finished Hide & Seek Safari round and stamps its scene once. */
 export function completeSeekRound<T extends PlayerBase>(
   player: T,
   round: { scene: SeekSceneId; hard: boolean; timeMs: number },

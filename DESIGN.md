@@ -58,7 +58,7 @@ Warm ivory is the page background, with almost-white panels. Forest green owns n
 
 ## Typography
 
-Lilita One at its native 400 weight supplies the logo and short display headings. Nunito's 400–900 variable range supplies the interface and body text. Fonts are bundled locally with their OFL licenses. Headings remain short; long player names wrap within the profile. Numeric coin counts use tabular figures.
+Lilita One at its native 400 weight supplies the logo and short display headings. Nunito's 400–900 variable range supplies the interface and body text. Fonts are bundled locally with their OFL licenses. Headings remain short; long player names wrap within the profile.
 
 ## Layout
 

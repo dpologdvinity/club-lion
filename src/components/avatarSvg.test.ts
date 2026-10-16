@@ -486,7 +486,7 @@ test("necklaces, hair clips, and bangles render each option and nothing by defau
   }
 });
 
-test("new earrings render and premium accessories cost coins", () => {
+test("new earrings render", () => {
   for (const id of ["silver_hoops", "gold_jhumkas"]) {
     const svg = generateAvatarSvgString({
       ...DEFAULT_AVATAR_LOOK,

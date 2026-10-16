@@ -230,9 +230,13 @@ export default function App() {
     };
   }, [settingsOpen]);
   const [toast, setToast] = useState("");
+  const spokenToast = useRef("");
   useEffect(() => {
+    const said = spokenToast.current;
+    spokenToast.current = toast;
     if (!toast) return;
-    speak(toast);
+    // A stamp appended to the showing toast is read on its own, not the whole toast again.
+    speak(said && toast.startsWith(said) ? toast.slice(said.length) : toast);
     const id = window.setTimeout(() => setToast(""), 4800);
     return () => window.clearTimeout(id);
   }, [toast]);
@@ -244,9 +248,10 @@ export default function App() {
       (id) => !knownStamps.current.includes(id),
     );
     knownStamps.current = player.stamps ?? [];
-    const stamp = STAMP_DEFINITIONS.find((item) => item.id === fresh.at(-1));
-    if (!stamp) return;
-    const message = `${stamp.icon} New stamp: ${stamp.name}!`;
+    const message = STAMP_DEFINITIONS.filter((item) => fresh.includes(item.id))
+      .map((stamp) => `${stamp.icon} New stamp: ${stamp.name}!`)
+      .join(" ");
+    if (!message) return;
     setToast((current) => (current ? `${current} ${message}` : message));
   }, [player.stamps]);
   const openGames = (game: GameId | null = null) => {

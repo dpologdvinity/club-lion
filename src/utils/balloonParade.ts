@@ -29,9 +29,6 @@ export const RAINBOW_ORDER: readonly BalloonColor[] = [
 export type Surprise = SorterAnimal | "note";
 export const SURPRISES: readonly Surprise[] = [...SORTER_ANIMALS, "note"];
 
-/** Arches stop paying after this many, so repeating them cannot pile up. */
-export const BALLOON_MAX_PAID_RAINBOWS = 30;
-
 export function isBalloonColor(value: unknown): value is BalloonColor {
   return BALLOON_COLORS.some((color) => color.id === value);
 }
