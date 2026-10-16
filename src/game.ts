@@ -884,7 +884,14 @@ export function completeGame<T extends PlayerBase>(
   player: T,
   pairs: number,
 ): T {
-  if (!Number.isSafeInteger(pairs) || pairs < 0 || pairs > 6) return player;
+  if (
+    !Number.isSafeInteger(pairs) ||
+    pairs < 0 ||
+    pairs > 6 ||
+    !Number.isSafeInteger(player.coins + pairs * 10) ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
   const completed = {
     ...player,
     coins: player.coins + pairs * 10,
@@ -899,7 +906,13 @@ export function completeMangoRun<T extends PlayerBase>(
   player: T,
   score: number,
 ): T {
-  if (!Number.isSafeInteger(score) || score < 0) return player;
+  if (
+    !Number.isSafeInteger(score) ||
+    score < 0 ||
+    !Number.isSafeInteger(player.coins + score) ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
   return {
     ...player,
     coins: player.coins + score,
@@ -912,7 +925,13 @@ export function completeBeeStop<T extends PlayerBase>(
   player: T,
   score: number,
 ): T {
-  if (!Number.isSafeInteger(score) || score < 0 || score > BEE_STOP_MAX_SCORE)
+  if (
+    !Number.isSafeInteger(score) ||
+    score < 0 ||
+    score > BEE_STOP_MAX_SCORE ||
+    !Number.isSafeInteger(player.coins + coinsFor(score)) ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
     return player;
   return {
     ...player,
@@ -929,7 +948,9 @@ export function completePawSteps<T extends PlayerBase>(
   if (
     !Number.isSafeInteger(rounds) ||
     rounds < 0 ||
-    rounds > PAW_STEPS_MAX_ROUNDS
+    rounds > PAW_STEPS_MAX_ROUNDS ||
+    !Number.isSafeInteger(player.coins + rounds * PAW_STEPS_COINS_PER_ROUND) ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
   )
     return player;
   return {

@@ -593,6 +593,24 @@ test("saves preserve Fruit Catch and Paw Steps records across either migration",
     fruitCatchBest: 0,
   });
 });
+test("arcade completions reject overflowing wallets and play counters", () => {
+  const completions = [
+    completeGame,
+    completeMangoRun,
+    completeBeeStop,
+    completePawSteps,
+  ];
+  for (const complete of completions) {
+    const wallet = { ...newPlayer(), coins: Number.MAX_SAFE_INTEGER };
+    assert.equal(complete(wallet, 1), wallet);
+    const counter = { ...newPlayer(), gamesPlayed: Number.MAX_SAFE_INTEGER };
+    assert.equal(complete(counter, 0), counter);
+    const played = complete(newPlayer(), 1);
+    assert.equal(played.gamesPlayed, 1);
+    assert.deepEqual(restorePlayer(JSON.stringify(played)), played);
+  }
+});
+
 test("Fruit Catch rejects rewards that would overflow saved progress", () => {
   const wallet = { ...newPlayer(), coins: Number.MAX_SAFE_INTEGER };
   assert.equal(completeFruitCatch(wallet, 1, 0, 10), wallet);
