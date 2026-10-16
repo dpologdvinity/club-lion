@@ -37,6 +37,32 @@ export const mtMistBasecampManifest: RoomManifest = {
       position: { x: 1800, y: 530 },
       actionData: { gameId: "sled-run" },
     },
+    {
+      id: "mist-campfire",
+      label: "Warm up at the campfire",
+      icon: "🔥",
+      type: "activity",
+      position: { x: 1000, y: 520 },
+      actionData: {},
+      object: { kind: "campfire", width: 150, height: 170 },
+      reaction: {
+        message: "Crackle! The campfire glows warm.",
+        sound: "crackle",
+      },
+    },
+    {
+      id: "mist-alphorn",
+      label: "Blow the alphorn",
+      icon: "🎺",
+      type: "activity",
+      position: { x: 1400, y: 530 },
+      actionData: {},
+      object: { kind: "alphorn", width: 190, height: 180 },
+      reaction: {
+        message: "Hooooo! The echo rolls down the mountain.",
+        sound: "chime",
+      },
+    },
   ],
   ambientAudioPreset: "alpine-wind",
   obstacles: [

@@ -20,7 +20,8 @@ test("Mt. Mist is a registered 2400×720 canyon room with a snowy plateau", () =
   ]);
   assert.equal(ROOM_MANIFESTS["mt-mist"], room);
   assert.ok(PLACES.some((place) => place.id === room.id));
-  assert.deepEqual(room.interactives, [
+  assert.deepEqual(
+    room.interactives.find((item) => item.id === "sled-run-gate"),
     {
       id: "sled-run-gate",
       label: "Sled Run Race",
@@ -29,7 +30,7 @@ test("Mt. Mist is a registered 2400×720 canyon room with a snowy plateau", () =
       position: { x: 1800, y: 530 },
       actionData: { gameId: "sled-run" },
     },
-  ]);
+  );
 });
 
 test("basecamp and plaza have reciprocal portals with safe arrival spawns", () => {

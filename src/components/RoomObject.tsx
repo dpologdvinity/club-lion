@@ -677,6 +677,166 @@ export function RoomObject({
             </g>
           </>
         )}
+        {kind === "campfire" && (
+          <>
+            <path
+              d="M30 225L170 195M170 225L30 195"
+              stroke="#7b4b26"
+              strokeWidth="14"
+              strokeLinecap="round"
+            />
+            <g className={active ? "object-chime" : "sm-flicker"}>
+              <path
+                d={
+                  active
+                    ? "M100 30Q150 100 135 160Q100 205 65 160Q50 100 100 30Z"
+                    : "M100 100Q130 130 120 170Q100 200 80 170Q70 130 100 100Z"
+                }
+                fill="#f08a3c"
+                stroke="#c24f1e"
+                strokeWidth="5"
+              />
+              <path
+                d="M100 140Q116 158 108 178Q100 190 92 178Q84 158 100 140Z"
+                fill="#f7d34d"
+              />
+            </g>
+          </>
+        )}
+        {kind === "alphorn" && (
+          <>
+            <path
+              d="M20 225L160 90"
+              stroke="#b97a45"
+              strokeWidth="18"
+              strokeLinecap="round"
+            />
+            <path
+              d="M150 70Q190 60 185 120Q160 125 140 100Z"
+              fill="#d89a5a"
+              stroke="#7b4b26"
+              strokeWidth="5"
+            />
+            {active && (
+              <g
+                className="object-chime"
+                fill="none"
+                stroke="#6ec3e8"
+                strokeWidth="5"
+                strokeLinecap="round"
+              >
+                <path d="M170 40Q190 20 195 45" />
+                <path d="M150 30Q165 5 185 15" />
+              </g>
+            )}
+          </>
+        )}
+        {kind === "yarn" && (
+          <>
+            <path
+              className={active ? "sm-sway" : undefined}
+              d={
+                active
+                  ? "M60 195Q10 215 120 225Q190 232 170 215"
+                  : "M70 200Q60 215 80 222"
+              }
+              fill="none"
+              stroke="#e5546e"
+              strokeWidth="6"
+              strokeLinecap="round"
+            />
+            <g className={active ? "object-chime" : undefined}>
+              <circle
+                cx="90"
+                cy="165"
+                r="52"
+                fill="#ee7a9b"
+                stroke="#b24d6c"
+                strokeWidth="5"
+              />
+              <path
+                d="M52 150Q90 185 128 140M45 175Q95 200 135 165M70 118Q110 150 120 120"
+                fill="none"
+                stroke="#b24d6c"
+                strokeWidth="4"
+              />
+            </g>
+          </>
+        )}
+        {kind === "treats" && (
+          <>
+            <path
+              d="M45 110H155L145 235H55Z"
+              fill="#cfe8f2"
+              fillOpacity="0.8"
+              stroke="#7aa3b8"
+              strokeWidth="5"
+            />
+            <path
+              d={active ? "M35 95H165L158 110H42Z" : "M40 80H160V110H40Z"}
+              fill="#e5546e"
+              stroke="#a83348"
+              strokeWidth="5"
+            />
+            <g fill="#d89a5a" stroke="#9a6a3a" strokeWidth="3">
+              <rect x="65" y="190" width="40" height="14" rx="7" />
+              <rect x="95" y="165" width="34" height="14" rx="7" />
+              <rect x="70" y="215" width="50" height="14" rx="7" />
+            </g>
+            {active && (
+              <rect
+                className="object-chime"
+                x="80"
+                y="55"
+                width="50"
+                height="16"
+                rx="8"
+                fill="#d89a5a"
+                stroke="#9a6a3a"
+                strokeWidth="3"
+              />
+            )}
+          </>
+        )}
+        {kind === "popcorn" && (
+          <>
+            <path
+              d="M40 120H160L150 200H50Z"
+              fill="#fff"
+              stroke="#c24f4f"
+              strokeWidth="5"
+            />
+            <path
+              d="M70 120L65 200M100 120V200M130 120L135 200"
+              stroke="#e5546e"
+              strokeWidth="9"
+            />
+            <path
+              d="M20 120Q100 40 180 120Z"
+              fill="#e5546e"
+              stroke="#a83348"
+              strokeWidth="5"
+            />
+            <path d="M50 200H150L140 235H60Z" fill="#8a6a4a" />
+            <g
+              className={active ? "object-chime" : undefined}
+              fill="#fff7d6"
+              stroke="#e5c56a"
+              strokeWidth="3"
+            >
+              {(active ? [60, 90, 120, 145, 105] : [75, 110, 130]).map(
+                (x, i) => (
+                  <circle
+                    key={x}
+                    cx={x}
+                    cy={(active ? 85 : 110) - ((i * 17) % 40)}
+                    r="10"
+                  />
+                ),
+              )}
+            </g>
+          </>
+        )}
       </svg>
       <span className="room-object-caption">{item.label}</span>
     </button>

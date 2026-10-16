@@ -70,6 +70,19 @@ export const wonderParkMidwayManifest: RoomManifest = {
       position: { x: 1900, y: 600 },
       actionData: { gameId: "balloon-parade" },
     },
+    {
+      id: "midway-popcorn",
+      label: "Pop some popcorn",
+      icon: "🍿",
+      type: "activity",
+      position: { x: 1100, y: 590 },
+      actionData: {},
+      object: { kind: "popcorn", width: 150, height: 170 },
+      reaction: {
+        message: "Pop pop pop! Fluffy popcorn everywhere.",
+        sound: "crackle",
+      },
+    },
   ],
   obstacles: [
     {

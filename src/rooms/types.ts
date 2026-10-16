@@ -61,7 +61,12 @@ export type RoomObjectKind =
   | "jellyfish"
   | "treasure"
   | "snowman"
-  | "snowglobe";
+  | "snowglobe"
+  | "campfire"
+  | "alphorn"
+  | "yarn"
+  | "treats"
+  | "popcorn";
 
 export type RoomManifest = {
   id: string;

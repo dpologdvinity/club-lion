@@ -43,6 +43,27 @@ for (const room of [
     exit: "Mt. Mist Alpine Basecamp",
   },
   {
+    name: "Mt. Mist Alpine Basecamp",
+    action: "Warm up at the campfire",
+    kind: "campfire",
+    objects: 2,
+    exit: "Snowflake Rink",
+  },
+  {
+    name: "Pet Paradise Nursery",
+    action: "Roll the yarn ball",
+    kind: "yarn",
+    objects: 2,
+    exit: "Downtown Plaza",
+  },
+  {
+    name: "Carnival Midway",
+    action: "Pop some popcorn",
+    kind: "popcorn",
+    objects: 1,
+    exit: "Wonder Park Entrance",
+  },
+  {
     name: "Your cozy den",
     action: "Switch the reading lamp",
     kind: "lamp",

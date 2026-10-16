@@ -52,6 +52,32 @@ export const petParadiseManifest: RoomManifest = {
       position: { x: 1700, y: 600 },
       actionData: { gameId: "animal-band" },
     },
+    {
+      id: "pet-yarn",
+      label: "Roll the yarn ball",
+      icon: "🧶",
+      type: "activity",
+      position: { x: 950, y: 540 },
+      actionData: {},
+      object: { kind: "yarn", width: 160, height: 150 },
+      reaction: {
+        message: "The yarn unrolls across the floor!",
+        sound: "rustle",
+      },
+    },
+    {
+      id: "pet-treats",
+      label: "Open the treat jar",
+      icon: "🦴",
+      type: "activity",
+      position: { x: 1450, y: 520 },
+      actionData: {},
+      object: { kind: "treats", width: 130, height: 180 },
+      reaction: {
+        message: "Pop! A crunchy treat for a good pet.",
+        sound: "bubble",
+      },
+    },
   ],
   ambientAudioPreset: "pet-spa-ambient",
   obstacles: [
