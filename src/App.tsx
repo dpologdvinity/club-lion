@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { speak } from "./utils/speech";
 import {
   ArrowUpRight,
   Check,
@@ -185,6 +186,7 @@ export default function App() {
   const [toast, setToast] = useState("");
   useEffect(() => {
     if (!toast) return;
+    speak(toast);
     const id = window.setTimeout(() => setToast(""), 4800);
     return () => window.clearTimeout(id);
   }, [toast]);

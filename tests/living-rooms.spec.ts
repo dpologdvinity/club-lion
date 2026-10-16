@@ -150,3 +150,30 @@ for (const room of [
     expect(errors).toEqual([]);
   });
 }
+
+test("room reactions are read aloud for children who cannot read yet", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const spoken: string[] = [];
+    Object.assign(window, { spoken });
+    Object.defineProperty(window, "speechSynthesis", {
+      value: {
+        cancel() {},
+        speak(utterance: SpeechSynthesisUtterance) {
+          spoken.push(utterance.text);
+        },
+      },
+    });
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Map", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: /Sunset Beach/ })
+    .click();
+  await tapRoomPath(page, "Build a sandcastle", true);
+  await expect
+    .poll(() => page.evaluate(() => Reflect.get(window, "spoken")))
+    .toContain("Pat pat pat! A tall castle with a flag.");
+});

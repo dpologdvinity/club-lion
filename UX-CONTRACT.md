@@ -51,3 +51,5 @@ The user requested a Club Penguin-like website using lions. The first complete s
 English interface, native semantics, keyboard movement, named controls, field associations, visible focus, accessible modal behavior, reduced motion, and responsive document flow are baseline requirements. Browser tests exercise desktop and mobile, success and validation paths, lost storage, rewards, persistence, all seven arcade activities, lighting preference recovery and global rendering, and automated WCAG AA scans.
 
 Verification uses Playwright Chromium against the Vite server, with temporary screenshots and reports outside source control.
+
+- Toast messages are also read aloud with the browser's speech engine, emoji removed, so pre-readers hear what happened. Speech follows the master volume and stays silent while the master or sound-effects channel is muted.
