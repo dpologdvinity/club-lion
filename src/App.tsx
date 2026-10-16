@@ -74,40 +74,87 @@ import { usePlayer } from "./usePlayer";
 import { useLightingPrefs } from "./useLightingPrefs";
 import { Lion } from "./components/Lion";
 import { Dialog } from "./components/Dialog";
-import { SledRun } from "./components/SledRun";
-import { RiverSurf } from "./components/RiverSurf";
-import { KartRace } from "./components/KartRace";
 import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
 import { Help, Shop, Wardrobe, WorldMap } from "./components/Panels";
 import { GamesPanel, type GameId } from "./components/GamesPanel";
 import { SafeRoomScenery } from "./components/SafeRoomScenery";
 import { ROOM_MANIFESTS } from "./rooms/registry";
-import { PlayerCard } from "./components/PlayerCard";
-import { CatalogModal } from "./components/CatalogModal";
-import { StampBook } from "./components/StampBook";
-import { SalonModal } from "./components/SalonModal";
-import { ClosetModal } from "./components/ClosetModal";
-import { FriendsPanel } from "./components/FriendsPanel";
 import { AudioControls } from "./components/AudioControls";
 import { RoomMusic } from "./components/RoomMusic";
 import { LightingControls } from "./components/LightingControls";
-import { JukeboxModal } from "./components/JukeboxModal";
-import { Condo } from "./components/Condo";
-import { SpyTerminalModal } from "./components/SpyTerminal";
-import { AccountModal } from "./components/AccountModal";
-import { ServerListModal } from "./components/ServerListModal";
 import { LOCAL_PLAYER_ID, useCustomServers } from "./useCustomServers";
-import { PetCareModal } from "./components/PetCareModal";
-import { PetPickerModal } from "./components/PetPickerModal";
 import { PET_PROFILES } from "./utils/petSpecies";
-import { LeaderboardModal } from "./components/LeaderboardModal";
-import { RooftopLounge } from "./components/RooftopLounge";
-import { ParkRide } from "./components/ParkRide";
 import { PARK_RIDES, type ParkRideId } from "./utils/parkRides";
-import { WaterRide } from "./components/WaterRide";
 import { WATER_RIDE_STAMPS, type WaterRideId } from "./utils/waterRides.ts";
 import { COMPACT_LAYOUT } from "./components/compactLayout";
+import { lazyPanel } from "./components/lazyPanel";
+
+// Panels, rides and games outside the world stay out of the startup bundle.
+const SledRun = lazyPanel(() =>
+  import("./components/SledRun").then((module) => module.SledRun),
+);
+const RiverSurf = lazyPanel(() =>
+  import("./components/RiverSurf").then((module) => module.RiverSurf),
+);
+const KartRace = lazyPanel(() =>
+  import("./components/KartRace").then((module) => module.KartRace),
+);
+const CatalogModal = lazyPanel(() =>
+  import("./components/CatalogModal").then((module) => module.CatalogModal),
+);
+const StampBook = lazyPanel(() =>
+  import("./components/StampBook").then((module) => module.StampBook),
+);
+const SalonModal = lazyPanel(() =>
+  import("./components/SalonModal").then((module) => module.SalonModal),
+);
+const ClosetModal = lazyPanel(() =>
+  import("./components/ClosetModal").then((module) => module.ClosetModal),
+);
+const FriendsPanel = lazyPanel(() =>
+  import("./components/FriendsPanel").then((module) => module.FriendsPanel),
+);
+const JukeboxModal = lazyPanel(() =>
+  import("./components/JukeboxModal").then((module) => module.JukeboxModal),
+);
+const Condo = lazyPanel(() =>
+  import("./components/Condo").then((module) => module.Condo),
+);
+const SpyTerminalModal = lazyPanel(() =>
+  import("./components/SpyTerminal").then((module) => module.SpyTerminalModal),
+);
+const AccountModal = lazyPanel(() =>
+  import("./components/AccountModal").then((module) => module.AccountModal),
+);
+const ServerListModal = lazyPanel(() =>
+  import("./components/ServerListModal").then(
+    (module) => module.ServerListModal,
+  ),
+);
+const PetCareModal = lazyPanel(() =>
+  import("./components/PetCareModal").then((module) => module.PetCareModal),
+);
+const PetPickerModal = lazyPanel(() =>
+  import("./components/PetPickerModal").then((module) => module.PetPickerModal),
+);
+const LeaderboardModal = lazyPanel(() =>
+  import("./components/LeaderboardModal").then(
+    (module) => module.LeaderboardModal,
+  ),
+);
+const RooftopLounge = lazyPanel(() =>
+  import("./components/RooftopLounge").then((module) => module.RooftopLounge),
+);
+const ParkRide = lazyPanel(() =>
+  import("./components/ParkRide").then((module) => module.ParkRide),
+);
+const WaterRide = lazyPanel(() =>
+  import("./components/WaterRide").then((module) => module.WaterRide),
+);
+const PlayerCard = lazyPanel(() =>
+  import("./components/PlayerCard").then((module) => module.PlayerCard),
+);
 
 type Panel =
   | "map"

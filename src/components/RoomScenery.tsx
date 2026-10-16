@@ -1,30 +1,119 @@
-import { CozyDenScenery } from "./CozyDenScenery.tsx";
-import { NeighborhoodArcadeScenery } from "./NeighborhoodArcadeScenery.tsx";
-import { CanopyCafeScenery } from "./CanopyCafeScenery.tsx";
-import { WateringHoleScenery } from "./WateringHoleScenery.tsx";
-import { useEffect, useState, type ComponentType } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useState,
+  type ComponentType,
+  type LazyExoticComponent,
+} from "react";
 import type { PlaceId } from "../game.ts";
 import "./sceneryMotion.css";
-import { DowntownPlazaScenery } from "./DowntownPlazaScenery.tsx";
-import { ClubPulseScenery } from "./ClubPulseScenery.tsx";
-import { WonderParkEntranceScenery } from "./WonderParkEntranceScenery.tsx";
-import { WonderParkMidwayScenery } from "./WonderParkMidwayScenery.tsx";
-import { SunsetBeachScenery } from "./SunsetBeachScenery.tsx";
-import { CoastalPierScenery } from "./CoastalPierScenery.tsx";
-import { MtMistScenery } from "./MtMistScenery.tsx";
-import { CanyonRapidsScenery } from "./CanyonRapidsScenery.tsx";
-import { PetParadiseScenery } from "./PetParadiseScenery.tsx";
-import { PenthouseCondoScenery } from "./PenthouseCondoScenery.tsx";
-import { ScoutBaseScenery } from "./ScoutBaseScenery.tsx";
-import { SplashOasisEntryScenery } from "./SplashOasisEntryScenery.tsx";
-import { SplashOasisRiverScenery } from "./SplashOasisRiverScenery.tsx";
-import { LionSpeedwayScenery } from "./LionSpeedwayScenery.tsx";
-import { LionAquariumScenery } from "./LionAquariumScenery.tsx";
-import { SnowflakeRinkScenery } from "./SnowflakeRinkScenery.tsx";
+
+// Scenery loads when a room is first shown, so startup skips every room's artwork.
+const CozyDenScenery = lazy(() =>
+  import("./CozyDenScenery.tsx").then((module) => ({
+    default: module.CozyDenScenery,
+  })),
+);
+const NeighborhoodArcadeScenery = lazy(() =>
+  import("./NeighborhoodArcadeScenery.tsx").then((module) => ({
+    default: module.NeighborhoodArcadeScenery,
+  })),
+);
+const CanopyCafeScenery = lazy(() =>
+  import("./CanopyCafeScenery.tsx").then((module) => ({
+    default: module.CanopyCafeScenery,
+  })),
+);
+const WateringHoleScenery = lazy(() =>
+  import("./WateringHoleScenery.tsx").then((module) => ({
+    default: module.WateringHoleScenery,
+  })),
+);
+const DowntownPlazaScenery = lazy(() =>
+  import("./DowntownPlazaScenery.tsx").then((module) => ({
+    default: module.DowntownPlazaScenery,
+  })),
+);
+const ClubPulseScenery = lazy(() =>
+  import("./ClubPulseScenery.tsx").then((module) => ({
+    default: module.ClubPulseScenery,
+  })),
+);
+const WonderParkEntranceScenery = lazy(() =>
+  import("./WonderParkEntranceScenery.tsx").then((module) => ({
+    default: module.WonderParkEntranceScenery,
+  })),
+);
+const WonderParkMidwayScenery = lazy(() =>
+  import("./WonderParkMidwayScenery.tsx").then((module) => ({
+    default: module.WonderParkMidwayScenery,
+  })),
+);
+const SunsetBeachScenery = lazy(() =>
+  import("./SunsetBeachScenery.tsx").then((module) => ({
+    default: module.SunsetBeachScenery,
+  })),
+);
+const CoastalPierScenery = lazy(() =>
+  import("./CoastalPierScenery.tsx").then((module) => ({
+    default: module.CoastalPierScenery,
+  })),
+);
+const MtMistScenery = lazy(() =>
+  import("./MtMistScenery.tsx").then((module) => ({
+    default: module.MtMistScenery,
+  })),
+);
+const CanyonRapidsScenery = lazy(() =>
+  import("./CanyonRapidsScenery.tsx").then((module) => ({
+    default: module.CanyonRapidsScenery,
+  })),
+);
+const PetParadiseScenery = lazy(() =>
+  import("./PetParadiseScenery.tsx").then((module) => ({
+    default: module.PetParadiseScenery,
+  })),
+);
+const PenthouseCondoScenery = lazy(() =>
+  import("./PenthouseCondoScenery.tsx").then((module) => ({
+    default: module.PenthouseCondoScenery,
+  })),
+);
+const ScoutBaseScenery = lazy(() =>
+  import("./ScoutBaseScenery.tsx").then((module) => ({
+    default: module.ScoutBaseScenery,
+  })),
+);
+const SplashOasisEntryScenery = lazy(() =>
+  import("./SplashOasisEntryScenery.tsx").then((module) => ({
+    default: module.SplashOasisEntryScenery,
+  })),
+);
+const SplashOasisRiverScenery = lazy(() =>
+  import("./SplashOasisRiverScenery.tsx").then((module) => ({
+    default: module.SplashOasisRiverScenery,
+  })),
+);
+const LionSpeedwayScenery = lazy(() =>
+  import("./LionSpeedwayScenery.tsx").then((module) => ({
+    default: module.LionSpeedwayScenery,
+  })),
+);
+const LionAquariumScenery = lazy(() =>
+  import("./LionAquariumScenery.tsx").then((module) => ({
+    default: module.LionAquariumScenery,
+  })),
+);
+const SnowflakeRinkScenery = lazy(() =>
+  import("./SnowflakeRinkScenery.tsx").then((module) => ({
+    default: module.SnowflakeRinkScenery,
+  })),
+);
 
 type Scene = {
   width: number;
-  Scenery: ComponentType<{ seconds: number }>;
+  Scenery: LazyExoticComponent<ComponentType<{ seconds: number }>>;
   /** Some motion still follows game logic (paths, physics, text) and needs the shared clock. */
   clock?: true;
 };
@@ -111,7 +200,9 @@ export function RoomScenery({
       preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
       aria-hidden="true"
     >
-      <Scenery seconds={seconds} />
+      <Suspense fallback={null}>
+        <Scenery seconds={seconds} />
+      </Suspense>
     </svg>
   );
 }

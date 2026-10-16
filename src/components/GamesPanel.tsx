@@ -1,27 +1,67 @@
 import { useEffect, useRef, useState, type ComponentProps } from "react";
 import { ArrowLeft, ChevronRight } from "lucide-react";
-import { MemorySafari } from "./MemorySafari";
-import { BeeStop } from "./BeeStop";
-import { PawSteps } from "./PawSteps";
-import { FruitCatch } from "./FruitCatch";
-import { DJBeatDrop } from "./DJBeatDrop";
-import { SmoothieKitchenContent } from "./SmoothieKitchen";
-import { RollerCoasterRide } from "./RollerCoasterRide";
-import { WaterholeAngler } from "./WaterholeAngler";
-import { TopModelsRunway } from "./TopModelsRunway";
-import { InstrumentContent } from "./InstrumentModal";
-import { BubblePop } from "./BubblePop";
-import { ColoringBook } from "./ColoringBook";
 import type { PageFills } from "../utils/coloringBook.ts";
-import { MangoBakery } from "./MangoBakery";
-import { HideAndSeekSafari } from "./HideAndSeekSafari";
-import { AnimalBand } from "./AnimalBand";
-import { ShapeSorter } from "./ShapeSorter";
-import { PicturePuzzle } from "./PicturePuzzle";
-import { BalloonParade } from "./BalloonParade";
 import type { PlayerV2 } from "../game.ts";
 
 import { gameCards, type GameId } from "../games/catalog.ts";
+import { lazyPanel } from "./lazyPanel";
+
+// Each game's code stays out of the startup bundle.
+const MemorySafari = lazyPanel(() =>
+  import("./MemorySafari").then((module) => module.MemorySafari),
+);
+const BeeStop = lazyPanel(() =>
+  import("./BeeStop").then((module) => module.BeeStop),
+);
+const PawSteps = lazyPanel(() =>
+  import("./PawSteps").then((module) => module.PawSteps),
+);
+const FruitCatch = lazyPanel(() =>
+  import("./FruitCatch").then((module) => module.FruitCatch),
+);
+const DJBeatDrop = lazyPanel(() =>
+  import("./DJBeatDrop").then((module) => module.DJBeatDrop),
+);
+const SmoothieKitchenContent = lazyPanel(() =>
+  import("./SmoothieKitchen").then((module) => module.SmoothieKitchenContent),
+);
+const RollerCoasterRide = lazyPanel(() =>
+  import("./RollerCoasterRide").then((module) => module.RollerCoasterRide),
+);
+const WaterholeAngler = lazyPanel(() =>
+  import("./WaterholeAngler").then((module) => module.WaterholeAngler),
+);
+const TopModelsRunway = lazyPanel(() =>
+  import("./TopModelsRunway").then((module) => module.TopModelsRunway),
+);
+const InstrumentContent = lazyPanel(() =>
+  import("./InstrumentModal").then((module) => module.InstrumentContent),
+);
+const BubblePop = lazyPanel(() =>
+  import("./BubblePop").then((module) => module.BubblePop),
+);
+const ColoringBook = lazyPanel(() =>
+  import("./ColoringBook").then((module) => module.ColoringBook),
+);
+const MangoBakery = lazyPanel(() =>
+  import("./MangoBakery").then((module) => module.MangoBakery),
+);
+const HideAndSeekSafari = lazyPanel(() =>
+  import("./HideAndSeekSafari").then((module) => module.HideAndSeekSafari),
+);
+const AnimalBand = lazyPanel(() =>
+  import("./AnimalBand").then((module) => module.AnimalBand),
+);
+const ShapeSorter = lazyPanel(() =>
+  import("./ShapeSorter").then((module) => module.ShapeSorter),
+);
+const PicturePuzzle = lazyPanel(() =>
+  import("./PicturePuzzle").then((module) => module.PicturePuzzle),
+);
+const BalloonParade = lazyPanel(() =>
+  import("./BalloonParade").then((module) => module.BalloonParade),
+);
+
 export type { GameId } from "../games/catalog.ts";
 
 export function GamesPanel({
