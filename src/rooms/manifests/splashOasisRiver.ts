@@ -30,6 +30,8 @@ export const splashOasisRiverManifest: RoomManifest = {
   interactives: [
     {
       id: "lazy-river-current",
+      label: "Float the Lazy River",
+      icon: "🛶",
       type: "ride",
       position: { x: 1400, y: 400 },
       actionData: { rideId: "lazy-river-current" },

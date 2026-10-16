@@ -15,12 +15,12 @@ Stack: React 19, TypeScript strict, Vite 8, Node 22+. Saves are localStorage. De
 
 ## Where things live
 
-- `src/App.tsx` shell; `src/components/World.tsx` room view, movement, hotspots (`hotspot()`, `hotspotLabels`).
+- `src/App.tsx` shell; `src/components/World.tsx` room view, movement, and special hotspot behavior (`hotspot()`). Labels, icons, and arcade launch IDs belong to the room manifests.
 - `src/game.ts` save, rewards (`completeX`), `restorePlayer` validation. `src/usePlayer.ts` persistence.
 - `src/rooms/manifests/*.ts` per-room stage, hotspots, portals, walkable area; `src/rooms/registry.ts`.
 - `src/components/*Scenery.tsx` SVG rooms; table `ROOM_SCENERY` in `RoomScenery.tsx`; motion classes `sm-*` in `sceneryMotion.css`.
 - `src/components/avatar/*` + `Avatar.tsx` doll avatar; look fields in `src/types/world.ts`.
-- `src/components/GamesPanel.tsx` arcade list and `GameId` union. New game: pure logic in `src/utils/`, component, `completeX` in `game.ts`, stamp in `stampDefinitions.ts`, room hotspot, unit test + `tests/<game>.spec.ts`.
+- `src/games/catalog.ts`: arcade cards, progress labels, and `GameId`; `src/components/GamesPanel.tsx` renders the games. New game: pure logic in `src/utils/`, component, `completeX` in `game.ts`, card in the catalogue, stamp in `stampDefinitions.ts`, room hotspot with `label`, `icon`, and typed `actionData.gameId`, unit test + `tests/<game>.spec.ts`.
 - Tests: `src/**/*.test.ts` (node:test) and `tests/*.spec.ts` (Playwright desktop 1440x1000, mobile 390x844).
 
 ## Code rules

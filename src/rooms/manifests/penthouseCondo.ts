@@ -25,12 +25,16 @@ export const penthouseCondoManifest: RoomManifest = {
   interactives: [
     {
       id: "condo-furniture-editor",
+      label: "Customize Furniture Grid",
+      icon: "🛋️",
       type: "game_launch",
       position: { x: 1200, y: 350 },
       actionData: { action: "edit_furniture" },
     },
     {
       id: "condo-jukebox",
+      label: "Grand Jukebox",
+      icon: "🎵",
       type: "secret_clickable",
       position: { x: 800, y: 350 },
       actionData: { action: "open_jukebox" },

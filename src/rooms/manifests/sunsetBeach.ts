@@ -31,9 +31,11 @@ export const sunsetBeachManifest: RoomManifest = {
   interactives: [
     {
       id: "beach-seek-lookout",
+      label: "Hide & Seek Safari",
+      icon: "🔍",
       type: "game_launch",
       position: { x: 760, y: 560 },
-      actionData: {},
+      actionData: { gameId: "seek" },
     },
   ],
   ambientAudioPreset: "ocean-surf",

@@ -31,9 +31,11 @@ export const mtMistBasecampManifest: RoomManifest = {
   interactives: [
     {
       id: "sled-run-gate",
+      label: "Sled Run Race",
+      icon: "🛷",
       type: "activity",
       position: { x: 1800, y: 530 },
-      actionData: {},
+      actionData: { gameId: "sled-run" },
     },
   ],
   ambientAudioPreset: "alpine-wind",

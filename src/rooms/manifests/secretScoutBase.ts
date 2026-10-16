@@ -30,12 +30,16 @@ export const secretScoutBaseManifest: RoomManifest = {
   interactives: [
     {
       id: "spy-terminal",
+      label: "Launch Spy Terminal",
+      icon: "💻",
       type: "game_launch",
       position: { x: 960, y: 520 },
       actionData: { game: "spy-terminal" },
     },
     {
       id: "surveillance-holo-map",
+      label: "Surveillance Holo-Map",
+      icon: "🛰️",
       type: "secret_clickable",
       position: { x: 1500, y: 500 },
       actionData: {},

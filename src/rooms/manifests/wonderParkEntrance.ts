@@ -42,24 +42,32 @@ export const wonderParkEntranceManifest: RoomManifest = {
   interactives: [
     {
       id: "coaster-ticket-gate",
+      label: "Ride Savanna Screamer",
+      icon: "🎢",
       type: "ride",
       position: { x: 900, y: 600 },
-      actionData: { rideId: "wonder-coaster" },
+      actionData: { rideId: "wonder-coaster", gameId: "coaster" },
     },
     {
       id: "giant-ferris-wheel",
+      label: "Ride the Ferris wheel",
+      icon: "🎡",
       type: "ride",
       position: { x: 1700, y: 560 },
       actionData: { rideId: "giant-ferris-wheel" },
     },
     {
       id: "sunshine-flume",
+      label: "Ride the Log Flume",
+      icon: "💦",
       type: "ride",
       position: { x: 2350, y: 600 },
       actionData: { rideId: "sunshine-flume" },
     },
     {
       id: "park-map-kiosk",
+      label: "Park map",
+      icon: "🗺️",
       type: "secret_clickable",
       position: { x: 1400, y: 610 },
       actionData: {},

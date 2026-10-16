@@ -25,12 +25,16 @@ export const lionAquariumManifest: RoomManifest = {
   interactives: [
     {
       id: "aquarium-feed-fish",
+      label: "Feed the fish",
+      icon: "🐟",
       type: "secret_clickable",
       position: { x: 760, y: 560 },
       actionData: {},
     },
     {
       id: "aquarium-touch-pool",
+      label: "Touch pool",
+      icon: "🦀",
       type: "secret_clickable",
       position: { x: 1560, y: 560 },
       actionData: {},

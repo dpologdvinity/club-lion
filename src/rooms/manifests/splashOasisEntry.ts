@@ -37,18 +37,24 @@ export const splashOasisEntryManifest: RoomManifest = {
   interactives: [
     {
       id: "tsunami-wave-pool",
+      label: "Ride the Wave Pool",
+      icon: "🌊",
       type: "ride",
       position: { x: 900, y: 600 },
       actionData: { rideId: "tsunami-wave-pool" },
     },
     {
       id: "speed-slides",
+      label: "Ride the Speed Slides",
+      icon: "🛝",
       type: "ride",
       position: { x: 1560, y: 560 },
       actionData: { rideId: "speed-slides" },
     },
     {
       id: "dump-bucket-fortress",
+      label: "Splash under the Bucket",
+      icon: "🪣",
       type: "ride",
       position: { x: 1900, y: 580 },
       actionData: { rideId: "dump-bucket-fortress" },

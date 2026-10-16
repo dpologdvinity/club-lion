@@ -1,3 +1,5 @@
+import type { GameId } from "../games/catalog.ts";
+
 export type RoomPortal = {
   targetRoomId: string;
   targetSpawn: { x: number; y: number };
@@ -46,6 +48,8 @@ export type RoomManifest = {
   portals: RoomPortal[];
   interactives: {
     id: string;
+    label?: string;
+    icon?: string;
     type:
       | "activity"
       | "ride"
@@ -54,7 +58,7 @@ export type RoomManifest = {
       | "secret_clickable"
       | "shop";
     position: { x: number; y: number };
-    actionData: Record<string, unknown>;
+    actionData: Record<string, unknown> & { gameId?: GameId };
   }[];
   ambientAudioPreset: string;
   /** Solid scenery. Optional so rooms without collisions stay valid. */

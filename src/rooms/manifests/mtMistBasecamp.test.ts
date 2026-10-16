@@ -23,9 +23,11 @@ test("Mt. Mist is a registered 2400×720 canyon room with a snowy plateau", () =
   assert.deepEqual(room.interactives, [
     {
       id: "sled-run-gate",
+      label: "Sled Run Race",
+      icon: "🛷",
       type: "activity",
       position: { x: 1800, y: 530 },
-      actionData: {},
+      actionData: { gameId: "sled-run" },
     },
   ]);
 });

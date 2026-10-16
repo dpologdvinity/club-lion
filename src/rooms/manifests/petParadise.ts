@@ -30,21 +30,27 @@ export const petParadiseManifest: RoomManifest = {
   interactives: [
     {
       id: "pet-grooming-station",
+      label: "Grooming Spa",
+      icon: "🛁",
       type: "secret_clickable",
       position: { x: 1200, y: 400 },
       actionData: {},
     },
     {
       id: "pet-pick-pet",
+      label: "Pick your pet",
+      icon: "🐾",
       type: "secret_clickable",
       position: { x: 640, y: 420 },
       actionData: {},
     },
     {
       id: "pet-animal-band",
+      label: "Animal Orchestra",
+      icon: "🎶",
       type: "game_launch",
       position: { x: 1700, y: 600 },
-      actionData: {},
+      actionData: { gameId: "animal-band" },
     },
   ],
   ambientAudioPreset: "pet-spa-ambient",

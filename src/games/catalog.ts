@@ -1,0 +1,141 @@
+import type { PlayerV2 } from "../game.ts";
+
+/** Arcade cards in display order, with progress from the current save. */
+export function gameCards(player: PlayerV2) {
+  return [
+    {
+      id: "bubble-pop",
+      name: "Bubble Pop",
+      art: "🫧 🦁 ⭐",
+      description: "Pop floating bubbles to free the surprises inside.",
+      reward: "Challenge mode pays up to 60 coins",
+      best: player.bubblePopBest ?? 0,
+      progressLabel: "Best",
+    },
+    {
+      id: "coloring-book",
+      name: "Coloring Book",
+      art: "🖍️ 🐉 🎡",
+      description: "Tap to fill six pages. There is no wrong color.",
+      reward: "Finish a page for a stamp",
+      best: 0,
+      progressLabel: "Best",
+    },
+    {
+      id: "bakery",
+      name: "Mango Bakery",
+      art: "🎂 🥭 🕯️",
+      description: "Bake, decorate and serve cakes to animal friends.",
+      reward: "Earn up to 24 coins per cake",
+      best: player.cakesServed ?? 0,
+      progressLabel: "Orders served",
+    },
+    {
+      id: "seek",
+      name: "Hide & Seek Safari",
+      art: "🔍 🦓 🌿",
+      description: "Spot the animals hiding in the scene.",
+      reward: "Earn 10–20 coins and a stamp per place",
+      best: player.seekRounds ?? 0,
+      progressLabel: "Rounds found",
+    },
+    {
+      id: "animal-band",
+      name: "Animal Orchestra",
+      art: "🦁 🦓 🦒",
+      description: "Tap an animal to play its sound. Record a tiny song.",
+      reward: "Earn 4 coins the first time you play a song back",
+      best: player.animalBandSongs ?? 0,
+      progressLabel: "Songs played",
+    },
+    {
+      id: "shape-sorter",
+      name: "Shape Sorter Safari",
+      art: "🔺 ⭕ 🟦",
+      description: "Drop each shape into the animal it fits.",
+      reward: "Earn 5 coins a round and a star stamp",
+      best: player.shapeSorterRounds ?? 0,
+      progressLabel: "Rounds sorted",
+    },
+    {
+      id: "picture-puzzle",
+      name: "Picture Puzzle",
+      art: "🧩 🦁 🎡",
+      description: "Drag each piece to its spot. Big pictures, big pieces.",
+      reward: "Earn 5–12 coins a picture and a star stamp",
+      best: player.picturePuzzles ?? 0,
+      progressLabel: "Pictures finished",
+    },
+    {
+      id: "balloon-parade",
+      name: "Balloon Parade",
+      art: "🎈 🌈 🎈",
+      description: "Pop the balloons. Pop them in rainbow order for an arch.",
+      reward: "Earn 10 coins for each rainbow arch",
+      best: player.balloonRainbows ?? 0,
+      progressLabel: "Rainbows built",
+    },
+    {
+      id: "dj-beat-drop",
+      name: "DJ Beat Drop",
+      art: "🎧 🎵 🦁",
+      description: "Match four lanes to the beat.",
+      reward: "Earn coins for your groove",
+      best: player.djBeatDropBest ?? 0,
+      progressLabel: "Best",
+    },
+    {
+      id: "smoothie",
+      name: "Smoothie Kitchen",
+      art: "🥭 🥥 🧊",
+      description: "Follow café recipes, blend and serve.",
+      reward: "Earn up to 42 coins per order",
+      best: player.smoothiesServed ?? 0,
+      progressLabel: "Orders served",
+    },
+    {
+      id: "coaster",
+      name: "Savanna Screamer",
+      art: "🎢 🦁 🎡",
+      description: "Ride the loop and keep a local souvenir.",
+      reward: "A scenic ride · no coin payout",
+      best: 0,
+      progressLabel: "Best",
+    },
+    {
+      id: "fishing",
+      name: "Waterhole Angler",
+      art: "🎣 🐟 🌊",
+      description: "Cast your line, reel in exotic fish.",
+      reward: "Earn coins based on catch rarity",
+      best: player.fishCaughtCount ?? 0,
+      progressLabel: "Best",
+    },
+    {
+      id: "runway",
+      name: "Top Models Runway",
+      art: "💃 📸 👑",
+      description: "30s styling challenge on the catwalk.",
+      reward: "Earn up to 60 coins for 3 stars",
+      best: player.fashionBestScore ?? 0,
+      progressLabel: "Best",
+    },
+    {
+      id: "instrument",
+      name: "World Instruments",
+      art: "🎹 🥁 🎶",
+      description: "Play procedural piano, marimba, and drums.",
+      reward: "Harmonic jam mode · procedural audio",
+      best: 0,
+      progressLabel: "Best",
+    },
+  ] as const;
+}
+
+export type GameId =
+  | ReturnType<typeof gameCards>[number]["id"]
+  | "memory"
+  | "bee"
+  | "paw"
+  | "fruit"
+  | "sled-run";

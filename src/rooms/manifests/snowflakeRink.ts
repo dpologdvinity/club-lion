@@ -25,12 +25,16 @@ export const snowflakeRinkManifest: RoomManifest = {
   interactives: [
     {
       id: "rink-skate",
+      label: "Skate",
+      icon: "⛸️",
       type: "activity",
       position: { x: 1280, y: 560 },
       actionData: {},
     },
     {
       id: "rink-hot-cocoa",
+      label: "Hot cocoa",
+      icon: "☕",
       type: "secret_clickable",
       position: { x: 640, y: 560 },
       actionData: {},

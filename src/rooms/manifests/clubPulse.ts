@@ -53,6 +53,8 @@ export const clubPulseManifest: RoomManifest = {
   interactives: [
     {
       id: CLUB_PULSE_DJ_BOOTH_ID,
+      label: "DJ Booth · DJ Beat Drop",
+      icon: "🎧",
       type: "game_launch",
       position: { x: 960, y: 400 },
       actionData: {
@@ -63,6 +65,8 @@ export const clubPulseManifest: RoomManifest = {
     },
     {
       id: "club-pulse-dance-floor",
+      label: "Step onto the dance floor",
+      icon: "💃",
       type: "instrument",
       position: { x: 960, y: 540 },
       actionData: {

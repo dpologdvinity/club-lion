@@ -517,23 +517,17 @@ export function World({
       );
   };
   const hotspot = (id: string) => {
+    const gameId = manifest?.interactives.find((item) => item.id === id)
+      ?.actionData.gameId;
+    if (gameId) {
+      onActivity(gameId);
+      return;
+    }
     if (id === "lighthouse-foghorn") {
       playFoghorn(sound ? undefined : null);
       onUnlockStamp?.("lighthouse_foghorn");
       notify("BWWWOOOOMMM! 📯 The lighthouse foghorn echoes across the bay!");
-    } else if (id === "sled-run-gate") onActivity("sled-run");
-    else if (id === "coaster-ticket-gate") onActivity("coaster");
-    else if (id === "club-pulse-dj-booth") onActivity("dj-beat-drop");
-    else if (id === "midway-game-booth") onActivity("fruit");
-    else if (id === "cafe-bakery-window") onActivity("bakery");
-    else if (id === "plaza-bubble-cart") onActivity("bubble-pop");
-    else if (id === "plaza-coloring-easel") onActivity("coloring-book");
-    else if (id === "beach-seek-lookout") onActivity("seek");
-    else if (id === "pet-animal-band") onActivity("animal-band");
-    else if (id === "plaza-shape-sorter") onActivity("shape-sorter");
-    else if (id === "plaza-picture-puzzle") onActivity("picture-puzzle");
-    else if (id === "midway-balloon-parade") onActivity("balloon-parade");
-    else if (id === "park-map-kiosk") onMap();
+    } else if (id === "park-map-kiosk") onMap();
     else if (id === "club-pulse-dance-floor") {
       walk(50, 75);
       document
@@ -617,91 +611,11 @@ export function World({
       notify("The Pride Agency satellite grid is scanning the savanna.");
     else if (RIDE_HOTSPOTS[id]) onOpenRide?.(RIDE_HOTSPOTS[id]);
   };
-  const hotspotLabels: Record<string, string> = {
-    "lighthouse-foghorn": "Sound Foghorn",
-    "sled-run-gate": "Sled Run Race",
-    "coaster-ticket-gate": "Ride Savanna Screamer",
-    "giant-ferris-wheel": "Ride the Ferris wheel",
-    "park-map-kiosk": "Park map",
-    "spinning-mango-teacups": "Ride Mango Teacups",
-    "grand-golden-carousel": "Ride Golden Carousel",
-    "sunshine-flume": "Ride the Log Flume",
-    "lion-leap-tower": "Ride Lion Leap Tower",
-    "midway-game-booth": "Play Fruit Catch!",
-    "cafe-bakery-window": "Mango Bakery",
-    "plaza-bubble-cart": "Bubble Pop",
-    "plaza-coloring-easel": "Coloring Book",
-    "beach-seek-lookout": "Hide & Seek Safari",
-    "pet-animal-band": "Animal Orchestra",
-    "plaza-shape-sorter": "Shape Sorter Safari",
-    "plaza-picture-puzzle": "Picture Puzzle",
-    "midway-balloon-parade": "Balloon Parade",
-    "club-pulse-dj-booth": "DJ Booth · DJ Beat Drop",
-    "club-pulse-dance-floor": "Step onto the dance floor",
-    "marble-lion-fountain": "Visit the lion fountain",
-    "speed-slides": "Ride the Speed Slides",
-    "tsunami-wave-pool": "Ride the Wave Pool",
-    "dump-bucket-fortress": "Splash under the Bucket",
-    "lazy-river-current": "Float the Lazy River",
-    "pet-grooming-station": "Grooming Spa",
-    "pet-pick-pet": "Pick your pet",
-    "spy-terminal": "Launch Spy Terminal",
-    "condo-furniture-editor": "Customize Furniture Grid",
-    "condo-jukebox": "Grand Jukebox",
-    "surveillance-holo-map": "Surveillance Holo-Map",
-    "river-surf-dock": "River Surf Rapids",
-    "kart-race-gate": "Race karts",
-    "winner-podium": "Podium",
-    "aquarium-feed-fish": "Feed the fish",
-    "aquarium-touch-pool": "Touch pool",
-    "rink-skate": "Skate",
-    "rink-hot-cocoa": "Hot cocoa",
-  };
   // Picture-first labels for hotspots, so pre-readers can spot them.
-  const hotspotIcons: Record<string, string> = {
-    "lighthouse-foghorn": "📯",
-    "aquarium-feed-fish": "🐟",
-    "aquarium-touch-pool": "🦀",
-    "rink-skate": "⛸️",
-    "rink-hot-cocoa": "☕",
-    "sled-run-gate": "🛷",
-    "coaster-ticket-gate": "🎢",
-    "giant-ferris-wheel": "🎡",
-    "park-map-kiosk": "🗺️",
-    "spinning-mango-teacups": "🥭",
-    "grand-golden-carousel": "🎠",
-    "sunshine-flume": "💦",
-    "lion-leap-tower": "🗼",
-    "midway-game-booth": "🍎",
-    "cafe-bakery-window": "🎂",
-    "plaza-bubble-cart": "🫧",
-    "plaza-coloring-easel": "🖍️",
-    "beach-seek-lookout": "🔍",
-    "club-pulse-dj-booth": "🎧",
-    "club-pulse-dance-floor": "💃",
-    "marble-lion-fountain": "⛲",
-    "speed-slides": "🛝",
-    "tsunami-wave-pool": "🌊",
-    "dump-bucket-fortress": "🪣",
-    "lazy-river-current": "🛶",
-    "pet-grooming-station": "🛁",
-    "pet-pick-pet": "🐾",
-    "spy-terminal": "💻",
-    "condo-furniture-editor": "🛋️",
-    "condo-jukebox": "🎵",
-    "surveillance-holo-map": "🛰️",
-    "river-surf-dock": "🏄",
-    "kart-race-gate": "🏎️",
-    "winner-podium": "🏆",
-    "pet-animal-band": "🎶",
-    "plaza-shape-sorter": "🔺",
-    "plaza-picture-puzzle": "🧩",
-    "midway-balloon-parade": "🎈",
-  };
-  const hotspotIcon = (id: string) =>
-    hotspotIcons[id] && (
+  const hotspotIcon = (icon: string | undefined) =>
+    icon && (
       <span className="hotspot-icon" aria-hidden="true">
-        {hotspotIcons[id]}
+        {icon}
       </span>
     );
   return (
@@ -799,8 +713,8 @@ export function World({
                 }}
                 onClick={() => hotspot(item.id)}
               >
-                {hotspotIcon(item.id)}
-                {hotspotLabels[item.id]} <ArrowUpRight size={17} />
+                {hotspotIcon(item.icon)}
+                {item.label} <ArrowUpRight size={17} />
               </button>
             );
           })}
@@ -1253,11 +1167,9 @@ export function World({
                 onClick={() => hotspot(item.id)}
               >
                 <span className="room-nav-icon" aria-hidden="true">
-                  {hotspotIcons[item.id] ?? "✨"}
+                  {item.icon ?? "✨"}
                 </span>
-                <span className="room-nav-caption">
-                  {hotspotLabels[item.id]}
-                </span>
+                <span className="room-nav-caption">{item.label}</span>
               </button>
             ))}
           {!compact && (
@@ -1374,11 +1286,9 @@ export function World({
                 }}
               >
                 <span className="room-nav-icon" aria-hidden="true">
-                  {hotspotIcons[item.id] ?? "✨"}
+                  {item.icon ?? "✨"}
                 </span>
-                <span className="room-nav-caption">
-                  {hotspotLabels[item.id]}
-                </span>
+                <span className="room-nav-caption">{item.label}</span>
               </button>
             ))}
           </div>

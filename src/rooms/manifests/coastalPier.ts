@@ -31,6 +31,8 @@ export const coastalPierManifest: RoomManifest = {
   interactives: [
     {
       id: "lighthouse-foghorn",
+      label: "Sound Foghorn",
+      icon: "📯",
       type: "instrument",
       position: { x: 1950, y: 520 },
       actionData: {},

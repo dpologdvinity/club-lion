@@ -29,6 +29,8 @@ export const canyonRapidsManifest: RoomManifest = {
   interactives: [
     {
       id: "river-surf-dock",
+      label: "River Surf Rapids",
+      icon: "🏄",
       type: "activity",
       position: { x: 1750, y: 530 },
       actionData: {},

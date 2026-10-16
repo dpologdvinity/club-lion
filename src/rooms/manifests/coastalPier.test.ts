@@ -33,6 +33,8 @@ test("the lighthouse exposes the foghorn instrument", () => {
   assert.deepEqual(coastalPierManifest.interactives, [
     {
       id: "lighthouse-foghorn",
+      label: "Sound Foghorn",
+      icon: "📯",
       type: "instrument",
       position: { x: 1950, y: 520 },
       actionData: {},

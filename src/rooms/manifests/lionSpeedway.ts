@@ -29,12 +29,16 @@ export const lionSpeedwayManifest: RoomManifest = {
   interactives: [
     {
       id: "kart-race-gate",
+      label: "Race karts",
+      icon: "🏎️",
       type: "game_launch",
       position: { x: 1180, y: 540 },
       actionData: {},
     },
     {
       id: "winner-podium",
+      label: "Podium",
+      icon: "🏆",
       type: "secret_clickable",
       position: { x: 2110, y: 555 },
       actionData: {},
