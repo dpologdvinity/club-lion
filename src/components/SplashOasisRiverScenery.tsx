@@ -963,7 +963,7 @@ function ArrowSign({
         strokeLinejoin="round"
       />
       <path
-        d={`M${w - 10}-116q${-w * 0.6}-4 ${-w}0t${-w * 0.8} 0M${w - 10}-88q${-w * 0.5}-4 ${-w}0t${-w * 0.8} 0`}
+        d={`M${w - 10}-116q${-w * 0.6}-4 ${-w} 0t${-w * 0.8} 0M${w - 10}-88q${-w * 0.5}-4 ${-w} 0t${-w * 0.8} 0`}
         fill="none"
         stroke="#a96d36"
         strokeWidth="2"

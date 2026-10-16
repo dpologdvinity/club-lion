@@ -8,6 +8,10 @@ test("world navigation reaches Splash Oasis and Lazy River with animated scenery
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (err) => errors.push(err.message));
+  // Malformed SVG path data only shows up as a console error.
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
 
   await page.goto("/");
 

@@ -406,7 +406,7 @@ function ArrowSign({
       {[-118, -100, -86].map((gy) => (
         <path
           key={gy}
-          d={`M${back + 10} ${gy}q${w * 0.5}-4 ${w}0t${w * 0.8} 0`}
+          d={`M${back + 10} ${gy}q${w * 0.5}-4 ${w} 0t${w * 0.8} 0`}
           fill="none"
           stroke="#a96d36"
           strokeWidth="2"
