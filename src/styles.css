@@ -597,13 +597,16 @@ svg {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 9px;
+  /* Kid tap target: 48 px minimum, whatever the label length. */
+  min-width: 48px;
+  min-height: 48px;
+  padding: 8px 12px;
   background: #fff6daee;
   color: #725532;
   border: 1px solid #efd7a1;
   box-shadow: 0 2px 4px #49381522;
-  border-radius: 7px;
-  font-size: 10px;
+  border-radius: 12px;
+  font-size: 13px;
   font-weight: 800;
 }
 .building-label:hover {
@@ -3759,8 +3762,8 @@ svg {
     padding: 4px 8px;
   }
   .building-label {
-    font-size: 9px;
-    padding: 5px 6px;
+    font-size: 12px;
+    padding: 8px 10px;
     gap: 4px;
   }
   .cafe-label {
@@ -5184,6 +5187,8 @@ svg {
 .interactive-prop {
   position: absolute;
   z-index: 10;
+  min-width: 48px;
+  min-height: 48px;
   background: none;
   border: none;
   padding: 4px;
