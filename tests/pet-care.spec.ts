@@ -66,7 +66,6 @@ test("nursery grooming is named, keyboard accessible, persistent, and silent by 
   expect(
     saved.stamps.filter((id: string) => id === "pet_pampered"),
   ).toHaveLength(1);
-  expect(saved.coins).toBe(250);
   expect(saved.gamesPlayed).toBe(0);
   expect(
     (

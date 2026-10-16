@@ -85,10 +85,6 @@ for (const ride of RIDES) {
       .getByRole("button", { name: /^Splash Oasis/ })
       .click();
     if (ride.river) await tapRoomPath(page, /Lazy River Oasis/);
-    const coinsBefore = await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key) ?? "{}").coins ?? 0,
-      SAVE_KEY,
-    );
     await tapRoomPath(page, ride.hotspot);
 
     const dialog = page.getByRole("dialog", { name: `${ride.name} ride` });
@@ -131,7 +127,6 @@ for (const ride of RIDES) {
       SAVE_KEY,
     );
     expect(saved.stamps).toContain(ride.stamp);
-    expect(saved.coins).toBe(coinsBefore + 15);
 
     await dialog.getByRole("button", { name: "Exit ride" }).click();
     await expect(dialog).toBeHidden();

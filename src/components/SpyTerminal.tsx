@@ -17,7 +17,6 @@ import {
   getCipherHint,
   calculateSpyRank,
   playSpySound,
-  SPY_PUZZLE_MAX_COINS,
   type CipherPhraseId,
   type CipherPuzzle,
   type Direction,
@@ -30,7 +29,6 @@ type Mode = "laser" | "cipher";
 type Result = {
   puzzleType: "laser_grid" | "cipher";
   scoreOrStage: number;
-  coins: number;
 };
 
 const DIRECTION_KEYS: Record<string, Direction> = {
@@ -51,8 +49,6 @@ const CIPHER_PHRASE_IDS: Exclude<CipherPhraseId, "custom">[] = [
 ];
 
 const LASER_GRID_MAX_ALARMS = 3;
-const LASER_STAGE_COINS = 20;
-const CIPHER_COINS = 20;
 
 function initGridState(stageIndex: number): GridState {
   const stage = LASER_GRID_STAGES[stageIndex];
@@ -147,7 +143,6 @@ function LaserTripwireGrid({
       onFinish({
         puzzleType: "laser_grid",
         scoreOrStage: stageIndex + 1,
-        coins: LASER_STAGE_COINS,
       });
     }
   };
@@ -272,7 +267,7 @@ function LaserTripwireGrid({
       )}
       {cleared && stageIndex < LASER_GRID_STAGES.length - 1 && (
         <div className="spy-mission-result" role="status">
-          <p>Vault terminal reached! Coins earned: {LASER_STAGE_COINS}.</p>
+          <p>Vault terminal reached!</p>
           <button
             ref={resultRef}
             className="button button-primary"
@@ -342,7 +337,6 @@ function ClassifiedAgentCipher({
       onFinish({
         puzzleType: "cipher",
         scoreOrStage: phraseIndex + 1,
-        coins: CIPHER_COINS,
       });
     }
   };
@@ -458,7 +452,7 @@ function ClassifiedAgentCipher({
       </div>
       {solved && (
         <div className="spy-mission-result" role="status">
-          <p>Transmission decrypted! Coins earned: {CIPHER_COINS}.</p>
+          <p>Transmission decrypted!</p>
           <button
             ref={nextRef}
             className="button button-primary"
@@ -572,13 +566,11 @@ export function SpyTerminalModal({
   onCompletePuzzle: (
     puzzleType: "laser_grid" | "cipher",
     scoreOrStage: number,
-    coinsEarned: number,
   ) => void;
   onClose: () => void;
 }) {
   const handleFinish = (result: Result) => {
-    const cappedCoins = Math.min(result.coins, SPY_PUZZLE_MAX_COINS);
-    onCompletePuzzle(result.puzzleType, result.scoreOrStage, cappedCoins);
+    onCompletePuzzle(result.puzzleType, result.scoreOrStage);
   };
 
   return (

@@ -2,13 +2,7 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import { Dialog } from "./Dialog";
 import { Avatar } from "./Avatar";
-import { Coin } from "./Lion";
-import {
-  premiumIdsForLook,
-  salonLookCost,
-  type AvatarLook,
-  type PlayerBase,
-} from "../game";
+import { type AvatarLook, type PlayerBase } from "../game";
 import { resolveHairStyle } from "../types/world.ts";
 import {
   BANGS_OPTIONS,
@@ -28,7 +22,6 @@ import {
   LIP_COLORS,
   PIERCINGS,
   SKIN_TONE_OPTIONS,
-  premiumId,
   type SalonCategory,
   type StyleOption,
 } from "../types/avatarOptions.ts";
@@ -51,24 +44,8 @@ export function SalonModal({
     ...player.look,
     hairId: resolveHairStyle(player.look.hairId),
   });
-  const cost = salonLookCost(player, draft);
-  const affordable = player.coins >= cost;
-  const newUnlocks = premiumIdsForLook(draft).filter(
-    (id) => !player.owned.includes(id),
-  ).length;
-
   const update = (patch: Partial<AvatarLook>) =>
     setDraft((current) => ({ ...current, ...patch }));
-
-  const priceTag = (category: SalonCategory, option: StyleOption) =>
-    option.price !== undefined &&
-    !player.owned.includes(premiumId(category, option.id)) ? (
-      <span className="salon-price">
-        <span className="sr-only"> premium, </span>
-        <Coin amount={option.price} />
-        <span className="sr-only"> coins</span>
-      </span>
-    ) : null;
 
   const pills = (
     legend: string,
@@ -89,7 +66,6 @@ export function SalonModal({
             onClick={() => pick(option.id)}
           >
             {selected === option.id && <Check size={15} />} {option.label}
-            {category && priceTag(category, option)}
           </button>
         ))}
       </div>
@@ -122,7 +98,6 @@ export function SalonModal({
                 {selected === option.id && <Check size={17} />}
               </span>
               <small>{option.label}</small>
-              {category && priceTag(category, option)}
             </button>
           );
         })}
@@ -305,20 +280,9 @@ export function SalonModal({
             </>
           )}
 
-          {cost > 0 && (
-            <p className="salon-cost" role="status">
-              {newUnlocks === 1
-                ? "1 premium look"
-                : `${newUnlocks} premium looks`}{" "}
-              to unlock: <Coin amount={cost} />
-              {!affordable && " (not enough coins yet)"}
-            </p>
-          )}
-
           <button
             type="button"
             className="button button-primary"
-            disabled={!affordable}
             onClick={() => onSave(draft)}
           >
             <Check size={17} /> Confirm new look

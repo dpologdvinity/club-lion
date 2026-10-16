@@ -12,7 +12,6 @@ test("fish species table has at least 7 catches with valid weight ranges", () =>
   for (const species of FISH_SPECIES) {
     assert.ok(species.minWeight > 0);
     assert.ok(species.maxWeight >= species.minWeight);
-    assert.ok(species.coins > 0);
     assert.ok(["common", "uncommon", "rare", "epic"].includes(species.rarity));
   }
   const ids = FISH_SPECIES.map((s) => s.id);
@@ -33,26 +32,20 @@ test("fish species table has at least 7 catches with valid weight ranges", () =>
 test("expected catches match the design spec", () => {
   const byId = (id: string) => FISH_SPECIES.find((s) => s.id === id)!;
   assert.deepEqual(byId("river_minnow").rarity, "common");
-  assert.equal(byId("river_minnow").coins, 3);
-  assert.equal(byId("striped_tilapia").coins, 5);
-  assert.equal(byId("old_boot").coins, 1);
   assert.equal(byId("old_boot").rarity, "common");
   assert.equal(byId("baobab_perch").rarity, "uncommon");
   assert.equal(byId("spotted_catfish").rarity, "uncommon");
   assert.equal(byId("golden_catfish").rarity, "rare");
-  assert.equal(byId("golden_catfish").coins, 50);
   assert.equal(byId("savanna_eel").rarity, "epic");
-  assert.equal(byId("savanna_eel").coins, 80);
 });
 
-test("getRandomCatch returns a valid species with weight in range and matching coins", () => {
+test("getRandomCatch returns a valid species with weight in range", () => {
   for (let seed = 0; seed < 50; seed += 1) {
     const result = getRandomCatch(seed);
     const species = FISH_SPECIES.find((s) => s.id === result.species.id);
     assert.ok(species, `unknown species for seed ${seed}`);
     assert.ok(result.weight >= species!.minWeight);
     assert.ok(result.weight <= species!.maxWeight);
-    assert.equal(result.coins, species!.coins);
     // Rounded to 1 decimal place.
     assert.equal(Math.round(result.weight * 10) / 10, result.weight);
   }

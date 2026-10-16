@@ -9,7 +9,7 @@ import {
   Shirt,
 } from "lucide-react";
 import { isAdventureComplete, type AdventureId, type PlayerV2 } from "../game";
-import { Coin, Lion } from "./Lion";
+import { Lion } from "./Lion";
 
 const ADVENTURES = [
   {
@@ -79,7 +79,7 @@ export function Sidebar({
       <section className="adventures-panel">
         <div className="adventures-heading">
           <h2 className="panel-label">Little adventures</h2>
-          <span title="Complete an adventure to earn 50 coins">
+          <span title="Complete an adventure to celebrate">
             <Gift size={17} />
           </span>
         </div>
@@ -118,7 +118,7 @@ export function Sidebar({
                         className="claim-button"
                         onClick={() => onClaim(id)}
                       >
-                        <Gift size={13} /> Claim <Coin amount={50} />
+                        <Gift size={13} /> Claim
                       </button>
                     )
                   ) : (
@@ -142,7 +142,7 @@ export function Sidebar({
           <span className="tiny-sparkle" aria-hidden="true">
             ✧
           </span>{" "}
-          Every little adventure earns 50 coins.
+          Every little adventure is a happy win.
         </div>
       </section>
     </aside>

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Fish, RotateCcw, Waves, X } from "lucide-react";
-import { Coin } from "./Lion";
 import {
   getRandomCatch,
   isWithinBiteWindow,
@@ -99,7 +98,7 @@ function playTriumphFanfare(ctx: AudioContext) {
   });
 }
 
-type CatchResult = { speciesId: string; weight: number; coins: number };
+type CatchResult = { speciesId: string; weight: number };
 
 export function WaterholeAngler({
   onClose,
@@ -272,7 +271,6 @@ export function WaterholeAngler({
           onCatch({
             speciesId: result.species.id,
             weight: result.weight,
-            coins: result.coins,
           });
         } else {
           setStage("idle");
@@ -421,9 +419,6 @@ export function WaterholeAngler({
               </span>
               <p>{caughtFish.species.description}</p>
               <p>Weight: {caughtFish.weight} kg</p>
-              <p>
-                <Coin amount={caughtFish.coins} />
-              </p>
               <button
                 type="button"
                 className="button-primary"

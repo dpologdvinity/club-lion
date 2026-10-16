@@ -34,9 +34,6 @@ export type CakeOrder = {
 
 export const MAX_TOPPINGS = 40;
 export const MAX_CAKE_PHOTOS = 6;
-export const BAKERY_COINS_PER_STAR = 8;
-export const BAKERY_FREE_PLAY_COINS = 5;
-export const MAX_BAKERY_COINS = BAKERY_COINS_PER_STAR * 3;
 
 export const SPONGE_COLORS: Record<Sponge, string> = {
   vanilla: "#f7dc9c",
@@ -109,7 +106,7 @@ export function orderAsCake(order: CakeOrder): Cake {
   };
 }
 
-export type CakeScore = { stars: 1 | 2 | 3; coins: number };
+export type CakeScore = { stars: 1 | 2 | 3 };
 
 /**
  * Shape, sponge and frosting are a point each; toppings are worth three points,
@@ -132,7 +129,7 @@ export function scoreCake(order: CakeOrder, cake: Cake): CakeScore {
   }
   points += needed === 0 ? 3 : Math.max(0, (matched - extra / 2) / needed) * 3;
   const stars = points >= 6 ? 3 : points >= 4 ? 2 : 1;
-  return { stars, coins: stars * BAKERY_COINS_PER_STAR };
+  return { stars };
 }
 
 const isOneOf = <T extends string>(

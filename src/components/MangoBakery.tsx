@@ -6,9 +6,7 @@ import {
   type PointerEvent,
 } from "react";
 import { CakeArt, ToppingIcon } from "./CakeArt";
-import { Coin } from "./Lion";
 import {
-  BAKERY_FREE_PLAY_COINS,
   CAKE_SHAPES,
   FROSTINGS,
   FROSTING_COLORS,
@@ -42,7 +40,7 @@ const TOPPING_NAMES = {
   lion: "Lion topper",
 } as const;
 
-type Served = { stars: number; coins: number } | null;
+type Served = { stars: number } | null;
 type Drag = { kind: ToppingKind; x: number; y: number; moved: boolean };
 
 function describeOrder(cake: Cake) {
@@ -58,7 +56,7 @@ export function MangoBakery({
   onServe,
 }: {
   photos: Cake[];
-  onServe: (cake: Cake, coins: number) => void;
+  onServe: (cake: Cake) => void;
 }) {
   const [orderMode, setOrderMode] = useState(false);
   const [order, setOrder] = useState(() => pickOrder());
@@ -170,10 +168,8 @@ export function MangoBakery({
   const serve = () => {
     if (servedRef.current) return;
     servedRef.current = true;
-    const result = orderMode
-      ? scoreCake(order, cake)
-      : { stars: 3, coins: BAKERY_FREE_PLAY_COINS };
-    onServe(cake, result.coins);
+    const result = orderMode ? scoreCake(order, cake) : { stars: 3 };
+    onServe(cake);
     setServed(result);
     setStatus(
       orderMode ? `Served! ${result.stars} of 3 stars` : "Served! Yummy!",
@@ -324,9 +320,6 @@ export function MangoBakery({
             )}
             {served ? (
               <>
-                <span className="bakery-earned">
-                  + <Coin amount={served.coins} />
-                </span>
                 <button
                   ref={againRef}
                   type="button"

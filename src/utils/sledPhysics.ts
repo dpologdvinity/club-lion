@@ -6,7 +6,7 @@ export type SledState = {
   speed: number;
   airborne: boolean;
   jumpHeight: number;
-  coinsCollected: number;
+  pineconesCollected: number;
   tricksCompleted: number;
   crashed: boolean;
   /** Vertical velocity keeps the jump ballistic without hidden mutable state. */
@@ -147,7 +147,7 @@ export function checkSledPickup(
   );
   if (!pickedUp) return { nextState: state, pickedUp: null };
   const nextState = { ...state };
-  if (pickedUp.type === "golden_pinecone") nextState.coinsCollected += 1;
+  if (pickedUp.type === "golden_pinecone") nextState.pineconesCollected += 1;
   if (pickedUp.type === "speed_boost")
     nextState.speed = Math.min(MAX_SPEED, state.speed + 12);
   if (pickedUp.type === "ramp" && !state.airborne)
@@ -157,14 +157,14 @@ export function checkSledPickup(
 
 export function calculateSledPayout(
   distance: number,
-  coins: number,
+  pinecones: number,
   tricks: number,
 ): number {
   const count = (value: number) =>
     Number.isSafeInteger(value) && value >= 0 ? value : 0;
   return (
     10 +
-    count(coins) * 5 +
+    count(pinecones) * 5 +
     count(tricks) * 10 +
     (Number.isFinite(distance) && distance >= SLED_FINISH_DISTANCE ? 30 : 0)
   );

@@ -5,22 +5,18 @@ const orders = [
   {
     name: "Mango Tango",
     scoops: ["Mango slices", "Mango slices", "Crushed Ice"],
-    coins: 30,
   },
   {
     name: "Baobab Berry Blitz",
     scoops: ["Baobab Berry", "Baobab Berry", "Honey drizzle", "Crushed Ice"],
-    coins: 42,
   },
   {
     name: "Savanna Sunrise",
     scoops: ["Mango slices", "Pineapple chunks", "Honey drizzle"],
-    coins: 36,
   },
   {
     name: "Coconut Cloud",
     scoops: ["Coconut Milk", "Coconut Milk", "Crushed Ice", "Honey drizzle"],
-    coins: 39,
   },
 ];
 
@@ -40,7 +36,7 @@ async function fillOrder(page: Page, scoops: string[]) {
     await page.getByRole("button", { name, exact: true }).click();
 }
 
-test("orders show their recipe, blend accurately, and pay once even on rapid serving", async ({
+test("orders show their recipe, blend accurately, and count once even on rapid serving", async ({
   page,
 }) => {
   const order = await openKitchen(page);
@@ -59,7 +55,7 @@ test("orders show their recipe, blend accurately, and pay once even on rapid ser
     button.click();
   });
   await expect(page.getByLabel("Smoothie rewards")).toHaveText(
-    JSON.stringify([order.coins]),
+    JSON.stringify([1]),
   );
   await expect(
     page.getByRole("button", { name: "Mango slices", exact: true }),

@@ -344,9 +344,6 @@ export function checkCipherSolved(state: CipherPuzzle): boolean {
 
 // --- Spy agency ranks ---
 
-/** Highest coin reward a single spy puzzle completion may pay out. */
-export const SPY_PUZZLE_MAX_COINS = 100;
-
 export type SpyRank = { rank: number; title: string; badge: string };
 
 export const SPY_RANKS: SpyRank[] = [

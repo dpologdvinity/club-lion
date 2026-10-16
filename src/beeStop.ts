@@ -86,16 +86,6 @@ export function advance(
  */
 export const REDUCED_MOTION_FPS = 20;
 
-/** Coin bands. Finishing any run pays at least 15; a flawless run caps at 120. */
-export function coinsFor(score: number): number {
-  if (!Number.isFinite(score) || score < 0) return 0;
-  if (score >= 900) return 120;
-  if (score >= 700) return 90;
-  if (score >= 450) return 60;
-  if (score >= 200) return 35;
-  return 15;
-}
-
 function clampRound(round: number): number {
   if (!Number.isFinite(round)) return 1;
   return Math.min(BEE_STOP_ROUNDS, Math.max(1, Math.round(round)));

@@ -22,7 +22,6 @@ import {
   BAGS,
 } from "../types/avatarOptions.ts";
 import { LEFT_ARM_HIP, RIG, RIGHT_ARM_DOWN } from "./avatar/shared.ts";
-import { newPlayer, salonLookCost } from "../game.ts";
 
 test("generateAvatarSvgString outputs stacked SVG layers in correct order", () => {
   const svg = generateAvatarSvgString(DEFAULT_AVATAR_LOOK, "idle");
@@ -495,7 +494,6 @@ test("new earrings render and premium accessories cost coins", () => {
     });
     assert.ok(svg.includes(`jewelry-${id.replace(/_/g, "-")}`), id);
   }
-  const player = { ...newPlayer(), owned: [] };
   const look = {
     ...DEFAULT_AVATAR_LOOK,
     jewelryId: "gold_jhumkas",
@@ -503,17 +501,9 @@ test("new earrings render and premium accessories cost coins", () => {
     hairClipId: "rhinestone_barrettes",
     braceletId: "rainbow_bangles",
   };
-  assert.equal(salonLookCost(player, look), 120 + 90 + 80 + 80);
-  assert.equal(
-    salonLookCost(player, {
-      ...DEFAULT_AVATAR_LOOK,
-      necklaceId: "cross_chain",
-    }),
-    0,
-  );
 });
 
-test("shoulder bags render every option and price the premium one", () => {
+test("shoulder bags render every option", () => {
   for (const { id } of BAGS) {
     const svg = generateAvatarSvgString({ ...DEFAULT_AVATAR_LOOK, bagId: id });
     assertValidSvg(svg, id);
@@ -523,15 +513,6 @@ test("shoulder bags render every option and price the premium one", () => {
       id,
     );
   }
-  const player = { ...newPlayer(), owned: [] };
-  assert.equal(
-    salonLookCost(player, {
-      ...DEFAULT_AVATAR_LOOK,
-      bagId: "pink_heart_bag",
-      hairClipId: "tiara",
-    }),
-    90 + 100,
-  );
 });
 
 test("braided topknot and big curls carry doll details", () => {

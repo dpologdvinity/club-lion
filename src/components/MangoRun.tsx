@@ -18,7 +18,7 @@ import {
   Sparkles,
   Trophy,
 } from "lucide-react";
-import { Coin, Lion } from "./Lion";
+import { Lion } from "./Lion";
 import {
   buildPattern,
   buildTrail,
@@ -442,16 +442,14 @@ export function MangoRun({
             <span>
               <Sparkles size={15} /> Endless. Three lives.
             </span>
-            <span>
-              <Coin amount={best} /> best run
-            </span>
+            <span>Best run: {best}</span>
           </div>
           <button className="button button-primary" onClick={start}>
             Let’s run <ArrowRight size={18} />
           </button>
           <p className="game-help">
             Arrow keys, W A S D, or the on-screen pad to steer. Each mango is 10
-            coins.
+            points.
           </p>
         </div>
       )}
@@ -482,7 +480,7 @@ export function MangoRun({
             </span>
             <span>
               <span className="sr-only">Personal best: </span>
-              <Coin amount={best} />
+              {best}
             </span>
             {mode === "playing" && (
               <button className="mr-pause" onClick={pause} aria-label="Pause">
@@ -579,7 +577,7 @@ export function MangoRun({
           )}
           <p className="game-help">
             Arrow keys, W A S D, or the on-screen pad to steer. Mangoes are 10
-            coins each.
+            points each.
           </p>
         </>
       )}
@@ -593,12 +591,7 @@ export function MangoRun({
           <p>
             {finalScore} points and {mangoesCount}{" "}
             {mangoesCount === 1 ? "mango" : "mangoes"}.
-            <br />
-            Every point turns into coins for your adventure.
           </p>
-          <div className="reward-display">
-            + <Coin amount={finalScore} />
-          </div>
           <div className="game-win-actions">
             <button
               className="button button-secondary"

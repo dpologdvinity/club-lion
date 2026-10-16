@@ -4,7 +4,6 @@ import {
   BOOST_COOLDOWN_MS,
   COUNTDOWN_MS,
   KART_LAPS,
-  KART_PLACE_COINS,
   KART_RADIUS,
   MANGO_SPOTS,
   TRACK_HALF_WIDTH,
@@ -12,7 +11,6 @@ import {
   countdownStage,
   createRace,
   kartPose,
-  kartRaceCoins,
   lapsDone,
   playerPlace,
   raceOrder,
@@ -209,13 +207,6 @@ test("finishers rank by finish time, then distance, with grid order breaking tie
     ],
   });
   assert.deepEqual(order, [1, 2, 3, 0]);
-});
-
-test("every place pays coins and only real places pay", () => {
-  assert.deepEqual([1, 2, 3, 4].map(kartRaceCoins), [...KART_PLACE_COINS]);
-  assert.ok(KART_PLACE_COINS.every((coins) => coins > 0));
-  for (const bad of [0, 5, 1.5, Number.NaN])
-    assert.equal(kartRaceCoins(bad), 0);
 });
 
 test("a finished race does not change any more", () => {

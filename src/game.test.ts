@@ -38,24 +38,11 @@ import {
   STAMP_DEFINITIONS,
   type Player,
 } from "./game.ts";
-import { SPY_PUZZLE_MAX_COINS } from "./utils/spyPuzzles.ts";
 import { BUBBLE_POP_MAX_SCORE } from "./utils/bubblePop.ts";
-import {
-  ANIMAL_BAND_COINS,
-  ANIMAL_BAND_MAX_PAID_SONGS,
-} from "./utils/animalBand.ts";
-import {
-  SHAPE_SORTER_COINS_PER_ROUND,
-  SHAPE_SORTER_ROUNDS,
-} from "./utils/shapeSorter.ts";
-import {
-  PICTURE_PUZZLE_COINS,
-  PICTURE_PUZZLE_MAX_PAID,
-} from "./utils/picturePuzzle.ts";
-import {
-  BALLOON_RAINBOW_COINS,
-  BALLOON_MAX_PAID_RAINBOWS,
-} from "./utils/balloonParade.ts";
+import { ANIMAL_BAND_MAX_PAID_SONGS } from "./utils/animalBand.ts";
+import { SHAPE_SORTER_ROUNDS } from "./utils/shapeSorter.ts";
+import { PICTURE_PUZZLE_MAX_PAID } from "./utils/picturePuzzle.ts";
+import { BALLOON_MAX_PAID_RAINBOWS } from "./utils/balloonParade.ts";
 import { MAX_CAKE_PHOTOS, newCake, type Cake } from "./utils/bakery.ts";
 import {
   DEFAULT_AVATAR_LOOK,
@@ -72,46 +59,28 @@ test("a corrupt save safely starts a fresh adventure", () => {
   );
 });
 
-test("smoothie orders pay bounded rewards and never overflow player progress", () => {
-  const player = newPlayer();
-  const served = completeSmoothieOrder(player, 42);
-  assert.equal(served.coins, 292);
-  assert.equal(served.smoothiesServed, 1);
-  assert.equal(completeSmoothieOrder(served, 0).smoothiesServed, 2);
-  for (const coins of [-1, 0.5, NaN, 43, Number.MAX_SAFE_INTEGER]) {
-    assert.equal(completeSmoothieOrder(player, coins), player);
-  }
-  const fullWallet = { ...player, coins: Number.MAX_SAFE_INTEGER };
-  assert.equal(completeSmoothieOrder(fullWallet, 30), fullWallet);
-  const fullCounter = { ...player, smoothiesServed: Number.MAX_SAFE_INTEGER };
-  assert.equal(completeSmoothieOrder(fullCounter, 0), fullCounter);
-});
-
-test("bakery serves pay bounded coins and keep photos of the newest six cakes", () => {
+test("bakery serves keep photos of the newest six cakes", () => {
   const player = newPlayer();
   const cake: Cake = {
     ...newCake(),
     shape: "star",
     toppings: [{ kind: "lion", x: 50, y: 40 }],
   };
-  const served = completeBakeryServe(player, cake, 24);
-  assert.equal(served.coins, 274);
+  const served = completeBakeryServe(player, cake);
   assert.equal(served.cakesServed, 1);
   assert.deepEqual(served.bakeryCakes, [cake]);
-  for (const coins of [-1, 0.5, NaN, 25])
-    assert.equal(completeBakeryServe(player, cake, coins), player);
   const badCake = JSON.parse(JSON.stringify({ ...cake, shape: "cube" }));
-  assert.equal(completeBakeryServe(player, badCake, 5), player);
+  assert.equal(completeBakeryServe(player, badCake), player);
   let busy = served;
   for (let i = 0; i < 8; i++)
-    busy = completeBakeryServe(busy, { ...newCake(), sponge: "mango" }, 5);
+    busy = completeBakeryServe(busy, { ...newCake(), sponge: "mango" });
   assert.equal(busy.bakeryCakes?.length, MAX_CAKE_PHOTOS);
   assert.equal(busy.bakeryCakes?.[0].sponge, "mango");
   assert.equal(busy.cakesServed, 9);
 });
 
 test("bakery photos survive save round trips and old saves still load", () => {
-  const player = completeBakeryServe(newPlayer(), newCake(), 5);
+  const player = completeBakeryServe(newPlayer(), newCake());
   assert.deepEqual(restorePlayer(JSON.stringify(player)), player);
   const migrated = migratePlayerSave(player);
   assert.deepEqual(migrated.bakeryCakes, [newCake()]);
@@ -140,7 +109,6 @@ test("seek rounds pay per round, stamp each scene once, and track the best hard 
     hard: false,
     timeMs: 40_000,
   });
-  assert.equal(easy.coins, 250 + 10 + 15);
   assert.deepEqual(easy.stamps, ["seek_beach"]);
   assert.equal(easy.seekBestMs, undefined);
   const again = completeSeekRound(easy, {
@@ -148,7 +116,6 @@ test("seek rounds pay per round, stamp each scene once, and track the best hard 
     hard: true,
     timeMs: 21_000,
   });
-  assert.equal(again.coins, easy.coins + 20);
   assert.deepEqual(again.stamps, ["seek_beach"]);
   assert.equal(again.seekBestMs, 21_000);
   const slower = completeSeekRound(again, {
@@ -208,16 +175,13 @@ test("invalid condo layout data is dropped without discarding the rest of the sa
   const player = {
     ...newPlayer(),
     name: "Roary",
-    coins: 500,
     condoLayout: overlapping,
   };
   const restored = restorePlayer(JSON.stringify(player));
   assert.equal(restored.condoLayout, undefined);
   assert.equal(restored.name, "Roary");
-  assert.equal(restored.coins, 500);
   const migrated = migratePlayerSave(player);
   assert.equal(migrated.condoLayout, undefined);
-  assert.equal(migrated.coins, 500);
 });
 
 test("absent condo layout data stays absent through restoration and migration", () => {
@@ -229,11 +193,9 @@ test("absent condo layout data stays absent through restoration and migration", 
 test("smoothie and DJ progress round trips together through v1 and v2 saves", () => {
   const player = completeSmoothieOrder(
     completeDJBeatDrop(newPlayer(), 400, 12),
-    30,
   );
   assert.deepEqual(restorePlayer(JSON.stringify(player)), player);
   const migrated = migratePlayerSave(player);
-  assert.equal(migrated.coins, 300);
   assert.equal(migrated.smoothiesServed, 1);
   assert.equal(migrated.djBeatDropBest, 400);
   assert.deepEqual(
@@ -248,14 +210,12 @@ test("smoothie and DJ progress round trips together through v1 and v2 saves", ()
   );
 });
 
-test("fishing catches pay coins and track games played and fish caught", () => {
+test("fishing catches track games played and fish caught", () => {
   const player = newPlayer();
   const caught = completeFishingCatch(player, {
     speciesId: "golden_catfish",
     weight: 8.4,
-    coins: 50,
   });
-  assert.equal(caught.coins, 300);
   assert.equal(caught.gamesPlayed, 1);
   assert.equal(caught.fishCaughtCount, 1);
   assert.equal(caught.largestFishWeight, 8.4);
@@ -265,51 +225,24 @@ test("fishing catches keep the largest fish weight seen so far", () => {
   const player = completeFishingCatch(newPlayer(), {
     speciesId: "golden_catfish",
     weight: 8.4,
-    coins: 50,
   });
   const smaller = completeFishingCatch(player, {
     speciesId: "river_minnow",
     weight: 0.3,
-    coins: 3,
   });
   assert.equal(smaller.largestFishWeight, 8.4);
   const bigger = completeFishingCatch(smaller, {
     speciesId: "savanna_eel",
     weight: 9.0,
-    coins: 80,
   });
   assert.equal(bigger.largestFishWeight, 9.0);
   assert.equal(bigger.fishCaughtCount, 3);
-});
-
-test("fishing catches reject invalid inputs and never overflow player progress", () => {
-  const player = newPlayer();
-  const badCases = [
-    { speciesId: "golden_catfish", weight: -1, coins: 50 },
-    { speciesId: "golden_catfish", weight: NaN, coins: 50 },
-    { speciesId: "golden_catfish", weight: 8.4, coins: -5 },
-    { speciesId: "golden_catfish", weight: 8.4, coins: NaN },
-    { speciesId: "not_a_fish", weight: 8.4, coins: 50 },
-  ];
-  for (const catchResult of badCases) {
-    assert.equal(completeFishingCatch(player, catchResult), player);
-  }
-  const fullWallet = { ...player, coins: Number.MAX_SAFE_INTEGER };
-  assert.equal(
-    completeFishingCatch(fullWallet, {
-      speciesId: "golden_catfish",
-      weight: 8.4,
-      coins: 50,
-    }),
-    fullWallet,
-  );
 });
 
 test("fishing progress round trips through v1 saves and migrates to v2", () => {
   const player = completeFishingCatch(newPlayer(), {
     speciesId: "golden_catfish",
     weight: 8.4,
-    coins: 50,
   });
   assert.deepEqual(restorePlayer(JSON.stringify(player)), player);
   const migrated = migratePlayerSave(player);
@@ -332,16 +265,12 @@ test("fishing progress round trips through v1 saves and migrates to v2", () => {
   );
 });
 
-test("purchases deduct the price once and never allow a negative balance", () => {
+test("shop items are free to collect, once", () => {
   const item = SHOP_ITEMS.find((item) => item.id === "hat")!;
   const bought = buyItem(newPlayer(), item.id);
-  assert.equal(bought.coins, newPlayer().coins - item.price);
   assert.ok(bought.owned.includes(item.id));
+  assert.equal(bought.accessory, item.id);
   assert.deepEqual(buyItem(bought, item.id), bought);
-  assert.deepEqual(buyItem({ ...newPlayer(), coins: 0 }, item.id), {
-    ...newPlayer(),
-    coins: 0,
-  });
   assert.deepEqual(buyItem(newPlayer(), "unknown"), newPlayer());
 });
 
@@ -353,18 +282,14 @@ test("greetings count distinct neighbors, and adventures can be rewarded only on
   assert.equal(player.met.length, 1);
   player = meetLion(meetLion(player, "cleo"), "pip");
   const rewarded = claimReward(player, "neighbors");
-  assert.equal(rewarded.coins, player.coins + 50);
   assert.deepEqual(claimReward(rewarded, "neighbors"), rewarded);
 });
 
 test("visiting home and finishing a game unlock their own adventures", () => {
   const visited = visitPlace(newPlayer(), "den");
   assert.ok(visited.visited.includes("den"));
-  assert.equal(claimReward(visited, "home").coins, visited.coins + 50);
   const played = completeGame(newPlayer(), 6);
   assert.equal(played.gamesPlayed, 1);
-  assert.equal(played.coins, newPlayer().coins + 60);
-  assert.equal(claimReward(played, "game").coins, played.coins + 50);
 });
 
 test("save round trips preserve valid progress and reject invalid character choices", () => {
@@ -376,10 +301,9 @@ test("save round trips preserve valid progress and reject invalid character choi
   );
 });
 
-test("a mango run pays coins, counts a game, and sets the first best score", () => {
+test("a mango run counts a game, and sets the first best score", () => {
   const player = newPlayer();
   const run = completeMangoRun(player, 42);
-  assert.equal(run.coins, player.coins + 42);
   assert.equal(run.gamesPlayed, player.gamesPlayed + 1);
   assert.equal(run.mangoRunBest, 42);
 });
@@ -393,7 +317,6 @@ test("mango run keeps the highest score as the best", () => {
 test("mango runs are repeatable and each one pays out again", () => {
   const once = completeMangoRun(newPlayer(), 7);
   const twice = completeMangoRun(once, 5);
-  assert.equal(twice.coins, once.coins + 5);
   assert.equal(twice.gamesPlayed, once.gamesPlayed + 1);
   assert.equal(twice.mangoRunBest, 7);
 });
@@ -401,7 +324,6 @@ test("mango runs are repeatable and each one pays out again", () => {
 test("a mango run scoring zero still counts a play and pays nothing", () => {
   const player = newPlayer();
   const run = completeMangoRun(player, 0);
-  assert.equal(run.coins, player.coins);
   assert.equal(run.gamesPlayed, player.gamesPlayed + 1);
   assert.equal(run.mangoRunBest, 0);
   assert.equal(completeMangoRun(run, 0).mangoRunBest, 0);
@@ -427,10 +349,9 @@ test("saving keeps a valid mango run best and drops an invalid one", () => {
   assert.deepEqual(invalid, newPlayer());
 });
 
-test("a DJ Beat Drop run pays coins, counts a game, and sets the first best score", () => {
+test("a DJ Beat Drop run counts a game, and sets the first best score", () => {
   const player = newPlayer();
   const run = completeDJBeatDrop(player, 400, 12);
-  assert.equal(run.coins, player.coins + 20);
   assert.equal(run.gamesPlayed, player.gamesPlayed + 1);
   assert.equal(run.djBeatDropBest, 400);
 });
@@ -441,31 +362,16 @@ test("DJ Beat Drop keeps the highest score as the best", () => {
   assert.equal(completeDJBeatDrop(first, 900, 30).djBeatDropBest, 900);
 });
 
-test("DJ Beat Drop rejects impossible runs and prevents reward overflow", () => {
-  const player = newPlayer();
-  assert.equal(completeDJBeatDrop(player, 6801, 32), player);
-  assert.equal(completeDJBeatDrop(player, 100, 33), player);
-  const fullWallet = { ...player, coins: Number.MAX_SAFE_INTEGER };
-  assert.equal(completeDJBeatDrop(fullWallet, 100, 1), fullWallet);
-  assert.equal(completeDJBeatDrop(player, 6800, 32).coins, 590);
-  const invalidBest = restorePlayer(
-    JSON.stringify({ ...player, djBeatDropBest: 6801 }),
-  );
-  assert.equal(invalidBest.djBeatDropBest, undefined);
-});
-
 test("DJ Beat Drop progress survives both save migrations", () => {
   const v1 = completeDJBeatDrop(newPlayer(), 400, 12);
   const v2 = migratePlayerSave(v1);
   assert.equal(v2.djBeatDropBest, 400);
-  assert.equal(v2.coins, 270);
   assert.deepEqual(migratePlayerSave(JSON.parse(JSON.stringify(v2))), v2);
 });
 
 test("DJ Beat Drop runs are repeatable and each one pays out again", () => {
   const once = completeDJBeatDrop(newPlayer(), 100, 3);
   const twice = completeDJBeatDrop(once, 60, 2);
-  assert.equal(twice.coins, once.coins + 3);
   assert.equal(twice.gamesPlayed, once.gamesPlayed + 1);
   assert.equal(twice.djBeatDropBest, 100);
 });
@@ -494,16 +400,13 @@ test("saving keeps a valid DJ Beat Drop best and drops an invalid one", () => {
 test("finishing Bee Stop pays its score band once and keeps the best result", () => {
   const start = newPlayer();
   const sloppy = completeBeeStop(start, 460);
-  assert.equal(sloppy.coins, start.coins + 60);
   assert.equal(sloppy.gamesPlayed, 1);
   assert.equal(sloppy.beeStopBest, 460);
   const perfect = completeBeeStop(sloppy, 1000);
-  assert.equal(perfect.coins, sloppy.coins + 120);
   assert.equal(perfect.gamesPlayed, 2);
   assert.equal(perfect.beeStopBest, 1000);
   const worse = completeBeeStop(perfect, 120);
   assert.equal(worse.beeStopBest, 1000);
-  assert.equal(worse.coins, perfect.coins + 15);
 });
 
 test("Bee Stop rejects impossible scores instead of paying out", () => {
@@ -514,11 +417,8 @@ test("Bee Stop rejects impossible scores instead of paying out", () => {
 
 test("a save from before Bee Stop existed keeps its progress and reports no best score", () => {
   const { beeStopBest: _omitted, ...legacy } = newPlayer();
-  const restored = restorePlayer(
-    JSON.stringify({ ...legacy, coins: 999, name: "Roary" }),
-  );
+  const restored = restorePlayer(JSON.stringify({ ...legacy, name: "Roary" }));
   assert.equal(restored.beeStopBest, 0);
-  assert.equal(restored.coins, 999);
   assert.equal(restored.name, "Roary");
   assert.equal(
     restorePlayer(JSON.stringify({ ...legacy, beeStopBest: 5000 })).beeStopBest,
@@ -530,9 +430,8 @@ test("a save from before Bee Stop existed keeps its progress and reports no best
   );
 });
 
-test("Paw Steps pays ten coins per finished round and counts one game", () => {
+test("Paw Steps counts one game and keeps the best round", () => {
   const played = completePawSteps(newPlayer(), 5);
-  assert.equal(played.coins, newPlayer().coins + 50);
   assert.equal(played.gamesPlayed, 1);
   assert.equal(played.pawStepsBest, 5);
 });
@@ -541,7 +440,6 @@ test("Paw Steps keeps the highest round count across games", () => {
   const best = completePawSteps(completePawSteps(newPlayer(), 7), 3);
   assert.equal(best.pawStepsBest, 7);
   assert.equal(best.gamesPlayed, 2);
-  assert.equal(best.coins, newPlayer().coins + 100);
 });
 
 test("Paw Steps rejects scores no round could produce", () => {
@@ -556,7 +454,6 @@ test("a save without a Paw Steps record starts at zero and rejects nonsense", ()
   const legacySave = {
     ...newPlayer(),
     name: "Roary",
-    coins: 430,
     owned: ["scarf", "hat"],
     accessory: "hat",
   };
@@ -579,7 +476,7 @@ test("a save without a Paw Steps record starts at zero and rejects nonsense", ()
 });
 
 test("saves preserve Fruit Catch and Paw Steps records across either migration", () => {
-  const fruitSave = { ...newPlayer(), coins: 430, fruitCatchBest: 80 };
+  const fruitSave = { ...newPlayer(), fruitCatchBest: 80 };
   Reflect.deleteProperty(fruitSave, "pawStepsBest");
   assert.deepEqual(restorePlayer(JSON.stringify(fruitSave)), {
     ...fruitSave,
@@ -593,43 +490,12 @@ test("saves preserve Fruit Catch and Paw Steps records across either migration",
     fruitCatchBest: 0,
   });
 });
-test("arcade completions reject overflowing wallets and play counters", () => {
-  const completions = [
-    completeGame,
-    completeMangoRun,
-    completeBeeStop,
-    completePawSteps,
-  ];
-  for (const complete of completions) {
-    const wallet = { ...newPlayer(), coins: Number.MAX_SAFE_INTEGER };
-    assert.equal(complete(wallet, 1), wallet);
-    const counter = { ...newPlayer(), gamesPlayed: Number.MAX_SAFE_INTEGER };
-    assert.equal(complete(counter, 0), counter);
-    const played = complete(newPlayer(), 1);
-    assert.equal(played.gamesPlayed, 1);
-    assert.deepEqual(restorePlayer(JSON.stringify(played)), played);
-  }
-});
-
-test("Fruit Catch rejects rewards that would overflow saved progress", () => {
-  const wallet = { ...newPlayer(), coins: Number.MAX_SAFE_INTEGER };
-  assert.equal(completeFruitCatch(wallet, 1, 0, 10), wallet);
-  const counter = { ...newPlayer(), gamesPlayed: Number.MAX_SAFE_INTEGER };
-  assert.equal(completeFruitCatch(counter, 0, 0, 0), counter);
-  const boundary = { ...newPlayer(), coins: Number.MAX_SAFE_INTEGER - 2 };
-  const completed = completeFruitCatch(boundary, 1, 0, 10);
-  assert.equal(completed.coins, Number.MAX_SAFE_INTEGER);
-  assert.deepEqual(restorePlayer(JSON.stringify(completed)), completed);
-});
-
 test("Fruit Catch awards caught fruit, tracks a best score, and restores older saves", () => {
   const first = completeFruitCatch(newPlayer(), 8, 2, 80);
-  assert.equal(first.coins, 266);
   assert.equal(first.gamesPlayed, 1);
   assert.equal(first.fruitCatchBest, 80);
   assert.deepEqual(completeFruitCatch(first, 2, 0, 20), {
     ...first,
-    coins: 270,
     gamesPlayed: 2,
   });
   assert.deepEqual(completeFruitCatch(first, 4, 0, 99), first);
@@ -641,7 +507,6 @@ test("arcade scores and rewards survive switching games and restoring the save",
   const fruit = completeFruitCatch(newPlayer(), 8, 2, 80);
   const mango = completeMangoRun(fruit, 42);
   const replay = completeFruitCatch(mango, 2, 0, 20);
-  assert.equal(replay.coins, 312);
   assert.equal(replay.gamesPlayed, 3);
   assert.equal(replay.mangoRunBest, 42);
   assert.equal(replay.fruitCatchBest, 80);
@@ -658,7 +523,6 @@ test("arcade saves preserve both game records and migrate each older format", ()
   const fromFruit = restorePlayer(JSON.stringify(fruitSave));
   assert.equal(fromFruit.fruitCatchBest, 80);
   assert.equal(fromFruit.beeStopBest, 0);
-  assert.equal(fromFruit.coins, played.coins);
   const { fruitCatchBest: _fruit, ...beeSave } = played;
   const fromBee = restorePlayer(JSON.stringify(beeSave));
   assert.equal(fromBee.beeStopBest, 700);
@@ -670,14 +534,12 @@ test("unlocking a secret catalog item adds it to owned items", () => {
   const player = newPlayer();
   const unlocked = unlockSecretCatalogItem(player, "barista_apron");
   assert.ok(unlocked.owned.includes("barista_apron"));
-  assert.equal(unlocked.coins, player.coins);
 });
 
 test("unlocking a secret catalog item via its trigger id adds it to owned items", () => {
   const player = newPlayer();
   const unlocked = unlockSecretCatalogItem(player, "coffee_steam");
   assert.ok(unlocked.owned.includes("barista_apron"));
-  assert.equal(unlocked.coins, player.coins);
 });
 
 test("unlocking the same secret item twice does not duplicate it", () => {
@@ -696,11 +558,10 @@ test("unlocking an unknown secret id leaves the player unchanged", () => {
   );
 });
 
-test("migratePlayerSave cleanly upgrades v1 save to v2 without losing coins or items", () => {
+test("migratePlayerSave cleanly upgrades v1 save to v2 without losing items", () => {
   const v1 = {
     ...newPlayer(),
     name: "Roary",
-    coins: 999,
     owned: ["scarf", "hat", "plant"],
     accessory: "hat",
     decor: ["plant"],
@@ -714,7 +575,6 @@ test("migratePlayerSave cleanly upgrades v1 save to v2 without losing coins or i
   };
   const v2 = migratePlayerSave(v1);
   assert.equal(v2.version, 2);
-  assert.equal(v2.coins, 999);
   assert.deepEqual(v2.owned, ["scarf", "hat", "plant"]);
   assert.equal(v2.accessory, "hat");
   assert.deepEqual(v2.decor, ["plant"]);
@@ -744,12 +604,11 @@ test("migratePlayerSave keeps an existing look and pet instead of overwriting th
   assert.deepEqual(v2.pet, customPet);
 });
 
-test("migratePlayerSave computes a higher starRank for more games played and coins earned", () => {
-  const low = migratePlayerSave({ ...newPlayer(), gamesPlayed: 0, coins: 0 });
+test("migratePlayerSave computes a higher starRank for more games played", () => {
+  const low = migratePlayerSave({ ...newPlayer(), gamesPlayed: 0 });
   const high = migratePlayerSave({
     ...newPlayer(),
     gamesPlayed: 50,
-    coins: 5000,
   });
   assert.ok(high.starRank > low.starRank);
 });
@@ -800,7 +659,7 @@ test("new players and legacy saves start with an empty stamp collection", () => 
   assert.deepEqual(migratePlayerSave(legacy).stamps, []);
 });
 
-test("unlockStamp is immutable, preserves generic player fields, and grants no coins", () => {
+test("unlockStamp is immutable, preserves generic player fields, ", () => {
   const player = migratePlayerSave(newPlayer());
   const before = structuredClone(player);
   const unlocked = unlockStamp(player, "catalog_barista");
@@ -816,7 +675,7 @@ test("unlockStamp is immutable, preserves generic player fields, and grants no c
 });
 
 test("stamp restoration filters malformed and unknown IDs and removes duplicates", () => {
-  const player = { ...newPlayer(), coins: 430 };
+  const player = newPlayer();
   const restored = restorePlayer(
     JSON.stringify({
       ...player,
@@ -882,10 +741,9 @@ test("DJ combos award a stamp from the actual combo without inferring it from sc
   assert.equal(completeDJBeatDrop(player, 500, 33), player);
 });
 
-test("completing a spy puzzle pays coins, counts a puzzle solved, and sets rank 1", () => {
+test("completing a spy puzzle counts a puzzle solved, and sets rank 1", () => {
   const player = newPlayer();
-  const next = completeSpyPuzzle(player, "laser_grid", 1, 20);
-  assert.equal(next.coins, player.coins + 20);
+  const next = completeSpyPuzzle(player, "laser_grid", 1);
   assert.equal(next.spyPuzzlesSolved, 1);
   assert.equal(next.spyRank, 1);
   assert.deepEqual(next.spyBadges, ["🥉"]);
@@ -894,37 +752,24 @@ test("completing a spy puzzle pays coins, counts a puzzle solved, and sets rank 
 test("completing enough spy puzzles promotes spy rank and grants its badge once", () => {
   let player = newPlayer();
   for (let i = 0; i < 3; i++) {
-    player = completeSpyPuzzle(player, "cipher", 1, 10);
+    player = completeSpyPuzzle(player, "cipher", 1);
   }
   assert.equal(player.spyPuzzlesSolved, 3);
   assert.equal(player.spyRank, 2);
   assert.deepEqual(player.spyBadges, ["🥉", "🥈"]);
 });
 
-test("completeSpyPuzzle rejects negative, non-integer, or over-cap coin rewards", () => {
-  const player = newPlayer();
-  assert.equal(completeSpyPuzzle(player, "laser_grid", 1, -5), player);
-  assert.equal(completeSpyPuzzle(player, "laser_grid", 1, 1.5), player);
-  assert.equal(
-    completeSpyPuzzle(player, "laser_grid", 1, SPY_PUZZLE_MAX_COINS + 1),
-    player,
-  );
-});
-
 test("completeSpyPuzzle rejects an invalid puzzle type or non-integer stage", () => {
   const player = newPlayer();
-  assert.equal(
-    completeSpyPuzzle(player, "not_a_puzzle" as never, 1, 10),
-    player,
-  );
-  assert.equal(completeSpyPuzzle(player, "laser_grid", -1, 10), player);
-  assert.equal(completeSpyPuzzle(player, "laser_grid", 1.5, 10), player);
+  assert.equal(completeSpyPuzzle(player, "not_a_puzzle" as never, 1), player);
+  assert.equal(completeSpyPuzzle(player, "laser_grid", -1), player);
+  assert.equal(completeSpyPuzzle(player, "laser_grid", 1.5), player);
 });
 
 test("spy progression survives a save round trip and rejects a corrupted save", () => {
   let player = newPlayer();
-  player = completeSpyPuzzle(player, "laser_grid", 1, 15);
-  player = completeSpyPuzzle(player, "cipher", 1, 15);
+  player = completeSpyPuzzle(player, "laser_grid", 1);
+  player = completeSpyPuzzle(player, "cipher", 1);
   const restored = restorePlayer(JSON.stringify(player));
   assert.equal(restored.spyPuzzlesSolved, 2);
   assert.equal(restored.spyRank, 1);
@@ -949,7 +794,7 @@ test("a save from before spy progression existed restores without spy fields", (
 });
 
 test("legacy saves restore empty social arrays and preserve progress", () => {
-  const legacy = { ...newPlayer(), coins: 789 };
+  const legacy = newPlayer();
   for (const key of [
     "friends",
     "incomingFriendRequests",
@@ -958,7 +803,6 @@ test("legacy saves restore empty social arrays and preserve progress", () => {
   ] as const)
     delete legacy[key];
   const restored = restorePlayer(JSON.stringify(legacy));
-  assert.equal(restored.coins, 789);
   for (const key of [
     "friends",
     "incomingFriendRequests",
@@ -1036,30 +880,8 @@ test("social arrays round trip through V1 and V2 migration without persisting pr
   assert.equal("isOnline" in reloaded, false);
 });
 
-test("foghorn stamp awards 40 coins once and persists alongside coastal visits", () => {
-  const player = migratePlayerSave(newPlayer());
-  const before = structuredClone(player);
-  const unlocked = unlockStamp(player, "lighthouse_foghorn");
-  assert.equal(unlocked.coins, player.coins + 40);
-  assert.deepEqual(unlocked.stamps, ["lighthouse_foghorn"]);
-  assert.deepEqual(player, before);
-  assert.equal(unlockStamp(unlocked, "lighthouse_foghorn"), unlocked);
-  const full = { ...player, coins: Number.MAX_SAFE_INTEGER };
-  assert.equal(unlockStamp(full, "lighthouse_foghorn"), full);
-  const visited = visitPlace(
-    visitPlace(unlocked, "sunset-beach"),
-    "coastal-pier",
-  );
-  const restored = migratePlayerSave(JSON.parse(JSON.stringify(visited)));
-  assert.deepEqual(restored.stamps, unlocked.stamps);
-  assert.equal(restored.coins, unlocked.coins);
-  assert.ok(restored.visited.includes("sunset-beach"));
-  assert.ok(restored.visited.includes("coastal-pier"));
-  assert.equal(unlockStamp(restored, "lighthouse_foghorn"), restored);
-});
-
 test("sled best and Mt. Mist visits survive V1/V2 saves and legacy defaults", () => {
-  const legacy = { ...newPlayer(), coins: 350 };
+  const legacy = newPlayer();
   delete (legacy as Partial<Player>).sledRunBest;
   assert.equal(restorePlayer(JSON.stringify(legacy)).sledRunBest, 0);
   assert.equal(migratePlayerSave(legacy).sledRunBest, 0);
@@ -1073,55 +895,12 @@ test("sled best and Mt. Mist visits survive V1/V2 saves and legacy defaults", ()
       JSON.stringify({ ...legacy, sledRunBest: value }),
     );
     assert.equal(restored.sledRunBest, 0);
-    assert.equal(restored.coins, legacy.coins);
   }
-});
-
-test("sled completion derives rewards, raises best, and rejects invalid or overflowing results", () => {
-  const player = newPlayer();
-  const result = {
-    distance: 800,
-    coinsCollected: 3,
-    tricksCompleted: 2,
-    crashed: false,
-  };
-  const completed = completeSledRun(player, result);
-  assert.equal(completed.coins, 325);
-  assert.equal(completed.sledRunBest, 75);
-  assert.equal(completed.gamesPlayed, 1);
-  const crashed = completeSledRun(completed, {
-    ...result,
-    distance: 200,
-    crashed: true,
-    coinsCollected: 0,
-    tricksCompleted: 0,
-  });
-  assert.equal(crashed.coins, 335);
-  assert.equal(crashed.sledRunBest, 75);
-  assert.equal(crashed.gamesPlayed, 2);
-  for (const invalid of [
-    { ...result, distance: 400 },
-    { ...result, distance: NaN },
-    { ...result, distance: 801 },
-    { ...result, coinsCollected: -1 },
-    { ...result, coinsCollected: 10000 },
-    { ...result, tricksCompleted: 0.5 },
-    { ...result, tricksCompleted: 10000 },
-  ])
-    assert.equal(completeSledRun(player, invalid), player);
-  assert.equal(
-    completeSledRun({ ...player, coins: Number.MAX_SAFE_INTEGER }, result)
-      .coins,
-    Number.MAX_SAFE_INTEGER,
-  );
-  const crashAtFinish = completeSledRun(player, { ...result, crashed: true });
-  assert.equal(crashAtFinish.coins, 295);
 });
 
 test("legacy V2 saves without pet care preserve progress and profile", () => {
   const current = {
     ...migratePlayerSave(newPlayer()),
-    coins: 987,
     gamesPlayed: 12,
     starRank: 9,
     moodQuote: "Ready for the nursery",
@@ -1130,7 +909,6 @@ test("legacy V2 saves without pet care preserve progress and profile", () => {
   const { petCare: _care, ...legacy } = current;
   for (const raw of [legacy, JSON.stringify(legacy)]) {
     const restored = migratePlayerSave(raw);
-    assert.equal(restored.coins, 987);
     assert.equal(restored.gamesPlayed, 12);
     assert.equal(restored.starRank, 9);
     assert.equal(restored.moodQuote, legacy.moodQuote);
@@ -1161,7 +939,6 @@ test("pet care survives V1 and V2 round trips without mutating the player", () =
 test("invalid pet stats recover safely without discarding other progress", () => {
   const saved = {
     ...migratePlayerSave(newPlayer()),
-    coins: 987,
     petCare: {
       happiness: "100",
       cleanliness: -20,
@@ -1173,7 +950,6 @@ test("invalid pet stats recover safely without discarding other progress", () =>
   };
   for (const version of [1, 2]) {
     const restored = migratePlayerSave({ ...saved, version });
-    assert.equal(restored.coins, 987);
     assert.deepEqual(restored.petCare, {
       happiness: 60,
       cleanliness: 0,
@@ -1193,7 +969,6 @@ test("pet care grants Pampered Pride atomically and once without coin rewards", 
   assert.deepEqual(pampered.stamps, ["pet_pampered"]);
   const replay = applyPetCareAction(pampered, "play");
   assert.deepEqual(replay.stamps, ["pet_pampered"]);
-  assert.equal(replay.coins, player.coins);
   assert.equal(replay.gamesPlayed, player.gamesPlayed);
   assert.deepEqual(
     migratePlayerSave(JSON.stringify(replay)).stamps,
@@ -1201,17 +976,14 @@ test("pet care grants Pampered Pride atomically and once without coin rewards", 
   );
 });
 
-test("buyCatalogItem charges once for shop pieces and refuses secrets or short funds", async () => {
+test("buyCatalogItem collects shop pieces once and refuses secrets", async () => {
   const { buyCatalogItem } = await import("./game.ts");
-  const rich = { ...newPlayer(), coins: 500 };
-  const bought = buyCatalogItem(rich, "cropped_puffer");
-  assert.equal(bought.coins, 280);
+  const player = newPlayer();
+  const bought = buyCatalogItem(player, "cropped_puffer");
   assert.ok(bought.owned.includes("cropped_puffer"));
   assert.equal(buyCatalogItem(bought, "cropped_puffer"), bought);
-  assert.equal(buyCatalogItem(rich, "barista_apron"), rich);
-  assert.equal(buyCatalogItem(rich, "nope"), rich);
-  const poor = { ...newPlayer(), coins: 10 };
-  assert.equal(buyCatalogItem(poor, "cropped_puffer"), poor);
+  assert.equal(buyCatalogItem(player, "barista_apron"), player);
+  assert.equal(buyCatalogItem(player, "nope"), player);
 });
 
 test("equipCatalogItem writes owned items to the look field for their slot", async () => {
@@ -1232,14 +1004,9 @@ test("equipCatalogItem writes owned items to the look field for their slot", asy
   assert.equal(equipCatalogItem(player, "cropped_puffer"), player);
 });
 
-test("applySalonLook buys unowned premium options once and keeps free looks free", async () => {
-  const {
-    applySalonLook,
-    salonLookCost,
-    premiumIdsForLook,
-    migratePlayerSave,
-  } = await import("./game.ts");
-  const player = { ...migratePlayerSave(newPlayer()), coins: 400 };
+test("applySalonLook saves any valid look for free and rejects invalid ones", async () => {
+  const { applySalonLook, migratePlayerSave } = await import("./game.ts");
+  const player = migratePlayerSave(newPlayer());
   const glam = {
     ...player.look,
     eyeStyle: "glitter_pop",
@@ -1247,47 +1014,15 @@ test("applySalonLook buys unowned premium options once and keeps free looks free
     hairId: "mermaid_waves",
     eyeshadowId: "bronze",
   };
-  assert.deepEqual(premiumIdsForLook(glam).sort(), [
-    "eye:glitter_pop",
-    "hair:mermaid_waves",
-    "lip:glitter_gloss",
-  ]);
-  assert.equal(salonLookCost(player, glam), 450);
-  assert.equal(applySalonLook(player, glam), player, "unaffordable is a no-op");
-
-  const funded = { ...player, coins: 500 };
-  const styled = applySalonLook(funded, glam);
-  assert.equal(styled.coins, 50);
+  const styled = applySalonLook(player, glam);
   assert.equal(styled.look.hairId, "mermaid_waves");
-  assert.equal(salonLookCost(styled, glam), 0);
-  assert.equal(applySalonLook(styled, { ...glam, lipId: "rose" }).coins, 50);
-
-  const free = applySalonLook(player, {
-    ...player.look,
-    eyeStyle: "siren",
-    hairId: "big_curls",
-    hairStreak: "#00f0ff",
-  });
-  assert.equal(free.coins, 400);
-  assert.equal(free.look.hairStreak, "#00f0ff");
+  assert.equal(styled.look.eyeStyle, "glitter_pop");
+  assert.deepEqual(styled.owned, player.owned);
   assert.equal(
     applySalonLook(player, { ...player.look, hairId: "" }),
     player,
     "invalid looks are rejected",
   );
-});
-
-test("premiumIdsForLook identifies premium piercing and jewelry options", async () => {
-  const { premiumIdsForLook, DEFAULT_AVATAR_LOOK } = await import("./game.ts");
-  const look = {
-    ...DEFAULT_AVATAR_LOOK,
-    piercingId: "septum_ring",
-    jewelryId: "butterfly_choker",
-  };
-  assert.deepEqual(premiumIdsForLook(look).sort(), [
-    "jewelry:butterfly_choker",
-    "piercing:septum_ring",
-  ]);
 });
 
 test("dressAvatar allows free, owned, or already-worn pieces only", async () => {
@@ -1331,7 +1066,7 @@ test("dressAvatar allows free, owned, or already-worn pieces only", async () => 
   );
 });
 
-test("saves keep premium salon unlocks and the new look fields", async () => {
+test("saves keep the new look fields and drop retired premium unlock ids", async () => {
   const { migratePlayerSave } = await import("./game.ts");
   const save = {
     ...migratePlayerSave(newPlayer()),
@@ -1346,64 +1081,10 @@ test("saves keep premium salon unlocks and the new look fields", async () => {
     },
   };
   const restored = migratePlayerSave(JSON.parse(JSON.stringify(save)));
-  assert.deepEqual(restored.owned, ["scarf", "eye:glitter_pop"]);
+  assert.deepEqual(restored.owned, ["scarf"]);
   assert.equal(restored.look.topId, "star_baby_tee");
   assert.equal(restored.look.lipId, "cherry");
   assert.equal(restored.look.hairStreak, "#ff3d9a");
-});
-
-test("kart races pay placing coins once per race and keep the best lap", () => {
-  const player = newPlayer();
-  const first = completeKartRace(player, {
-    raceNumber: 1,
-    place: 2,
-    bestLapMs: 7400,
-  });
-  assert.equal(first.coins, player.coins + 30);
-  assert.equal(first.kartRacesFinished, 1);
-  assert.equal(first.kartBestLapMs, 7400);
-  assert.equal(first.gamesPlayed, player.gamesPlayed + 1);
-  // The same finished race reported again (double tap, re-render) pays nothing.
-  assert.equal(
-    completeKartRace(first, { raceNumber: 1, place: 2, bestLapMs: 7400 }),
-    first,
-  );
-  const second = completeKartRace(first, {
-    raceNumber: 2,
-    place: 4,
-    bestLapMs: 9100,
-  });
-  assert.equal(second.coins, first.coins + 20);
-  assert.equal(second.kartBestLapMs, 7400);
-  const third = completeKartRace(second, {
-    raceNumber: 3,
-    place: 1,
-    bestLapMs: 6200,
-  });
-  assert.equal(third.coins, second.coins + 40);
-  assert.equal(third.kartBestLapMs, 6200);
-  for (const bad of [
-    { raceNumber: 3, place: 1, bestLapMs: 6000 },
-    { raceNumber: 5, place: 1, bestLapMs: 6000 },
-    { raceNumber: 4, place: 0, bestLapMs: 6000 },
-    { raceNumber: 4, place: 5, bestLapMs: 6000 },
-    { raceNumber: 4, place: 1.5, bestLapMs: 6000 },
-  ])
-    assert.equal(completeKartRace(third, bad), third);
-  const noLap = completeKartRace(third, {
-    raceNumber: 4,
-    place: 3,
-    bestLapMs: -5,
-  });
-  assert.equal(noLap.coins, third.coins + 25);
-  assert.equal(noLap.kartBestLapMs, 6200);
-  assert.equal(
-    completeKartRace(
-      { ...player, coins: Number.MAX_SAFE_INTEGER },
-      { raceNumber: 1, place: 1, bestLapMs: null },
-    ).coins,
-    Number.MAX_SAFE_INTEGER,
-  );
 });
 
 test("the first finished kart race earns the Speedway Rookie stamp", () => {
@@ -1431,9 +1112,8 @@ test("kart race progress survives saves, and old or bad saves still load", () =>
   const v2 = migratePlayerSave(raced);
   assert.equal(migratePlayerSave(JSON.stringify(v2)).kartBestLapMs, 6800);
   assert.equal(migratePlayerSave(JSON.stringify(v2)).kartRacesFinished, 1);
-  const legacy = { ...newPlayer(), coins: 410 };
+  const legacy = newPlayer();
   const old = restorePlayer(JSON.stringify(legacy));
-  assert.equal(old.coins, 410);
   assert.equal(old.kartRacesFinished, undefined);
   assert.equal(old.kartBestLapMs, undefined);
   for (const [races, lap] of [
@@ -1449,21 +1129,17 @@ test("kart race progress survives saves, and old or bad saves still load", () =>
         kartBestLapMs: lap,
       }),
     );
-    assert.equal(bad.coins, 410);
     assert.equal(bad.kartRacesFinished, undefined);
     assert.equal(bad.kartBestLapMs, undefined);
   }
 });
 test("a finished Bubble Pop challenge pays once by score and keeps the best", () => {
   const first = completeBubblePop(newPlayer(), 1_000);
-  assert.equal(first.coins, 275);
   assert.equal(first.gamesPlayed, 1);
   assert.equal(first.bubblePopBest, 1_000);
   const lower = completeBubblePop(first, 120);
-  assert.equal(lower.coins, 278);
   assert.equal(lower.bubblePopBest, 1_000);
   const maxed = completeBubblePop(newPlayer(), BUBBLE_POP_MAX_SCORE);
-  assert.equal(maxed.coins, 310);
   for (const bad of [-1, 10.5, Number.NaN, BUBBLE_POP_MAX_SCORE + 1]) {
     assert.equal(completeBubblePop(first, bad), first);
   }
@@ -1477,7 +1153,6 @@ test("Bubble Pop bests survive a save round trip and tampered bests are dropped"
       JSON.stringify({ ...played, bubblePopBest: bad }),
     );
     assert.equal(restored.bubblePopBest, undefined);
-    assert.equal(restored.coins, played.coins);
   }
 });
 
@@ -1505,34 +1180,30 @@ test("saves from before the coloring book and Bubble Pop still load", () => {
     ...older
   } = {
     ...newPlayer(),
-    coins: 410,
   };
   const restored = restorePlayer(JSON.stringify(older));
-  assert.equal(restored.coins, 410);
   assert.equal(restored.coloringBook, undefined);
   assert.equal(restored.bubblePopBest, undefined);
   const tampered = restorePlayer(
     JSON.stringify({ ...older, coloringBook: { pages: "crayons" } }),
   );
-  assert.equal(tampered.coins, 410);
   assert.equal(tampered.coloringBook, undefined);
 });
 
 test("River Surf best score survives V1/V2 saves and bad values are dropped", () => {
-  const surfed = completeRiverSurf(newPlayer(), { score: 42, coins: 12 });
+  const surfed = completeRiverSurf(newPlayer(), { score: 42 });
   assert.equal(surfed.riverSurfBest, 42);
   assert.equal(restorePlayer(JSON.stringify(surfed)).riverSurfBest, 42);
   const v2 = migratePlayerSave(surfed);
   assert.equal(v2.riverSurfBest, 42);
   assert.equal(migratePlayerSave(JSON.stringify(v2)).riverSurfBest, 42);
-  const legacy = { ...newPlayer(), coins: 330 };
+  const legacy = newPlayer();
   assert.equal(restorePlayer(JSON.stringify(legacy)).riverSurfBest, undefined);
   for (const value of [-1, 2.5, "42", null, Number.MAX_VALUE]) {
     const restored = restorePlayer(
       JSON.stringify({ ...legacy, riverSurfBest: value }),
     );
     assert.equal(restored.riverSurfBest, undefined);
-    assert.equal(restored.coins, 330);
   }
 });
 
@@ -1541,7 +1212,6 @@ test("kart colour and Fast mode are remembered, validated, and optional", () => 
   const chosen = setKartPrefs(player, { color: "sky", mode: "fast" });
   assert.equal(chosen.kartColor, "sky");
   assert.equal(chosen.kartMode, "fast");
-  assert.equal(chosen.coins, player.coins);
   assert.equal(setKartPrefs(chosen, { color: "gold", mode: "fast" }), chosen);
   assert.equal(setKartPrefs(chosen, { color: "sky", mode: "turbo" }), chosen);
   const restored = restorePlayer(JSON.stringify(chosen));
@@ -1550,9 +1220,8 @@ test("kart colour and Fast mode are remembered, validated, and optional", () => 
   const v2 = migratePlayerSave(chosen);
   assert.equal(migratePlayerSave(JSON.stringify(v2)).kartColor, "sky");
   assert.equal(migratePlayerSave(JSON.stringify(v2)).kartMode, "fast");
-  const legacy = { ...newPlayer(), coins: 275 };
+  const legacy = newPlayer();
   const old = restorePlayer(JSON.stringify(legacy));
-  assert.equal(old.coins, 275);
   assert.equal(old.kartColor, undefined);
   assert.equal(old.kartMode, undefined);
   for (const [color, mode] of [
@@ -1563,20 +1232,17 @@ test("kart colour and Fast mode are remembered, validated, and optional", () => 
     const bad = restorePlayer(
       JSON.stringify({ ...legacy, kartColor: color, kartMode: mode }),
     );
-    assert.equal(bad.coins, 275);
     assert.equal(bad.kartColor, undefined);
     assert.equal(bad.kartMode, undefined);
   }
 });
 
-test("an Animal Orchestra song pays once per song, stamps the first, and stops at the cap", () => {
+test("an Animal Orchestra song counts once per song, stamps the first, and stops at the cap", () => {
   const first = completeAnimalBand(newPlayer(), 6);
-  assert.equal(first.coins, 250 + ANIMAL_BAND_COINS + 15);
   assert.equal(first.animalBandSongs, 1);
   assert.equal(first.gamesPlayed, 1);
   assert.deepEqual(first.stamps, ["animal_band_maestro"]);
   const second = completeAnimalBand(first, 10);
-  assert.equal(second.coins, first.coins + ANIMAL_BAND_COINS);
   assert.equal(second.animalBandSongs, 2);
   assert.deepEqual(second.stamps, ["animal_band_maestro"]);
   for (const bad of [0, 11, 2.5, Number.NaN]) {
@@ -1587,13 +1253,10 @@ test("an Animal Orchestra song pays once per song, stamps the first, and stops a
     animalBandSongs: ANIMAL_BAND_MAX_PAID_SONGS,
   };
   assert.equal(completeAnimalBand(full, 4), full);
-  const overflowing = { ...first, coins: Number.MAX_SAFE_INTEGER };
-  assert.equal(completeAnimalBand(overflowing, 4), overflowing);
 });
 
-test("a Shape Sorter round pays once and only the last round earns the stamp", () => {
+test("a Shape Sorter round counts once and only the last round earns the stamp", () => {
   const round1 = completeShapeSorterRound(newPlayer(), 1);
-  assert.equal(round1.coins, 250 + SHAPE_SORTER_COINS_PER_ROUND);
   assert.equal(round1.shapeSorterRounds, 1);
   assert.equal(completeShapeSorterRound(round1, 1), round1);
   assert.equal(round1.stamps?.length ?? 0, 0);
@@ -1618,7 +1281,6 @@ test("animal band and shape sorter progress survives a save and bad values are d
   const restored = restorePlayer(JSON.stringify(played));
   assert.equal(restored.animalBandSongs, 1);
   assert.equal(restored.shapeSorterRounds, 1);
-  assert.equal(restored.coins, played.coins);
   const tampered = restorePlayer(
     JSON.stringify({
       ...played,
@@ -1628,7 +1290,6 @@ test("animal band and shape sorter progress survives a save and bad values are d
   );
   assert.equal(tampered.animalBandSongs, undefined);
   assert.equal(tampered.shapeSorterRounds, undefined);
-  assert.equal(tampered.coins, played.coins);
 });
 
 test("pet species survives V1 and V2 saves and unknown values fall back to lion", () => {
@@ -1673,7 +1334,6 @@ test("choosePetSpecies swaps species, renames the pet and keeps its position", (
 
 test("a Picture Puzzle pays once per finish and only the nine-piece picture earns the stamp", () => {
   const four = completePicturePuzzle(newPlayer(), 4);
-  assert.equal(four.coins, 250 + PICTURE_PUZZLE_COINS[4]);
   assert.equal(four.picturePuzzles, 1);
   assert.equal(four.stamps?.length ?? 0, 0);
   const nine = completePicturePuzzle(completePicturePuzzle(four, 6), 9);
@@ -1686,17 +1346,12 @@ test("a Picture Puzzle pays once per finish and only the nine-piece picture earn
   assert.equal(completePicturePuzzle(capped, 4), capped);
 });
 
-test("a Balloon Parade rainbow pays once and the first arch earns its stamp", () => {
+test("a Balloon Parade rainbow counts once and the first arch earns its stamp", () => {
   const first = completeBalloonRainbow(newPlayer());
-  const stampCoins =
-    STAMP_DEFINITIONS.find((stamp) => stamp.id === "balloon_rainbow")
-      ?.rewardCoins ?? 0;
-  assert.equal(first.coins, 250 + BALLOON_RAINBOW_COINS + stampCoins);
   assert.equal(first.balloonRainbows, 1);
   assert.deepEqual(first.stamps, ["balloon_rainbow"]);
   const second = completeBalloonRainbow(first);
   assert.equal(second.balloonRainbows, 2);
-  assert.equal(second.coins, first.coins + BALLOON_RAINBOW_COINS);
   assert.deepEqual(second.stamps, ["balloon_rainbow"]);
   const capped = { ...first, balloonRainbows: BALLOON_MAX_PAID_RAINBOWS };
   assert.equal(completeBalloonRainbow(capped), capped);
@@ -1707,7 +1362,6 @@ test("picture puzzle and balloon progress survives a save and bad values are dro
   const restored = restorePlayer(JSON.stringify(played));
   assert.equal(restored.picturePuzzles, 1);
   assert.equal(restored.balloonRainbows, 1);
-  assert.equal(restored.coins, played.coins);
   const tampered = restorePlayer(
     JSON.stringify({
       ...played,
@@ -1717,7 +1371,6 @@ test("picture puzzle and balloon progress survives a save and bad values are dro
   );
   assert.equal(tampered.picturePuzzles, undefined);
   assert.equal(tampered.balloonRainbows, undefined);
-  assert.equal(tampered.coins, played.coins);
 });
 
 test("a save from before these games loads with no progress for them", () => {
@@ -1726,5 +1379,164 @@ test("a save from before these games loads with no progress for them", () => {
   );
   assert.equal(old.picturePuzzles, undefined);
   assert.equal(old.balloonRainbows, undefined);
-  assert.equal(old.coins, 250);
+});
+
+test("saves written when coins existed still load and drop the old balance", () => {
+  const legacy = { ...newPlayer(), coins: 777 };
+  const restored = restorePlayer(JSON.stringify(legacy));
+  assert.equal(restored.name, legacy.name);
+  assert.deepEqual(restored.owned, legacy.owned);
+  assert.equal(Reflect.has(restored, "coins"), false);
+  const migrated = migratePlayerSave(legacy);
+  assert.equal(Reflect.has(migrated, "coins"), false);
+});
+
+test("smoothie orders count once each and never overflow the counter", () => {
+  const player = newPlayer();
+  const served = completeSmoothieOrder(player);
+  assert.equal(served.smoothiesServed, 1);
+  assert.equal(completeSmoothieOrder(served).smoothiesServed, 2);
+  const fullCounter = { ...player, smoothiesServed: Number.MAX_SAFE_INTEGER };
+  assert.equal(completeSmoothieOrder(fullCounter), fullCounter);
+});
+
+test("fishing catches reject invalid inputs", () => {
+  const player = newPlayer();
+  const badCases = [
+    { speciesId: "golden_catfish", weight: -1 },
+    { speciesId: "golden_catfish", weight: NaN },
+    { speciesId: "not_a_fish", weight: 8.4 },
+  ];
+  for (const catchResult of badCases) {
+    assert.equal(completeFishingCatch(player, catchResult), player);
+  }
+});
+
+test("DJ Beat Drop rejects impossible runs", () => {
+  const player = newPlayer();
+  assert.equal(completeDJBeatDrop(player, 6801, 32), player);
+  assert.equal(completeDJBeatDrop(player, 100, 33), player);
+  assert.equal(completeDJBeatDrop(player, 6800, 32).gamesPlayed, 1);
+  const invalidBest = restorePlayer(
+    JSON.stringify({ ...player, djBeatDropBest: 6801 }),
+  );
+  assert.equal(invalidBest.djBeatDropBest, undefined);
+});
+
+test("arcade completions reject overflowing play counters", () => {
+  const completions = [
+    completeGame,
+    completeMangoRun,
+    completeBeeStop,
+    completePawSteps,
+  ];
+  for (const complete of completions) {
+    const counter = { ...newPlayer(), gamesPlayed: Number.MAX_SAFE_INTEGER };
+    assert.equal(complete(counter, 0), counter);
+    const played = complete(newPlayer(), 1);
+    assert.equal(played.gamesPlayed, 1);
+    assert.deepEqual(restorePlayer(JSON.stringify(played)), played);
+  }
+});
+
+test("Fruit Catch rejects an overflowing play counter", () => {
+  const counter = { ...newPlayer(), gamesPlayed: Number.MAX_SAFE_INTEGER };
+  assert.equal(completeFruitCatch(counter, 0, 0, 0), counter);
+  const completed = completeFruitCatch(newPlayer(), 1, 0, 10);
+  assert.deepEqual(restorePlayer(JSON.stringify(completed)), completed);
+});
+
+test("foghorn stamp unlocks once and persists alongside coastal visits", () => {
+  const player = migratePlayerSave(newPlayer());
+  const before = structuredClone(player);
+  const unlocked = unlockStamp(player, "lighthouse_foghorn");
+  assert.deepEqual(unlocked.stamps, ["lighthouse_foghorn"]);
+  assert.deepEqual(player, before);
+  assert.equal(unlockStamp(unlocked, "lighthouse_foghorn"), unlocked);
+  const visited = visitPlace(
+    visitPlace(unlocked, "sunset-beach"),
+    "coastal-pier",
+  );
+  const restored = migratePlayerSave(JSON.parse(JSON.stringify(visited)));
+  assert.deepEqual(restored.stamps, unlocked.stamps);
+  assert.ok(restored.visited.includes("sunset-beach"));
+  assert.ok(restored.visited.includes("coastal-pier"));
+  assert.equal(unlockStamp(restored, "lighthouse_foghorn"), restored);
+});
+
+test("sled completion raises best and rejects invalid results", () => {
+  const player = newPlayer();
+  const result = {
+    distance: 800,
+    pineconesCollected: 3,
+    tricksCompleted: 2,
+    crashed: false,
+  };
+  const completed = completeSledRun(player, result);
+  assert.equal(completed.sledRunBest, 75);
+  assert.equal(completed.gamesPlayed, 1);
+  const crashed = completeSledRun(completed, {
+    ...result,
+    distance: 200,
+    crashed: true,
+    pineconesCollected: 0,
+    tricksCompleted: 0,
+  });
+  assert.equal(crashed.sledRunBest, 75);
+  assert.equal(crashed.gamesPlayed, 2);
+  for (const invalid of [
+    { ...result, distance: 400 },
+    { ...result, distance: NaN },
+    { ...result, distance: 801 },
+    { ...result, pineconesCollected: -1 },
+    { ...result, pineconesCollected: 10000 },
+    { ...result, tricksCompleted: 0.5 },
+    { ...result, tricksCompleted: 10000 },
+  ])
+    assert.equal(completeSledRun(player, invalid), player);
+});
+
+test("kart races count once per race and keep the best lap", () => {
+  const player = newPlayer();
+  const first = completeKartRace(player, {
+    raceNumber: 1,
+    place: 2,
+    bestLapMs: 7400,
+  });
+  assert.equal(first.kartRacesFinished, 1);
+  assert.equal(first.kartBestLapMs, 7400);
+  assert.equal(first.gamesPlayed, player.gamesPlayed + 1);
+  // The same finished race reported again (double tap, re-render) counts nothing.
+  assert.equal(
+    completeKartRace(first, { raceNumber: 1, place: 2, bestLapMs: 7400 }),
+    first,
+  );
+  const second = completeKartRace(first, {
+    raceNumber: 2,
+    place: 4,
+    bestLapMs: 9100,
+  });
+  assert.equal(second.kartRacesFinished, 2);
+  assert.equal(second.kartBestLapMs, 7400);
+  const third = completeKartRace(second, {
+    raceNumber: 3,
+    place: 1,
+    bestLapMs: 6200,
+  });
+  assert.equal(third.kartBestLapMs, 6200);
+  for (const bad of [
+    { raceNumber: 3, place: 1, bestLapMs: 6000 },
+    { raceNumber: 5, place: 1, bestLapMs: 6000 },
+    { raceNumber: 4, place: 0, bestLapMs: 6000 },
+    { raceNumber: 4, place: 5, bestLapMs: 6000 },
+    { raceNumber: 4, place: 1.5, bestLapMs: 6000 },
+  ])
+    assert.equal(completeKartRace(third, bad), third);
+  const noLap = completeKartRace(third, {
+    raceNumber: 4,
+    place: 3,
+    bestLapMs: -5,
+  });
+  assert.equal(noLap.kartRacesFinished, 4);
+  assert.equal(noLap.kartBestLapMs, 6200);
 });

@@ -146,9 +146,7 @@ export function AccountModal({
                 <span className="account-badge">
                   <Sparkles size={13} /> Star Rank {player.starRank ?? 1}
                 </span>
-                <p className="account-type-text">
-                  Local-First Explorer &bull; {player.coins} Coins
-                </p>
+                <p className="account-type-text">Local-First Explorer</p>
               </div>
             </div>
 

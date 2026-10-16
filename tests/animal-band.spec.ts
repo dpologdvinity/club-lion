@@ -58,7 +58,7 @@ test("every animal plays and dances, and the fifth tap bursts", async ({
   expect(errors).toEqual([]);
 });
 
-test("a recorded song plays back and pays once, and the stamp is earned", async ({
+test("a recorded song plays back once, and the stamp is earned", async ({
   page,
 }) => {
   await page.goto("/");
@@ -72,20 +72,16 @@ test("a recorded song plays back and pays once, and the stamp is earned", async 
   await play.click();
   await expect(page.locator(".band-note.is-playing")).toHaveCount(1);
   await expect(play).toBeEnabled({ timeout: 15_000 });
-  // 250 starting coins, +4 for the song, +15 for the first-song stamp.
-  await expect(page.locator(".wallet")).toHaveText("✦269");
 
   await play.click();
   await expect(page.locator(".band-note.is-playing")).toHaveCount(1);
   await expect(play).toBeEnabled({ timeout: 15_000 });
-  await expect(page.locator(".wallet")).toHaveText("✦269");
 
   await page.reload();
   await page.getByRole("button", { name: "Games", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Play Animal Orchestra" }),
   ).toContainText("Songs played 1");
-  await expect(page.locator(".wallet")).toHaveText("✦269");
 });
 
 test("the keyboard plays the animals and the band passes axe", async ({

@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { Coin } from "./Lion";
 import { SeekCoverArt, SeekSceneArt } from "./SeekSafariScenes";
 import {
   SEEK_HINT_MS,
   SEEK_SCENE_LIST,
   planSeekRound,
-  seekRoundCoins,
   type SeekPlacement,
   type SeekRound,
   type SeekSceneId,
@@ -272,7 +270,6 @@ export function HideAndSeekSafari({
               ))}
             </div>
             <p className="seek-win-reward">
-              + <Coin amount={seekRoundCoins(round.hard)} />
               {round.hard && finalMs !== null && (
                 <span className="seek-win-time">
                   <span aria-hidden="true">⏱️</span> {seconds(finalMs)}

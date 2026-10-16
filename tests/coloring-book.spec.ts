@@ -84,7 +84,6 @@ test("pages fill, erase, undo and surprise, then finish once for a stamp and per
   let progress = await saved(page);
   expect(progress.stamps).toContain("coloring_first_page");
   expect(progress.coloringBook.finished).toEqual(["lion-cub"]);
-  expect(progress.coins).toBe(250);
   await page.getByRole("button", { name: "Keep coloring" }).click();
   await done.click();
   progress = await saved(page);
@@ -122,7 +121,6 @@ test("a tampered coloring save keeps valid colors and the rest of the progress",
       "club-lion-player-v1",
       JSON.stringify({
         ...player,
-        coins: 480,
         coloringBook: {
           pages: {
             puppy: { head: "cocoa", ball: "url(#evil)", made_up: "sunny" },
@@ -134,7 +132,6 @@ test("a tampered coloring save keeps valid colors and the rest of the progress",
     );
   });
   await page.reload();
-  await expect(page.locator(".wallet")).toHaveText("✦480");
   await openColoringBook(page);
   await page.getByRole("button", { name: "Color the puppy, finished" }).click();
   await expect(region(page, "Head, cocoa brown")).toHaveAttribute(

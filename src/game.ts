@@ -10,7 +10,6 @@ import { sanitizeSocialGraph } from "./utils/socialGraph.ts";
 import {
   isKartColorId,
   isKartMode,
-  kartRaceCoins,
   type KartColorId,
   type KartMode,
 } from "./utils/kartRace.ts";
@@ -24,27 +23,18 @@ export {
   evaluateStampUnlocks,
   isStampUnlocked,
 } from "./utils/stampDefinitions.ts";
-import { BEE_STOP_MAX_SCORE, coinsFor } from "./beeStop.ts";
-import { MAX_SMOOTHIE_COINS } from "./utils/smoothieRecipes.ts";
-import { BUBBLE_POP_MAX_SCORE, bubblePopCoins } from "./utils/bubblePop.ts";
+import { BEE_STOP_MAX_SCORE } from "./beeStop.ts";
+import { BUBBLE_POP_MAX_SCORE } from "./utils/bubblePop.ts";
 import {
-  ANIMAL_BAND_COINS,
   ANIMAL_BAND_MAX_PAID_SONGS,
   SONG_MAX_TAPS,
 } from "./utils/animalBand.ts";
+import { SHAPE_SORTER_ROUNDS } from "./utils/shapeSorter.ts";
 import {
-  SHAPE_SORTER_COINS_PER_ROUND,
-  SHAPE_SORTER_ROUNDS,
-} from "./utils/shapeSorter.ts";
-import {
-  PICTURE_PUZZLE_COINS,
   PICTURE_PUZZLE_MAX_PAID,
   isPieceCount,
 } from "./utils/picturePuzzle.ts";
-import {
-  BALLOON_MAX_PAID_RAINBOWS,
-  BALLOON_RAINBOW_COINS,
-} from "./utils/balloonParade.ts";
+import { BALLOON_MAX_PAID_RAINBOWS } from "./utils/balloonParade.ts";
 import {
   restoreColoringBook,
   saveColoringPage,
@@ -52,7 +42,6 @@ import {
   type PageFills,
 } from "./utils/coloringBook.ts";
 import {
-  MAX_BAKERY_COINS,
   MAX_CAKE_PHOTOS,
   restoreCakePhoto,
   restoreCakePhotos,
@@ -62,21 +51,12 @@ import {
   SEEK_MAX_TIME_MS,
   SEEK_STAMPS,
   isSeekScene,
-  seekRoundCoins,
   type SeekSceneId,
 } from "./utils/seekSafari.ts";
 import { FISH_SPECIES } from "./utils/fishingEngine.ts";
-import {
-  coinsForScore,
-  DJ_BEAT_COUNT,
-  DJ_MAX_SCORE,
-} from "./utils/rhythmEngine.ts";
+import { DJ_BEAT_COUNT, DJ_MAX_SCORE } from "./utils/rhythmEngine.ts";
 import { deserializeLayout, serializeLayout } from "./utils/condoGrid.ts";
-import {
-  calculateSpyRank,
-  SPY_PUZZLE_MAX_COINS,
-  SPY_RANKS,
-} from "./utils/spyPuzzles.ts";
+import { calculateSpyRank, SPY_RANKS } from "./utils/spyPuzzles.ts";
 import type { AvatarLook, EquipSlot, PetState } from "./types/world.ts";
 import {
   DEFAULT_AVATAR_LOOK,
@@ -88,11 +68,9 @@ import {
 } from "./types/world.ts";
 import {
   BOTTOMS,
-  PREMIUM_SALON_OPTIONS,
   SHOES,
   TOPS,
   findOption,
-  premiumId,
   resolveBottomId,
   resolveShoeId,
   resolveTopId,
@@ -136,7 +114,6 @@ export type PlaceId =
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
-  coins: number;
   color: LionColor;
   accessory: string;
   owned: string[];
@@ -196,48 +173,41 @@ export type Player = PlayerBase & {
 };
 
 export const PAW_STEPS_MAX_ROUNDS = 999;
-export const PAW_STEPS_COINS_PER_ROUND = 10;
 
 export const SHOP_ITEMS = [
   {
     id: "scarf",
     name: "Forest scarf",
-    price: 80,
     kind: "accessory",
     description: "A little cozy, a little adventurous.",
   },
   {
     id: "glasses",
     name: "Sunshine shades",
-    price: 120,
     kind: "accessory",
     description: "For the coolest cat in the savanna.",
   },
   {
     id: "hat",
     name: "Explorer hat",
-    price: 150,
     kind: "accessory",
     description: "Every adventure starts with a good hat.",
   },
   {
     id: "flower",
     name: "Daisy crown",
-    price: 100,
     kind: "accessory",
     description: "Bring a little spring wherever you go.",
   },
   {
     id: "plant",
     name: "Happy houseplant",
-    price: 100,
     kind: "decor",
     description: "A leafy new friend for your den.",
   },
   {
     id: "cushion",
     name: "Sunny cushion",
-    price: 180,
     kind: "decor",
     description: "The perfect spot for an afternoon nap.",
   },
@@ -403,7 +373,7 @@ export const NEIGHBORS = [
     accessory: "glasses",
     x: 67,
     y: 83,
-    greeting: "Psst… try the arcade! There are fun games and coins to win. 🎮",
+    greeting: "Psst… try the arcade! There are fun games to play. 🎮",
   },
 ];
 
@@ -411,7 +381,6 @@ export function newPlayer(): Player {
   return {
     version: 1,
     name: "Sunny",
-    coins: 250,
     color: "gold",
     accessory: "scarf",
     owned: ["scarf"],
@@ -503,8 +472,6 @@ export function restorePlayer(raw: string | null): Player {
     const p = JSON.parse(raw);
     if (
       p.version !== 1 ||
-      !Number.isSafeInteger(p.coins) ||
-      p.coins < 0 ||
       typeof p.name !== "string" ||
       !p.name.trim() ||
       !Array.isArray(p.owned) ||
@@ -523,8 +490,7 @@ export function restorePlayer(raw: string | null): Player {
         p.owned.filter(
           (id: unknown) =>
             SHOP_ITEMS.some((item) => item.id === id) ||
-            CATALOG_ITEMS.some((item) => item.id === id) ||
-            PREMIUM_SALON_OPTIONS.some((option) => option.id === id),
+            CATALOG_ITEMS.some((item) => item.id === id),
         ),
       ),
     ];
@@ -541,7 +507,6 @@ export function restorePlayer(raw: string | null): Player {
       recentVisitors: social.recentVisitors,
       version: 1,
       name: p.name.trim().slice(0, 16),
-      coins: p.coins,
       color: ["gold", "sand", "copper", "rose"].includes(p.color)
         ? p.color
         : "gold",
@@ -762,8 +727,8 @@ export type PlayerSave = Player | PlayerV2;
 
 const DEFAULT_MOOD_QUOTE = "Vibing in the savanna";
 
-function calculateStarRank(gamesPlayed: number, coins: number): number {
-  return 1 + Math.floor(gamesPlayed / 5) + Math.floor(coins / 500);
+function calculateStarRank(gamesPlayed: number): number {
+  return 1 + Math.floor(gamesPlayed / 5);
 }
 
 function isPlayerV2(
@@ -825,18 +790,16 @@ export function migratePlayerSave(save: unknown): PlayerV2 {
     look,
     pet,
     petCare,
-    starRank: calculateStarRank(v1.gamesPlayed, v1.coins),
+    starRank: calculateStarRank(v1.gamesPlayed),
     moodQuote,
   };
 }
 
 export function buyItem<T extends PlayerBase>(player: T, id: string): T {
   const item = SHOP_ITEMS.find((item) => item.id === id);
-  if (!item || player.owned.includes(id) || player.coins < item.price)
-    return player;
+  if (!item || player.owned.includes(id)) return player;
   return {
     ...player,
-    coins: player.coins - item.price,
     owned: [...player.owned, id],
     ...(item.kind === "accessory"
       ? { accessory: id }
@@ -875,7 +838,6 @@ export function claimReward<T extends PlayerBase>(
     ? player
     : ({
         ...player,
-        coins: player.coins + 50,
         claimed: [...player.claimed, id],
       } as T);
 }
@@ -888,13 +850,11 @@ export function completeGame<T extends PlayerBase>(
     !Number.isSafeInteger(pairs) ||
     pairs < 0 ||
     pairs > 6 ||
-    !Number.isSafeInteger(player.coins + pairs * 10) ||
     !Number.isSafeInteger(player.gamesPlayed + 1)
   )
     return player;
   const completed = {
     ...player,
-    coins: player.coins + pairs * 10,
     gamesPlayed: player.gamesPlayed + 1,
   } as T;
   return pairs === 6
@@ -909,13 +869,11 @@ export function completeMangoRun<T extends PlayerBase>(
   if (
     !Number.isSafeInteger(score) ||
     score < 0 ||
-    !Number.isSafeInteger(player.coins + score) ||
     !Number.isSafeInteger(player.gamesPlayed + 1)
   )
     return player;
   return {
     ...player,
-    coins: player.coins + score,
     gamesPlayed: player.gamesPlayed + 1,
     mangoRunBest: Math.max(player.mangoRunBest ?? 0, score),
   } as T;
@@ -929,13 +887,11 @@ export function completeBeeStop<T extends PlayerBase>(
     !Number.isSafeInteger(score) ||
     score < 0 ||
     score > BEE_STOP_MAX_SCORE ||
-    !Number.isSafeInteger(player.coins + coinsFor(score)) ||
     !Number.isSafeInteger(player.gamesPlayed + 1)
   )
     return player;
   return {
     ...player,
-    coins: player.coins + coinsFor(score),
     gamesPlayed: player.gamesPlayed + 1,
     beeStopBest: Math.max(player.beeStopBest, score),
   } as T;
@@ -949,13 +905,11 @@ export function completePawSteps<T extends PlayerBase>(
     !Number.isSafeInteger(rounds) ||
     rounds < 0 ||
     rounds > PAW_STEPS_MAX_ROUNDS ||
-    !Number.isSafeInteger(player.coins + rounds * PAW_STEPS_COINS_PER_ROUND) ||
     !Number.isSafeInteger(player.gamesPlayed + 1)
   )
     return player;
   return {
     ...player,
-    coins: player.coins + rounds * PAW_STEPS_COINS_PER_ROUND,
     gamesPlayed: player.gamesPlayed + 1,
     pawStepsBest: Math.max(player.pawStepsBest, rounds),
   } as T;
@@ -974,16 +928,11 @@ export function unlockSecretCatalogItem<T extends PlayerBase>(
   return { ...player, owned: [...player.owned, item.id] } as T;
 }
 
-/** Buys a non-secret Le Shop catalog item once, if the player can afford it. */
+/** Collects a non-secret Le Shop catalog item once. */
 export function buyCatalogItem<T extends PlayerBase>(player: T, id: string): T {
   const item = CATALOG_ITEMS.find((item) => item.id === id && !item.isSecret);
-  if (!item || player.owned.includes(id) || player.coins < item.price)
-    return player;
-  return {
-    ...player,
-    coins: player.coins - item.price,
-    owned: [...player.owned, id],
-  } as T;
+  if (!item || player.owned.includes(id)) return player;
+  return { ...player, owned: [...player.owned, id] } as T;
 }
 
 const LOOK_FIELD_FOR_SLOT: Partial<Record<EquipSlot, keyof AvatarLook>> = {
@@ -1011,65 +960,13 @@ export function equipCatalogItem<T extends PlayerBase & { look?: AvatarLook }>(
   return { ...player, look: { ...look, [field]: id } } as T;
 }
 
-/** Premium salon unlocks a look uses, as namespaced owned-list IDs. */
-export function premiumIdsForLook(look: AvatarLook): string[] {
-  const picks: [SalonCategory, string | undefined][] = [
-    ["eye", look.eyeStyle],
-    ["shadow", look.eyeshadowId],
-    ["lip", look.lipId],
-    ["iris", look.eyeColorId],
-    ["face", look.faceDetailId],
-    ["hair", resolveHairStyle(look.hairId)],
-    ["piercing", look.piercingId],
-    ["jewelry", look.jewelryId],
-    ["necklace", look.necklaceId],
-    ["clips", look.hairClipId],
-    ["bracelet", look.braceletId],
-    ["bag", look.bagId],
-    ["bangs", look.bangsId],
-    ["skin", look.skinTone],
-  ];
-  return picks.flatMap(([category, id]) => {
-    if (!id) return [];
-    const key = premiumId(category, id);
-    return PREMIUM_SALON_OPTIONS.some((option) => option.id === key)
-      ? [key]
-      : [];
-  });
-}
-
-/** Coins still owed for premium salon options in a look the player does not own. */
-export function salonLookCost(player: PlayerBase, look: AvatarLook): number {
-  return premiumIdsForLook(look)
-    .filter((id) => !player.owned.includes(id))
-    .reduce(
-      (total, id) =>
-        total +
-        (PREMIUM_SALON_OPTIONS.find((option) => option.id === id)?.price ?? 0),
-      0,
-    );
-}
-
-/**
- * Saves a salon makeover, buying any premium options it uses that the player
- * does not own yet. Unaffordable or invalid looks leave the player unchanged.
- */
+/** Saves a salon makeover. Invalid looks leave the player unchanged. */
 export function applySalonLook<T extends PlayerBase>(
   player: T,
   look: AvatarLook,
 ): T {
   if (!validateAvatarLook(look)) return player;
-  const cost = salonLookCost(player, look);
-  if (player.coins < cost) return player;
-  const unlocked = premiumIdsForLook(look).filter(
-    (id) => !player.owned.includes(id),
-  );
-  return {
-    ...player,
-    coins: player.coins - cost,
-    owned: [...player.owned, ...unlocked],
-    look,
-  } as T;
+  return { ...player, look } as T;
 }
 
 /** Whether a clothing piece is in the closet: free basics or owned shop items. */
@@ -1127,7 +1024,6 @@ export function completeFruitCatch<T extends PlayerBase>(
     hits < 0 ||
     !Number.isSafeInteger(score) ||
     score !== caught * 10 ||
-    !Number.isSafeInteger(player.coins + caught * 2) ||
     !Number.isSafeInteger(player.gamesPlayed + 1)
   )
     return player;
@@ -1135,7 +1031,6 @@ export function completeFruitCatch<T extends PlayerBase>(
   const newBest = Math.max(player.fruitCatchBest, score);
   return {
     ...player,
-    coins: player.coins + caught * 2,
     gamesPlayed: newGamesPlayed,
     fruitCatchBest: newBest,
   } as T;
@@ -1146,16 +1041,10 @@ export function completeBubblePop<T extends PlayerBase>(
   player: T,
   score: number,
 ): T {
-  if (
-    !Number.isSafeInteger(score) ||
-    score < 0 ||
-    score > BUBBLE_POP_MAX_SCORE ||
-    !Number.isSafeInteger(player.coins + bubblePopCoins(score))
-  )
+  if (!Number.isSafeInteger(score) || score < 0 || score > BUBBLE_POP_MAX_SCORE)
     return player;
   return {
     ...player,
-    coins: player.coins + bubblePopCoins(score),
     gamesPlayed: player.gamesPlayed + 1,
     bubblePopBest: Math.max(player.bubblePopBest ?? 0, score),
   };
@@ -1171,14 +1060,12 @@ export function completeAnimalBand<T extends PlayerBase>(
     !Number.isSafeInteger(taps) ||
     taps < 1 ||
     taps > SONG_MAX_TAPS ||
-    songs >= ANIMAL_BAND_MAX_PAID_SONGS ||
-    !Number.isSafeInteger(player.coins + ANIMAL_BAND_COINS)
+    songs >= ANIMAL_BAND_MAX_PAID_SONGS
   )
     return player;
   return unlockStamp(
     {
       ...player,
-      coins: player.coins + ANIMAL_BAND_COINS,
       gamesPlayed: player.gamesPlayed + 1,
       animalBandSongs: songs + 1,
     },
@@ -1195,13 +1082,11 @@ export function completeShapeSorterRound<T extends PlayerBase>(
     !Number.isSafeInteger(round) ||
     round < 1 ||
     round > SHAPE_SORTER_ROUNDS ||
-    round <= (player.shapeSorterRounds ?? 0) ||
-    !Number.isSafeInteger(player.coins + SHAPE_SORTER_COINS_PER_ROUND)
+    round <= (player.shapeSorterRounds ?? 0)
   )
     return player;
   const paid = {
     ...player,
-    coins: player.coins + SHAPE_SORTER_COINS_PER_ROUND,
     gamesPlayed: player.gamesPlayed + 1,
     shapeSorterRounds: round,
   };
@@ -1216,15 +1101,10 @@ export function completePicturePuzzle<T extends PlayerBase>(
   pieces: number,
 ): T {
   const finished = player.picturePuzzles ?? 0;
-  if (
-    !isPieceCount(pieces) ||
-    finished >= PICTURE_PUZZLE_MAX_PAID ||
-    !Number.isSafeInteger(player.coins + PICTURE_PUZZLE_COINS[pieces])
-  )
+  if (!isPieceCount(pieces) || finished >= PICTURE_PUZZLE_MAX_PAID)
     return player;
   const paid = {
     ...player,
-    coins: player.coins + PICTURE_PUZZLE_COINS[pieces],
     gamesPlayed: player.gamesPlayed + 1,
     picturePuzzles: finished + 1,
   };
@@ -1234,15 +1114,10 @@ export function completePicturePuzzle<T extends PlayerBase>(
 /** Pays a finished rainbow arch once; the first arch also earns its stamp. */
 export function completeBalloonRainbow<T extends PlayerBase>(player: T): T {
   const rainbows = player.balloonRainbows ?? 0;
-  if (
-    rainbows >= BALLOON_MAX_PAID_RAINBOWS ||
-    !Number.isSafeInteger(player.coins + BALLOON_RAINBOW_COINS)
-  )
-    return player;
+  if (rainbows >= BALLOON_MAX_PAID_RAINBOWS) return player;
   return unlockStamp(
     {
       ...player,
-      coins: player.coins + BALLOON_RAINBOW_COINS,
       gamesPlayed: player.gamesPlayed + 1,
       balloonRainbows: rainbows + 1,
     },
@@ -1275,34 +1150,21 @@ export function completeDJBeatDrop<T extends PlayerBase>(
     !Number.isSafeInteger(combo) ||
     combo < 0 ||
     combo > DJ_BEAT_COUNT ||
-    !Number.isSafeInteger(player.coins + coinsForScore(score)) ||
     !Number.isSafeInteger(player.gamesPlayed + 1)
   )
     return player;
   const completed = {
     ...player,
-    coins: player.coins + coinsForScore(score),
     gamesPlayed: player.gamesPlayed + 1,
     djBeatDropBest: Math.max(player.djBeatDropBest ?? 0, score),
   } as T;
   return combo >= 16 ? unlockStamp(completed, "dj_beat_combo") : completed;
 }
 
-export function completeSmoothieOrder<T extends PlayerBase>(
-  player: T,
-  coinsEarned: number,
-): T {
-  if (
-    !Number.isSafeInteger(coinsEarned) ||
-    coinsEarned < 0 ||
-    coinsEarned > MAX_SMOOTHIE_COINS ||
-    !Number.isSafeInteger(player.coins + coinsEarned) ||
-    !Number.isSafeInteger((player.smoothiesServed ?? 0) + 1)
-  )
-    return player;
+export function completeSmoothieOrder<T extends PlayerBase>(player: T): T {
+  if (!Number.isSafeInteger((player.smoothiesServed ?? 0) + 1)) return player;
   return {
     ...player,
-    coins: player.coins + coinsEarned,
     smoothiesServed: (player.smoothiesServed ?? 0) + 1,
   } as T;
 }
@@ -1311,21 +1173,12 @@ export function completeSmoothieOrder<T extends PlayerBase>(
 export function completeBakeryServe<T extends PlayerBase>(
   player: T,
   cake: Cake,
-  coinsEarned: number,
 ): T {
   const photo = restoreCakePhoto(cake);
-  if (
-    !photo ||
-    !Number.isSafeInteger(coinsEarned) ||
-    coinsEarned < 0 ||
-    coinsEarned > MAX_BAKERY_COINS ||
-    !Number.isSafeInteger(player.coins + coinsEarned) ||
-    !Number.isSafeInteger((player.cakesServed ?? 0) + 1)
-  )
+  if (!photo || !Number.isSafeInteger((player.cakesServed ?? 0) + 1))
     return player;
   return {
     ...player,
-    coins: player.coins + coinsEarned,
     cakesServed: (player.cakesServed ?? 0) + 1,
     bakeryCakes: [...(player.bakeryCakes ?? []), photo].slice(-MAX_CAKE_PHOTOS),
   };
@@ -1341,7 +1194,6 @@ export function completeSeekRound<T extends PlayerBase>(
     !isSeekScene(round.scene) ||
     !Number.isSafeInteger(timeMs) ||
     timeMs <= 0 ||
-    !Number.isSafeInteger(player.coins + seekRoundCoins(round.hard)) ||
     !Number.isSafeInteger((player.seekRounds ?? 0) + 1)
   )
     return player;
@@ -1352,7 +1204,6 @@ export function completeSeekRound<T extends PlayerBase>(
   return unlockStamp(
     {
       ...player,
-      coins: player.coins + seekRoundCoins(round.hard),
       gamesPlayed: player.gamesPlayed + 1,
       seekRounds: (player.seekRounds ?? 0) + 1,
       ...(best === undefined ? {} : { seekBestMs: best }),
@@ -1391,16 +1242,11 @@ export function completeSpyPuzzle<T extends PlayerBase>(
   player: T,
   puzzleType: "laser_grid" | "cipher",
   scoreOrStage: number,
-  coinsEarned: number,
 ): T {
   if (
     (puzzleType !== "laser_grid" && puzzleType !== "cipher") ||
     !Number.isSafeInteger(scoreOrStage) ||
     scoreOrStage < 0 ||
-    !Number.isSafeInteger(coinsEarned) ||
-    coinsEarned < 0 ||
-    coinsEarned > SPY_PUZZLE_MAX_COINS ||
-    !Number.isSafeInteger(player.coins + coinsEarned) ||
     !Number.isSafeInteger((player.spyPuzzlesSolved ?? 0) + 1)
   )
     return player;
@@ -1411,7 +1257,6 @@ export function completeSpyPuzzle<T extends PlayerBase>(
     : [...(player.spyBadges ?? []), nextRank.badge];
   return {
     ...player,
-    coins: player.coins + coinsEarned,
     spyPuzzlesSolved,
     spyRank: nextRank.rank,
     spyBadges,
@@ -1423,38 +1268,28 @@ export function unlockStamp<T extends PlayerBase>(
   stampId: string,
 ): T {
   const stamp = STAMP_DEFINITIONS.find((stamp) => stamp.id === stampId);
-  if (
-    !stamp ||
-    player.stamps?.includes(stampId) ||
-    !Number.isSafeInteger(player.coins + (stamp.rewardCoins ?? 0))
-  )
-    return player;
+  if (!stamp || player.stamps?.includes(stampId)) return player;
   return {
     ...player,
-    coins: player.coins + (stamp.rewardCoins ?? 0),
     stamps: [...(player.stamps ?? []), stampId],
   };
 }
 
 export function completeFishingCatch<T extends PlayerBase>(
   player: T,
-  catchResult: { speciesId: string; weight: number; coins: number },
+  catchResult: { speciesId: string; weight: number },
 ): T {
-  const { speciesId, weight, coins } = catchResult;
+  const { speciesId, weight } = catchResult;
   const species = FISH_SPECIES.find((s) => s.id === speciesId);
   if (
     !species ||
     !Number.isFinite(weight) ||
     weight < 0 ||
-    !Number.isSafeInteger(coins) ||
-    coins < 0 ||
-    !Number.isSafeInteger(player.coins + coins) ||
     !Number.isSafeInteger((player.fishCaughtCount ?? 0) + 1)
   )
     return player;
   return {
     ...player,
-    coins: player.coins + coins,
     gamesPlayed: player.gamesPlayed + 1,
     fishCaughtCount: (player.fishCaughtCount ?? 0) + 1,
     largestFishWeight: Math.max(player.largestFishWeight ?? 0, weight),
@@ -1463,21 +1298,17 @@ export function completeFishingCatch<T extends PlayerBase>(
 
 export function recordFashionShowResult<T extends PlayerBase>(
   player: T,
-  result: { score: number; coins: number },
+  result: { score: number },
 ): T {
-  const { score, coins } = result;
+  const { score } = result;
   if (
     !Number.isFinite(score) ||
     score < 0 ||
-    !Number.isSafeInteger(coins) ||
-    coins < 0 ||
-    !Number.isSafeInteger(player.coins + coins) ||
     !Number.isSafeInteger((player.fashionShowsCompleted ?? 0) + 1)
   )
     return player;
   return {
     ...player,
-    coins: player.coins + coins,
     gamesPlayed: player.gamesPlayed + 1,
     fashionShowsCompleted: (player.fashionShowsCompleted ?? 0) + 1,
     fashionBestScore: Math.max(player.fashionBestScore ?? 0, Math.round(score)),
@@ -1486,62 +1317,49 @@ export function recordFashionShowResult<T extends PlayerBase>(
 
 export type SledResult = Pick<
   SledState,
-  "distance" | "coinsCollected" | "tricksCompleted" | "crashed"
+  "distance" | "pineconesCollected" | "tricksCompleted" | "crashed"
 >;
 
 export function completeSledRun<T extends PlayerBase>(
   player: T,
   result: SledResult,
 ): T {
-  const { distance, coinsCollected, tricksCompleted, crashed } = result;
+  const { distance, pineconesCollected, tricksCompleted, crashed } = result;
   if (
     !Number.isFinite(distance) ||
     distance < 0 ||
     distance > SLED_FINISH_DISTANCE ||
     typeof crashed !== "boolean" ||
     (!crashed && distance !== SLED_FINISH_DISTANCE) ||
-    !Number.isSafeInteger(coinsCollected) ||
-    coinsCollected < 0 ||
-    coinsCollected > SLED_MAX_PINECONES ||
+    !Number.isSafeInteger(pineconesCollected) ||
+    pineconesCollected < 0 ||
+    pineconesCollected > SLED_MAX_PINECONES ||
     !Number.isSafeInteger(tricksCompleted) ||
     tricksCompleted < 0 ||
     tricksCompleted > SLED_MAX_TRICKS
   )
     return player;
-  const coins = calculateSledPayout(
+  const score = calculateSledPayout(
     crashed ? Math.min(distance, SLED_FINISH_DISTANCE - 1) : distance,
-    coinsCollected,
+    pineconesCollected,
     tricksCompleted,
   );
-  if (
-    !Number.isSafeInteger(player.coins + coins) ||
-    !Number.isSafeInteger(player.gamesPlayed + 1)
-  )
-    return player;
+  if (!Number.isSafeInteger(player.gamesPlayed + 1)) return player;
   return {
     ...player,
-    coins: player.coins + coins,
     gamesPlayed: player.gamesPlayed + 1,
-    sledRunBest: Math.max(player.sledRunBest, coins),
+    sledRunBest: Math.max(player.sledRunBest, score),
   };
 }
 
 export function completeRiverSurf<T extends PlayerBase>(
   player: T,
-  result: { score: number; coins: number },
+  result: { score: number },
 ): T {
-  const { score, coins } = result;
-  if (
-    !Number.isFinite(score) ||
-    score < 0 ||
-    !Number.isSafeInteger(coins) ||
-    coins < 0 ||
-    !Number.isSafeInteger(player.coins + coins)
-  )
-    return player;
+  const { score } = result;
+  if (!Number.isFinite(score) || score < 0) return player;
   return {
     ...player,
-    coins: player.coins + coins,
     gamesPlayed: player.gamesPlayed + 1,
     riverSurfBest: Math.max(player.riverSurfBest ?? 0, Math.round(score)),
   } as T;
@@ -1554,17 +1372,17 @@ export type KartRaceResult = {
   bestLapMs: number | null;
 };
 
-/** Pays the placing coins once per race; replaying the same result is a no-op. */
+/** Records a finished race once; replaying the same result is a no-op. */
 export function completeKartRace<T extends PlayerBase>(
   player: T,
   result: KartRaceResult,
 ): T {
   const finished = player.kartRacesFinished ?? 0;
-  const coins = kartRaceCoins(result.place);
   if (
     result.raceNumber !== finished + 1 ||
-    coins === 0 ||
-    !Number.isSafeInteger(player.coins + coins) ||
+    !Number.isSafeInteger(result.place) ||
+    result.place < 1 ||
+    result.place > 4 ||
     !Number.isSafeInteger(player.gamesPlayed + 1)
   )
     return player;
@@ -1572,7 +1390,6 @@ export function completeKartRace<T extends PlayerBase>(
   const best = player.kartBestLapMs;
   return {
     ...player,
-    coins: player.coins + coins,
     gamesPlayed: player.gamesPlayed + 1,
     kartRacesFinished: finished + 1,
     ...(lap !== null && (best === undefined || lap < best)

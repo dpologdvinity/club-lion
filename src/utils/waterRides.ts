@@ -14,7 +14,7 @@ export const WATER_RIDE_SECONDS = {
   bucket: 28,
 } as const satisfies Record<WaterRideId, number>;
 
-/** First finish of each ride unlocks its stamp; stamps pay their coins once. */
+/** First finish of each ride unlocks its stamp; stamps unlock once. */
 export const WATER_RIDE_STAMPS = {
   slides: "speed_slider",
   river: "lazy_floater",

@@ -19,7 +19,7 @@ const INITIAL_STATE: SledState = {
   speed: 12,
   airborne: false,
   jumpHeight: 0,
-  coinsCollected: 0,
+  pineconesCollected: 0,
   tricksCompleted: 0,
   crashed: false,
 };
@@ -40,7 +40,7 @@ export function SledRun({
   const [reducedMotion, setReducedMotion] = useState(false);
   const [sound, setSound] = useState(false);
   const [announcement, setAnnouncement] = useState(
-    "Steer around trees and use ramps to earn stunt coins.",
+    "Steer around trees and use ramps for stunts.",
   );
   const simulation = useRef(INITIAL_STATE);
   const items = useRef([...SLED_ITEMS]);
@@ -113,10 +113,10 @@ export function SledRun({
       controls.jump = false;
       if (next.airborne && !previous.airborne) {
         soundEffect("jump");
-        setAnnouncement("Air stunt! Land safely to earn 10 coins.");
+        setAnnouncement("Air stunt! Land safely to score 10.");
       }
       if (next.tricksCompleted > previous.tricksCompleted)
-        setAnnouncement("Stunt landed! +10 coins.");
+        setAnnouncement("Stunt landed! +10.");
       // Remove every collected item immediately, including overlapping ramp/pinecone pairs.
       for (;;) {
         const pickup = checkSledPickup(next, items.current);
@@ -145,8 +145,8 @@ export function SledRun({
         setPhase("finished");
         setAnnouncement(
           next.crashed
-            ? "Run over. Your earned coins are ready to collect."
-            : "Finish line crossed! Your earned coins are ready to collect.",
+            ? "Run over. Your score is ready."
+            : "Finish line crossed! Your score is ready.",
         );
         return;
       }
@@ -164,7 +164,7 @@ export function SledRun({
       } else if (Math.floor(next.distance / 100) > lastMilestone) {
         lastMilestone = Math.floor(next.distance / 100);
         setAnnouncement(
-          `${lastMilestone * 100} of 800 meters. ${next.coinsCollected} pinecones, ${next.tricksCompleted} stunts.`,
+          `${lastMilestone * 100} of 800 meters. ${next.pineconesCollected} pinecones, ${next.tricksCompleted} stunts.`,
         );
       }
       if (now - lastWhoosh > 1600) {
@@ -192,7 +192,7 @@ export function SledRun({
 
   const payout = calculateSledPayout(
     state.crashed ? Math.min(state.distance, 799) : state.distance,
-    state.coinsCollected,
+    state.pineconesCollected,
     state.tricksCompleted,
   );
   const stars = state.crashed
@@ -244,8 +244,8 @@ export function SledRun({
     >
       <p id="sled-instructions">
         Steer with ← / → or A / D. Press Space on a ramp to launch a stunt.
-        Avoid trees, rocks, and snowdrifts. Pinecones earn 5 coins; landed
-        stunts earn 10.
+        Avoid trees, rocks, and snowdrifts. Pinecones score 5; landed stunts
+        score 10.
       </p>
       <div className="sled-hud">
         <label>
@@ -261,7 +261,7 @@ export function SledRun({
           Speed <strong>{Math.round(state.speed * 3.6)} km/h</strong>
         </span>
         <span>
-          Golden pinecones <strong>{state.coinsCollected}</strong>
+          Golden pinecones <strong>{state.pineconesCollected}</strong>
         </span>
         <span>
           Air time{" "}
@@ -279,7 +279,7 @@ export function SledRun({
       {phase === "ready" ? (
         <div className="sled-start">
           <h3>The 800-meter Alpine Dash</h3>
-          <p>Best payout: {best} coins. Finish safely for a 30-coin bonus.</p>
+          <p>Best score: {best}. Finish safely for a 30-point bonus.</p>
           <button
             className="button-primary"
             onClick={() => setPhase("running")}
@@ -299,11 +299,11 @@ export function SledRun({
             {"☆".repeat(3 - stars)}
           </p>
           <p>
-            {Math.floor(state.distance)} meters · {state.coinsCollected} golden
-            pinecones · {state.tricksCompleted} landed stunts
+            {Math.floor(state.distance)} meters · {state.pineconesCollected}{" "}
+            golden pinecones · {state.tricksCompleted} landed stunts
           </p>
           <p>
-            <strong>{payout} coins earned</strong>
+            <strong>{payout} points</strong>
           </p>
           <button
             ref={collectButton}
@@ -314,7 +314,7 @@ export function SledRun({
               onComplete(payout, state);
             }}
           >
-            Collect Coins &amp; Return to Basecamp
+            Return to Basecamp
           </button>
         </div>
       ) : (
@@ -471,7 +471,7 @@ export function SledRun({
             {rampReady
               ? "Ramp ready — Jump now!"
               : state.airborne
-                ? "Air stunt — landing earns 10 coins"
+                ? "Air stunt — landing scores 10"
                 : "Look for blue ramps and golden boost pads"}
           </p>
           <div className="sled-controls">

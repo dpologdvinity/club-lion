@@ -19,7 +19,7 @@ const initial: SledState = {
   speed: 12,
   airborne: false,
   jumpHeight: 0,
-  coinsCollected: 0,
+  pineconesCollected: 0,
   tricksCompleted: 0,
   crashed: false,
 };
@@ -93,8 +93,8 @@ test("pinecone pickup adds one and boost pads raise bounded speed", () => {
   };
   const result = checkSledPickup(initial, [pinecone]);
   assert.equal(result.pickedUp, pinecone);
-  assert.equal(result.nextState.coinsCollected, 1);
-  assert.equal(initial.coinsCollected, 0);
+  assert.equal(result.nextState.pineconesCollected, 1);
+  assert.equal(initial.pineconesCollected, 0);
   assert.equal(
     checkSledPickup(initial, [{ ...pinecone, laneX: 100 }]).pickedUp,
     null,
@@ -181,7 +181,7 @@ test("a full course reaches 800m without skipping hazards or repeating pickups",
   assert.equal(
     calculateSledPayout(
       state.distance,
-      state.coinsCollected,
+      state.pineconesCollected,
       state.tricksCompleted,
     ),
     40,

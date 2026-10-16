@@ -20,19 +20,19 @@ test("missed beats reset the streak while the completed result preserves the pea
   await expect(page.locator(".dj-combo-banner")).toContainText("0 combo");
   await page.clock.runFor(17000);
   await expect(page.getByLabel("DJ rewards")).toHaveText(
-    '[{"score":100,"combo":1,"coins":5}]',
+    '[{"score":100,"combo":1}]',
   );
   await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
   await page.clock.runFor(2000);
   await expect(page.getByLabel("DJ rewards")).toHaveText(
-    '[{"score":100,"combo":1,"coins":5}]',
+    '[{"score":100,"combo":1}]',
   );
   await page.getByRole("button", { name: "Play again" }).click();
   await page.clock.runFor(500);
   await page.getByRole("button", { name: "Hit lane D" }).click();
   await page.clock.runFor(18000);
   await expect(page.getByLabel("DJ rewards")).toHaveText(
-    '[{"score":100,"combo":1,"coins":5},{"score":100,"combo":1,"coins":5}]',
+    '[{"score":100,"combo":1},{"score":100,"combo":1}]',
   );
 });
 
@@ -69,7 +69,7 @@ test("audio initialization failure still permits scoring and completion", async 
   await expect(page.locator(".fruit-game-stats")).toContainText("100 pts");
   await page.clock.runFor(18000);
   await expect(page.getByLabel("DJ rewards")).toHaveText(
-    '[{"score":100,"combo":1,"coins":5}]',
+    '[{"score":100,"combo":1}]',
   );
   expect(errors).toEqual([]);
 });

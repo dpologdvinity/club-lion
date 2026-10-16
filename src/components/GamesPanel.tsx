@@ -19,7 +19,6 @@ import { AnimalBand } from "./AnimalBand";
 import { ShapeSorter } from "./ShapeSorter";
 import { PicturePuzzle } from "./PicturePuzzle";
 import { BalloonParade } from "./BalloonParade";
-import { PAW_STEPS_COINS_PER_ROUND } from "../game";
 import type { PlayerV2 } from "../game.ts";
 
 import { gameCards, type GameId } from "../games/catalog.ts";
@@ -52,7 +51,7 @@ export function GamesPanel({
   player: PlayerV2;
   initialGame?: GameId | null;
   onCompleteDJ?: (score: number, combo: number) => void;
-  onCompleteSmoothie?: (coins: number) => void;
+  onCompleteSmoothie?: () => void;
   onCompleteGame?: (pairs: number) => void;
   onCompleteBeeStop?: (score: number) => void;
   onCompletePawSteps?: (rounds: number) => void;
@@ -60,16 +59,11 @@ export function GamesPanel({
   onSafariFinish?: (pairs: number) => void;
   onPawStepsFinish?: (rounds: number) => void;
   onFruitFinish?: (caught: number, hits: number, score: number) => void;
-  onCompleteFishing?: (result: {
-    speciesId: string;
-    weight: number;
-    coins: number;
-  }) => void;
+  onCompleteFishing?: (result: { speciesId: string; weight: number }) => void;
   onCompleteFashion?: (result: {
     themeId: string;
     score: number;
     stars: number;
-    coins: number;
   }) => void;
   onCompleteBubblePop?: (score: number) => void;
   onColorPage?: (pageId: string, fills: PageFills, finish: boolean) => void;
@@ -299,7 +293,6 @@ export function GamesPanel({
         <span className="arcade-copy">
           <strong>Memory Safari</strong>
           <small>Find the matching pairs. No timer, no rush.</small>
-          <span className="arcade-reward">Earn up to 60 coins</span>
         </span>
         <ChevronRight size={20} />
       </button>
@@ -317,7 +310,6 @@ export function GamesPanel({
         <span className="arcade-copy">
           <strong>Bee Stop</strong>
           <small>Ten rounds of perfect timing.</small>
-          <span className="arcade-reward">Earn 15–120 coins</span>
           {player.beeStopBest > 0 && (
             <span className="game-card-best">Best {player.beeStopBest}</span>
           )}
@@ -338,10 +330,9 @@ export function GamesPanel({
         <span className="arcade-copy">
           <strong>Paw Steps</strong>
           <small>Repeat the lion's paw steps. No timer, no rush.</small>
-          <span className="arcade-reward">
-            {PAW_STEPS_COINS_PER_ROUND} coins a round.
-            {player.pawStepsBest > 0 && ` Best: ${player.pawStepsBest}.`}
-          </span>
+          {player.pawStepsBest > 0 && (
+            <span className="game-card-best">Best {player.pawStepsBest}</span>
+          )}
         </span>
         <ChevronRight size={20} />
       </button>
@@ -359,7 +350,6 @@ export function GamesPanel({
         <span className="arcade-copy">
           <strong>Fruit Catch!</strong>
           <small>Catch the good stuff. Dodge the icky stuff.</small>
-          <span className="arcade-reward">2 coins for every fruit caught</span>
         </span>
         <ChevronRight size={20} />
       </button>

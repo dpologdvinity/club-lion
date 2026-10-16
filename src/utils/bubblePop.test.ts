@@ -1,11 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  BUBBLE_POP_MAX_COINS,
   BUBBLE_POP_MAX_SCORE,
   CHALLENGE_MAX_BUBBLES,
   START_SCORE,
-  bubblePopCoins,
   makeBubble,
   scorePop,
   type Bubble,
@@ -48,17 +46,6 @@ test("golden bubbles score big and extend any chain without changing its color",
   const after = scorePop(state, pop("lilac"));
   assert.equal(after.state.combo, 3);
   assert.equal(after.points, 30);
-});
-
-test("challenge coins pay one per 40 points, capped, and nothing for bad scores", () => {
-  assert.equal(bubblePopCoins(0), 0);
-  assert.equal(bubblePopCoins(39), 0);
-  assert.equal(bubblePopCoins(40), 1);
-  assert.equal(bubblePopCoins(1_000), 25);
-  assert.equal(bubblePopCoins(BUBBLE_POP_MAX_SCORE), BUBBLE_POP_MAX_COINS);
-  assert.equal(bubblePopCoins(-80), 0);
-  assert.equal(bubblePopCoins(12.5), 0);
-  assert.equal(bubblePopCoins(Number.NaN), 0);
 });
 
 test("the score cap covers every bubble a challenge can spawn at the top multiplier", () => {

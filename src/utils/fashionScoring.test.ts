@@ -29,7 +29,7 @@ test("getItemStyleTags returns appropriate style tags", () => {
   assert.deepEqual(getItemStyleTags("unknown-item"), ["casual"]);
 });
 
-test("scoreOutfit awards 3 stars and 60 coins for perfect theme matches", () => {
+test("scoreOutfit awards 3 stars for perfect theme matches", () => {
   const result = scoreOutfit("savanna_chic", [
     "wreath-gold",
     "tunic-savanna",
@@ -38,7 +38,6 @@ test("scoreOutfit awards 3 stars and 60 coins for perfect theme matches", () => 
 
   assert.ok(result.score >= 80, `Expected score >= 80, got ${result.score}`);
   assert.equal(result.stars, 3);
-  assert.equal(result.coins, 60);
   assert.match(result.feedback, /Magnificent/i);
 });
 
@@ -50,18 +49,15 @@ test("scoreOutfit handles partially matching outfits with 2 stars", () => {
 
   assert.ok(result.score >= 50 && result.score < 80);
   assert.equal(result.stars, 2);
-  assert.equal(result.coins, 25);
 });
 
 test("scoreOutfit handles empty or mismatched outfits gracefully", () => {
   const emptyResult = scoreOutfit("neon_nightlife", []);
   assert.equal(emptyResult.score, 10);
   assert.equal(emptyResult.stars, 1);
-  assert.equal(emptyResult.coins, 5);
 
   const mismatchedResult = scoreOutfit("savanna_chic", ["visor-neon"]);
   assert.equal(mismatchedResult.stars, 1);
-  assert.equal(mismatchedResult.coins, 10);
 });
 
 test("scoreOutfit handles unknown themes without crashing", () => {

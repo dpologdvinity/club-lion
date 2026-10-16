@@ -6,7 +6,6 @@ export type FishSpecies = {
   rarity: FishRarity;
   minWeight: number;
   maxWeight: number;
-  coins: number;
   description: string;
 };
 
@@ -17,7 +16,6 @@ export const FISH_SPECIES: readonly FishSpecies[] = [
     rarity: "common",
     minWeight: 0.2,
     maxWeight: 0.5,
-    coins: 3,
     description: "A tiny, quick-darting minnow.",
   },
   {
@@ -26,7 +24,6 @@ export const FISH_SPECIES: readonly FishSpecies[] = [
     rarity: "common",
     minWeight: 0.8,
     maxWeight: 2.0,
-    coins: 5,
     description: "A handsome, striped tilapia.",
   },
   {
@@ -35,7 +32,6 @@ export const FISH_SPECIES: readonly FishSpecies[] = [
     rarity: "common",
     minWeight: 0.5,
     maxWeight: 1.0,
-    coins: 1,
     description: "A waterlogged boot! Somebody lost their shoe.",
   },
   {
@@ -44,7 +40,6 @@ export const FISH_SPECIES: readonly FishSpecies[] = [
     rarity: "uncommon",
     minWeight: 2.5,
     maxWeight: 5.0,
-    coins: 12,
     description: "A sturdy perch that lurks near baobab roots.",
   },
   {
@@ -53,7 +48,6 @@ export const FISH_SPECIES: readonly FishSpecies[] = [
     rarity: "uncommon",
     minWeight: 3.0,
     maxWeight: 7.0,
-    coins: 15,
     description: "A whiskered catfish with speckled scales.",
   },
   {
@@ -62,7 +56,6 @@ export const FISH_SPECIES: readonly FishSpecies[] = [
     rarity: "rare",
     minWeight: 6.0,
     maxWeight: 12.0,
-    coins: 50,
     description: "A rare catfish that gleams like gold.",
   },
   {
@@ -71,7 +64,6 @@ export const FISH_SPECIES: readonly FishSpecies[] = [
     rarity: "epic",
     minWeight: 4.0,
     maxWeight: 9.0,
-    coins: 80,
     description: "A legendary eel said to haunt the deepest pools.",
   },
 ];
@@ -103,7 +95,6 @@ function mulberry32(seed: number): () => number {
 export function getRandomCatch(randomSeed?: number): {
   species: FishSpecies;
   weight: number;
-  coins: number;
 } {
   const random =
     randomSeed === undefined ? Math.random : mulberry32(randomSeed);
@@ -122,7 +113,7 @@ export function getRandomCatch(randomSeed?: number): {
     species.minWeight + random() * (species.maxWeight - species.minWeight);
   const weight = Math.round(rawWeight * 10) / 10;
 
-  return { species, weight, coins: species.coins };
+  return { species, weight };
 }
 
 export function isWithinBiteWindow(

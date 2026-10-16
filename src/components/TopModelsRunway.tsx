@@ -13,7 +13,6 @@ export type TopModelsRunwayProps = {
     themeId: string;
     score: number;
     stars: number;
-    coins: number;
   }) => void;
   onClose: () => void;
 };
@@ -169,7 +168,6 @@ export function TopModelsRunway({
         themeId: activeTheme.id,
         score: outcome.score,
         stars: outcome.stars,
-        coins: outcome.coins,
       });
     }, 2200);
 
@@ -352,8 +350,8 @@ export function TopModelsRunway({
                 &ldquo;{result.feedback}&rdquo;
               </p>
               <div className="verdict-reward">
-                <Sparkles size={20} /> Won:{" "}
-                <strong>+{result.coins} Coins!</strong>
+                <Sparkles size={20} />{" "}
+                <strong>{"★".repeat(result.stars)}</strong>
               </div>
             </div>
 

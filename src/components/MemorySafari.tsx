@@ -8,7 +8,6 @@ import {
   Sparkles,
   Trophy,
 } from "lucide-react";
-import { Coin } from "./Lion";
 
 const SYMBOLS = ["🦁", "🌴", "🥭", "🌼", "🦋", "☀️"];
 function shuffledCards() {
@@ -100,14 +99,11 @@ export function MemorySafari({
           <p>
             A little game for your lion-sized brain.
             <br />
-            Find all 6 matching pairs to earn <strong>60 coins.</strong>
+            Find all 6 matching pairs.
           </p>
           <div className="game-features">
             <span>
               <Sparkles size={15} /> No timer. No rush.
-            </span>
-            <span>
-              <Coin amount={60} /> per game
             </span>
           </div>
           <button className="button button-primary" onClick={restart}>
@@ -122,11 +118,9 @@ export function MemorySafari({
           <h3>That’s a roaring success!</h3>
           <p>
             All 6 pairs, found in {moves} moves.
-            <br />A little well-earned treasure for your adventure.
+            <br />
+            Hooray! What a good memory.
           </p>
-          <div className="reward-display">
-            + <Coin amount={60} />
-          </div>
           <div className="game-win-actions">
             <button className="button button-secondary" onClick={restart}>
               <RotateCcw size={16} /> Play again
@@ -145,7 +139,6 @@ export function MemorySafari({
             <span>
               <Check size={17} /> {matched.length / 2} / 6 pairs
             </span>
-            <Coin amount={60} />
           </div>
           <div className="memory-grid">
             {cards.map((card, index) => {

@@ -66,14 +66,11 @@ test("an easy round hints, forgives wrong taps, pays and stamps once, and persis
   for (let i = 0; i < 4; i++) await findCurrent(page);
   await expect(page.locator(".seek-progress .is-found")).toHaveCount(5);
   await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
-  await expect(page.locator(".wallet")).toHaveText("✦275");
 
   await page.getByRole("button", { name: "Play again" }).click();
   await expect(page.locator(".seek-progress .is-found")).toHaveCount(0);
   await page.keyboard.press("Escape");
-  await expect(page.locator(".wallet")).toHaveText("✦275");
   await page.reload();
-  await expect(page.locator(".wallet")).toHaveText("✦275");
   expect(
     await page.evaluate(() => {
       const saved = JSON.parse(localStorage.getItem("club-lion-player-v1")!);
@@ -103,7 +100,6 @@ test("tricky rounds add decoys and a timer and remember the best time", async ({
   }
   await expect(page.locator(".seek-win-time")).toContainText("10s");
   await expect(page.getByLabel("New best time")).toBeVisible();
-  await expect(page.locator(".wallet")).toHaveText("✦285");
   await page.clock.resume();
   await expectAccessible(page);
   await page.getByRole("button", { name: "Pick a new place" }).click();

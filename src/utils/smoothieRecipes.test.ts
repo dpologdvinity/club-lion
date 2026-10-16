@@ -18,7 +18,6 @@ test("exact match scores 100% accuracy and 3 stars", () => {
   const result = scoreSmoothie(mangoTango, [...mangoTango.ingredients]);
   assert.equal(result.accuracy, 100);
   assert.equal(result.stars, 3);
-  assert.equal(result.coins, mangoTango.baseCoins * 3);
 });
 
 test("exact match regardless of pour order still scores 100%", () => {
@@ -35,7 +34,6 @@ test("missing one ingredient lowers accuracy and stars", () => {
   const result = scoreSmoothie(mangoTango, partial);
   assert.ok(result.accuracy < 100);
   assert.ok(result.stars < 3);
-  assert.ok(result.coins < mangoTango.baseCoins * 3);
 });
 
 test("extra wrong ingredients reduce accuracy below a correct subset", () => {
@@ -48,12 +46,11 @@ test("extra wrong ingredients reduce accuracy below a correct subset", () => {
   assert.ok(result.accuracy < 100);
 });
 
-test("empty blender pitcher scores 0 accuracy, 0 stars, 0 coins", () => {
+test("empty blender pitcher scores 0 accuracy, 0 stars", () => {
   const mangoTango = RECIPES.find((r) => r.name === "Mango Tango")!;
   const result = scoreSmoothie(mangoTango, []);
   assert.equal(result.accuracy, 0);
   assert.equal(result.stars, 0);
-  assert.equal(result.coins, 0);
 });
 
 test("star thresholds: 1 star below 60%, 2 stars at 60-89%, 3 stars at 90%+", () => {
@@ -64,11 +61,4 @@ test("star thresholds: 1 star below 60%, 2 stars at 60-89%, 3 stars at 90%+", ()
   const almostAll = recipe.ingredients.slice(0, -1);
   const partialResult = scoreSmoothie(recipe, almostAll);
   assert.ok(partialResult.stars >= 1);
-});
-
-test("coin payout scales with stars and never goes negative", () => {
-  const recipe = RECIPES.find((r) => r.name === "Savanna Sunrise")!;
-  const result = scoreSmoothie(recipe, []);
-  assert.equal(result.coins, 0);
-  assert.ok(result.coins >= 0);
 });

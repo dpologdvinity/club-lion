@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import {
-  Coins,
   Leaf,
   Play,
   RotateCcw,
@@ -17,7 +16,6 @@ import {
   RELAX_SPAWN_MS,
   START_BUBBLES,
   START_SCORE,
-  bubblePopCoins,
   makeBubble,
   multiplierFor,
   scorePop,
@@ -260,7 +258,6 @@ export function BubblePop({
     setBubbles((list) => list.filter((item) => item.id !== id));
   };
 
-  const coins = bubblePopCoins(score.score);
   const newBest = phase === "done" && score.score > bestAtStart.current;
 
   return (
@@ -460,13 +457,6 @@ export function BubblePop({
                 {score.score}
               </div>
               <div className="bubble-overlay-row">
-                <span
-                  className="bubble-chip"
-                  role="img"
-                  aria-label={`${coins} coins earned`}
-                >
-                  <Coins size={18} aria-hidden="true" /> +{coins}
-                </span>
                 {!newBest && (
                   <span
                     className="bubble-chip"
@@ -503,7 +493,7 @@ export function BubblePop({
       </div>
       <p className="sr-only" aria-live="polite">
         {phase === "done"
-          ? `Time's up! You scored ${score.score} and earned ${coins} coins.`
+          ? `Time's up! You scored ${score.score}.`
           : announcement}
       </p>
     </div>

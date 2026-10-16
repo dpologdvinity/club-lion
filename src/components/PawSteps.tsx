@@ -10,8 +10,6 @@ import {
   Trophy,
   type LucideIcon,
 } from "lucide-react";
-import { PAW_STEPS_COINS_PER_ROUND } from "../game";
-import { Coin } from "./Lion";
 
 type Direction = "up" | "down" | "left" | "right";
 type Phase = "intro" | "showing" | "input" | "over";
@@ -210,8 +208,7 @@ export function PawSteps({
           <p>
             Watch the lion&apos;s paws light up, then tap them back in order.
             <br />
-            Each round adds one more step. Every round is worth{" "}
-            <strong>{PAW_STEPS_COINS_PER_ROUND} coins.</strong>
+            Each round adds one more step.
           </p>
           <div className="game-features">
             <span>
@@ -252,9 +249,6 @@ export function PawSteps({
             Best so far: {Math.max(best, rounds)}{" "}
             {Math.max(best, rounds) === 1 ? "round" : "rounds"}.
           </p>
-          <div className="reward-display">
-            + <Coin amount={rounds * PAW_STEPS_COINS_PER_ROUND} />
-          </div>
           <div className="game-win-actions">
             <button
               ref={playBtnRef}
@@ -283,7 +277,6 @@ export function PawSteps({
             <span>
               <Sparkles size={17} /> {sequence.length} steps
             </span>
-            <Coin amount={rounds * PAW_STEPS_COINS_PER_ROUND} />
           </div>
           <div
             ref={padRef}

@@ -24,13 +24,7 @@ export const PICTURES = [
 export type PictureId = (typeof PICTURES)[number]["id"];
 
 export const PICTURE_PUZZLE_ROUNDS = PICTURES.length;
-/** Coins for finishing a picture, by its piece count. */
-export const PICTURE_PUZZLE_COINS: Record<PieceCount, number> = {
-  4: 5,
-  6: 8,
-  9: 12,
-};
-/** Finishes stop paying after this many, so replaying cannot farm coins. */
+/** Finishes stop counting after this many, so replaying cannot pile up. */
 export const PICTURE_PUZZLE_MAX_PAID = 60;
 
 export function isPieceCount(value: unknown): value is PieceCount {

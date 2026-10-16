@@ -19,8 +19,6 @@ export type ParkRideProps = {
   ride: ParkRideId;
   look?: AvatarLook;
   pet?: PetState;
-  /** Coins the first finished run pays; shown on the finale. */
-  rewardCoins?: number;
   onClose: () => void;
   /** Reports each naturally finished run. Rewards are granted by the caller. */
   onFinish?: () => void;
@@ -235,7 +233,6 @@ export function ParkRide({
   ride,
   look = DEFAULT_AVATAR_LOOK,
   pet,
-  rewardCoins = 0,
   onClose,
   onFinish,
 }: ParkRideProps) {
@@ -246,8 +243,6 @@ export function ParkRide({
   const [beat, setBeat] = useState<RideBeat>(info.beats[0]);
   const [armsUp, setArmsUp] = useState(false);
   const [bursts, setBursts] = useState<Burst[]>([]);
-  const [coins, setCoins] = useState(0);
-  const reward = useRef(rewardCoins);
   const finishRef = useRef(onFinish);
   const holding = useRef(false);
   const timers = useRef(new Set<number>());
@@ -282,8 +277,6 @@ export function ParkRide({
       window.setTimeout(() => {
         holding.current = false;
         setDone(true);
-        setCoins(reward.current);
-        reward.current = 0;
         finishRef.current?.();
       }, info.seconds * 1000),
     );
@@ -329,7 +322,6 @@ export function ParkRide({
   };
   const again = () => {
     setDone(false);
-    setCoins(0);
     setBeat(info.beats[0]);
     setRun((n) => n + 1);
   };
@@ -408,12 +400,6 @@ export function ParkRide({
             <div className="pr-finale-stars" aria-hidden="true">
               ⭐ 🎉 ⭐
             </div>
-            {coins > 0 && (
-              <p className="pr-coins">
-                <span aria-hidden="true">🪙</span> +{coins}
-                <span className="sr-only"> coins</span>
-              </p>
-            )}
             <div className="pr-finale-actions">
               <button
                 ref={againRef}

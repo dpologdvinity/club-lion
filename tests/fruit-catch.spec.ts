@@ -61,11 +61,9 @@ test("Fruit Catch rewards once, celebrates records, resets, and persists", async
   );
   await page.clock.runFor(3200);
   await expect(page.locator(".fruit-game-stats")).toContainText("10 points");
-  await expect(page.locator(".wallet")).toHaveText("✦250");
   await page.screenshot({ path: testInfo.outputPath("fruit-playing.png") });
   await page.getByRole("button", { name: "All games" }).click();
   await page.clock.runFor(30_000);
-  await expect(page.locator(".wallet")).toHaveText("✦250");
   await page.getByRole("button", { name: /Fruit Catch!/ }).click();
   await page.getByRole("button", { name: "Let’s play" }).click();
   await page.clock.runFor(30_100);
@@ -76,21 +74,17 @@ test("Fruit Catch rewards once, celebrates records, resets, and persists", async
       .evaluate((el) => el.firstChild?.textContent),
   );
   expect(score).toBeGreaterThan(0);
-  const coins = 250 + score / 5;
-  await expect(page.locator(".wallet")).toHaveText(`✦${coins}`);
   await expect(page.locator(".fruit-best")).toHaveText(
     "A new personal best! 🏆",
   );
   await page.screenshot({ path: testInfo.outputPath("fruit-result.png") });
   await page.clock.runFor(5000);
-  await expect(page.locator(".wallet")).toHaveText(`✦${coins}`);
   await page.getByRole("button", { name: "Play again" }).click();
   await expect(page.locator(".fruit-game-stats")).toContainText("0 points");
   await expect(page.locator(".fruit-game-stats")).toContainText("30s");
   await expect(page.getByLabel("3 lives", { exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
   await page.clock.runFor(30_000);
-  await expect(page.locator(".wallet")).toHaveText(`✦${coins}`);
   await page.reload();
   await openFruitCatch(page);
   await expect(page.locator(".fruit-best")).toHaveText(
@@ -127,10 +121,11 @@ test("three rotten catches end the round and a lower replay keeps the record", a
     "3 rotten pieces landed in your basket and cost you 3 hearts.",
   );
   await expect(page.locator(".fruit-best")).toHaveText("Personal best: 100");
-  await expect(page.locator(".wallet")).toHaveText("✦250");
   await page.getByRole("button", { name: "Back to the pride" }).click();
   await openAdventures(page);
-  await expect(page.getByRole("button", { name: "Claim 50" })).toHaveCount(1);
+  await expect(
+    page.getByRole("button", { name: "Claim", exact: true }),
+  ).toHaveCount(1);
   const saved = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("club-lion-player-v1")!),
   );

@@ -70,17 +70,14 @@ test("a huge or invalid frame gap never teleports the teacup", () => {
   assert.deepEqual(spinTeacup(cup, -1, true), cup);
 });
 
-test("the first ride on each attraction pays its stamp coins exactly once", () => {
+test("the first ride on each attraction unlocks its stamp exactly once", () => {
   for (const id of rideIds) {
     const stamp = STAMP_DEFINITIONS.find(
       (item) => item.id === PARK_RIDES[id].stampId,
     );
     assert.ok(stamp, id);
     assert.equal(stamp.category, "park_thrills");
-    const reward = stamp.rewardCoins ?? 0;
-    assert.ok(reward > 0 && reward <= 25, id);
     const first = unlockStamp(newPlayer(), stamp.id);
-    assert.equal(first.coins, newPlayer().coins + reward);
     assert.deepEqual(first.stamps, [stamp.id]);
     const again = unlockStamp(first, stamp.id);
     assert.equal(again, first);

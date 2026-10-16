@@ -235,7 +235,7 @@ test("top models runway 30s challenge allows wardrobe selection, catwalk strut, 
   await expect(runwayDialog.getByText(/Score:/)).toBeVisible({
     timeout: 5000,
   });
-  await expect(runwayDialog.getByText(/Won:/)).toBeVisible();
+  await expect(runwayDialog.locator(".verdict-reward")).toContainText("★");
 
   // Check Collect & Return button
   const collectBtn = runwayDialog.getByRole("button", {

@@ -5,7 +5,6 @@ import {
   BEE_STOP_ROUNDS,
   advance,
   bandFor,
-  coinsFor,
   flowerFor,
   REDUCED_MOTION_FPS,
   scoreFor,
@@ -95,21 +94,6 @@ test("reduced motion stays playable because no hop can clear a scoring band", ()
       `round ${round} hop ${hop} can clear the okay band`,
     );
   }
-});
-
-test("coin bands rise with the score and never exceed the 120 cap", () => {
-  assert.equal(coinsFor(1000), 120);
-  assert.equal(coinsFor(900), 120);
-  assert.equal(coinsFor(899), 90);
-  assert.equal(coinsFor(700), 90);
-  assert.equal(coinsFor(699), 60);
-  assert.equal(coinsFor(450), 60);
-  assert.equal(coinsFor(449), 35);
-  assert.equal(coinsFor(200), 35);
-  assert.equal(coinsFor(199), 15);
-  assert.equal(coinsFor(0), 15);
-  assert.equal(coinsFor(-1), 0);
-  assert.equal(coinsFor(Number.NaN), 0);
 });
 
 test("out-of-range rounds fall back to the first or last round instead of nonsense", () => {

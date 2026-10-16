@@ -19,7 +19,7 @@ import {
 import { SafeRoomScenery } from "./SafeRoomScenery";
 import { ROOM_MANIFESTS } from "../rooms/registry";
 import { PLACE_ICONS } from "../rooms/placeIcons";
-import { Coin, Lion } from "./Lion";
+import { Lion } from "./Lion";
 
 export function WorldMap({
   place,
@@ -226,9 +226,6 @@ export function Shop({
             <Home size={17} /> For your den
           </button>
         </div>
-        <span className="shop-wallet">
-          <Coin amount={player.coins} />
-        </span>
       </div>
       <div className="shop-grid">
         {SHOP_ITEMS.filter((item) => item.kind === tab).map((item) => {
@@ -255,7 +252,7 @@ export function Shop({
               <p>{item.description}</p>
               <button
                 className={`button ${owned ? "button-secondary" : "button-primary"}`}
-                disabled={equipped || (!owned && player.coins < item.price)}
+                disabled={equipped}
                 onClick={() => (owned ? onEquip(item.id) : onBuy(item.id))}
               >
                 {equipped ? (
@@ -265,14 +262,8 @@ export function Shop({
                   </>
                 ) : owned ? (
                   "Wear it"
-                ) : player.coins < item.price ? (
-                  <>
-                    <Coin amount={item.price} /> Need more coins
-                  </>
                 ) : (
-                  <>
-                    <Coin amount={item.price} /> Make it mine
-                  </>
+                  "Make it mine"
                 )}
               </button>
             </article>
@@ -280,8 +271,7 @@ export function Shop({
         })}
       </div>
       <p className="shop-note">
-        <Sparkles size={14} /> Earn more coins at the arcade or by finishing
-        your adventures.
+        <Sparkles size={14} /> Everything here is free. Pick what you love!
       </p>
     </div>
   );
@@ -326,7 +316,7 @@ export function Help() {
           <Shirt size={20} />
           <span>
             <strong>Make it yours</strong>Style your lion, play an arcade game
-            to earn coins, and shop for something special.
+            for fun, and pick something special.
           </span>
         </p>
       </div>

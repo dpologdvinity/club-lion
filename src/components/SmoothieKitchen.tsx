@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Martini, RotateCcw, Star } from "lucide-react";
 import { Dialog } from "./Dialog";
-import { Coin } from "./Lion";
 import {
   INGREDIENTS,
   RECIPES,
@@ -74,7 +73,7 @@ function drawWhirlpool(
 
 type KitchenProps = {
   onClose: () => void;
-  onServe: (coinsEarned: number) => void;
+  onServe: () => void;
   onOrder?: (name: string) => void;
 };
 
@@ -200,7 +199,7 @@ export function SmoothieKitchenContent({
   const serveAndContinue = () => {
     if (!result || servedRef.current) return;
     servedRef.current = true;
-    onServe(result.coins);
+    onServe();
     setOrder(pickOrder(order.id));
     setPitcher([]);
     setResult(null);
@@ -306,10 +305,7 @@ export function SmoothieKitchenContent({
                 />
               ))}
             </div>
-            <p>
-              {result.accuracy}% match &mdash; serve for{" "}
-              <Coin amount={result.coins} />
-            </p>
+            <p>{result.accuracy}% match &mdash; serve it!</p>
             <button
               ref={serveRef}
               type="button"

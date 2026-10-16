@@ -25,7 +25,6 @@ import {
   countdownStage,
   createRace,
   kartPose,
-  kartRaceCoins,
   lapsDone,
   playerPlace,
   raceOrder,
@@ -481,7 +480,6 @@ export function KartRace({
   const [announcement, setAnnouncement] = useState("");
   const [result, setResult] = useState<{
     place: number;
-    coins: number;
     lapMs: number | null;
     record: boolean;
   } | null>(null);
@@ -575,7 +573,6 @@ export function KartRace({
         const lap = lapMs === null ? null : Math.round(lapMs);
         setResult({
           place,
-          coins: kartRaceCoins(place),
           lapMs: lap,
           record: lap !== null && (bestLapMs === undefined || lap < bestLapMs),
         });
@@ -752,7 +749,7 @@ export function KartRace({
       <section className="kart-race kart-podium" aria-label="Race results">
         <Confetti calm={reduced} />
         <p className="sr-only" role="status">
-          {`You came in place ${result.place} of 4 and earned ${result.coins} coins.`}
+          {`You came in place ${result.place} of 4.`}
         </p>
         <div className="kart-podium-stage" aria-hidden="true">
           {podium.map((index, column) => {
@@ -793,9 +790,6 @@ export function KartRace({
         <div className="kart-podium-summary">
           <span className={`kart-medal kart-medal-${result.place}`}>
             {result.place}
-          </span>
-          <span className="kart-coins" aria-label={`${result.coins} coins`}>
-            +{result.coins}
           </span>
           {result.lapMs !== null && (
             <span

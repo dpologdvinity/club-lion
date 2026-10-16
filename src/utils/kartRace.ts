@@ -62,9 +62,6 @@ export const BOOST_MS = 1400;
 export const BOOST_COOLDOWN_MS = 5000;
 export const MANGO_BOOST_MS = 1600;
 export const MANGO_RESPAWN_MS = 3000;
-/** Coins for 1st, 2nd, 3rd and 4th place. Everyone earns something. */
-export const KART_PLACE_COINS = [40, 30, 25, 20] as const;
-
 const STEP_MS = 1000 / 60;
 const CRAWL_SPEED = 60;
 const WALL = TRACK_HALF_WIDTH - KART_RADIUS;
@@ -441,10 +438,4 @@ export function stepRace(
     left -= step;
   }
   return next;
-}
-
-export function kartRaceCoins(place: number): number {
-  return Number.isSafeInteger(place) && place >= 1 && place <= 4
-    ? KART_PLACE_COINS[place - 1]
-    : 0;
 }

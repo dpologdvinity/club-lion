@@ -1,16 +1,13 @@
 /**
  * Avatar customization registry: every makeup, hair, and clothing option.
  *
- * Options with a `price` are premium salon unlocks bought with coins.
  * Clothing marked `free` is always in the closet; other clothing pieces are
- * sold in Le Shop under the same ID (see CATALOG_ITEMS).
+ * collected in Le Shop under the same ID (see CATALOG_ITEMS).
  */
 
 export type StyleOption = {
   id: string;
   label: string;
-  /** Coin price for premium salon options; absent means free. */
-  price?: number;
 };
 
 export type ColorOption = StyleOption & { hex: string };
@@ -54,8 +51,8 @@ export const EYE_LOOKS = [
   { id: "cut_crease", label: "Cut Crease Glam" },
   { id: "double_wing", label: "Double Wing Rebel" },
   { id: "kohl_sultry", label: "Kohl Waterline Sultry" },
-  { id: "graphic_liner", label: "Graphic Liner", price: 150 },
-  { id: "glitter_pop", label: "Glitter Pop", price: 150 },
+  { id: "graphic_liner", label: "Graphic Liner" },
+  { id: "glitter_pop", label: "Glitter Pop" },
 ] as const satisfies readonly StyleOption[];
 
 export type EyeStyle = (typeof EYE_LOOKS)[number]["id"];
@@ -86,21 +83,18 @@ export const EYESHADOWS = [
     id: "holo_shimmer",
     label: "Holo Shimmer",
     hex: "#b9a6ff",
-    price: 120,
     special: "holo",
   },
   {
     id: "sunset_ombre",
     label: "Sunset Ombré",
     hex: "#ff7a59",
-    price: 120,
     special: "ombre",
   },
   {
     id: "mermaid_duo",
     label: "Mermaid Duo",
     hex: "#41e2ba",
-    price: 120,
     special: "holo",
   },
 ] as const satisfies readonly ShadowOption[];
@@ -165,14 +159,12 @@ export const LIP_COLORS = [
     label: "Glitter Gloss",
     hex: "#ff6fae",
     finish: "glitter",
-    price: 100,
   },
   {
     id: "holo_gloss",
     label: "Holo Gloss",
     hex: "#e2b4ff",
     finish: "glitter",
-    price: 100,
   },
 ] as const satisfies readonly LipOption[];
 
@@ -220,13 +212,11 @@ export const EYE_COLORS = [
     id: "rose_quartz",
     label: "Rose Quartz",
     iris: ["#ffd0e6", "#e0679f", "#5a1236"],
-    price: 90,
   },
   {
     id: "galaxy",
     label: "Galaxy",
     iris: ["#7ef0ff", "#7b3fd6", "#120a3a"],
-    price: 90,
   },
 ] as const satisfies readonly EyeColorOption[];
 
@@ -252,11 +242,11 @@ export const FACE_DETAILS = [
   { id: "freckles", label: "Freckles" },
   { id: "sun_freckles", label: "Sun Freckles" },
   { id: "bridge_freckles", label: "Bridge Freckles" },
-  { id: "glitter_freckles", label: "Glitter Freckles", price: 100 },
-  { id: "heart_decal", label: "Heart Decal", price: 80 },
-  { id: "star_stickers", label: "Star Stickers", price: 80 },
-  { id: "face_gems", label: "Face Gems", price: 120 },
-  { id: "butterfly_gems", label: "Butterfly Gems", price: 120 },
+  { id: "glitter_freckles", label: "Glitter Freckles" },
+  { id: "heart_decal", label: "Heart Decal" },
+  { id: "star_stickers", label: "Star Stickers" },
+  { id: "face_gems", label: "Face Gems" },
+  { id: "butterfly_gems", label: "Butterfly Gems" },
 ] as const satisfies readonly StyleOption[];
 
 /* -------------------------------------------------------------
@@ -266,10 +256,10 @@ export const PIERCINGS = [
   { id: "none", label: "None" },
   { id: "diamond_nose_stud", label: "Diamond Nose Stud" },
   { id: "gold_nose_hoop", label: "Gold Nose Hoop" },
-  { id: "septum_ring", label: "Septum Ring", price: 75 },
-  { id: "lip_ring", label: "Side Lip Ring", price: 75 },
-  { id: "eyebrow_piercing", label: "Eyebrow Barbell", price: 75 },
-  { id: "double_nostril", label: "Double Nose Studs", price: 100 },
+  { id: "septum_ring", label: "Septum Ring" },
+  { id: "lip_ring", label: "Side Lip Ring" },
+  { id: "eyebrow_piercing", label: "Eyebrow Barbell" },
+  { id: "double_nostril", label: "Double Nose Studs" },
 ] as const satisfies readonly StyleOption[];
 
 export type PiercingStyle = (typeof PIERCINGS)[number]["id"];
@@ -280,11 +270,11 @@ export const JEWELRY = [
   { id: "silver_bamboo_hoops", label: "Silver Bamboo Hoops" },
   { id: "diamond_studs", label: "Diamond Studs" },
   { id: "pearl_drops", label: "Pearl Drops" },
-  { id: "rhinestone_choker", label: "Tennis Choker", price: 90 },
-  { id: "layered_chains", label: "Layered Chains", price: 90 },
-  { id: "butterfly_choker", label: "Butterfly Choker", price: 110 },
+  { id: "rhinestone_choker", label: "Tennis Choker" },
+  { id: "layered_chains", label: "Layered Chains" },
+  { id: "butterfly_choker", label: "Butterfly Choker" },
   { id: "silver_hoops", label: "Big Silver Hoops" },
-  { id: "gold_jhumkas", label: "Gold Jhumka Earrings", price: 120 },
+  { id: "gold_jhumkas", label: "Gold Jhumka Earrings" },
 ] as const satisfies readonly StyleOption[];
 
 export type JewelryStyle = (typeof JEWELRY)[number]["id"];
@@ -295,28 +285,28 @@ export const NECKLACES = [
   { id: "diamond_choker", label: "Diamond Choker" },
   { id: "pearl_choker", label: "Pearl Choker" },
   { id: "cross_chain", label: "Cross Chain" },
-  { id: "heart_chain", label: "Heart Locket Chain", price: 90 },
-  { id: "gold_coin_layers", label: "Layered Gold Coins", price: 120 },
+  { id: "heart_chain", label: "Heart Locket Chain" },
+  { id: "gold_coin_layers", label: "Layered Gold Coins" },
 ] as const satisfies readonly StyleOption[];
 
 export const HAIR_CLIPS = [
   { id: "none", label: "None" },
   { id: "butterfly_clips", label: "Butterfly Clips" },
   { id: "star_clips", label: "Star Clips" },
-  { id: "rhinestone_barrettes", label: "Rhinestone Barrettes", price: 80 },
-  { id: "tiara", label: "Crystal Tiara", price: 100 },
+  { id: "rhinestone_barrettes", label: "Rhinestone Barrettes" },
+  { id: "tiara", label: "Crystal Tiara" },
 ] as const satisfies readonly StyleOption[];
 
 export const BAGS = [
   { id: "none", label: "None" },
   { id: "gold_mini_bag", label: "Gold Shoulder Bag" },
-  { id: "pink_heart_bag", label: "Pink Heart Bag", price: 90 },
+  { id: "pink_heart_bag", label: "Pink Heart Bag" },
 ] as const satisfies readonly StyleOption[];
 
 export const BRACELETS = [
   { id: "none", label: "None" },
   { id: "gold_bangles", label: "Stacked Gold Bangles" },
-  { id: "rainbow_bangles", label: "Rainbow Jelly Bangles", price: 80 },
+  { id: "rainbow_bangles", label: "Rainbow Jelly Bangles" },
 ] as const satisfies readonly StyleOption[];
 
 /* -------------------------------------------------------------
@@ -358,8 +348,8 @@ export const HAIR_STYLE_OPTIONS = [
   { id: "messy_bun", label: "Messy Claw-Clip Bun" },
   { id: "pixie_spikes", label: "Spiky Pixie" },
   { id: "side_swoop", label: "Side Swoop" },
-  { id: "crimped", label: "Crimped Mane", price: 200 },
-  { id: "mermaid_waves", label: "Mermaid Waves", price: 200 },
+  { id: "crimped", label: "Crimped Mane" },
+  { id: "mermaid_waves", label: "Mermaid Waves" },
 ] as const satisfies readonly StyleOption[];
 
 export type HairStyle = (typeof HAIR_STYLE_OPTIONS)[number]["id"];
@@ -515,32 +505,6 @@ export const SALON_CATEGORY_OPTIONS: Readonly<
   skin: SKIN_TONE_OPTIONS,
   bangs: BANGS_OPTIONS,
 };
-
-/**
- * Owned-list ID for a premium salon option. Namespaced so a lip and an
- * eyeshadow sharing a name never collide with each other or shop items.
- */
-export function premiumId(category: SalonCategory, id: string): string {
-  return `${category}:${id}`;
-}
-
-/** Every premium salon unlock, keyed by its namespaced owned-list ID. */
-export const PREMIUM_SALON_OPTIONS: readonly {
-  id: string;
-  label: string;
-  price: number;
-}[] = (
-  Object.entries(SALON_CATEGORY_OPTIONS) as [
-    SalonCategory,
-    readonly StyleOption[],
-  ][]
-).flatMap(([category, options]) =>
-  options.flatMap((o) =>
-    typeof o.price === "number"
-      ? [{ id: premiumId(category, o.id), label: o.label, price: o.price }]
-      : [],
-  ),
-);
 
 /* -------------------------------------------------------------
  * Clothing resolution (shared by the renderer and the closet)

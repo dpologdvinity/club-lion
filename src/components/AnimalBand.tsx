@@ -123,7 +123,7 @@ export function AnimalBand({
       if (!paidRef.current) {
         paidRef.current = true;
         finishRef.current(notes.length);
-        setAnnouncement("Nice song! Coins for your band.");
+        setAnnouncement("Nice song!");
       }
     }, notes.length * NOTE_MS);
   };

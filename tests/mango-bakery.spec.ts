@@ -78,7 +78,6 @@ test("free play decorates by tap, keyboard and drag, blows out candles, and serv
       button.click();
       button.click();
     });
-  await expect(page.locator(".wallet")).toHaveText("✦255");
   await expect(
     page.getByRole("button", { name: "Bake another cake" }),
   ).toBeFocused();
@@ -92,10 +91,8 @@ test("free play decorates by tap, keyboard and drag, blows out candles, and serv
     page.getByRole("button", { name: "Serve the cake" }),
   ).toBeFocused();
   await expect(toppings(page)).toHaveCount(0);
-  await expect(page.locator(".wallet")).toHaveText("✦255");
 
   await page.reload();
-  await expect(page.locator(".wallet")).toHaveText("✦255");
   await openBakery(page);
   await expect(
     page.getByRole("list", { name: "Cake photos" }).getByRole("img"),
@@ -135,7 +132,6 @@ test("picture orders score stars from the visual recipe and pay once per order",
   await page.getByRole("button", { name: "Add sprinkles" }).click();
   await page.getByRole("button", { name: "Add mango slice" }).click();
   await page.getByRole("button", { name: "Serve the cake" }).click();
-  await expect(page.locator(".wallet")).toHaveText("✦274");
   await expect(page.locator(".bakery-reaction")).toHaveText("⭐⭐⭐");
   await expectAccessible(page);
 
@@ -143,9 +139,7 @@ test("picture orders score stars from the visual recipe and pay once per order",
   await page.getByRole("button", { name: "Star cake" }).click();
   await page.getByRole("button", { name: "Serve the cake" }).click();
   await expect(page.locator(".bakery-reaction")).toHaveText("⭐");
-  await expect(page.locator(".wallet")).toHaveText("✦282");
   await page.keyboard.press("Escape");
-  await expect(page.locator(".wallet")).toHaveText("✦282");
 });
 
 test("the Downtown Plaza café window opens the bakery", async ({ page }) => {

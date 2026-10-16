@@ -334,7 +334,6 @@ test("direct café orders pay once and survive reload, with one modal and opener
       button.click();
       button.click();
     });
-  expect((await saved(page)).coins).toBe(before.coins + order.baseCoins * 3);
   expect((await saved(page)).smoothiesServed).toBe(1);
   await page.keyboard.press("Escape");
   await expect(opener).toBeFocused();
@@ -367,7 +366,6 @@ test("the real DJ booth saves its scored reward once and returns to arcade and r
   await page.clock.runFor(18500);
   const after = await saved(page);
   expect(after.djBeatDropBest).toBe(100);
-  expect(after.coins).toBe(before.coins + 5);
   expect(after.gamesPlayed).toBe(before.gamesPlayed + 1);
   await page.clock.runFor(2000);
   expect(await saved(page)).toEqual(after);

@@ -12,7 +12,7 @@ const RIBBON_MEDALS = [
   { id: "savanna_explorer", name: "Savanna Explorer" },
   { id: "secret_finder", name: "Secret Finder" },
   { id: "smoothie_chef", name: "Smoothie Chef" },
-  { id: "high_roller", name: "High Roller" },
+  { id: "game_star", name: "Game Star" },
 ];
 
 function petHappiness(mood: string): number {
@@ -41,7 +41,7 @@ export function PlayerCard({
         ? "secret_finder"
         : null,
       player.owned.includes("mango_smoothie_cup") ? "smoothie_chef" : null,
-      player.coins >= 1000 ? "high_roller" : null,
+      player.gamesPlayed >= 20 ? "game_star" : null,
     ].filter((id): id is string => id !== null),
   );
 

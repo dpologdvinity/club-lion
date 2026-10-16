@@ -18,8 +18,6 @@ export type SeekScene = {
 
 export const SEEK_TARGETS_PER_ROUND = 5;
 export const SEEK_DECOYS_HARD = 4;
-export const SEEK_COINS_EASY = 10;
-export const SEEK_COINS_HARD = 20;
 export const SEEK_HINT_MS = 5000;
 export const SEEK_MAX_TIME_MS = 60 * 60 * 1000;
 
@@ -178,10 +176,6 @@ export function planSeekRound(
       )
     : [];
   return { scene: scene.id, hard, targets, decoys };
-}
-
-export function seekRoundCoins(hard: boolean): number {
-  return hard ? SEEK_COINS_HARD : SEEK_COINS_EASY;
 }
 
 export function isSeekScene(value: unknown): value is SeekSceneId {

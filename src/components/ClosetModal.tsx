@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Check, Lock } from "lucide-react";
 import { Dialog } from "./Dialog";
 import { Avatar } from "./Avatar";
-import { Coin } from "./Lion";
 import {
   CATALOG_ITEMS,
   canWearClothing,
@@ -106,9 +105,6 @@ export function ClosetModal({
                   const wearable =
                     canWearClothing(player, option) || worn[tab] === option.id;
                   const selected = outfit[tab] === option.id;
-                  const price = CATALOG_ITEMS.find(
-                    (item) => item.id === option.id,
-                  )?.price;
                   return (
                     <button
                       type="button"
@@ -123,11 +119,8 @@ export function ClosetModal({
                       {selected && <Check size={15} />}
                       {!wearable && <Lock size={13} aria-hidden="true" />}{" "}
                       {option.label}
-                      {!wearable && price !== undefined && (
-                        <span className="salon-price">
-                          <span className="sr-only"> — in Le Shop for</span>
-                          <Coin amount={price} />
-                        </span>
+                      {!wearable && (
+                        <span className="sr-only"> — find it in Le Shop</span>
                       )}
                     </button>
                   );

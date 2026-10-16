@@ -24,7 +24,6 @@ const order: CakeOrder = {
 test("a cake matching the picture order earns three stars", () => {
   assert.deepEqual(scoreCake(order, orderAsCake(order)), {
     stars: 3,
-    coins: 24,
   });
 });
 
@@ -42,7 +41,7 @@ test("near misses earn two stars and anything served earns at least one", () => 
   assert.equal(scoreCake(order, { ...cake, frosting: "mint" }).stars, 2);
   const missingCandle = { ...cake, toppings: cake.toppings.slice(0, 3) };
   assert.equal(scoreCake(order, missingCandle).stars, 2);
-  assert.deepEqual(scoreCake(order, newCake()), { stars: 1, coins: 8 });
+  assert.deepEqual(scoreCake(order, newCake()), { stars: 1 });
 });
 
 test("piling on extra toppings costs stars", () => {

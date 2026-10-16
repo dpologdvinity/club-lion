@@ -206,7 +206,7 @@ test("arcade milestones require their own score thresholds rather than total pla
   );
 });
 
-test("Foghorn Mariner is a secret event stamp with a 40 coin reward", () => {
+test("Foghorn Mariner is a secret event stamp", () => {
   const stamp = STAMP_DEFINITIONS.find((s) => s.id === "lighthouse_foghorn");
   assert.ok(stamp);
   assert.equal(stamp.title, "Foghorn Mariner");
@@ -217,7 +217,6 @@ test("Foghorn Mariner is a secret event stamp with a 40 coin reward", () => {
     "Sound the two-tone brass foghorn atop the coastal lighthouse.",
   );
   assert.equal(stamp.icon, "📯");
-  assert.equal(stamp.rewardCoins, 40);
   assert.ok(
     !evaluateStampUnlocks({
       ...newPlayer(),
@@ -231,19 +230,16 @@ test("Phase 5 stamp definitions include Alpine Sledder, Rapids Surfer, and Loung
   assert.ok(sled);
   assert.equal(sled.name, "Alpine Sledder");
   assert.equal(sled.category, "arcade_mastery");
-  assert.equal(sled.rewardCoins, 50);
 
   const surf = STAMP_DEFINITIONS.find((s) => s.id === "river_surf_pro");
   assert.ok(surf);
   assert.equal(surf.name, "Rapids Surfer");
   assert.equal(surf.category, "arcade_mastery");
-  assert.equal(surf.rewardCoins, 35);
 
   const server = STAMP_DEFINITIONS.find((s) => s.id === "server_host");
   assert.ok(server);
   assert.equal(server.name, "Lounge Host");
   assert.equal(server.category, "secrets");
-  assert.equal(server.rewardCoins, 30);
 
   const base = newPlayer();
   assert.deepEqual(evaluateStampUnlocks(base), []);

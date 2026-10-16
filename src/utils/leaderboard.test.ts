@@ -11,7 +11,6 @@ import type { PlayerBase } from "../game.ts";
 
 const createMockPlayer = (overrides: Partial<PlayerBase> = {}): PlayerBase => ({
   name: "Simba",
-  coins: 500,
   color: "gold",
   accessory: "scarf",
   owned: ["scarf"],

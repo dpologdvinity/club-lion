@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { Check, Coffee, Leaf, Star } from "lucide-react";
 import { Dialog } from "./Dialog";
-import { Coin } from "./Lion";
 import { CATALOG_ITEMS, type EquipSlot, type PlayerBase } from "../game";
 
 const SLOT_TABS: { id: EquipSlot; label: string }[] = [
@@ -130,20 +129,11 @@ export function CatalogModal({
                   )}
                   <button
                     className={`button ${owned ? "button-secondary" : "button-primary"}`}
-                    disabled={!owned && player.coins < item.price}
                     onClick={() =>
                       owned ? onEquip(item.id, item.slot) : onBuy(item.id)
                     }
                   >
-                    {owned ? (
-                      "Equip"
-                    ) : item.price === 0 ? (
-                      "Claim it"
-                    ) : (
-                      <>
-                        <Coin amount={item.price} /> Buy
-                      </>
-                    )}
+                    {owned ? "Equip" : "Claim it"}
                   </button>
                 </article>
               );

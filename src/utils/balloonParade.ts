@@ -1,7 +1,7 @@
 /**
  * Balloon Parade rules with no React or DOM dependency: the rainbow colour
  * order, the step that builds the arch, the surprise inside each balloon, and
- * the coins for a finished arch.
+ * a finished arch.
  */
 import { SORTER_ANIMALS, type SorterAnimal } from "./shapeSorter.ts";
 
@@ -29,8 +29,7 @@ export const RAINBOW_ORDER: readonly BalloonColor[] = [
 export type Surprise = SorterAnimal | "note";
 export const SURPRISES: readonly Surprise[] = [...SORTER_ANIMALS, "note"];
 
-export const BALLOON_RAINBOW_COINS = 10;
-/** Arches stop paying after this many, so repeating them cannot farm coins. */
+/** Arches stop paying after this many, so repeating them cannot pile up. */
 export const BALLOON_MAX_PAID_RAINBOWS = 30;
 
 export function isBalloonColor(value: unknown): value is BalloonColor {

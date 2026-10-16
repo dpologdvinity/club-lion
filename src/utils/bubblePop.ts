@@ -1,6 +1,6 @@
 /**
  * Bubble Pop rules with no React or DOM dependency: bubble generation, the
- * challenge combo scoring, and the coin payout for a finished challenge.
+ * challenge combo scoring.
  */
 
 export const BUBBLE_COLORS = [
@@ -44,8 +44,6 @@ export const START_BUBBLES = 5;
 export const BASE_POINTS = 10;
 export const GOLDEN_POINTS = 50;
 export const MAX_MULTIPLIER = 5;
-export const BUBBLE_POP_MAX_COINS = 60;
-export const POINTS_PER_COIN = 40;
 /** No challenge can spawn more bubbles than this, so no real score exceeds the cap. */
 export const CHALLENGE_MAX_BUBBLES =
   START_BUBBLES + Math.ceil(CHALLENGE_MS / CHALLENGE_SPAWN_MS);
@@ -125,10 +123,4 @@ export function scorePop(
         : bubble.color,
     },
   };
-}
-
-/** Coins for one finished challenge: one per 40 points, at most 60. */
-export function bubblePopCoins(score: number): number {
-  if (!Number.isSafeInteger(score) || score <= 0) return 0;
-  return Math.min(BUBBLE_POP_MAX_COINS, Math.floor(score / POINTS_PER_COIN));
 }

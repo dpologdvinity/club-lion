@@ -61,7 +61,7 @@ function generateFeatures(): RiverFeature[] {
   return features;
 }
 
-type Result = { score: number; coins: number; tricks: number };
+type Result = { score: number; tricks: number };
 
 export function RiverSurf({
   best,
@@ -69,7 +69,7 @@ export function RiverSurf({
   onClose,
 }: {
   best: number;
-  onComplete: (coins: number) => void;
+  onComplete: (score: number) => void;
   onClose: () => void;
 }) {
   const [playing, setPlaying] = useState(false);
@@ -97,15 +97,15 @@ export function RiverSurf({
     if (doneRef.current) return;
     doneRef.current = true;
     const tricks = tricksLandedRef.current;
-    const coins = calculateRiverSurfPayout(
+    const payout = calculateRiverSurfPayout(
       stateRef.current.score,
       tricks,
       cleanRef.current && !stateRef.current.wipedOut,
     );
-    const finalResult = { score: stateRef.current.score, coins, tricks };
+    const finalResult = { score: stateRef.current.score, tricks };
     setResult(finalResult);
     setPlaying(false);
-    completeRef.current(coins);
+    completeRef.current(payout);
   };
 
   useEffect(() => {
@@ -258,8 +258,8 @@ export function RiverSurf({
           <strong>{result.tricks}</strong> tricks landed.
         </p>
         <div className="fruit-score">
-          +{result.coins}
-          <span>coins</span>
+          {result.score}
+          <span>points</span>
         </div>
         <div className="game-win-actions">
           <button className="button button-secondary" onClick={start}>

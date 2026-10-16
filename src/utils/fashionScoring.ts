@@ -80,7 +80,6 @@ export type ScoredOutfit = {
   score: number; // 0 to 100
   stars: number; // 1, 2, or 3
   feedback: string;
-  coins: number;
 };
 
 export function scoreOutfit(
@@ -89,7 +88,7 @@ export function scoreOutfit(
 ): ScoredOutfit {
   const theme = FASHION_THEMES[themeId];
   if (!theme) {
-    return { score: 0, stars: 1, feedback: "Unknown fashion theme.", coins: 5 };
+    return { score: 0, stars: 1, feedback: "Unknown fashion theme." };
   }
 
   const validItems = equippedItemIds.filter(
@@ -102,7 +101,6 @@ export function scoreOutfit(
       stars: 1,
       feedback:
         "Bare runway! Put on some stylish pieces to impress the judges.",
-      coins: 5,
     };
   }
 
@@ -123,16 +121,13 @@ export function scoreOutfit(
   const rawScore = Math.min(100, Math.max(10, varietyBonus + matchBonus));
 
   let stars = 1;
-  let coins = 10;
   let feedback = "Nice effort! Try combining more themed pieces next time.";
 
   if (rawScore >= 80) {
     stars = 3;
-    coins = 60;
     feedback = "Magnificent! A flawless interpretation of the runway theme!";
   } else if (rawScore >= 50) {
     stars = 2;
-    coins = 25;
     feedback =
       "Great runway presence! The judges appreciated your style direction.";
   }
@@ -141,6 +136,5 @@ export function scoreOutfit(
     score: rawScore,
     stars,
     feedback,
-    coins,
   };
 }

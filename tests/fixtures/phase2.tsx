@@ -32,7 +32,7 @@ function Fixture() {
       {open === "smoothie" && (
         <SmoothieKitchen
           onClose={() => setOpen(null)}
-          onServe={(coins) => setSmoothies((items) => [...items, coins])}
+          onServe={() => setSmoothies((items) => [...items, 1])}
         />
       )}
     </main>

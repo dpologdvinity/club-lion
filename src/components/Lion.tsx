@@ -51,14 +51,3 @@ export function Lion({
     </span>
   );
 }
-
-export function Coin({ amount }: { amount?: number }) {
-  return (
-    <span className="coin-label">
-      <span className="coin-icon" aria-hidden="true">
-        ✦
-      </span>
-      {amount !== undefined && <span>{amount.toLocaleString("en-US")}</span>}
-    </span>
-  );
-}

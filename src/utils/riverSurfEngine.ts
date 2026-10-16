@@ -124,10 +124,10 @@ export function calculateRiverSurfPayout(
   cleanFinish: boolean,
 ): number {
   const base = 10;
-  const scoreCoins = Math.floor(Math.max(0, score) / 20);
-  const trickCoins = Math.max(0, tricks) * 5;
+  const scoreBonus = Math.floor(Math.max(0, score) / 20);
+  const trickBonus = Math.max(0, tricks) * 5;
   const cleanBonus = cleanFinish ? 25 : 0;
-  return Math.max(base, base + scoreCoins + trickCoins + cleanBonus);
+  return Math.max(base, base + scoreBonus + trickBonus + cleanBonus);
 }
 
 export type RiverSurfSoundType =

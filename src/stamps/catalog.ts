@@ -8,7 +8,6 @@ export type StampDefinition = {
   id: string;
   name: string;
   title?: string;
-  rewardCoins?: number;
   category: StampCategory;
   description: string;
   icon: string;
@@ -24,7 +23,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     description:
       "Sound the two-tone brass foghorn atop the coastal lighthouse.",
     icon: "📯",
-    rewardCoins: 40,
     unlockHint: "Pull the brass chain at the Coastal Pier lighthouse.",
   },
   {
@@ -97,7 +95,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Rode the Ferris wheel up to the sunset.",
     icon: "🎡",
-    rewardCoins: 20,
     unlockHint: "Ride the Ferris wheel at Wonder Park Entrance.",
   },
   {
@@ -106,7 +103,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Spun round and round in a mango teacup.",
     icon: "🥭",
-    rewardCoins: 20,
     unlockHint: "Ride the mango teacups at Carnival Midway.",
   },
   {
@@ -115,7 +111,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Rode a golden carousel horse to the music box.",
     icon: "🎠",
-    rewardCoins: 20,
     unlockHint: "Ride the carousel at Carnival Midway.",
   },
   {
@@ -124,7 +119,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Splashed down the Sunshine Flume.",
     icon: "💦",
-    rewardCoins: 20,
     unlockHint: "Ride the log flume at Wonder Park Entrance.",
   },
   {
@@ -133,7 +127,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Dropped from the top of the Lion Leap tower.",
     icon: "🗼",
-    rewardCoins: 20,
     unlockHint: "Ride the drop tower at Carnival Midway.",
   },
   {
@@ -150,7 +143,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Bobbed over the big waves in the wave pool.",
     icon: "🌊",
-    rewardCoins: 15,
     unlockHint: "Ride the Tsunami Wave Pool at Splash Oasis.",
   },
   {
@@ -159,7 +151,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Zoomed down a Splash Oasis tube slide.",
     icon: "🌀",
-    rewardCoins: 15,
     unlockHint: "Ride a Speed Slide at Splash Oasis.",
   },
   {
@@ -168,7 +159,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Floated the whole Lazy River in an inner tube.",
     icon: "🛟",
-    rewardCoins: 15,
     unlockHint: "Float the Lazy River Oasis current.",
   },
   {
@@ -177,7 +167,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Got soaked under the giant tipping bucket.",
     icon: "🪣",
-    rewardCoins: 15,
     unlockHint: "Stand under the Dump Bucket Fortress.",
   },
   {
@@ -316,8 +305,7 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "arcade_mastery",
     description: "Mastered the Mt. Mist downhill sled run with extreme stunts.",
     icon: "🛷",
-    rewardCoins: 50,
-    unlockHint: "Score 50 or more coins on a Mt. Mist downhill sled run.",
+    unlockHint: "Score 50 or more points on a Mt. Mist downhill sled run.",
   },
   {
     id: "river_surf_pro",
@@ -326,7 +314,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "arcade_mastery",
     description: "Conquered the Canyon Rapids river surf stunt run.",
     icon: "🏄",
-    rewardCoins: 35,
     unlockHint: "Score 30 or more in Canyon Rapids river surfing.",
   },
   {
@@ -336,7 +323,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Raced the animal pride round Lion Speedway to the finish.",
     icon: "🏎️",
-    rewardCoins: 25,
     unlockHint: "Finish a kart race at Lion Speedway.",
   },
   {
@@ -347,7 +333,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     description:
       "Fed the Lion Aquarium fish and watched them swarm to the snack.",
     icon: "🐟",
-    rewardCoins: 10,
     unlockHint: "Feed the fish at the Lion Aquarium.",
   },
   {
@@ -357,7 +342,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "park_thrills",
     description: "Pulled a spinning skate pose on the Snowflake Rink ice.",
     icon: "⛸️",
-    rewardCoins: 15,
     unlockHint: "Skate at the Snowflake Rink.",
   },
   {
@@ -366,7 +350,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "arcade_mastery",
     description: "Found every hidden animal on the savanna.",
     icon: "🦓",
-    rewardCoins: 15,
     unlockHint: "Finish a Hide & Seek Safari round on the savanna.",
   },
   {
@@ -375,7 +358,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "arcade_mastery",
     description: "Found every hidden friend on the beach.",
     icon: "🦀",
-    rewardCoins: 15,
     unlockHint: "Finish a Hide & Seek Safari round on the beach.",
   },
   {
@@ -384,7 +366,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "arcade_mastery",
     description: "Found every hidden animal in the jungle.",
     icon: "🐒",
-    rewardCoins: 15,
     unlockHint: "Finish a Hide & Seek Safari round in the jungle.",
   },
   {
@@ -393,7 +374,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "arcade_mastery",
     description: "Recorded a song with the animal band and heard it play back.",
     icon: "🎶",
-    rewardCoins: 15,
     unlockHint: "Record a song in the Animal Orchestra and play it through.",
   },
   {
@@ -403,7 +383,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     description:
       "Sorted every shape into the animal holes in all three rounds.",
     icon: "🔺",
-    rewardCoins: 15,
     unlockHint: "Finish all three rounds of Shape Sorter Safari.",
   },
   {
@@ -412,7 +391,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "arcade_mastery",
     description: "Finished the nine-piece Ferris wheel picture.",
     icon: "🧩",
-    rewardCoins: 15,
     unlockHint: "Finish the nine-piece Ferris wheel in Picture Puzzle.",
   },
   {
@@ -421,7 +399,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "arcade_mastery",
     description: "Popped the balloons in rainbow order to build a full arch.",
     icon: "🌈",
-    rewardCoins: 15,
     unlockHint: "Pop six balloons in rainbow order in Balloon Parade.",
   },
   {
@@ -431,7 +408,6 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     category: "secrets",
     description: "Created and hosted a custom community server lounge.",
     icon: "🌐",
-    rewardCoins: 30,
     unlockHint: "Host a custom server in the community server browser.",
   },
 ];

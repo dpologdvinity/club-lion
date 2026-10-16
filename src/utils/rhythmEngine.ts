@@ -62,12 +62,6 @@ export function nextCombo(judgment: Judgment, comboBeforeHit: number): number {
   return judgment === "miss" ? 0 : comboBeforeHit + 1;
 }
 
-/** 1 coin per 20 score, so runs with big combos pay out meaningfully more. */
-export function coinsForScore(score: number): number {
-  if (!Number.isSafeInteger(score) || score < 0) return 0;
-  return Math.floor(score / 20);
-}
-
 export type BeatNote = {
   id: number;
   lane: Lane;

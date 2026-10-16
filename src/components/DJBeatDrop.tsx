@@ -9,7 +9,6 @@ import {
   pointsFor,
   nextCombo,
   comboMultiplier,
-  coinsForScore,
   JUDGMENT_LABEL,
   JUDGMENT_WINDOW_MS,
   LANE_KEYS,
@@ -29,7 +28,7 @@ const JUDGMENT_CLASS: Record<Judgment, string> = {
   miss: "dj-badge-miss",
 };
 
-type Result = { score: number; combo: number; coins: number };
+type Result = { score: number; combo: number };
 
 function getAudioContextClass(): typeof AudioContext | undefined {
   return (
@@ -219,7 +218,6 @@ export function DJBeatDrop({
     const finalResult: Result = {
       score: scoreRef.current,
       combo: peakComboRef.current,
-      coins: coinsForScore(scoreRef.current),
     };
     setResult(finalResult);
     setPlaying(false);
@@ -358,8 +356,7 @@ export function DJBeatDrop({
         <h3>{result.score >= 2000 ? "Beat master!" : "Nice rhythm!"}</h3>
         <p>
           You scored <strong>{result.score}</strong> points with a top combo of{" "}
-          <strong>{result.combo}</strong> and earned{" "}
-          <strong>{result.coins}</strong> coins.
+          <strong>{result.combo}</strong>.
         </p>
         <p className="fruit-best">
           {result.score > bestAtStart.current

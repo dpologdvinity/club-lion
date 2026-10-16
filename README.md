@@ -40,25 +40,27 @@ A playable, illustrated virtual world browser game inspired by the golden era of
 - Send local messages and emotes through the chat bar.
 - Toss mangos and water balloons with the action wheel's ballistic targeting.
 
-### Earn Coins & Collect Stamps
+### Play & Collect Stamps
 
-| Activity          | Coins      | Details                                        |
-| :---------------- | :--------- | :--------------------------------------------- |
-| Memory Safari     | 60         | Match 6 pairs of safari animals                |
-| Bee Stop          | 15–120     | Stop the bee on the blossom across 10 rounds   |
-| Paw Steps         | 10/round   | Repeat growing arrow sequences (Simon Says)    |
-| Fruit Catch       | 2/catch    | Catch ripe fruit in a 30-second frenzy         |
-| DJ Beat Drop      | varies     | Mix 4 stems behind the turntable at Club Pulse |
-| Smoothie Kitchen  | per order  | Blend and serve café recipes at Canopy Café    |
-| Waterhole Angler  | per catch  | Relaxing dock fishing with 8 species           |
-| Top Models Runway | per show   | Style your avatar for the catwalk judges       |
-| Spy Terminal      | per puzzle | Crack laser grids and cipher codes at Scout HQ |
-| Adventure Rewards | 50 each    | Greet 3 neighbors, play a game, visit your den |
+Every game is free to play, with no currency. Finishing games, exploring and finding secrets unlock stamps and progress.
+
+| Activity          | Details                                        |
+| :---------------- | :--------------------------------------------- |
+| Memory Safari     | Match 6 pairs of safari animals                |
+| Bee Stop          | Stop the bee on the blossom across 10 rounds   |
+| Paw Steps         | Repeat growing arrow sequences (Simon Says)    |
+| Fruit Catch       | Catch ripe fruit in a 30-second frenzy         |
+| DJ Beat Drop      | Mix 4 stems behind the turntable at Club Pulse |
+| Smoothie Kitchen  | Blend and serve café recipes at Canopy Café    |
+| Waterhole Angler  | Relaxing dock fishing with 8 species           |
+| Top Models Runway | Style your avatar for the catwalk judges       |
+| Spy Terminal      | Crack laser grids and cipher codes at Scout HQ |
+| Adventures        | Greet 3 neighbors, play a game, visit your den |
 
 ### Customize Everything
 
 - **Name and style your lion** with 4 coat colors and shop accessories.
-- **Spend coins** on fashion items and den decorations in the shop.
+- **Collect fashion items and den decorations** from the free shop.
 - **Decorate your penthouse** with the isometric 16×16 furniture grid.
 - **Collect stamps** that unlock from exploring, playing, and discovering secrets.
 
@@ -191,7 +193,7 @@ The browser suite runs at desktop (1280×720) and mobile (390×844) viewports, c
 ```
 src/
 ├── App.tsx                    # Root shell: navigation, modals, panels
-├── game.ts                    # Progression engine: coins, saves, rewards
+├── game.ts                    # Progression engine: saves, stamps, progress
 ├── usePlayer.ts               # React persistence hook (localStorage)
 ├── main.tsx                   # Vite entry point
 ├── styles.css                 # All styles with design tokens (~5,800 lines)
@@ -259,7 +261,7 @@ npm test
 
 Covers:
 
-- **Game progression** — coin balances, one-time rewards, purchase ownership, save round-trips, V1→V2 migration
+- **Game progression** — one-time progress, item ownership, save round-trips, V1→V2 migration
 - **Minigame engines** — Bee Stop scoring bands, rhythm hit detection, smoothie recipes, fishing species, fashion scoring, spy puzzle generation
 - **Physics** — coaster track geometry, waterpark wave/bucket cycles, kinetic ride motion, ballistic trajectories, particle trails, pet follower spring dynamics
 - **Audio** — procedural jukebox scheduling, instrument synth parameters, audio bus lifecycle, keyboard shortcut binding

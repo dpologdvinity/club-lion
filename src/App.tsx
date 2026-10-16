@@ -71,7 +71,7 @@ import {
 } from "./game";
 import { usePlayer } from "./usePlayer";
 import { useLightingPrefs } from "./useLightingPrefs";
-import { Coin, Lion } from "./components/Lion";
+import { Lion } from "./components/Lion";
 import { Dialog } from "./components/Dialog";
 import { SledRun } from "./components/SledRun";
 import { RiverSurf } from "./components/RiverSurf";
@@ -423,10 +423,6 @@ export default function App() {
               <Compass size={21} />
             </button>
             <div className="player-menu">
-              <span className="wallet" aria-label={`${player.coins} coins`}>
-                <Coin amount={player.coins} />
-              </span>
-              <span className="player-menu-divider" />
               <button
                 className="avatar-button"
                 onClick={() => setPanel("style")}
@@ -525,7 +521,7 @@ export default function App() {
               onAdventure={adventure}
               onClaim={(id) => {
                 setPlayer((p) => claimReward(p, id));
-                notify("Adventure complete! 50 happy little coins are yours.");
+                notify("Adventure complete! Hooray! 🎉");
               }}
             />
           </aside>
@@ -669,14 +665,8 @@ export default function App() {
           player={player}
           onClose={closePanel}
           onBuy={(id) => {
-            const before = player.coins;
-            const bought = buyCatalogItem(player, id);
-            if (bought.coins === before) {
-              notify("Not enough coins for that piece yet.");
-              return;
-            }
-            setPlayer(bought);
-            notify("Purchased! Added to your closet.");
+            setPlayer((p) => buyCatalogItem(p, id));
+            notify("Added to your closet!");
           }}
           onEquip={(id) => {
             setPlayer((p) => equipCatalogItem(p, id));
@@ -737,11 +727,9 @@ export default function App() {
       {panel === "spy" && (
         <SpyTerminalModal
           spyPuzzlesSolved={player.spyPuzzlesSolved ?? 0}
-          onCompletePuzzle={(puzzleType, scoreOrStage, coinsEarned) => {
-            setPlayer((p) =>
-              completeSpyPuzzle(p, puzzleType, scoreOrStage, coinsEarned),
-            );
-            notify(`Mission complete! Earned ${coinsEarned} coins.`);
+          onCompletePuzzle={(puzzleType, scoreOrStage) => {
+            setPlayer((p) => completeSpyPuzzle(p, puzzleType, scoreOrStage));
+            notify("Mission complete!");
           }}
           onClose={closePanel}
         />
@@ -764,12 +752,6 @@ export default function App() {
             ride={ride}
             look={player.look}
             pet={player.pet}
-            rewardCoins={
-              player.stamps?.includes(rideStamp)
-                ? 0
-                : (STAMP_DEFINITIONS.find((stamp) => stamp.id === rideStamp)
-                    ?.rewardCoins ?? 0)
-            }
             onFinish={() => setPlayer((p) => unlockStamp(p, rideStamp))}
             onClose={closePanel}
           />
@@ -779,18 +761,18 @@ export default function App() {
         <Dialog title="Canyon Rapids River Surf" onClose={closePanel}>
           <RiverSurf
             best={player.riverSurfBest ?? 0}
-            onComplete={(coins) => {
+            onComplete={(score) => {
               setPlayer((p) => {
-                let updated = completeRiverSurf(p, { score: coins, coins });
+                let updated = completeRiverSurf(p, { score });
                 const eligible = evaluateStampUnlocks(updated);
                 for (const id of eligible) {
                   updated = unlockStamp(updated, id);
                 }
-                return coins >= 30
+                return score >= 30
                   ? unlockStamp(updated, "river_surf_pro")
                   : updated;
               });
-              notify(`Gnarly run! +${coins} coins.`);
+              notify("Gnarly run!");
             }}
             onClose={closePanel}
           />
@@ -947,19 +929,19 @@ export default function App() {
               <SledRun
                 look={player.look}
                 best={player.sledRunBest}
-                onComplete={(coins, result) => {
+                onComplete={(score, result) => {
                   setPlayer((p) => {
                     let updated = completeSledRun(p, result);
                     const eligible = evaluateStampUnlocks(updated);
                     for (const id of eligible) {
                       updated = unlockStamp(updated, id);
                     }
-                    return result.tricksCompleted >= 3 || coins >= 50
+                    return result.tricksCompleted >= 3 || score >= 50
                       ? unlockStamp(updated, "sled_champion")
                       : updated;
                   });
                   navigate("mt-mist", { x: 1800, y: 600 });
-                  notify(`Sled run complete! +${coins} coins.`);
+                  notify("Sled run complete!");
                 }}
               />
             )}
@@ -970,11 +952,11 @@ export default function App() {
                 onCompleteDJ={(score, combo) =>
                   setPlayer((p) => completeDJBeatDrop(p, score, combo))
                 }
-                onCompleteSmoothie={(coins) =>
-                  setPlayer((p) => completeSmoothieOrder(p, coins))
+                onCompleteSmoothie={() =>
+                  setPlayer((p) => completeSmoothieOrder(p))
                 }
-                onServeCake={(cake, coins) =>
-                  setPlayer((p) => completeBakeryServe(p, cake, coins))
+                onServeCake={(cake) =>
+                  setPlayer((p) => completeBakeryServe(p, cake))
                 }
                 onCompleteSeek={(round) =>
                   setPlayer((p) => completeSeekRound(p, round))
@@ -997,13 +979,11 @@ export default function App() {
                 }
                 onCompleteFishing={(res) => {
                   setPlayer((p) => completeFishingCatch(p, res));
-                  notify(
-                    `Caught a ${res.speciesId.replace(/_/g, " ")}! +${res.coins} coins.`,
-                  );
+                  notify(`Caught a ${res.speciesId.replace(/_/g, " ")}!`);
                 }}
                 onCompleteFashion={(res) => {
                   setPlayer((p) => recordFashionShowResult(p, res));
-                  notify(`Runway show complete! +${res.coins} coins.`);
+                  notify("Runway show complete!");
                 }}
                 onCompleteBubblePop={(score) =>
                   setPlayer((p) => completeBubblePop(p, score))

@@ -47,7 +47,7 @@ test("every park ride opens from its hotspot, cheers on taps and exits", async (
   expect(errors).toEqual([]);
 });
 
-test("finishing a ride pays its stamp coins once and offers ride again or exit", async ({
+test("finishing a ride unlocks its stamp once and offers ride again or exit", async ({
   page,
 }) => {
   await page.clock.install();
@@ -55,14 +55,9 @@ test("finishing a ride pays its stamp coins once and offers ride again or exit",
   await openRide(page, "Carnival Midway", "Ride Mango Teacups");
   const dialog = page.getByRole("dialog", { name: "Mango Teacups" });
   await expect(dialog).toBeVisible();
-  const coinsBefore: number = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key) ?? "{}").coins,
-    SAVE_KEY,
-  );
   await page.clock.fastForward(25_000);
   const again = dialog.getByRole("button", { name: "Ride again" });
   await expect(again).toBeFocused();
-  await expect(dialog.getByText("+20")).toBeVisible();
   const results = await new AxeBuilder({ page })
     .include(".dialog-ride")
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
@@ -76,7 +71,6 @@ test("finishing a ride pays its stamp coins once and offers ride again or exit",
       ),
     )
     .toMatchObject({
-      coins: coinsBefore + 20,
       stamps: expect.arrayContaining(["mango_teacups"]),
     });
   await again.click();
@@ -85,13 +79,15 @@ test("finishing a ride pays its stamp coins once and offers ride again or exit",
   await expect(
     dialog.getByRole("button", { name: "Ride again" }),
   ).toBeVisible();
-  await expect(dialog.getByText("+20")).toHaveCount(0);
   expect(
     await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key) ?? "{}").coins,
+      (key) =>
+        JSON.parse(localStorage.getItem(key) ?? "{}").stamps.filter(
+          (id: string) => id === "mango_teacups",
+        ).length,
       SAVE_KEY,
     ),
-  ).toBe(coinsBefore + 20);
+  ).toBe(1);
   await dialog.getByRole("button", { name: "Exit ride" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });

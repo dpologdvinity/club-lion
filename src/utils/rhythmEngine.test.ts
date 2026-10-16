@@ -5,7 +5,6 @@ import {
   comboMultiplier,
   pointsFor,
   nextCombo,
-  coinsForScore,
   generateChart,
   findHittableNote,
   JUDGMENT_WINDOW_MS,
@@ -60,19 +59,6 @@ test("points scale with judgment quality and the pre-hit combo multiplier", () =
   assert.equal(pointsFor("great", 20), 210);
   assert.equal(pointsFor("good", 30), 160);
   assert.equal(pointsFor("miss", 30), 0);
-});
-
-test("coin reward is one coin per 20 score, floored", () => {
-  assert.equal(coinsForScore(0), 0);
-  assert.equal(coinsForScore(19), 0);
-  assert.equal(coinsForScore(20), 1);
-  assert.equal(coinsForScore(999), 49);
-});
-
-test("coinsForScore rejects invalid input", () => {
-  assert.equal(coinsForScore(-5), 0);
-  assert.equal(coinsForScore(Number.NaN), 0);
-  assert.equal(coinsForScore(4.5), 0);
 });
 
 test("generateChart produces one note per beat on a deterministic lane cycle", () => {

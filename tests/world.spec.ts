@@ -2,7 +2,7 @@ import { tapRoomPath } from "./room-paths";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { SAVE_KEY } from "../src/game";
-import { coinsFor, FLOWER_SPOTS } from "../src/beeStop";
+import { FLOWER_SPOTS } from "../src/beeStop";
 import { closeAdventures, openAdventures, openHeaderSettings } from "./header";
 
 const PAW_LABELS = ["Up", "Down", "Left", "Right"];
@@ -71,9 +71,10 @@ test("map travel and unique greetings complete adventures with one reward each",
     await page.getByRole("button", { name: `Say hello to ${name}` }).click();
   await page.getByRole("button", { name: "Say hello to Milo" }).click();
   await openAdventures(page);
-  await expect(page.getByRole("button", { name: "Claim 50" })).toHaveCount(1);
-  await page.getByRole("button", { name: "Claim 50" }).click();
-  await expect(page.locator(".wallet")).toHaveText("✦300");
+  await expect(
+    page.getByRole("button", { name: "Claim", exact: true }),
+  ).toHaveCount(1);
+  await page.getByRole("button", { name: "Claim", exact: true }).click();
   await closeAdventures(page);
   await page.getByRole("button", { name: "Map", exact: true }).click();
   await page
@@ -82,10 +83,8 @@ test("map travel and unique greetings complete adventures with one reward each",
   await expect(page.locator(".world-location h2")).toHaveText("Your cozy den");
   await expect(page.locator(".world-stage")).toHaveClass(/scene-den/);
   await openAdventures(page);
-  await page.getByRole("button", { name: "Claim 50" }).click();
-  await expect(page.locator(".wallet")).toHaveText("✦350");
+  await page.getByRole("button", { name: "Claim", exact: true }).click();
   await page.reload();
-  await expect(page.locator(".wallet")).toHaveText("✦350");
   await expect(
     page.getByText("Adventure complete", { exact: true }),
   ).toHaveCount(2);
@@ -116,23 +115,17 @@ test("wardrobe validation, purchases, and persistent customizations work", async
     .filter({ has: page.getByRole("heading", { name: "Explorer hat" }) });
   await hat.getByRole("button", { name: /Make it mine/ }).click();
   await expect(hat.getByRole("button", { name: "Wearing" })).toBeDisabled();
-  await expect(page.locator(".wallet")).toHaveText("✦100");
   await page.getByRole("button", { name: "For your den" }).click();
   const plant = page
     .locator(".shop-item")
     .filter({ has: page.getByRole("heading", { name: "Happy houseplant" }) });
   await plant.getByRole("button", { name: /Make it mine/ }).click();
-  await expect(page.locator(".wallet")).toHaveText("✦0");
-  await expect(
-    page.getByRole("button", { name: /Need more coins/ }),
-  ).toBeDisabled();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.getByRole("button", { name: "My den", exact: true }).click();
   await expect(page.getByLabel("Your happy houseplant")).toBeVisible();
   await page.reload();
   await expect(page.locator(".profile-details h3")).toHaveText("Roary");
-  await expect(page.locator(".wallet")).toHaveText("✦0");
   await expect(page.locator(".your-character .accessory-hat")).toBeVisible();
 });
 
@@ -219,15 +212,10 @@ test.describe("with reduced motion", () => {
       /(\d+) points/.exec((await summary.innerText()) ?? "")![1],
     );
     expect(score % 10).toBe(0);
-    await expect(page.locator(".wallet")).toHaveText(
-      `✦${250 + coinsFor(score)}`,
-    );
   });
 });
 
-test("Memory Safari can be completed and awards exactly 60 coins", async ({
-  page,
-}) => {
+test("Memory Safari can be completed and can be won", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Games", exact: true }).click();
   await page.getByRole("button", { name: "Play Memory Safari" }).click();
@@ -267,19 +255,15 @@ test("Memory Safari can be completed and awards exactly 60 coins", async ({
   await expect(
     page.getByRole("heading", { name: "That’s a roaring success!" }),
   ).toBeVisible();
-  await expect(page.locator(".wallet")).toHaveText("✦310");
   await expect(
     page.getByRole("button", { name: "All games", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Back to the pride" }).click();
   await openAdventures(page);
-  await page.getByRole("button", { name: "Claim 50" }).click();
-  await expect(page.locator(".wallet")).toHaveText("✦360");
+  await page.getByRole("button", { name: "Claim", exact: true }).click();
 });
 
-test("Bee Stop runs ten rounds, pays its score band, and remembers the best", async ({
-  page,
-}) => {
+test("Bee Stop runs ten rounds and remembers the best", async ({ page }) => {
   test.setTimeout(120_000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -316,7 +300,6 @@ test("Bee Stop runs ten rounds, pays its score band, and remembers the best", as
   );
   expect(score % 10).toBe(0);
   expect(score).toBeGreaterThan(0);
-  await expect(page.locator(".wallet")).toHaveText(`✦${250 + coinsFor(score)}`);
   await expect(page.locator(".bee-bloom")).toBeVisible();
   await page.getByRole("button", { name: "Back to the pride" }).click();
   await page.reload();
@@ -328,7 +311,6 @@ test("Bee Stop runs ten rounds, pays its score band, and remembers the best", as
   await page.getByRole("button", { name: "Let’s play" }).click();
   await page.keyboard.press("Enter");
   await expect(page.locator(".bee-announce")).toContainText("Round 2 of 10");
-  await expect(page.locator(".wallet")).toHaveText(`✦${250 + coinsFor(score)}`);
   expect(errors).toEqual([]);
 });
 
@@ -356,7 +338,7 @@ test("the arcade and Bee Stop have no WCAG AA accessibility violations", async (
     page.getByRole("button", { name: "Games", exact: true }),
   ).toBeFocused();
 });
-test("Paw Steps pays for every finished round, then remembers the best score", async ({
+test("Paw Steps counts finished rounds, then remembers the best score", async ({
   page,
 }) => {
   await page.goto("/");
@@ -391,14 +373,14 @@ test("Paw Steps pays for every finished round, then remembers the best score", a
   await expect(
     page.getByText("You repeated 1 round", { exact: false }),
   ).toBeVisible();
-  await expect(page.locator(".wallet")).toHaveText("✦260");
   await page.keyboard.press("Escape");
   await openAdventures(page);
-  await expect(page.getByRole("button", { name: "Claim 50" })).toHaveCount(1);
+  await expect(
+    page.getByRole("button", { name: "Claim", exact: true }),
+  ).toHaveCount(1);
   await page.reload();
-  await expect(page.locator(".wallet")).toHaveText("✦260");
   await page.getByRole("button", { name: "Games", exact: true }).click();
-  await expect(page.getByText("Best: 1.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Best 1", { exact: true })).toBeVisible();
 });
 
 test("Paw Steps accepts rapid correct input and locks a completed round", async ({
@@ -438,7 +420,6 @@ test("Paw Steps accepts rapid correct input and locks a completed round", async 
     page.getByRole("heading", { name: "What a run!" }),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
-  await expect(page.locator(".wallet")).toHaveText("✦260");
   await page.getByRole("button", { name: "Play again" }).click();
   await expect(
     page.getByRole("dialog").locator('[aria-live="polite"]'),
@@ -450,7 +431,6 @@ test("Paw Steps accepts rapid correct input and locks a completed round", async 
     page.getByRole("button", { name: "Games", exact: true }),
   ).toBeFocused();
   await page.reload();
-  await expect(page.locator(".wallet")).toHaveText("✦260");
 });
 
 test("the arcade menu keeps keyboard focus when any game is left", async ({
@@ -472,7 +452,6 @@ test("the arcade menu keeps keyboard focus when any game is left", async ({
     page.getByRole("button", { name: "Games", exact: true }),
   ).toBeFocused();
   await page.reload();
-  await expect(page.locator(".wallet")).toHaveText("✦250");
 });
 
 test("Fruit Catch drops fruit fast enough to catch and keeps the round busy", async ({
@@ -801,7 +780,6 @@ test("coastal travel and the lighthouse foghorn award a persistent stamp once", 
     "Coastal Pier & Boardwalk",
   );
   await tapRoomPath(page, "Sound Foghorn", true);
-  await expect(page.locator(".wallet")).toHaveText("✦290");
   await expect(page.getByRole("status")).toContainText(
     "BWWWOOOOMMM! 📯 The lighthouse foghorn echoes across the bay!",
   );
@@ -809,13 +787,11 @@ test("coastal travel and the lighthouse foghorn award a persistent stamp once", 
     .getByRole("button", { name: "Turn sound on", exact: true })
     .click();
   await tapRoomPath(page, "Sound Foghorn", true);
-  await expect(page.locator(".wallet")).toHaveText("✦290");
   await page
     .getByRole("button", { name: "Turn sound off", exact: true })
     .click();
   // Use the activity list when collision-aware walking cannot reach the label.
   await tapRoomPath(page, "Sound Foghorn", true);
-  await expect(page.locator(".wallet")).toHaveText("✦290");
   await page.screenshot({
     path: `/tmp/club-lion-coastal-${test.info().project.name}.png`,
   });
@@ -835,7 +811,6 @@ test("coastal travel and the lighthouse foghorn award a persistent stamp once", 
     .getByRole("button", { name: "Downtown Plaza", exact: true })
     .click();
   await page.reload();
-  await expect(page.locator(".wallet")).toHaveText("✦290");
   const saved = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key)!),
     SAVE_KEY,
@@ -849,7 +824,6 @@ test("coastal travel and the lighthouse foghorn award a persistent stamp once", 
     .filter({ hasText: "Coastal Pier & Boardwalk" })
     .click();
   await tapRoomPath(page, "Sound Foghorn", true);
-  await expect(page.locator(".wallet")).toHaveText("✦290");
   expect(errors).toEqual([]);
 });
 
@@ -879,9 +853,7 @@ test("closet mixes free tops, bottoms, and shoes onto the avatar and locks shop 
   ).toHaveClass(/bottom-denim-mini/);
 });
 
-test("salon makeup tab previews free looks and prices premium ones", async ({
-  page,
-}) => {
+test("salon makeup tab previews every look for free", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Salon", exact: true }).click();
   const salon = page.getByRole("dialog", { name: "Stella's Salon" });
@@ -890,9 +862,7 @@ test("salon makeup tab previews free looks and prices premium ones", async ({
     .click();
   await salon.getByRole("button", { name: /Siren Flick/ }).click();
   await salon.getByRole("button", { name: /Cherry Red/ }).click();
-  await expect(salon.locator(".salon-cost")).toHaveCount(0);
   await salon.getByRole("button", { name: /Glitter Pop/ }).click();
-  await expect(salon.locator(".salon-cost")).toContainText("premium look");
   await salon.getByRole("button", { name: /Siren Flick/ }).click();
   await salon.getByRole("button", { name: "Confirm new look" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);

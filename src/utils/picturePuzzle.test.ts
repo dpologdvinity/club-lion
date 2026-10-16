@@ -2,7 +2,6 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   PICTURES,
-  PICTURE_PUZZLE_COINS,
   PUZZLE_HEIGHT,
   PUZZLE_WIDTH,
   gridFor,
@@ -137,9 +136,4 @@ test("the tray order is a shuffled permutation of the pieces", () => {
     shufflePieces(4, () => 0),
     [1, 2, 3, 0],
   );
-});
-
-test("bigger pictures pay more coins", () => {
-  assert.ok(PICTURE_PUZZLE_COINS[4] < PICTURE_PUZZLE_COINS[6]);
-  assert.ok(PICTURE_PUZZLE_COINS[6] < PICTURE_PUZZLE_COINS[9]);
 });

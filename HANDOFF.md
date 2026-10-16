@@ -6,7 +6,7 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 
 - All original worktrees landed in table order: doll-avatar-5, world-collision, picture-nav-2, pets-species, rooms-new, room-music, games-puzzle, test-hygiene.
 - Added aquarium/rink rooms, pet species, Picture Puzzle, Balloon Parade, picture navigation, collision-aware movement, and room music.
-- Reward follow-ups reject previously paid Shape Sorter rounds, Animal Orchestra coin overflow, and unsafe shared stamp bonuses.
+- Coins are gone: no wallet, prices or payouts. Shop, closet and salon are free; games count plays, bests, stamps and stars. Saves that still contain `coins` load and drop it. Premium salon unlock ids in old `owned` lists are dropped on load because every option is free.
 - Unit tests use native recursive discovery; new `src/**/*.test.ts` files need no package-script edits. Latest local verification passed 776 tests, typecheck, formatting, and production build.
 - Leave owner files alone: `.github/agents/`, `.github/hooks/`, `gallery/rooms-current/room-default.png`.
 

@@ -63,7 +63,6 @@ export const SORTER_ROUNDS: readonly (readonly SorterPair[])[] = [
 ];
 
 export const SHAPE_SORTER_ROUNDS = SORTER_ROUNDS.length;
-export const SHAPE_SORTER_COINS_PER_ROUND = 5;
 
 /** True when the shape belongs in that animal's hole this round. */
 export function isMatch(

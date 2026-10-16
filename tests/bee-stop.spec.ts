@@ -61,7 +61,6 @@ test("reduced motion scores the visible bee when activated by a click", async ({
   );
   await expect(page.locator(".bee-announce")).toContainText("Round 2 of 10");
   await expect(page.locator(".game-stats")).toContainText("100 points");
-  await expect(page.locator(".wallet")).toHaveText("✦250");
 });
 
 test("pointer and click events from one activation score the round once", async ({
@@ -105,14 +104,9 @@ test("a held pointer cannot stop the following round when released", async ({
   );
 });
 
-test("missed rounds keep every petal visible and pay the advertised minimum", async ({
-  page,
-}, testInfo) => {
+test("missed rounds keep every petal visible", async ({ page }, testInfo) => {
   await page.getByRole("button", { name: "All games" }).click();
   await page.getByRole("button", { name: "Play Bee Stop" }).click();
-  await expect(page.locator(".game-features")).toContainText(
-    "Earn 15–120 coins",
-  );
   await page.getByRole("button", { name: "Let’s play" }).click();
   for (let round = 1; round <= 10; round++) {
     await page
@@ -126,7 +120,6 @@ test("missed rounds keep every petal visible and pay the advertised minimum", as
   await expect(page.locator(".game-win")).toContainText(
     "0 points across 10 rounds.",
   );
-  await expect(page.locator(".wallet")).toHaveText("✦265");
   const petals = page.locator(".bee-bloom ellipse");
   await expect(petals).toHaveCount(10);
   expect(

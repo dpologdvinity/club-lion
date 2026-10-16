@@ -208,7 +208,7 @@ test("checkRiverPickup sets isAirborne for ramp_wave", () => {
 
 // --- calculateRiverSurfPayout ---
 
-test("calculateRiverSurfPayout returns at least 10 coins for a zero score run", () => {
+test("calculateRiverSurfPayout returns at least 10 points for a zero score run", () => {
   const coins = calculateRiverSurfPayout(0, 0, false);
   assert.ok(coins >= 10);
 });
@@ -225,7 +225,7 @@ test("calculateRiverSurfPayout scales up with more tricks", () => {
   assert.ok(many > few);
 });
 
-test("calculateRiverSurfPayout adds a clean finish bonus of at least 25 coins", () => {
+test("calculateRiverSurfPayout adds a clean finish bonus of at least 25 points", () => {
   const dirty = calculateRiverSurfPayout(500, 3, false);
   const clean = calculateRiverSurfPayout(500, 3, true);
   assert.ok(clean - dirty >= 25);

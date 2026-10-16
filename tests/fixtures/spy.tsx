@@ -14,15 +14,12 @@ function Fixture() {
       <output aria-label="Completed puzzles">
         {player.spyPuzzlesSolved ?? 0}
       </output>
-      <output aria-label="Coins">{player.coins}</output>
       {open && (
         <SpyTerminalModal
           spyPuzzlesSolved={player.spyPuzzlesSolved ?? 0}
           onClose={() => setOpen(false)}
-          onCompletePuzzle={(type, stage, coins) =>
-            setPlayer((current) =>
-              completeSpyPuzzle(current, type, stage, coins),
-            )
+          onCompletePuzzle={(type, stage) =>
+            setPlayer((current) => completeSpyPuzzle(current, type, stage))
           }
         />
       )}

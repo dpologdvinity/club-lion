@@ -7,14 +7,12 @@ import {
   Sparkles,
   Trophy,
 } from "lucide-react";
-import { Coin } from "./Lion";
 import {
   advance,
   BAND_LABEL,
   BAND_POINTS,
   bandFor,
   BEE_STOP_ROUNDS,
-  coinsFor,
   FEEDBACK_MS,
   flowerFor,
   MAX_STEP_SECONDS,
@@ -176,9 +174,6 @@ export function BeeStop({
             <span>
               <Sparkles size={15} /> Easy at first, trickier by round ten.
             </span>
-            <span>
-              <Sparkles size={15} /> Earn 15–120 coins
-            </span>
           </div>
           <button className="button button-primary" onClick={restart}>
             Let’s play <ArrowRight size={18} />
@@ -188,7 +183,6 @@ export function BeeStop({
     );
 
   if (phase === "won") {
-    const earned = coinsFor(finalScore);
     const record = finalScore > bestAtStart.current;
     return (
       <div className="bee-game">
@@ -203,9 +197,6 @@ export function BeeStop({
             <br />
             Best run so far: {Math.max(best, finalScore)}.
           </p>
-          <div className="reward-display">
-            + <Coin amount={earned} />
-          </div>
           <div className="game-win-actions">
             <button className="button button-secondary" onClick={restart}>
               <RotateCcw size={16} /> Play again

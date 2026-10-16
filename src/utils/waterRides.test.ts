@@ -27,14 +27,12 @@ test("every water ride lasts 20 to 40 seconds", () => {
   }
 });
 
-test("each ride's first finish pays its stamp coins exactly once", () => {
+test("each ride's first finish unlocks its stamp exactly once", () => {
   for (const id of Object.values(WATER_RIDE_STAMPS)) {
     const stamp = STAMP_DEFINITIONS.find((s) => s.id === id);
     assert.ok(stamp, id);
     assert.equal(stamp.category, "park_thrills");
-    assert.ok((stamp.rewardCoins ?? 0) > 0, id);
     const first = unlockStamp(newPlayer(), id);
-    assert.equal(first.coins, newPlayer().coins + (stamp.rewardCoins ?? 0));
     assert.equal(unlockStamp(first, id), first);
   }
 });

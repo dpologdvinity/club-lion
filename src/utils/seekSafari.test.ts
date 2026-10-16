@@ -7,7 +7,6 @@ import {
   getSeekScene,
   isSeekScene,
   planSeekRound,
-  seekRoundCoins,
 } from "./seekSafari.ts";
 
 function seeded(seed: number) {
@@ -76,8 +75,7 @@ test("extreme random values still produce valid rounds", () => {
   }
 });
 
-test("hard rounds pay more and scene ids are validated", () => {
-  assert.ok(seekRoundCoins(true) > seekRoundCoins(false));
+test("scene ids are validated", () => {
   assert.equal(isSeekScene("beach"), true);
   assert.equal(isSeekScene("moon"), false);
 });
