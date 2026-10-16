@@ -29,6 +29,20 @@ for (const room of [
     exit: "Downtown Plaza",
   },
   {
+    name: "Lion Aquarium",
+    action: "Wake the jellyfish",
+    kind: "jellyfish",
+    objects: 2,
+    exit: "Coastal Pier & Boardwalk",
+  },
+  {
+    name: "Snowflake Rink",
+    action: "Dress the snowman",
+    kind: "snowman",
+    objects: 2,
+    exit: "Mt. Mist Alpine Basecamp",
+  },
+  {
     name: "Your cozy den",
     action: "Switch the reading lamp",
     kind: "lamp",

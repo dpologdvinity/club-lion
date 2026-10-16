@@ -553,6 +553,130 @@ export function RoomObject({
             <path d="M30 150Q100 120 170 150Q100 175 30 150Z" fill="#f7d34d" />
           </g>
         )}
+        {kind === "jellyfish" && (
+          <g className={active ? "object-chime" : "sm-bob"}>
+            <path
+              d={
+                active
+                  ? "M30 120Q30 20 100 20Q170 20 170 120Q100 140 30 120Z"
+                  : "M30 110Q30 40 100 40Q170 40 170 110Q100 130 30 110Z"
+              }
+              fill={active ? "#f6a8e0" : "#c9a6f0"}
+              stroke="#8a62c4"
+              strokeWidth="5"
+            />
+            <path
+              className="sm-sway"
+              d="M55 125q-10 40 5 80M85 130q10 40-5 90M115 130q-10 40 5 90M145 125q10 40-5 80"
+              fill="none"
+              stroke="#b08ae0"
+              strokeWidth="6"
+              strokeLinecap="round"
+            />
+          </g>
+        )}
+        {kind === "treasure" && (
+          <>
+            <path
+              d="M20 235V150H180V235Z"
+              fill="#b97a45"
+              stroke="#7b4b26"
+              strokeWidth="6"
+            />
+            <path
+              d={
+                active
+                  ? "M20 150Q10 70 60 50L150 30Q190 60 180 150Z"
+                  : "M20 150Q20 95 100 95Q180 95 180 150Z"
+              }
+              fill="#cf8d54"
+              stroke="#7b4b26"
+              strokeWidth="6"
+            />
+            <rect x="88" y="150" width="24" height="28" fill="#f7d34d" />
+            {active && (
+              <g className="object-chime" fill="#f7d34d" stroke="#c9a02a">
+                <circle cx="70" cy="125" r="14" strokeWidth="4" />
+                <circle cx="105" cy="115" r="14" strokeWidth="4" />
+                <circle cx="135" cy="128" r="14" strokeWidth="4" />
+              </g>
+            )}
+          </>
+        )}
+        {kind === "snowman" && (
+          <>
+            <circle
+              cx="100"
+              cy="190"
+              r="48"
+              fill="#fff"
+              stroke="#b4c7e0"
+              strokeWidth="5"
+            />
+            <circle
+              cx="100"
+              cy="120"
+              r="36"
+              fill="#fff"
+              stroke="#b4c7e0"
+              strokeWidth="5"
+            />
+            <g className={active ? "object-chime" : undefined}>
+              <path
+                d="M60 90H140M78 90V45H122V90"
+                fill="#4a4a6a"
+                stroke="#2e2e48"
+                strokeWidth="5"
+              />
+              <path
+                d="M80 140Q100 152 120 140"
+                fill="none"
+                stroke="#2e2e48"
+                strokeWidth="4"
+              />
+            </g>
+            <circle cx="88" cy="112" r="4" fill="#2e2e48" />
+            <circle cx="112" cy="112" r="4" fill="#2e2e48" />
+            <path d="M100 120l24 6-24 4Z" fill="#f08a3c" />
+            <path
+              className={active ? "sm-sway" : undefined}
+              d="M68 150H132L140 168H60Z"
+              fill="#e5546e"
+              stroke="#a83348"
+              strokeWidth="4"
+            />
+          </>
+        )}
+        {kind === "snowglobe" && (
+          <>
+            <path
+              d="M45 235H155L145 195H55Z"
+              fill="#9a6a4a"
+              stroke="#6d4830"
+              strokeWidth="5"
+            />
+            <circle
+              cx="100"
+              cy="120"
+              r="75"
+              fill={active ? "#dff1ff" : "#eaf6ff"}
+              fillOpacity="0.85"
+              stroke="#8fb4d8"
+              strokeWidth="5"
+            />
+            <path
+              d="M80 190L100 110L120 190Z"
+              fill="#5f9a6a"
+              stroke="#3f7248"
+              strokeWidth="4"
+            />
+            <g className={active ? "sm-drift" : undefined} fill="#fff">
+              {[60, 85, 115, 140, 100, 75, 125].map((x, i) => (
+                <circle key={x} cx={x} cy={70 + ((i * 23) % 90)} r="4" />
+              ))}
+            </g>
+          </>
+        )}
       </svg>
       <span className="room-object-caption">{item.label}</span>
     </button>

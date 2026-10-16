@@ -39,6 +39,29 @@ export const lionAquariumManifest: RoomManifest = {
       position: { x: 1560, y: 560 },
       actionData: {},
     },
+    {
+      id: "aquarium-jellyfish",
+      label: "Wake the jellyfish",
+      icon: "🪼",
+      type: "activity",
+      position: { x: 1050, y: 520 },
+      actionData: {},
+      object: { kind: "jellyfish", width: 150, height: 180 },
+      reaction: {
+        message: "Glow glow! The jellyfish floats up.",
+        sound: "bubble",
+      },
+    },
+    {
+      id: "aquarium-treasure",
+      label: "Open the treasure chest",
+      icon: "🪙",
+      type: "activity",
+      position: { x: 2000, y: 540 },
+      actionData: {},
+      object: { kind: "treasure", width: 170, height: 150 },
+      reaction: { message: "Clink! Shiny gold coins inside!", sound: "chime" },
+    },
   ],
   obstacles: [
     {
