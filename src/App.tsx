@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { speak } from "./utils/speech";
 import {
   ArrowUpRight,
@@ -100,7 +100,6 @@ import { ServerListModal } from "./components/ServerListModal";
 import { LOCAL_PLAYER_ID, useCustomServers } from "./useCustomServers";
 import { PetCareModal } from "./components/PetCareModal";
 import { PetPickerModal } from "./components/PetPickerModal";
-import { performPetCare } from "./utils/petCare";
 import { PET_PROFILES } from "./utils/petSpecies";
 import { LeaderboardModal } from "./components/LeaderboardModal";
 import { RooftopLounge } from "./components/RooftopLounge";
@@ -191,6 +190,18 @@ export default function App() {
     return () => window.clearTimeout(id);
   }, [toast]);
   const notify = (message: string) => setToast(message);
+  // Every newly earned stamp gets its own celebration; stamps already in the save stay quiet.
+  const knownStamps = useRef(player.stamps ?? []);
+  useEffect(() => {
+    const fresh = (player.stamps ?? []).filter(
+      (id) => !knownStamps.current.includes(id),
+    );
+    knownStamps.current = player.stamps ?? [];
+    const stamp = STAMP_DEFINITIONS.find((item) => item.id === fresh.at(-1));
+    if (!stamp) return;
+    const message = `${stamp.icon} New stamp: ${stamp.name}!`;
+    setToast((current) => (current ? `${current} ${message}` : message));
+  }, [player.stamps]);
   const openGames = (game: GameId | null = null) => {
     setInitialGame(game);
     setPanel(game === "sled-run" ? "sled-run" : "games");
@@ -823,12 +834,6 @@ export default function App() {
           petCare={player.petCare}
           onCare={(action) => {
             setPlayer((p) => applyPetCareAction(p, action));
-            if (
-              !player.stamps?.includes("pet_pampered") &&
-              performPetCare(player.petCare, action).nextState.happiness >= 100
-            ) {
-              notify("🐾 Pampered Pride stamp unlocked!");
-            }
           }}
           onPickPet={() => setPanel("pet-picker")}
           onClose={closePanel}

@@ -33,6 +33,9 @@ test("Sunset Beach and Coastal Pier allow travel, lighthouse foghorn activation,
   await expect(
     page.getByText(/The lighthouse foghorn echoes across the bay!/),
   ).toBeVisible();
+  await expect(page.locator(".toast")).toContainText(
+    "New stamp: Foghorn Mariner!",
+  );
 
   // Open Stamp Book and verify Foghorn Mariner stamp is collected
   await page.getByRole("button", { name: "Stamp Book", exact: true }).click();
