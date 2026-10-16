@@ -85,6 +85,20 @@ for (const room of [
     exit: "Downtown Plaza",
   },
   {
+    name: "Splash Oasis",
+    action: "Squeeze the rubber duck",
+    kind: "duck",
+    objects: 2,
+    exit: "Downtown Plaza",
+  },
+  {
+    name: "Canyon Rapids",
+    action: "Paddle the kayak",
+    kind: "kayak",
+    objects: 1,
+    exit: "Downtown Plaza",
+  },
+  {
     name: "Your cozy den",
     action: "Switch the reading lamp",
     kind: "lamp",

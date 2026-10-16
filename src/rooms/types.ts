@@ -70,7 +70,11 @@ export type RoomObjectKind =
   | "balloons"
   | "fishing"
   | "seagull"
-  | "flag";
+  | "flag"
+  | "duck"
+  | "sprinkler"
+  | "periscope"
+  | "kayak";
 
 export type RoomManifest = {
   id: string;

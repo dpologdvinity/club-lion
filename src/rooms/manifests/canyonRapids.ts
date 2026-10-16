@@ -35,6 +35,16 @@ export const canyonRapidsManifest: RoomManifest = {
       position: { x: 1750, y: 530 },
       actionData: {},
     },
+    {
+      id: "rapids-kayak",
+      label: "Paddle the kayak",
+      icon: "🛶",
+      type: "activity",
+      position: { x: 1100, y: 560 },
+      actionData: {},
+      object: { kind: "kayak", width: 190, height: 150 },
+      reaction: { message: "Paddle paddle! Splash!", sound: "splash" },
+    },
   ],
   ambientAudioPreset: "canyon-rapids-ambient",
   obstacles: [

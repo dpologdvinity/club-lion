@@ -44,6 +44,16 @@ export const secretScoutBaseManifest: RoomManifest = {
       position: { x: 1500, y: 500 },
       actionData: {},
     },
+    {
+      id: "scout-periscope",
+      label: "Raise the periscope",
+      icon: "🔭",
+      type: "activity",
+      position: { x: 420, y: 520 },
+      actionData: {},
+      object: { kind: "periscope", width: 140, height: 190 },
+      reaction: { message: "Periscope up! All clear, agent.", sound: "chime" },
+    },
   ],
   obstacles: [
     {

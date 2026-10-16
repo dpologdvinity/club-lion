@@ -941,6 +941,97 @@ export function RoomObject({
             </g>
           </>
         )}
+        {kind === "duck" && (
+          <g className={active ? "object-chime" : "sm-bob"}>
+            <path
+              d="M25 170Q30 225 100 225Q175 225 180 165Q150 180 120 165Q130 120 100 105Q60 100 60 140Q35 150 25 170Z"
+              fill="#f7d34d"
+              stroke="#c9a02a"
+              strokeWidth="5"
+            />
+            <circle cx="88" cy="132" r="6" fill="#2e2e48" />
+            <path
+              d={active ? "M60 140L20 120L30 150Z" : "M60 140L30 140L60 152Z"}
+              fill="#f08a3c"
+              stroke="#c24f1e"
+              strokeWidth="3"
+            />
+          </g>
+        )}
+        {kind === "sprinkler" && (
+          <>
+            <path
+              d="M70 235H130L120 190H80Z"
+              fill="#6ec3e8"
+              stroke="#3f8fb8"
+              strokeWidth="5"
+            />
+            <circle cx="100" cy="185" r="16" fill="#e5546e" />
+            <g
+              className={active ? "sm-pulse" : undefined}
+              fill="none"
+              stroke="#8fd3f4"
+              strokeWidth="6"
+              strokeLinecap="round"
+            >
+              {active ? (
+                <path d="M100 170Q40 60 15 120M100 170Q100 40 100 20M100 170Q160 60 185 120" />
+              ) : (
+                <path d="M100 170Q85 140 75 150M100 170Q115 140 125 150" />
+              )}
+            </g>
+          </>
+        )}
+        {kind === "periscope" && (
+          <>
+            <path
+              d="M40 235H160V200H40Z"
+              fill="#5f6b7a"
+              stroke="#3e4652"
+              strokeWidth="5"
+            />
+            <g className={active ? "object-chime" : undefined}>
+              <path
+                d={
+                  active
+                    ? "M88 200V40H140V75H112V200Z"
+                    : "M88 200V150H140V185H112V200Z"
+                }
+                fill="#7d8a9a"
+                stroke="#3e4652"
+                strokeWidth="5"
+              />
+              <rect
+                x="122"
+                y={active ? 47 : 157}
+                width="14"
+                height="20"
+                rx="4"
+                fill="#8fd3f4"
+              />
+            </g>
+          </>
+        )}
+        {kind === "kayak" && (
+          <g className={active ? "object-chime" : "sm-bob"}>
+            <path
+              d="M10 180Q100 225 190 180Q100 160 10 180Z"
+              fill="#f08a3c"
+              stroke="#b95a22"
+              strokeWidth="5"
+            />
+            <path
+              d={active ? "M40 110L160 210" : "M30 150L170 165"}
+              stroke="#8a5a30"
+              strokeWidth="8"
+              strokeLinecap="round"
+            />
+            <path
+              d={active ? "M30 100l20 25-14 6Z" : "M20 140l14 22-12 2Z"}
+              fill="#f7d34d"
+            />
+          </g>
+        )}
       </svg>
       <span className="room-object-caption">{item.label}</span>
     </button>
