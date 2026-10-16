@@ -19,11 +19,15 @@ async function checkAccessibility(page: Page) {
     .disableRules(["target-size"])
     .analyze();
   expect(results.violations).toEqual([]);
-  // Rising balloons pass behind the top controls by design; every still target keeps its size.
+  // The stage clips rising balloons, but axe measures their unclipped boxes, so
+  // hide them while checking that every still control keeps its tap size.
+  const hide = await page.addStyleTag({
+    content: ".bp-balloon { visibility: hidden !important; }",
+  });
   const targets = await new AxeBuilder({ page })
     .withRules(["target-size"])
-    .exclude(".bp-balloon")
     .analyze();
+  await hide.evaluate((node) => node.remove());
   expect(targets.violations).toEqual([]);
 }
 
