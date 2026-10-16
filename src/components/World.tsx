@@ -1021,7 +1021,7 @@ export function World({
             <PetCompanion
               pet={{
                 ...player.pet,
-                color: (player.pet?.color || player.color) as any,
+                color: player.pet?.color || player.color,
                 accessory:
                   player.accessory !== "none"
                     ? player.accessory

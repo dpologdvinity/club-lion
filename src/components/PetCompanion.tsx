@@ -1,6 +1,8 @@
 import type { JSX } from "react";
 import type { PetState } from "../types/world.ts";
 import type { LionColor } from "../game.ts";
+
+const LION_COLORS: readonly LionColor[] = ["gold", "sand", "copper", "rose"];
 import { PET_PROFILES, restorePetSpecies } from "../utils/petSpecies.ts";
 import { PetPicture } from "./PetSpeciesArt.tsx";
 
@@ -18,11 +20,7 @@ export function PetCompanion({
 }): JSX.Element {
   const flip = heading === "left";
   const species = restorePetSpecies(pet.species);
-  const validColor: LionColor = ["gold", "sand", "copper", "rose"].includes(
-    pet.color,
-  )
-    ? (pet.color as LionColor)
-    : "gold";
+  const validColor = LION_COLORS.find((color) => color === pet.color) ?? "gold";
 
   return (
     <div

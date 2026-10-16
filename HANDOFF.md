@@ -33,6 +33,8 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 - Animal art, sounds, and touch dragging still need owner/real-iPad assessment. Playwright Chromium and WebKit do not replace real iPad Safari. BrowserStack was postponed.
 - The age-category / Toca Boca-style redesign requires brainstorming with the owner before implementation.
 
+- Cast debt: about 39 `as` casts remain in `src` (CLAUDE.md forbids them). Ten are copies of the `webkitAudioContext` lookup that `getAudioContextClass` in `src/utils/audioBus.ts` already owns; consolidate those first.
+
 ## Owner preferences and boundaries
 
 - Prioritize development speed; keep updates and tool output short. Integrate one branch at a time and avoid repeated exploration.
