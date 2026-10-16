@@ -543,7 +543,7 @@ function lipFinishMarkup(finish: LipFinish, p: string): string {
 
 function renderLips(makeup: ResolvedMakeup, p: string): string {
   // Overlined doll pout, scaled up around the mouth center
-  const tilt = ` transform="${makeup.preset.smirk ? "rotate(-5 60 58.8) " : ""}translate(60 59.2) scale(1.18 1.45) translate(-60 -59)"`;
+  const tilt = ` transform="${makeup.preset.smirk ? "rotate(-5 60 58.8) " : ""}translate(60 59.2) scale(1.08 1.3) translate(-60 -59)"`;
   return (
     `<g class="avatar-lips lip-${makeup.lipFinish}"${tilt}>` +
     `<path d="${LIP_LOWER}" fill="${makeup.lips}" />` +
