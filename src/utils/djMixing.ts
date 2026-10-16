@@ -1,3 +1,4 @@
+import { getSharedAudioBus, sfxOutput } from "./audioBus.ts";
 /**
  * VIP Penthouse Rooftop Lounge — Procedural Web Audio DJ Mixing Engine.
  * 100% Procedural synthesis using Web Audio API oscillators and noise buffers ($0 stack).
@@ -68,7 +69,7 @@ export class DJMixerEngine {
       this.filterNode.Q.setValueAtTime(3.5, this.ctx.currentTime);
 
       this.filterNode.connect(this.masterGain);
-      this.masterGain.connect(this.ctx.destination);
+      this.masterGain.connect(sfxOutput(this.ctx));
     } catch {
       // Safe fallback
     }
@@ -77,12 +78,8 @@ export class DJMixerEngine {
   private ensureAudioContext(): boolean {
     if (!this.ctx) {
       if (typeof window === "undefined") return false;
-      const AudioContextClass =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext })
-          .webkitAudioContext;
-      if (!AudioContextClass) return false;
-      this.ctx = new AudioContextClass();
+      this.ctx = getSharedAudioBus().getContext();
+      if (!this.ctx) return false;
     }
     if (this.ctx.state === "suspended") {
       this.ctx.resume().catch(() => {});

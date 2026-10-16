@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { getSharedAudioBus, sfxOutput } from "../utils/audioBus";
 import { ArrowRight, RotateCcw, Sparkles, Trophy } from "lucide-react";
 import { Dialog } from "./Dialog";
 import {
@@ -30,14 +31,6 @@ const JUDGMENT_CLASS: Record<Judgment, string> = {
 
 type Result = { score: number; combo: number };
 
-function getAudioContextClass(): typeof AudioContext | undefined {
-  return (
-    window.AudioContext ||
-    (window as unknown as { webkitAudioContext?: typeof AudioContext })
-      .webkitAudioContext
-  );
-}
-
 /** 808 kick: a pitch envelope sweeping from 150Hz down to 40Hz. */
 function playKick(ctx: AudioContext) {
   const osc = ctx.createOscillator();
@@ -48,7 +41,7 @@ function playKick(ctx: AudioContext) {
   gain.gain.setValueAtTime(0.9, ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(sfxOutput(ctx));
   osc.start();
   osc.stop(ctx.currentTime + 0.3);
 }
@@ -69,7 +62,7 @@ function playSnare(ctx: AudioContext) {
   noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
   noise.connect(filter);
   filter.connect(noiseGain);
-  noiseGain.connect(ctx.destination);
+  noiseGain.connect(sfxOutput(ctx));
 
   const body = ctx.createOscillator();
   const bodyGain = ctx.createGain();
@@ -78,7 +71,7 @@ function playSnare(ctx: AudioContext) {
   bodyGain.gain.setValueAtTime(0.4, ctx.currentTime);
   bodyGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
   body.connect(bodyGain);
-  bodyGain.connect(ctx.destination);
+  bodyGain.connect(sfxOutput(ctx));
 
   noise.start();
   body.start();
@@ -101,7 +94,7 @@ function playHiHat(ctx: AudioContext) {
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
   noise.connect(filter);
   filter.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(sfxOutput(ctx));
   noise.start();
 }
 
@@ -121,7 +114,7 @@ function playBassDrop(ctx: AudioContext) {
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
   osc.connect(filter);
   filter.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(sfxOutput(ctx));
   osc.start();
   osc.stop(ctx.currentTime + 0.45);
 }
@@ -165,10 +158,8 @@ export function DJBeatDrop({
 
   const audioContext = () => {
     try {
-      if (!audioRef.current) {
-        const AudioContextClass = getAudioContextClass();
-        if (AudioContextClass) audioRef.current = new AudioContextClass();
-      }
+      if (!audioRef.current)
+        audioRef.current = getSharedAudioBus().getContext();
       if (audioRef.current?.state === "suspended") {
         void audioRef.current.resume().catch(() => {});
       }
@@ -177,12 +168,6 @@ export function DJBeatDrop({
       return null;
     }
   };
-
-  useEffect(() => {
-    return () => {
-      audioRef.current?.close().catch(() => {});
-    };
-  }, []);
 
   useEffect(() => {
     if (playing) padRef.current?.focus();

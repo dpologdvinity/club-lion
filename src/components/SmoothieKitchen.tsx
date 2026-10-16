@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { getSharedAudioBus, sfxOutput } from "../utils/audioBus";
 import { Martini, RotateCcw, Star } from "lucide-react";
 import { Dialog } from "./Dialog";
 import {
@@ -104,7 +105,6 @@ export function SmoothieKitchenContent({
   const [blending, setBlending] = useState(false);
   const [result, setResult] = useState<SmoothieScore | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
   const stopBuzzRef = useRef<(() => void) | null>(null);
   const holdFrameRef = useRef(0);
   const cancelledRef = useRef(false);
@@ -122,7 +122,6 @@ export function SmoothieKitchenContent({
       cancelledRef.current = true;
       cancelAnimationFrame(holdFrameRef.current);
       stopBuzzRef.current?.();
-      void audioCtxRef.current?.close().catch(() => {});
     };
   }, []);
 
@@ -147,16 +146,11 @@ export function SmoothieKitchenContent({
     ).matches;
 
     try {
-      const AudioContextClass =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext?: typeof AudioContext })
-          .webkitAudioContext;
-      if (AudioContextClass) {
-        const ctx = audioCtxRef.current ?? new AudioContextClass();
-        audioCtxRef.current = ctx;
+      const ctx = getSharedAudioBus().getContext();
+      if (ctx) {
         void ctx.resume().catch(() => {});
         const gainNode = ctx.createGain();
-        gainNode.connect(ctx.destination);
+        gainNode.connect(sfxOutput(ctx));
         stopBuzzRef.current = playBlenderBuzz(ctx, gainNode);
       }
     } catch {

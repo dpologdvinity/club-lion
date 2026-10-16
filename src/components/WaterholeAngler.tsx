@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { getSharedAudioBus, sfxOutput } from "../utils/audioBus";
 import { Fish, RotateCcw, Waves, X } from "lucide-react";
 import {
   getRandomCatch,
@@ -25,11 +26,7 @@ const RARITY_LABEL: Record<FishRarity, string> = {
 
 function createAudioContext(): AudioContext | null {
   try {
-    const AudioContextClass =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext?: typeof AudioContext })
-        .webkitAudioContext;
-    return AudioContextClass ? new AudioContextClass() : null;
+    return getSharedAudioBus().getContext();
   } catch {
     return null;
   }
@@ -50,7 +47,7 @@ function playCastWhoosh(ctx: AudioContext) {
   gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.4);
   noise.connect(filter);
   filter.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(sfxOutput(ctx));
   noise.start();
   noise.stop(ctx.currentTime + 0.4);
 }
@@ -64,7 +61,7 @@ function playBobberPlop(ctx: AudioContext) {
   gain.gain.setValueAtTime(0.25, ctx.currentTime);
   gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.25);
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(sfxOutput(ctx));
   osc.start();
   osc.stop(ctx.currentTime + 0.25);
 }
@@ -77,7 +74,7 @@ function playReelClick(ctx: AudioContext) {
   gain.gain.setValueAtTime(0.08, ctx.currentTime);
   gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.05);
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(sfxOutput(ctx));
   osc.start();
   osc.stop(ctx.currentTime + 0.05);
 }
@@ -92,7 +89,7 @@ function playTriumphFanfare(ctx: AudioContext) {
     gain.gain.setValueAtTime(0.2, ctx.currentTime + index * 0.1);
     gain.gain.linearRampToValueAtTime(0, ctx.currentTime + index * 0.1 + 0.3);
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(sfxOutput(ctx));
     osc.start(ctx.currentTime + index * 0.1);
     osc.stop(ctx.currentTime + index * 0.1 + 0.3);
   });
@@ -138,7 +135,6 @@ export function WaterholeAngler({
       document.body.style.overflow = "";
       clearTimeout(timeoutRef.current);
       cancelAnimationFrame(frameRef.current);
-      void audioCtxRef.current?.close().catch(() => {});
       const target = returnFocus.current?.isConnected
         ? returnFocus.current
         : document.querySelector<HTMLElement>(".world-ground");

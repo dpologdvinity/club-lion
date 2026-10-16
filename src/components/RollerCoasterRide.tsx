@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { getSharedAudioBus, sfxOutput } from "../utils/audioBus";
 import { Avatar } from "./Avatar";
 import { PetCompanion } from "./PetCompanion";
 import {
@@ -52,11 +53,10 @@ function startRideAudio(): RideAudio | null {
         /* Already disconnected. */
       }
     }
-    if (context && context.state !== "closed")
-      void context.close().catch(() => {});
   };
   try {
-    context = new AudioContext();
+    context = getSharedAudioBus().getContext() ?? undefined;
+    if (!context) return null;
     const buffer = context.createBuffer(
       1,
       context.sampleRate,
@@ -80,8 +80,8 @@ function startRideAudio(): RideAudio | null {
     const rattleGain = context.createGain();
     rattleGain.gain.value = 0;
     nodes.push(wind, filter, windGain, rattle, rattleGain);
-    wind.connect(filter).connect(windGain).connect(context.destination);
-    rattle.connect(rattleGain).connect(context.destination);
+    wind.connect(filter).connect(windGain).connect(sfxOutput(context));
+    rattle.connect(rattleGain).connect(sfxOutput(context));
     wind.start();
     rattle.start();
     void context.resume().catch(stop);

@@ -194,3 +194,14 @@ export function resetSharedAudioBusForTests(): void {
   sharedBus?.dispose();
   sharedBus = null;
 }
+
+/**
+ * Where a sound on `ctx` should play: the shared SFX bus when `ctx` is the
+ * shared context (so mute and volume apply), else the context's own output.
+ */
+export function sfxOutput(ctx: AudioContext): AudioNode {
+  const bus = getSharedAudioBus();
+  return (
+    (bus.getContext() === ctx && bus.getSfxDestination()) || ctx.destination
+  );
+}

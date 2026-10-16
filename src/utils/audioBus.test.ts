@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createAudioBus } from "./audioBus.ts";
+import { createAudioBus, sfxOutput } from "./audioBus.ts";
 
 function makeFakeAudioContext(): AudioContext {
   const node = () => ({
@@ -116,4 +116,10 @@ test("dispose detaches nodes and is safe to call multiple times", () => {
   });
   assert.equal(bus.getMusicDestination(), null);
   assert.equal(bus.getSfxDestination(), null);
+});
+
+test("sfxOutput keeps a foreign context on its own speakers", () => {
+  const destination = { id: "own" };
+  const ctx = Object.create(null, { destination: { value: destination } });
+  assert.equal(sfxOutput(ctx), destination);
 });

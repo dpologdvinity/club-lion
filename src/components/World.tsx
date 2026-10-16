@@ -1,4 +1,5 @@
 import { RoomObject } from "./RoomObject.tsx";
+import { getSharedAudioBus } from "../utils/audioBus";
 import { speak } from "../utils/speech";
 import {
   useEffect,
@@ -233,7 +234,6 @@ export function World({
   } | null>(null);
   // Room music is session-wide, so the speaker state survives travel.
   const [sound, setSound] = useState(isRoomMusicOn);
-  const audio = useRef<AudioContext | null>(null);
   useEffect(() => {
     if (!sound || manifest?.ambientAudioPreset !== "ocean-surf") return;
     playOceanSurf();
@@ -274,7 +274,6 @@ export function World({
   }, [burst]);
   useEffect(
     () => () => {
-      void audio.current?.close().catch(() => {});
       if (walkTimer.current) window.clearTimeout(walkTimer.current);
     },
     [],
@@ -329,8 +328,10 @@ export function World({
   const chime = () => {
     if (!sound) return;
     try {
-      const context = audio.current ?? new AudioContext();
-      audio.current = context;
+      const bus = getSharedAudioBus();
+      const context = bus.getContext();
+      const destination = bus.getSfxDestination();
+      if (!context || !destination) return;
       void context.resume().catch(() => {});
       const oscillator = context.createOscillator();
       const gain = context.createGain();
@@ -343,7 +344,7 @@ export function World({
       gain.gain.setValueAtTime(0.055, context.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.2);
       oscillator.connect(gain);
-      gain.connect(context.destination);
+      gain.connect(destination);
       oscillator.start();
       oscillator.stop(context.currentTime + 0.2);
     } catch {
