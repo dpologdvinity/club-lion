@@ -471,6 +471,88 @@ export function RoomObject({
             />
           </>
         )}
+        {kind === "sandcastle" && (
+          <>
+            <path
+              d="M15 235Q100 215 185 235V150H15Z"
+              fill="#e8c88a"
+              stroke="#b98f52"
+              strokeWidth="5"
+            />
+            <path
+              d={
+                active
+                  ? "M40 160V70h30V40h20V70h20V30h20V70h20V160Z"
+                  : "M45 160V105h28V85h54V105h28V160Z"
+              }
+              fill="#f2d9a3"
+              stroke="#b98f52"
+              strokeWidth="5"
+            />
+            <path d="M90 160v-30q10-18 20 0v30" fill="#b98f52" />
+            {active && (
+              <path
+                className="sm-sway"
+                d="M100 40V5l36 14Z"
+                fill="#ee7a9b"
+                stroke="#b24d6c"
+                strokeWidth="4"
+              />
+            )}
+          </>
+        )}
+        {kind === "shell" && (
+          <>
+            <path
+              d="M20 215Q100 190 180 215Q100 245 20 215Z"
+              fill="#f4e3bd"
+              stroke="#c9a96b"
+              strokeWidth="5"
+            />
+            <path
+              d={
+                active
+                  ? "M30 190Q100 20 170 190Q100 215 30 190Z"
+                  : "M30 190Q100 110 170 190Q100 215 30 190Z"
+              }
+              fill="#f7b6c6"
+              stroke="#c9738c"
+              strokeWidth="5"
+            />
+            <path
+              d="M100 195L60 160M100 195V140M100 195L140 160"
+              stroke="#c9738c"
+              strokeWidth="4"
+              fill="none"
+            />
+            {active && (
+              <circle
+                className="object-chime"
+                cx="100"
+                cy="180"
+                r="16"
+                fill="#fffaf0"
+                stroke="#d8c9a8"
+                strokeWidth="4"
+              />
+            )}
+          </>
+        )}
+        {kind === "beachball" && (
+          <g className={active ? "object-chime" : "sm-bob"}>
+            <circle
+              cx="100"
+              cy="150"
+              r="70"
+              fill="#fff"
+              stroke="#a8a8c0"
+              strokeWidth="5"
+            />
+            <path d="M100 80Q60 150 100 220Q70 150 100 80Z" fill="#ee7a9b" />
+            <path d="M100 80Q140 150 100 220Q130 150 100 80Z" fill="#6ec3e8" />
+            <path d="M30 150Q100 120 170 150Q100 175 30 150Z" fill="#f7d34d" />
+          </g>
+        )}
       </svg>
       <span className="room-object-caption">{item.label}</span>
     </button>

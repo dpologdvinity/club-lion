@@ -22,6 +22,13 @@ for (const room of [
     objects: 5,
   },
   {
+    name: "Sunset Beach",
+    action: "Build a sandcastle",
+    kind: "sandcastle",
+    objects: 3,
+    exit: "Downtown Plaza",
+  },
+  {
     name: "Your cozy den",
     action: "Switch the reading lamp",
     kind: "lamp",
@@ -67,10 +74,9 @@ for (const room of [
         .violations,
     ).toEqual([]);
     await page.screenshot({ path: testInfo.outputPath(`${room.kind}.png`) });
-    await tapRoomPath(page, "Savanna Square");
-    await expect(page.locator(".world-location h2")).toHaveText(
-      "Savanna Square",
-    );
+    const exit = "exit" in room ? room.exit : "Savanna Square";
+    await tapRoomPath(page, exit);
+    await expect(page.locator(".world-location h2")).toHaveText(exit);
     expect(errors).toEqual([]);
   });
 }

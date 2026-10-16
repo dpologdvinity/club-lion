@@ -54,7 +54,10 @@ export type RoomObjectKind =
   | "lamp"
   | "books"
   | "plant"
-  | "cushion";
+  | "cushion"
+  | "sandcastle"
+  | "shell"
+  | "beachball";
 
 export type RoomManifest = {
   id: string;

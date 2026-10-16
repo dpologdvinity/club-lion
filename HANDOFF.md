@@ -21,7 +21,7 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 
 ## Living neighborhood rooms
 
-- Water, café, arcade and den now use independent illustrated SVG scenery, CSS ambient motion and manifest-owned stage objects. Visible actions include frog hops, tea pouring, oven pastries, surprise balls, light colors, hearth/lamp switches and storybook pages. Saved den decorations, greetings, games, shop and leaderboard remain connected.
+- Sunset Beach adds a sandcastle, seashell and beach ball. Water, café, arcade and den now use independent illustrated SVG scenery, CSS ambient motion and manifest-owned stage objects. Visible actions include frog hops, tea pouring, oven pastries, surprise balls, light colors, hearth/lamp switches and storybook pages. Saved den decorations, greetings, games, shop and leaderboard remain connected.
 - Add future objects, neighbors and destinations through each room manifest; add new object drawings in `RoomObject.tsx` only when existing kinds do not fit. `DESIGN.md` documents the extension path. Room reactions walk the doll/camera toward their object so phone users see the result.
 - Targeted browser coverage lives in `tests/living-rooms.spec.ts`; uses GitHub Actions. Local room verification passes 791 unit tests plus typecheck, format and build. Check the branch's latest GitHub run before claiming browser success.
 
