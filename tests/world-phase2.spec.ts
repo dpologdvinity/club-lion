@@ -314,11 +314,7 @@ test("direct café orders pay once and survive reload, with one modal and opener
   await page.goto("/");
   await page.clock.pauseAt(new Date("2026-10-03T13:00:00Z"));
   await travel(page, "Canopy café");
-  const opener = page.getByRole("button", {
-    name: "Blend smoothies",
-    exact: true,
-  });
-  await opener.click();
+  const opener = await tapRoomPath(page, "Blend smoothies", true);
   await expect(page.locator("dialog[open]")).toHaveCount(1);
   const orderText = await page.locator("#smoothie-order").innerText();
   const order = RECIPES.find((r) => orderText.includes(r.name))!;
@@ -467,9 +463,7 @@ test("panoramas, dance floor and activity dialogs retain accessibility and reduc
   ).toEqual([]);
   await page.keyboard.press("Escape");
   await travel(page, "Canopy café");
-  await page
-    .getByRole("button", { name: "Blend smoothies", exact: true })
-    .click();
+  await tapRoomPath(page, "Blend smoothies", true);
   expect(
     (
       await new AxeBuilder({ page })
