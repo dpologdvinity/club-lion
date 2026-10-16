@@ -10851,9 +10851,10 @@ textarea {
 .bp-balloon {
   position: absolute;
   top: 100%;
-  width: 72px;
-  height: 112px;
-  margin-left: -36px;
+  /* Narrower than the 19% lane spacing, so balloons in neighbouring lanes never overlap. */
+  width: min(72px, 17%);
+  aspect-ratio: 9 / 14;
+  margin-left: calc(min(72px, 17%) / -2);
   padding: 0;
   border: 0;
   background: transparent;
@@ -11059,8 +11060,7 @@ textarea {
     min-height: 64px;
   }
   .bp-balloon {
-    width: 64px;
-    height: 100px;
-    margin-left: -32px;
+    width: min(64px, 17%);
+    margin-left: calc(min(64px, 17%) / -2);
   }
 }

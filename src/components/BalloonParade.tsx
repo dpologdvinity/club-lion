@@ -54,6 +54,9 @@ type Pop = {
   surprise: Surprise;
 };
 
+/** Lanes in spawn order: back-to-back balloons rise two lanes apart, so tap targets never overlap. */
+const LANES = [12, 50, 88, 31, 69];
+
 function newBalloon(
   id: number,
   mode: Mode,
@@ -63,8 +66,8 @@ function newBalloon(
   return {
     id,
     color: spawnColor(mode, progress),
-    left: 8 + Math.random() * 84,
-    duration: 9 + Math.random() * 4,
+    left: LANES[id % LANES.length],
+    duration: 10 + Math.random(),
     offset,
     surprise: pickSurprise(),
     wiggle: 0,
