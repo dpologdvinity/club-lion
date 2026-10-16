@@ -1,4 +1,5 @@
 import { RoomObject } from "./RoomObject.tsx";
+import { speak } from "../utils/speech";
 import {
   useEffect,
   useRef,
@@ -473,6 +474,7 @@ export function World({
     onGreet(id);
     setBubble({ id, text: neighbor.greeting });
     chime();
+    speak(neighbor.greeting);
   };
   const visibleNeighbors = manifest
     ? (manifest.neighbors ?? []).flatMap((at) => {
@@ -945,7 +947,9 @@ export function World({
             {bubble?.id === n.id && (
               <span className="speech-bubble">{bubble.text}</span>
             )}
-            <Lion color={n.color} accessory={n.accessory} />
+            <span className="neighbor-idle">
+              <Lion color={n.color} accessory={n.accessory} />
+            </span>
             <span className="character-name">
               {n.name}
               <span className="greet-indicator"> ♡</span>

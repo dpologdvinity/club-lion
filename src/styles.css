@@ -760,6 +760,24 @@ svg {
 .world-character.neighbor:not(:disabled):active {
   transform: translate(-50%, -100%) translateY(1px);
 }
+/* Neighbors breathe gently so the square feels alive. */
+.neighbor-idle {
+  display: block;
+  animation: neighbor-idle 2.8s ease-in-out infinite alternate;
+}
+.world-character.neighbor:nth-of-type(2n) .neighbor-idle {
+  animation-delay: -1.4s;
+}
+@keyframes neighbor-idle {
+  to {
+    transform: translateY(-4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .neighbor-idle {
+    animation: none;
+  }
+}
 .world-character .lion {
   width: 67px;
   height: 74px;

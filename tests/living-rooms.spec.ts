@@ -151,7 +151,7 @@ for (const room of [
   });
 }
 
-test("room reactions are read aloud for children who cannot read yet", async ({
+test("greetings and room reactions are read aloud for children who cannot read yet", async ({
   page,
 }) => {
   await page.addInitScript(() => {
@@ -167,6 +167,10 @@ test("room reactions are read aloud for children who cannot read yet", async ({
     });
   });
   await page.goto("/");
+  await page.getByRole("button", { name: "Say hello to Milo" }).click();
+  await expect
+    .poll(() => page.evaluate(() => Reflect.get(window, "spoken").length))
+    .toBe(1);
   await page.getByRole("button", { name: "Map", exact: true }).click();
   await page
     .getByRole("dialog")
