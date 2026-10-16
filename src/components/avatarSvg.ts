@@ -479,7 +479,7 @@ export function generateAvatarLayersString(
   const p = sanitizeIdPrefix(idPrefix ?? `av${hashLook(look)}`);
 
   const layers = [
-    `<defs>${makeupDefs(p, look)}${hairDefs(p)}</defs>`,
+    `<defs>${makeupDefs(p, look)}${hairDefs(p, look.hairColor)}</defs>`,
     renderLayer0ShadowAndBoard(look, act),
     rig("head", renderLayer1HairBack(look, p)),
     renderLayer2BodyBase(look, act),

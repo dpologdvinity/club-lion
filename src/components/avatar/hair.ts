@@ -31,8 +31,8 @@ function glints(
   const left = paths
     .map(
       (d) =>
-        `<path d="${d}" stroke="rgba(255,255,255,0.4)" stroke-width="2.4" stroke-linecap="round" fill="none" />` +
-        `<path d="${d}" stroke="${core}" stroke-width="0.9" stroke-linecap="round" fill="none" />`,
+        `<path d="${d}" stroke="rgba(255,255,255,0.32)" stroke-width="1.8" stroke-linecap="round" fill="none" />` +
+        `<path d="${d}" stroke="${core}" stroke-width="0.55" stroke-linecap="round" fill="none" />`,
     )
     .join("");
   return `<g class="hair-glints">${left}${mirrored ? `<g ${MIRROR}>${left}</g>` : ""}</g>`;
@@ -43,8 +43,8 @@ function shineRibbon(p: string, band: string, streak: string): string {
   return (
     `<g class="hair-highlight">` +
     `<path d="${band}" fill="url(#${p}-shine)" />` +
-    `<path d="${streak}" stroke="rgba(255,255,255,0.45)" stroke-width="2.8" stroke-linecap="round" fill="none" />` +
-    `<path d="${streak}" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" fill="none" />` +
+    `<path d="${streak}" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-linecap="round" fill="none" />` +
+    `<path d="${streak}" stroke="#fff4e4" stroke-width="0.65" stroke-linecap="round" fill="none" />` +
     `</g>`
   );
 }
@@ -224,14 +224,15 @@ function braidStroke(d: string, c: string, width = 2.6): string {
 
 /** Braids coiled into a round bun on the crown. */
 function braidedBun(c: string): string {
-  const ring = (r: number) =>
-    `M${n(60 - r)} 1 a${r} ${r} 0 1 0 ${n(r * 2)} 0 a${r} ${r} 0 1 0 ${n(-r * 2)} 0`;
+  const coils = [
+    "M48 5 C42 -2 47 -10 58 -9 C72 -10 78 -2 70 5 C64 10 52 9 48 5",
+    "M49 -3 C53 -12 69 -13 73 -4 C76 3 64 7 53 3",
+    "M50 8 C54 1 65 -3 72 -1",
+    "M49 -5 C55 -1 64 3 70 7",
+  ];
   return (
-    `<circle cx="60" cy="1" r="11.6" fill="${c}" stroke="${INK}" stroke-width="1.1" />` +
-    braidStroke(ring(9.8), c, 3) +
-    braidStroke(ring(5.8), c, 3) +
-    `<circle cx="60" cy="1" r="2.4" fill="${c}" stroke="${INK}" stroke-width="0.8" />` +
-    `<path d="M53 -5 Q57 -9.4 63 -8.6" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" stroke-linecap="round" fill="none" />`
+    `<path d="M46 6 C40 -3 48 -13 60 -13 C73 -13 81 -4 74 6 Q62 15 46 6Z" fill="${c}" stroke="${INK}" stroke-width="1" />` +
+    coils.map((d) => braidStroke(d, c, 3.5)).join("")
   );
 }
 
@@ -291,6 +292,16 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
         back:
           `<path d="${mass}" fill="${c}" />` +
           shade(mass) +
+          `<g fill="none" stroke-linecap="round">${[
+            "M35 32 C24 45 40 52 29 62 C21 68 29 74 34 70",
+            "M30 65 C42 78 21 85 28 95 Q32 101 37 95",
+            "M37 87 C44 99 29 106 36 113",
+          ]
+            .map(
+              (d) =>
+                `<path d="${d}" stroke="rgba(255,226,185,0.32)" stroke-width="3" /><path d="${d}" ${MIRROR} stroke="rgba(255,226,185,0.32)" stroke-width="3" />`,
+            )
+            .join("")}</g>` +
           strands([
             "M26 56 C22 64 28 72 26 80 C24 88 21 94 24 102 C25 106 27 108 29 112",
             "M94 56 C98 64 92 72 94 80 C96 88 99 94 96 102 C95 106 93 108 91 112",
@@ -589,7 +600,7 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
     }
     case "half_up": {
       const mass =
-        "M60 7 C82 7 95 21 94.4 42 C94 56 97 67 101.4 76 C97.4 80.4 91 79.6 87.6 75.4 C86.6 80 81.6 82 77.4 80.4 L42.6 80.4 C38.4 82 33.4 80 32.4 75.4 C29 79.6 22.6 80.4 18.6 76 C23 67 26 56 25.6 42 C25 21 38 7 60 7 Z";
+        "M60 1 C86 -5 100 14 95 39 C94 55 99 65 102 76 Q105 86 94 91 C104 101 96 113 85 116 Q91 106 84 99 Q80 113 70 110 L48 110 Q36 117 28 109 Q39 106 32 96 Q19 99 18 88 Q28 90 24 79 C18 61 25 50 25 37 C23 15 38 0 60 1 Z";
       const cap =
         "M31.6 48 C29.4 23 42.4 9.4 60 9.4 C77.6 9.4 90.6 23 88.4 48 C87.4 40 85.4 34 82.4 30 C76 24 68 21.6 60 21.6 C52 21.6 44 24 37.6 30 C34.6 34 32.6 40 31.6 48 Z";
       const flip =
@@ -599,6 +610,16 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
         back:
           `<path d="${mass}" fill="${c}" />` +
           shade(mass) +
+          glints(
+            [
+              "M29 36 C23 56 35 66 28 80 C22 91 38 96 34 106",
+              "M91 36 C98 55 86 68 95 80 C102 92 87 97 89 108",
+              "M38 61 C32 78 45 91 39 104",
+              "M82 61 C88 78 75 91 81 104",
+            ],
+            false,
+            "rgba(255,226,185,0.38)",
+          ) +
           strands(["M27 50 C26 62 25 70 21 76", "M93 50 C94 62 95 70 99 76"]) +
           glints(["M25.4 50 C25 58 24 66 21.6 72"]),
         front:
@@ -1053,6 +1074,12 @@ function hairArt(style: HairStyle, c: string, p: string): HairArt {
             "M32 50 C31 62 30 74 27 84",
             "M88 50 C89 62 90 74 93 84",
           ]) +
+          `<defs><clipPath id="${p}-salon-hair"><path d="${cap}" /><path d="${flipLeft}" /><path d="${flipRight}" /></clipPath></defs>` +
+          `<g class="hair-salon-ribbons" clip-path="url(#${p}-salon-hair)" fill="none" stroke-linecap="round">` +
+          `<path d="M52 12 C36 13 25 28 28 44 C30 56 26 66 22 72 C17 78 13 78 10 76 M55 8 C38 4 19 19 22 40 M28 64 C25 80 20 88 13 88" stroke="#fff0cb" stroke-width="3.2" opacity="0.45" />` +
+          `<path d="M62 10 C76 10 91 21 92 38 C91 52 94 61 101 64 C106 66 110 63 112 60 M88 65 C88 78 96 85 105 82" stroke="#fff0cb" stroke-width="3.2" opacity="0.45" />` +
+          `<path d="M52 12 C36 13 25 28 28 44 M62 10 C76 10 91 21 92 38" stroke="#fff5df" stroke-width="1.1" opacity="0.65" />` +
+          `</g>` +
           glints(["M30.4 50 C29.8 58 29.4 66 28 74"]) +
           shineRibbon(
             p,
@@ -1092,7 +1119,10 @@ export function renderLayer1HairBack(look: AvatarLook, p: string): string {
     `<g class="avatar-hair-back hair-${cls}">` +
     // Puffed out past the front pieces: long cuts get big doll volume
     `<g transform="translate(60 26) scale(${BIG_VOLUME.has(style) ? "1.1 1.05" : "1.04 1.02"}) translate(-60 -26)">` +
-    inked(hairArt(style, hairColor, p).back, 1.1) +
+    inked(hairArt(style, hairColor, p).back, 1.1).replaceAll(
+      `fill="${hairColor}"`,
+      `fill="url(#${p}-hair-tone)"`,
+    ) +
     `</g>` +
     `</g>`
   );
@@ -1209,7 +1239,10 @@ export function renderLayer6HairFront(look: AvatarLook, p: string): string {
   const cls = style.replace(/_/g, "-");
   return (
     `<g class="avatar-hair-front hair-${cls}">` +
-    inked(hairArt(style, hairColor, p).front, 1.1) +
+    inked(hairArt(style, hairColor, p).front, 1.1).replaceAll(
+      `fill="${hairColor}"`,
+      `fill="url(#${p}-hair-tone)"`,
+    ) +
     renderHairStreak(style, look.hairStreak) +
     inked(renderBangs(look, hairColor), 1.1) +
     renderHairClips(look) +
@@ -1280,8 +1313,17 @@ export function renderHairClips(look: AvatarLook): string {
 }
 
 /** Shared gradient for glossy hair shine ribbons. */
-export function hairDefs(p: string): string {
+export function hairDefs(p: string, color = "#4a3728"): string {
   return (
+    `<linearGradient id="${p}-hair-tone" x1="0" y1="0" x2="1" y2="0">` +
+    `<stop offset="0" stop-color="#100807" />` +
+    `<stop offset="0.18" stop-color="${escapeXml(color)}" />` +
+    `<stop offset="0.36" stop-color="${escapeXml(color)}" />` +
+    `<stop offset="0.5" stop-color="#100807" />` +
+    `<stop offset="0.7" stop-color="${escapeXml(color)}" />` +
+    `<stop offset="0.88" stop-color="${escapeXml(color)}" />` +
+    `<stop offset="1" stop-color="#100807" />` +
+    `</linearGradient>` +
     `<linearGradient id="${p}-shine" x1="0" y1="0" x2="1" y2="0">` +
     `<stop offset="0" stop-color="#ffffff" stop-opacity="0" />` +
     `<stop offset="0.5" stop-color="#ffffff" stop-opacity="0.75" />` +

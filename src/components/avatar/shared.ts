@@ -36,7 +36,7 @@ export const PORTRAIT_VIEWBOX = "6 -16 108 108";
 
 /** Doll face outline in head-art coordinates (see {@link RIG}). */
 export const DOLL_HEAD_PATH =
-  "M60 13 C77 13 87.6 23 87.8 37.6 C88 45 87.4 50.4 84.6 55 C80 61.8 70.4 67.4 62.6 69 C61.4 69.4 58.6 69.4 57.4 69 C49.6 67.4 40 61.8 35.4 55 C32.6 50.4 32 45 32.2 37.6 C32.4 23 43 13 60 13 Z";
+  "M60 13 C76 13 87.4 23 87.8 37.6 C88.2 45 85.4 51.6 81 56.6 C75.2 63 67.2 69 60 69 C52.8 69 44.8 63 39 56.6 C34.6 51.6 31.8 45 32.2 37.6 C32.6 23 44 13 60 13 Z";
 
 /**
  * Head, torso, and leg art is drawn on a shared 120×160 layout grid and

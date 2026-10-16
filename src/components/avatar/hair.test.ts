@@ -61,7 +61,8 @@ test("every hairstyle draws distinct artwork", () => {
 test("hair color fills each style", () => {
   for (const { id } of HAIR_STYLE_OPTIONS) {
     const { back, front } = render({ hairId: id, hairColor: "#123abc" });
-    assert.ok((back + front).includes('fill="#123abc"'), id);
+    assert.ok((back + front).includes('fill="url(#t-hair-tone)"'), id);
+    assert.ok(hairDefs("t", "#123abc").includes('stop-color="#123abc"'));
   }
 });
 
@@ -112,7 +113,7 @@ test("every hairstyle mass carries the doll ink outline", () => {
   for (const { id } of HAIR_STYLE_OPTIONS) {
     const { back, front } = render({ hairId: id, hairColor: "#4a3728" });
     assert.ok(
-      `${back}${front}`.includes(`fill="#4a3728" stroke="#2a1610"`),
+      `${back}${front}`.includes(`fill="url(#t-hair-tone)" stroke="#2a1610"`),
       `${id} outlined`,
     );
   }

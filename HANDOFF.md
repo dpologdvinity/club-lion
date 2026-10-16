@@ -21,6 +21,7 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 
 ## Remaining follow-ups
 
+- Reference doll refinement: tapered face, lifted eyes with finer liner, softer skin highlights, selected-color hair gradients, longer half-up layers, cascading wave highlights, and woven topknot. Existing saves and wardrobe options preserved. Visual resemblance still needs owner feedback.
 - Doll accessory head transforms already share `RIG.head` / `RIG.headBoost`, with regression coverage in `avatarSvg.test.ts`. Visual resemblance to `gallery/avatars/` still needs owner feedback.
 - Registry follow-up: arcade cards, progress labels, and derived game IDs are in `src/games/catalog.ts`. Room manifests own hotspot labels, icons, and typed game launch IDs; adding these no longer needs World UI tables. Automatic test discovery removes test-list conflicts. Stamp metadata is now separate in `src/stamps/catalog.ts`; unlock evaluation and compatible exports remain in `src/utils/stampDefinitions.ts`.
 - Animal art, sounds, and touch dragging still need owner/real-iPad assessment. Playwright Chromium and WebKit do not replace real iPad Safari. BrowserStack was postponed.
