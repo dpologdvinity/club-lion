@@ -837,6 +837,110 @@ export function RoomObject({
             </g>
           </>
         )}
+        {kind === "balloons" && (
+          <g className={active ? "object-chime" : "sm-bob"}>
+            {[
+              { x: 60, fill: "#ee7a9b" },
+              { x: 100, fill: "#6ec3e8" },
+              { x: 140, fill: "#f7d34d" },
+            ].map(({ x, fill }, i) => (
+              <g key={x}>
+                <path
+                  d={`M${x} ${active ? 50 + i * 10 : 90 + i * 8}V235`}
+                  stroke="#8a7a8a"
+                  strokeWidth="3"
+                  fill="none"
+                />
+                <ellipse
+                  cx={x}
+                  cy={active ? 40 + i * 10 : 80 + i * 8}
+                  rx="30"
+                  ry="38"
+                  fill={fill}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                />
+              </g>
+            ))}
+          </g>
+        )}
+        {kind === "fishing" && (
+          <>
+            <path
+              d="M30 235L150 40"
+              stroke="#8a5a30"
+              strokeWidth="10"
+              strokeLinecap="round"
+            />
+            <path
+              d={active ? "M150 40V185" : "M150 40V140"}
+              stroke="#6a6a7a"
+              strokeWidth="3"
+              fill="none"
+            />
+            {active ? (
+              <g className="object-chime">
+                <path
+                  d="M120 195Q150 170 180 195Q150 220 120 195Z"
+                  fill="#f08a3c"
+                  stroke="#c24f1e"
+                  strokeWidth="4"
+                />
+                <path d="M120 195L100 180V210Z" fill="#f08a3c" />
+              </g>
+            ) : (
+              <circle cx="150" cy="140" r="8" fill="#e5546e" />
+            )}
+          </>
+        )}
+        {kind === "seagull" && (
+          <g className={active ? "object-chime" : "sm-bob"}>
+            <path
+              d={
+                active
+                  ? "M20 70Q60 20 100 110Q140 20 180 70Q140 90 100 150Q60 90 20 70Z"
+                  : "M30 120Q65 90 100 135Q135 90 170 120Q135 135 100 165Q65 135 30 120Z"
+              }
+              fill="#fff"
+              stroke="#8a9ab0"
+              strokeWidth="5"
+            />
+            <circle cx="100" cy="135" r="6" fill="#2e2e48" />
+            <path d="M100 145L125 152L100 158Z" fill="#f7a53c" />
+            <path
+              d="M85 175V215M115 175V215"
+              stroke="#f7a53c"
+              strokeWidth="5"
+            />
+          </g>
+        )}
+        {kind === "flag" && (
+          <>
+            <path
+              d="M45 235V20"
+              stroke="#6a6a7a"
+              strokeWidth="9"
+              strokeLinecap="round"
+            />
+            <g className={active ? "object-chime" : "sm-sway"}>
+              <path
+                d={
+                  active
+                    ? "M52 28Q100 5 150 28Q175 40 190 28V108Q175 120 150 108Q100 85 52 108Z"
+                    : "M52 28Q100 40 150 28V108Q100 120 52 108Z"
+                }
+                fill="#fff"
+                stroke="#2e2e48"
+                strokeWidth="5"
+              />
+              <path
+                d="M52 28H150V58H52ZM52 83H150V108H52Z"
+                fill="#2e2e48"
+                fillOpacity="0.85"
+              />
+            </g>
+          </>
+        )}
       </svg>
       <span className="room-object-caption">{item.label}</span>
     </button>

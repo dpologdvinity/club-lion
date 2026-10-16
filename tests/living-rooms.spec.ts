@@ -64,6 +64,27 @@ for (const room of [
     exit: "Wonder Park Entrance",
   },
   {
+    name: "Wonder Park Entrance",
+    action: "Float the balloons",
+    kind: "balloons",
+    objects: 1,
+    exit: "Carnival Midway",
+  },
+  {
+    name: "Coastal Pier & Boardwalk",
+    action: "Cast the fishing rod",
+    kind: "fishing",
+    objects: 2,
+    exit: "Sunset Beach",
+  },
+  {
+    name: "Lion Speedway",
+    action: "Wave the checkered flag",
+    kind: "flag",
+    objects: 1,
+    exit: "Downtown Plaza",
+  },
+  {
     name: "Your cozy den",
     action: "Switch the reading lamp",
     kind: "lamp",

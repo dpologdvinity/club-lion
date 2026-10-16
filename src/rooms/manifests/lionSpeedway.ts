@@ -43,6 +43,19 @@ export const lionSpeedwayManifest: RoomManifest = {
       position: { x: 2110, y: 555 },
       actionData: {},
     },
+    {
+      id: "speedway-flag",
+      label: "Wave the checkered flag",
+      icon: "🏁",
+      type: "activity",
+      position: { x: 1560, y: 500 },
+      actionData: {},
+      object: { kind: "flag", width: 170, height: 200 },
+      reaction: {
+        message: "Go go go! The checkered flag waves.",
+        sound: "chime",
+      },
+    },
   ],
   obstacles: [
     {

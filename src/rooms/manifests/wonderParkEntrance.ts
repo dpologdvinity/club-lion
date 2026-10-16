@@ -72,6 +72,19 @@ export const wonderParkEntranceManifest: RoomManifest = {
       position: { x: 1400, y: 610 },
       actionData: {},
     },
+    {
+      id: "park-balloons",
+      label: "Float the balloons",
+      icon: "🎈",
+      type: "activity",
+      position: { x: 560, y: 500 },
+      actionData: {},
+      object: { kind: "balloons", width: 150, height: 200 },
+      reaction: {
+        message: "Whee! The balloons float up high.",
+        sound: "bubble",
+      },
+    },
   ],
   obstacles: [
     {

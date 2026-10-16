@@ -30,7 +30,10 @@ test("Coastal Pier is a registered boardwalk in the coastal district", () => {
 });
 
 test("the lighthouse exposes the foghorn instrument", () => {
-  assert.deepEqual(coastalPierManifest.interactives, [
+  assert.deepEqual(
+    coastalPierManifest.interactives.find(
+      (item) => item.id === "lighthouse-foghorn",
+    ),
     {
       id: "lighthouse-foghorn",
       label: "Sound Foghorn",
@@ -39,5 +42,5 @@ test("the lighthouse exposes the foghorn instrument", () => {
       position: { x: 1950, y: 520 },
       actionData: {},
     },
-  ]);
+  );
 });
