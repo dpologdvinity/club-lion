@@ -48,8 +48,8 @@ export const RIG = {
   head: "matrix(1 0 0 1 0 -11.5)",
   /** The head rig scaled 1.2× about the chin so faces read at small world sizes. */
   headBoost: "matrix(1.2 0 0 1.2 -12 -25.3)",
-  torso: "matrix(0.86 0 0 1 8.4 -7.5)",
-  legs: "matrix(0.86 0 0 1.32 8.4 -39.18)",
+  torso: "matrix(0.8 0 0 1 12 -7.5)",
+  legs: "matrix(0.8 0 0 1.38 12 -47.7)",
 } as const;
 
 /** Wraps markup in one of the {@link RIG} transforms. */

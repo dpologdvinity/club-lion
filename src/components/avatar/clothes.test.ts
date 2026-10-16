@@ -179,7 +179,7 @@ test("every top, bottom, and shoe is drawn with the doll ink outline", () => {
 test("legs and footwear share the long-leg rig so platforms land on the ground", () => {
   const footwear = renderLayer4Footwear(DEFAULT_AVATAR_LOOK);
   const outfit = renderLayer5Outfit(DEFAULT_AVATAR_LOOK);
-  const legsRig = /<g transform="(matrix\(0\.86 0 0 1\.32 [^"]+\))">/;
+  const legsRig = /<g transform="(matrix\(0\.8 0 0 1\.38 [^"]+\))">/;
   const shoeRig = footwear.match(legsRig)?.[1];
   assert.ok(shoeRig, "footwear placed on the legs rig");
   assert.ok(outfit.includes(shoeRig), "bottoms use the same rig");

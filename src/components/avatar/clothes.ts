@@ -70,7 +70,7 @@ function glitter(points: readonly (readonly [number, number])[]): string {
     .join("");
 }
 
-function platformSole(color: string, stripe?: string, height = 6.6): string {
+function platformSole(color: string, stripe?: string, height = 7.4): string {
   const treads = [48, 51, 54, 57]
     .map(
       (tx) =>
@@ -78,7 +78,7 @@ function platformSole(color: string, stripe?: string, height = 6.6): string {
     )
     .join("");
   return (
-    `<rect x="46.4" y="139" width="15.2" height="${height}" rx="2.2" fill="${color}" />` +
+    `<rect x="45.6" y="139" width="16.8" height="${height}" rx="2.2" fill="${color}" />` +
     `<path d="M47.2 140.2 L60.8 140.2" stroke="rgba(255,255,255,0.4)" stroke-width="0.6" stroke-linecap="round" />` +
     (stripe
       ? `<rect x="46.6" y="${n(139 + height * 0.42)}" width="14.8" height="1.2" fill="${stripe}" />`

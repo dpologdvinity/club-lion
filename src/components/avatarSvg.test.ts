@@ -21,7 +21,7 @@ import {
   BRACELETS,
   BAGS,
 } from "../types/avatarOptions.ts";
-import { RIG } from "./avatar/shared.ts";
+import { LEFT_ARM_HIP, RIG, RIGHT_ARM_DOWN } from "./avatar/shared.ts";
 import { newPlayer, salonLookCost } from "../game.ts";
 
 test("generateAvatarSvgString outputs stacked SVG layers in correct order", () => {
@@ -577,6 +577,15 @@ test("head boost swaps every head rig for the larger one", () => {
   assert.equal(count(boosted, RIG.head), 0);
   assert.equal(count(boosted, RIG.headBoost), heads);
   assertValidSvg(boosted, "boosted");
+});
+
+test("arm shoulders stay on the slimmed torso edges", () => {
+  // Torso art spans x 48-72 at the shoulder line (see renderLayer2BodyBase)
+  const [scaleX, , , , tx] = RIG.torso.slice(7, -1).split(" ").map(Number);
+  const left = 48 * scaleX + tx;
+  const right = 72 * scaleX + tx;
+  assert.ok(Math.abs(RIGHT_ARM_DOWN.shoulder[0] - left) < 1.6);
+  assert.ok(Math.abs(LEFT_ARM_HIP.shoulder[0] - right) < 1.6);
 });
 
 test("doll head takes about two fifths of the standing figure", () => {

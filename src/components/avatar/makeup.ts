@@ -313,13 +313,11 @@ function lash([x, y]: Point, dx: number, dy: number, base: number): string {
 
 /** Upper lash clumps fanning out toward the outer corner. */
 const UPPER_LASHES = [
-  [0.01, -7, -2],
-  [0.08, -6.2, -3.8],
-  [0.17, -4.8, -5],
-  [0.27, -3.2, -5.2],
-  [0.38, -1.8, -4.6],
-  [0.5, -0.6, -3.6],
-  [0.62, 0.2, -2.6],
+  [0.02, -8, -3.4],
+  [0.14, -6.4, -6],
+  [0.28, -3.8, -6.6],
+  [0.44, -1.6, -5.6],
+  [0.62, 0.2, -4],
 ] as const;
 
 function lashes(points: readonly Point[], down: boolean, scale = 1): string {
@@ -405,7 +403,7 @@ function renderEye(
     `L${pt(wingTip)} L${n(ox - 0.4)} ${n(oy + 0.8)} C${pt(geo.u1)} ${pt(geo.u2)} ${pt(EYE_INNER)} Z`;
   const upperLashes = UPPER_LASHES.map(([t, dx, dy]) => {
     const [x, y] = cubicPoint(EYE_OUTER, geo.u1, geo.u2, EYE_INNER, t);
-    return lash([x - 0.2, y - 0.4], dx * (0.85 + wing * 0.15), dy, 0.8);
+    return lash([x - 0.2, y - 0.4], dx * (0.85 + wing * 0.15), dy, 0.55);
   }).join("");
   const lowerLashPoints = [0.55, 0.7, 0.84].map((t) =>
     cubicPoint(EYE_INNER, LOWER_INNER, LOWER_OUTER, EYE_OUTER, t),
@@ -545,7 +543,7 @@ function lipFinishMarkup(finish: LipFinish, p: string): string {
 
 function renderLips(makeup: ResolvedMakeup, p: string): string {
   // Overlined doll pout, scaled up around the mouth center
-  const tilt = ` transform="${makeup.preset.smirk ? "rotate(-5 60 58.8) " : ""}translate(60 59.2) scale(1.1 1.3) translate(-60 -59)"`;
+  const tilt = ` transform="${makeup.preset.smirk ? "rotate(-5 60 58.8) " : ""}translate(60 59.2) scale(1.18 1.45) translate(-60 -59)"`;
   return (
     `<g class="avatar-lips lip-${makeup.lipFinish}"${tilt}>` +
     `<path d="${LIP_LOWER}" fill="${makeup.lips}" />` +
@@ -557,6 +555,9 @@ function renderLips(makeup: ResolvedMakeup, p: string): string {
     // Parted glossy pout: a sliver of white between the lips
     `<path d="M58 58.95 Q60 60 62 58.95 Q60 59.35 58 58.95 Z" fill="#fffaf6" />` +
     lipFinishMarkup(makeup.lipFinish, p) +
+    // Wet-look specular highlights on both lips
+    `<ellipse cx="58.2" cy="57.6" rx="1.5" ry="0.45" fill="#ffffff" opacity="0.6" />` +
+    `<ellipse cx="59.6" cy="60.5" rx="2.1" ry="0.55" fill="#ffffff" opacity="0.7" />` +
     `</g>` +
     (makeup.preset.smirk
       ? `<path d="M67.6 55.6 Q68.6 56.6 68.2 57.8" stroke="rgba(110, 50, 30, 0.35)" stroke-width="0.5" stroke-linecap="round" fill="none" />`
