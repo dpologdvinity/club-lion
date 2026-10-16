@@ -21,13 +21,16 @@ async function openRoom(page: Page, destination: RegExp) {
 async function expectAvatarOnScreen(page: Page) {
   const avatar = page.locator(".your-character");
   await expect(avatar).toBeVisible();
-  const box = await avatar.boundingBox();
-  const view = page.viewportSize();
-  expect(box && view).toBeTruthy();
-  if (box && view) {
-    expect(box.x).toBeGreaterThanOrEqual(0);
-    expect(box.x + box.width).toBeLessThanOrEqual(view.width);
-  }
+  // The camera measures its viewport after mounting; visibility alone can precede that layout.
+  await expect(async () => {
+    const box = await avatar.boundingBox();
+    const view = page.viewportSize();
+    expect(box && view).toBeTruthy();
+    if (box && view) {
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(view.width);
+    }
+  }).toPass({ timeout: 5_000 });
 }
 
 async function savedStamps(page: Page): Promise<string[]> {
