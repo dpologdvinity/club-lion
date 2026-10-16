@@ -1105,7 +1105,9 @@ export function completeFruitCatch<T extends PlayerBase>(
     !Number.isSafeInteger(hits) ||
     hits < 0 ||
     !Number.isSafeInteger(score) ||
-    score !== caught * 10
+    score !== caught * 10 ||
+    !Number.isSafeInteger(player.coins + caught * 2) ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
   )
     return player;
   const newGamesPlayed = player.gamesPlayed + 1;

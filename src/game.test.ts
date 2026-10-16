@@ -593,6 +593,17 @@ test("saves preserve Fruit Catch and Paw Steps records across either migration",
     fruitCatchBest: 0,
   });
 });
+test("Fruit Catch rejects rewards that would overflow saved progress", () => {
+  const wallet = { ...newPlayer(), coins: Number.MAX_SAFE_INTEGER };
+  assert.equal(completeFruitCatch(wallet, 1, 0, 10), wallet);
+  const counter = { ...newPlayer(), gamesPlayed: Number.MAX_SAFE_INTEGER };
+  assert.equal(completeFruitCatch(counter, 0, 0, 0), counter);
+  const boundary = { ...newPlayer(), coins: Number.MAX_SAFE_INTEGER - 2 };
+  const completed = completeFruitCatch(boundary, 1, 0, 10);
+  assert.equal(completed.coins, Number.MAX_SAFE_INTEGER);
+  assert.deepEqual(restorePlayer(JSON.stringify(completed)), completed);
+});
+
 test("Fruit Catch awards caught fruit, tracks a best score, and restores older saves", () => {
   const first = completeFruitCatch(newPlayer(), 8, 2, 80);
   assert.equal(first.coins, 266);
