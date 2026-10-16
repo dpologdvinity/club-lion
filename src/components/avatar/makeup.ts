@@ -264,17 +264,17 @@ export function resolveMakeup(look: AvatarLook): ResolvedMakeup {
  * Layer 3: Glam Face (eyeshadow, winged liner, lashes, brows, lips)
  * Eyes are drawn for the viewer's left and mirrored for the right.
  * ------------------------------------------------------------- */
-const EYE_OUTER: Point = [34.4, 40.8];
+const EYE_OUTER: Point = [34.2, 38.8];
 const EYE_INNER: Point = [55.6, 47.2];
 const LOWER_INNER: Point = [51.8, 48.5];
-const LOWER_OUTER: Point = [39.6, 50.8];
+const LOWER_OUTER: Point = [39.4, 49.6];
 
 /** Almond doll eye: a high arched upper lid over a gentle lower lid. */
 export function eyeGeometry(lid: EyeState) {
   const drop = lid === "closed" ? 0 : lid;
   // Heavy doll lid: a low, flat arch that rests over the top of the iris
   // Heavy doll lid: a long, low arch over a narrow almond
-  const u1: Point = [40.2, 36.6 + drop * 5];
+  const u1: Point = [40, 34.8 + drop * 5];
   const u2: Point = [49.8, 39.4 + drop * 5.5];
   const lidCurve = `M${pt(EYE_OUTER)} C${pt(u1)} ${pt(u2)} ${pt(EYE_INNER)}`;
   return {
@@ -545,7 +545,7 @@ function lipFinishMarkup(finish: LipFinish, p: string): string {
 
 function renderLips(makeup: ResolvedMakeup, p: string): string {
   // Overlined doll pout, scaled up around the mouth center
-  const tilt = ` transform="${makeup.preset.smirk ? "rotate(-5 60 58.8) " : ""}translate(60 59.2) scale(1.26 1.22) translate(-60 -59)"`;
+  const tilt = ` transform="${makeup.preset.smirk ? "rotate(-5 60 58.8) " : ""}translate(60 59.2) scale(1.1 1.3) translate(-60 -59)"`;
   return (
     `<g class="avatar-lips lip-${makeup.lipFinish}"${tilt}>` +
     `<path d="${LIP_LOWER}" fill="${makeup.lips}" />` +
