@@ -26,12 +26,12 @@ function strands(paths: readonly string[], opacity = 0.26): string {
 function glints(
   paths: readonly string[],
   mirrored = true,
-  core = "#ffffff",
+  core = "#ffe6bd",
 ): string {
   const left = paths
     .map(
       (d) =>
-        `<path d="${d}" stroke="rgba(255,255,255,0.32)" stroke-width="1.8" stroke-linecap="round" fill="none" />` +
+        `<path d="${d}" stroke="rgba(255,214,150,0.28)" stroke-width="1.4" stroke-linecap="round" fill="none" />` +
         `<path d="${d}" stroke="${core}" stroke-width="0.55" stroke-linecap="round" fill="none" />`,
     )
     .join("");
@@ -43,8 +43,8 @@ function shineRibbon(p: string, band: string, streak: string): string {
   return (
     `<g class="hair-highlight">` +
     `<path d="${band}" fill="url(#${p}-shine)" />` +
-    `<path d="${streak}" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-linecap="round" fill="none" />` +
-    `<path d="${streak}" stroke="#fff4e4" stroke-width="0.65" stroke-linecap="round" fill="none" />` +
+    `<path d="${streak}" stroke="rgba(255,214,150,0.3)" stroke-width="1.5" stroke-linecap="round" fill="none" />` +
+    `<path d="${streak}" stroke="#ffe6bd" stroke-width="0.5" opacity="0.8" stroke-linecap="round" fill="none" />` +
     `</g>`
   );
 }
@@ -1314,20 +1314,21 @@ export function renderHairClips(look: AvatarLook): string {
 
 /** Shared gradient for glossy hair shine ribbons. */
 export function hairDefs(p: string, color = "#4a3728"): string {
+  const shadow = `color-mix(in srgb, ${escapeXml(color)} 45%, #1a0c08)`;
   return (
     `<linearGradient id="${p}-hair-tone" x1="0" y1="0" x2="1" y2="0">` +
-    `<stop offset="0" stop-color="#100807" />` +
+    `<stop offset="0" stop-color="${shadow}" />` +
     `<stop offset="0.18" stop-color="${escapeXml(color)}" />` +
     `<stop offset="0.36" stop-color="${escapeXml(color)}" />` +
-    `<stop offset="0.5" stop-color="#100807" />` +
+    `<stop offset="0.5" stop-color="${shadow}" />` +
     `<stop offset="0.7" stop-color="${escapeXml(color)}" />` +
     `<stop offset="0.88" stop-color="${escapeXml(color)}" />` +
-    `<stop offset="1" stop-color="#100807" />` +
+    `<stop offset="1" stop-color="${shadow}" />` +
     `</linearGradient>` +
     `<linearGradient id="${p}-shine" x1="0" y1="0" x2="1" y2="0">` +
-    `<stop offset="0" stop-color="#ffffff" stop-opacity="0" />` +
-    `<stop offset="0.5" stop-color="#ffffff" stop-opacity="0.75" />` +
-    `<stop offset="1" stop-color="#ffffff" stop-opacity="0" />` +
+    `<stop offset="0" stop-color="#ffe3b0" stop-opacity="0" />` +
+    `<stop offset="0.5" stop-color="#ffe3b0" stop-opacity="0.6" />` +
+    `<stop offset="1" stop-color="#ffe3b0" stop-opacity="0" />` +
     `</linearGradient>` +
     `<linearGradient id="${p}-mermaid" x1="0" y1="0" x2="1" y2="1">` +
     `<stop offset="0" stop-color="#ff9ad5" stop-opacity="0.2" />` +

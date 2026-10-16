@@ -1,0 +1,7 @@
+# Doll replacement concept
+
+Preview only; not the current game renderer. Generated with the built-in image-generation tool on 2026-10-15 from the four owner-supplied images alongside this file. The owner rejected the existing SVG character; this concept establishes the replacement visual target.
+
+Prompt: Create one full-body 2D Y2K fashion doll game character, using the four supplied images as strong visual references. Long upturned narrow almond eyes, black winged lashes, mauve metallic eyeshadow, golden brown half-lidded irises, tapered arched eyebrows with hair strokes, sculpted warm caramel skin, soft luminous shading, small shaped nose, dimensional glossy rose-brown bow lips. Voluminous chestnut butterfly blowout with fine caramel strand highlights, blonde face-framing streaks and butterfly clips. Head around 28% of full height, slim torso, long graceful legs, silver elongated hoops, lavender metallic halter, indigo embroidered flares and platform shoes. Near-frontal standing pose, hand on hip. Rich shaded crisp 2D digital illustration, fine contours. No logos, text, floor, frame, helmet hair, flat color blocks or thick white highlights. Transparent background requested; the resulting image includes a glow and is not yet a production cutout.
+
+A single full-body image cannot replace the layered renderer without losing mix-and-match clothing and styling. Production integration must preserve those features or explicitly agree a different character system with the owner.
