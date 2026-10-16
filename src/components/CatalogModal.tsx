@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { getSharedAudioBus } from "../utils/audioBus";
 import { Check, Coffee, Leaf, Star } from "lucide-react";
 import { Dialog } from "./Dialog";
 import { CATALOG_ITEMS, type EquipSlot, type PlayerBase } from "../game";
@@ -13,11 +14,11 @@ const SLOT_TABS: { id: EquipSlot; label: string }[] = [
 ];
 
 function playChime() {
-  const AudioContextClass =
-    window.AudioContext ||
-    (window as unknown as { webkitAudioContext: typeof AudioContext })
-      .webkitAudioContext;
-  const ctx = new AudioContextClass();
+  const bus = getSharedAudioBus();
+  const ctx = bus.getContext();
+  const destination = bus.getSfxDestination();
+  if (!ctx || !destination || ctx.state === "closed") return;
+  if (ctx.state === "suspended") void ctx.resume().catch(() => {});
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = "sine";
@@ -26,7 +27,7 @@ function playChime() {
   gain.gain.setValueAtTime(0.2, ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(destination);
   osc.start();
   osc.stop(ctx.currentTime + 0.4);
 }

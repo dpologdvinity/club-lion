@@ -1,3 +1,4 @@
+import { getSharedAudioBus } from "./audioBus.ts";
 import type { PlayerBase } from "../game.ts";
 
 export type MinigameId =
@@ -265,20 +266,18 @@ export function playLeaderboardSound(
 ): void {
   try {
     if (typeof window === "undefined") return;
-    const AudioContextClass =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext;
-    if (!AudioContextClass) return;
-
-    const ctx = customCtx || new AudioContextClass();
-    if (ctx.state === "closed") return;
+    const bus = getSharedAudioBus();
+    const ctx = customCtx || bus.getContext();
+    const destination = customCtx
+      ? customCtx.destination
+      : bus.getSfxDestination();
+    if (!ctx || !destination || ctx.state === "closed") return;
 
     const t = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(destination);
 
     if (type === "tab") {
       // Crisp blip chime

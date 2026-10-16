@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useId } from "react";
+import { getSharedAudioBus } from "../utils/audioBus";
 import { Sparkles, Trophy, Camera, Clock, X, Shirt, Star } from "lucide-react";
 import {
   FASHION_THEMES,
@@ -43,12 +44,11 @@ const AVAILABLE_CLOTHES = [
 
 function playSound(type: "tick" | "flash" | "cheer") {
   try {
-    const AudioCtx =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
+    const bus = getSharedAudioBus();
+    const ctx = bus.getContext();
+    const destination = bus.getSfxDestination();
+    if (!ctx || !destination || ctx.state === "closed") return;
+    if (ctx.state === "suspended") void ctx.resume().catch(() => {});
     const now = ctx.currentTime;
 
     if (type === "tick") {
@@ -58,7 +58,7 @@ function playSound(type: "tick" | "flash" | "cheer") {
       gain.gain.setValueAtTime(0.2, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(destination);
       osc.start(now);
       osc.stop(now + 0.05);
     } else if (type === "flash") {
@@ -75,7 +75,7 @@ function playSound(type: "tick" | "flash" | "cheer") {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
       noise.connect(filter);
       filter.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(destination);
       noise.start(now);
     } else if (type === "cheer") {
       const osc1 = ctx.createOscillator();
@@ -87,7 +87,7 @@ function playSound(type: "tick" | "flash" | "cheer") {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
       osc1.connect(gain);
       osc2.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(destination);
       osc1.start(now);
       osc2.start(now);
       osc1.stop(now + 0.6);
