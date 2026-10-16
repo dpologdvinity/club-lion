@@ -18,7 +18,12 @@ test("lionAquariumManifest is structurally valid with feeding and touch hotspots
   }
   assert.deepEqual(
     manifest.interactives.map((item) => item.id),
-    ["aquarium-feed-fish", "aquarium-touch-pool"],
+    [
+      "aquarium-feed-fish",
+      "aquarium-touch-pool",
+      "aquarium-jellyfish",
+      "aquarium-treasure",
+    ],
   );
 });
 
