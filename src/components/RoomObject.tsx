@@ -1,0 +1,478 @@
+import type { RoomManifest } from "../rooms/types.ts";
+import "./roomObjects.css";
+
+type Item = RoomManifest["interactives"][number];
+
+/** Objects live in stage space, so adding one never depends on screen size. */
+export function RoomObject({
+  item,
+  state,
+  onActivate,
+}: {
+  item: Item;
+  state: number;
+  onActivate: () => void;
+}) {
+  if (!item.object) return null;
+  const { kind, width, height } = item.object;
+  const active = state % 2 === 1;
+  return (
+    <button
+      type="button"
+      className={`room-object object-${kind} ${active ? "object-active" : ""}`}
+      style={{ left: item.position.x, top: item.position.y, width, height }}
+      aria-label={item.label}
+      aria-pressed={item.reaction ? active : undefined}
+      data-object-state={state}
+      onClick={onActivate}
+    >
+      <svg viewBox="0 0 200 240" preserveAspectRatio="none" aria-hidden="true">
+        {kind === "cabinet" && (
+          <>
+            <path
+              d="M20 8H175L185 180V235H15V180L28 145Z"
+              fill="#b57863"
+              stroke="#523f51"
+              strokeWidth="7"
+            />
+            <path
+              d="M32 35H163V139H32Z"
+              fill="#334e60"
+              stroke="#f4d69d"
+              strokeWidth="7"
+            />
+            {item.actionData.gameId === "memory" && (
+              <g fill="#f1d89d" stroke="#b78aa0" strokeWidth="3">
+                {[0, 1, 2, 3].map((i) => (
+                  <g
+                    key={i}
+                    transform={`translate(${53 + (i % 2) * 49} ${52 + Math.floor(i / 2) * 39})`}
+                  >
+                    <rect width="36" height="31" rx="4" />
+                    <circle
+                      cx="18"
+                      cy="15"
+                      r="7"
+                      fill={i % 2 ? "#719a87" : "#c28b6f"}
+                    />
+                  </g>
+                ))}
+              </g>
+            )}
+            {item.actionData.gameId === "bee" && (
+              <g>
+                <g className="sm-bob">
+                  <ellipse cx="84" cy="70" rx="15" ry="10" fill="#ddeacb" />
+                  <ellipse cx="110" cy="70" rx="15" ry="10" fill="#ddeacb" />
+                  <ellipse cx="97" cy="85" rx="24" ry="17" fill="#e7bd69" />
+                  <path
+                    d="M88 69v32M103 69v32"
+                    stroke="#6c5a42"
+                    strokeWidth="6"
+                  />
+                </g>
+                <path d="M125 130v-22" stroke="#87b58a" strokeWidth="5" />
+                <circle cx="125" cy="108" r="13" fill="#d49cab" />
+                <circle cx="125" cy="108" r="6" fill="#f3d888" />
+              </g>
+            )}
+            {item.actionData.gameId === "paw" && (
+              <g fill="#a4c7b1" stroke="#f1d89d" strokeWidth="3">
+                <path d="m100 48 18 24h-11v16H93V72H82ZM100 130l-18-24h11V90h14v16h11ZM44 90l20-16v10h17v13H64v10ZM153 90l-20 17V97h-17V84h17V74Z" />
+              </g>
+            )}
+            <path d="M25 155H175L180 185H20Z" fill="#e8c69b" />
+            <circle cx="60" cy="165" r="10" fill="#688a79" />
+            <circle cx="125" cy="165" r="7" fill="#ce775d" />
+            <circle cx="148" cy="165" r="7" fill="#8c96b2" />
+            <path d="M65 205H135" stroke="#503f52" strokeWidth="10" />
+          </>
+        )}
+        {kind === "bubbles" && (
+          <>
+            <path
+              d="M35 160H165L150 230H50Z"
+              fill="#ca9c65"
+              stroke="#8c7049"
+              strokeWidth="6"
+            />
+            <ellipse cx="100" cy="160" rx="65" ry="18" fill="#b9e1d1" />
+            <path d="M138 160V90" stroke="#dcc18a" strokeWidth="9" />
+            <circle
+              cx="138"
+              cy="68"
+              r="25"
+              fill="none"
+              stroke="#e7d18e"
+              strokeWidth="9"
+            />
+            <g
+              className="sm-bob"
+              fill="#c4eee0"
+              fillOpacity=".7"
+              stroke="#f0fff0"
+              strokeWidth="4"
+            >
+              <circle cx="65" cy="91" r="23" />
+              <circle cx="90" cy="35" r="17" />
+              <circle cx="40" cy="23" r="10" />
+            </g>
+          </>
+        )}
+        {kind === "cake" && (
+          <>
+            <path d="M15 190H185V225H15Z" fill="#ae845a" />
+            <ellipse cx="100" cy="185" rx="88" ry="15" fill="#f1dfb7" />
+            <path d="M45 135H155V180H45Z" fill="#d9ad72" />
+            <path
+              d="M45 135q15 25 30 0q15 25 30 0q15 25 30 0q10 25 20 0"
+              fill="#fae6c8"
+            />
+            <path d="M65 95H135V135H65Z" fill="#e6be88" />
+            <path d="M65 95q15 20 30 0q15 20 40 0" fill="#fff0d1" />
+            <circle cx="100" cy="85" r="12" fill="#d38d71" />
+            <path
+              d="M25 180V95Q25 15 100 15Q175 15 175 95V180"
+              fill="#cde5d3"
+              fillOpacity=".25"
+              stroke="#f8e6c4"
+              strokeWidth="5"
+            />
+            <path d="M100 15V0" stroke="#9e7954" strokeWidth="9" />
+          </>
+        )}
+        {kind === "splash" && (
+          <>
+            <ellipse cx="100" cy="190" rx="95" ry="30" fill="#a0dfd2" />
+            <g
+              className={active ? "object-splash" : "sm-bob"}
+              fill="#d5fff0"
+              stroke="#6bbcaf"
+              strokeWidth="3"
+            >
+              <path d="M40 175Q10 95 55 140Q70 45 100 145Q140 55 150 155Q200 100 170 180Z" />
+              <circle cx="40" cy="100" r="8" />
+              <circle cx="158" cy="82" r="11" />
+              <circle cx="100" cy="40" r="7" />
+            </g>
+            <ellipse
+              cx="100"
+              cy="195"
+              rx="65"
+              ry="13"
+              fill="none"
+              stroke="#efffe5"
+              strokeWidth="5"
+            />
+          </>
+        )}
+        {kind === "lily" && (
+          <>
+            <ellipse cx="55" cy="195" rx="50" ry="24" fill="#658e55" />
+            <ellipse cx="150" cy="165" rx="47" ry="22" fill="#82ac65" />
+            <g
+              transform={`translate(${active ? 108 : 12} ${active ? -30 : 0})`}
+            >
+              <g className="sm-bob">
+                <ellipse cx="50" cy="164" rx="33" ry="25" fill="#89b454" />
+                <circle cx="32" cy="143" r="14" fill="#a6cc6a" />
+                <circle cx="68" cy="143" r="14" fill="#a6cc6a" />
+                <circle cx="32" cy="141" r="5" fill="#345644" />
+                <circle cx="68" cy="141" r="5" fill="#345644" />
+                <path
+                  d="M37 168q13 12 26 0"
+                  fill="none"
+                  stroke="#345644"
+                  strokeWidth="4"
+                />
+              </g>
+            </g>
+          </>
+        )}
+        {kind === "chimes" && (
+          <g
+            className={active ? "object-chime" : "sm-sway"}
+            stroke="#765840"
+            strokeWidth="4"
+          >
+            <path d="M100 0V35M20 40Q100 10 180 40" fill="none" />
+            {[40, 80, 120, 160].map((x, i) => (
+              <g key={x}>
+                <path d={`M${x} 35v${75 + (i % 2) * 40}`} fill="none" />
+                <path
+                  d={`M${x - 20} ${110 + (i % 2) * 40}q20-35 40 0l-10 42h-20Z`}
+                  fill={i % 2 ? "#f2d2ae" : "#e9ac90"}
+                />
+              </g>
+            ))}
+          </g>
+        )}
+        {kind === "blender" && (
+          <>
+            <path
+              d="M40 185H160L170 235H30Z"
+              fill="#cf8c62"
+              stroke="#755b48"
+              strokeWidth="5"
+            />
+            <path
+              d="M50 45H150L140 185H60Z"
+              fill="#d2eee0"
+              stroke="#648578"
+              strokeWidth="5"
+            />
+            <path
+              className="sm-pulse"
+              d="M55 100Q100 80 145 100L138 178H62Z"
+              fill="#f4bb6a"
+            />
+            <path
+              d="M155 65q65 0 10 85"
+              fill="none"
+              stroke="#648578"
+              strokeWidth="12"
+            />
+            <path d="M40 30H160V49H40Z" fill="#648578" />
+            <circle cx="100" cy="210" r="12" fill="#f9e3ae" />
+          </>
+        )}
+        {kind === "tea" && (
+          <>
+            <ellipse cx="65" cy="216" rx="60" ry="15" fill="#e5bc83" />
+            <path
+              d="M15 145H110L95 210H30Z"
+              fill="#f7e6bf"
+              stroke="#9b7956"
+              strokeWidth="5"
+            />
+            <path
+              d="M112 155q55 0 10 35"
+              fill="none"
+              stroke="#f7e6bf"
+              strokeWidth="13"
+            />
+            <g transform={active ? "rotate(-22 155 85)" : undefined}>
+              <path
+                d="M120 75q-35 70 10 90h50q30-45-5-90Z"
+                fill="#7fa68b"
+                stroke="#476e5b"
+                strokeWidth="5"
+              />
+              <path
+                d="M120 100L80 80l25 55M180 90q45-20 10 45"
+                fill="none"
+                stroke="#476e5b"
+                strokeWidth="10"
+              />
+              <path
+                d="M125 70h50M150 50v20"
+                stroke="#476e5b"
+                strokeWidth="10"
+              />
+            </g>
+            <g
+              className="sm-drift"
+              fill="none"
+              stroke="#fff2ce"
+              strokeWidth="5"
+            >
+              <path d="M43 130q-20-20 0-40M76 122q-20-20 0-40" />
+            </g>
+          </>
+        )}
+        {kind === "oven" && (
+          <>
+            <rect
+              x="12"
+              y="20"
+              width="176"
+              height="215"
+              rx="18"
+              fill="#d5996c"
+              stroke="#77553e"
+              strokeWidth="6"
+            />
+            <rect
+              x="32"
+              y="85"
+              width="136"
+              height="125"
+              rx="12"
+              fill={active ? "#edbc72" : "#5d6258"}
+            />
+            <path d="M40 76H160" stroke="#f4d6a0" strokeWidth="10" />
+            <circle cx="55" cy="48" r="12" fill="#f7dfac" />
+            <circle cx="145" cy="48" r="12" fill="#f7dfac" />
+            {active && (
+              <path
+                d="M50 170q0-60 50-50q50-10 50 50Z"
+                fill="#e5a449"
+                stroke="#a76b35"
+                strokeWidth="5"
+              />
+            )}
+          </>
+        )}
+        {kind === "prizes" && (
+          <>
+            <rect
+              x="18"
+              y="5"
+              width="164"
+              height="230"
+              rx="22"
+              fill="#c9a4ae"
+              stroke="#72566b"
+              strokeWidth="6"
+            />
+            <rect
+              x="35"
+              y="25"
+              width="130"
+              height="135"
+              rx="14"
+              fill="#d5e5d0"
+            />
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <circle
+                key={i}
+                cx={58 + (i % 3) * 41}
+                cy={62 + Math.floor(i / 3) * 54}
+                r="22"
+                fill={["#e8b26b", "#8fb6a1", "#ba8eaf"][i % 3]}
+              />
+            ))}
+            <circle cx="100" cy="186" r="14" fill="#eee0b3" />
+            <path d="M60 210H140V230H60Z" fill="#70596c" />
+            {active && <circle cx="100" cy="218" r="16" fill="#ecc070" />}
+          </>
+        )}
+        {kind === "disco" && (
+          <>
+            <path d="M100 0v50" stroke="#d6c49d" strokeWidth="5" />
+            <g className="sm-sway">
+              <circle
+                cx="100"
+                cy="117"
+                r="65"
+                fill={active ? "#d2a1be" : "#a1c2b4"}
+                stroke="#e9d9aa"
+                strokeWidth="6"
+              />
+              <path
+                d="M37 105h126M40 135h120M55 160h90M65 60q-25 55 0 110M100 53v129M135 60q25 55 0 110"
+                fill="none"
+                stroke="#e9d9aa"
+                strokeWidth="4"
+              />
+            </g>
+          </>
+        )}
+        {kind === "fireplace" && (
+          <>
+            <path
+              d="M15 70H185V238H15Z"
+              fill="#b77d60"
+              stroke="#765744"
+              strokeWidth="6"
+            />
+            <path d="M48 235V135Q100 72 152 135V235" fill="#4d4945" />
+            <path d="M0 52H200V82H0ZM25 35H175V52H25Z" fill="#d1ac83" />
+            {!active && (
+              <g className="sm-flicker">
+                <path
+                  d="M60 215Q35 180 87 135Q75 180 112 120Q172 195 135 218Z"
+                  fill="#e9a151"
+                />
+                <path d="M82 215q-20-30 20-55q-5 25 20 45Z" fill="#ffe2a0" />
+              </g>
+            )}
+            <path
+              d="m50 224 90-9m-80-5 75 19"
+              stroke="#73503a"
+              strokeWidth="12"
+            />
+          </>
+        )}
+        {kind === "lamp" && (
+          <>
+            <path d="M100 70V220M55 230h90" stroke="#806047" strokeWidth="12" />
+            {active && (
+              <ellipse
+                cx="100"
+                cy="130"
+                rx="95"
+                ry="95"
+                fill="#ffe8a1"
+                opacity=".35"
+              />
+            )}
+            <path
+              d="M55 20H145L180 105H20Z"
+              fill={active ? "#ffe4a1" : "#b9aa83"}
+              stroke="#8e7958"
+              strokeWidth="5"
+            />
+          </>
+        )}
+        {kind === "books" && (
+          <>
+            <path
+              d="M10 60Q65 30 100 70Q145 30 190 60V205Q140 175 100 212Q65 175 10 205Z"
+              fill="#f1dcad"
+              stroke="#98704b"
+              strokeWidth="5"
+            />
+            <path d="M100 70V212" stroke="#98704b" strokeWidth="4" />
+            <circle
+              cx={active ? 145 : 55}
+              cy="115"
+              r="27"
+              fill={active ? "#8eae85" : "#e8ae66"}
+            />
+            <path d="M25 165h50M125 165h50" stroke="#be9b6c" strokeWidth="5" />
+          </>
+        )}
+        {kind === "plant" && (
+          <>
+            <path
+              d="M45 155H155L135 235H65Z"
+              fill="#ba7855"
+              stroke="#876044"
+              strokeWidth="5"
+            />
+            <g
+              className={active ? "object-chime" : "sm-sway"}
+              fill="#6d965e"
+              stroke="#486d45"
+              strokeWidth="4"
+            >
+              <path d="M100 170Q5 160 25 80Q100 85 100 170Q90 30 145 20Q190 80 100 170Q200 120 180 75Q120 80 100 170Z" />
+            </g>
+          </>
+        )}
+        {kind === "cushion" && (
+          <>
+            <path
+              d={
+                active
+                  ? "M10 115Q100 150 190 115L180 220Q100 235 20 220Z"
+                  : "M10 90Q100 65 190 90L180 220Q100 235 20 220Z"
+              }
+              fill="#e5b962"
+              stroke="#b68343"
+              strokeWidth="6"
+            />
+            <circle cx="100" cy="158" r="32" fill="#f7d88f" />
+            <path
+              d="M100 108v-16M100 208v16M50 158H34M150 158h16"
+              stroke="#f7d88f"
+              strokeWidth="6"
+            />
+          </>
+        )}
+      </svg>
+      <span className="room-object-caption">{item.label}</span>
+    </button>
+  );
+}

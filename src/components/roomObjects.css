@@ -1,0 +1,71 @@
+.room-object {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 4;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: 18px;
+}
+/* The global button:active transform would replace the centering transform. */
+.room-object:not(:disabled):active {
+  transform: translate(-50%, -100%);
+}
+.room-object > svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 5px 2px #40352b25);
+}
+.room-object:hover > svg {
+  filter: drop-shadow(0 0 6px #fff4ba);
+}
+.room-object:focus-visible {
+  outline: 5px solid #fff4ba;
+  outline-offset: 8px;
+}
+.room-object-caption {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  padding: 5px 12px;
+  border-radius: 12px;
+  background: #fff6de;
+  color: #294b39;
+  font-size: 17px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.object-chime {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: object-chime 0.7s ease-in-out infinite alternate;
+}
+.object-splash {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: object-splash 0.65s ease-in-out infinite alternate;
+}
+@keyframes object-chime {
+  to {
+    transform: rotate(12deg);
+  }
+}
+@keyframes object-splash {
+  to {
+    transform: scale(0.88, 1.15);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .room-object [class] {
+    animation: none;
+  }
+}
+
+.room-scenery text {
+  font-family: "Lilita One", sans-serif;
+}

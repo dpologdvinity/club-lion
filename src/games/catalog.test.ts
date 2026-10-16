@@ -65,6 +65,12 @@ test("room manifests own picture labels and preserve every arcade launch", () =>
       .map((item) => [item.id, item.actionData.gameId]),
   );
   assert.deepEqual(launches, {
+    "arcade-bee": "bee",
+    "arcade-memory": "memory",
+    "arcade-steps": "paw",
+    "cafe-cake": "bakery",
+    "cafe-smoothies": "smoothie",
+    "lagoon-bubbles": "bubble-pop",
     "sled-run-gate": "sled-run",
     "coaster-ticket-gate": "coaster",
     "club-pulse-dj-booth": "dj-beat-drop",

@@ -1,3 +1,4 @@
+import { RoomObject } from "./RoomObject.tsx";
 import {
   useEffect,
   useRef,
@@ -9,7 +10,6 @@ import {
   ArrowLeft,
   ArrowUpRight,
   Coffee,
-  Gamepad2,
   Home,
   Map,
   MapPin,
@@ -19,7 +19,6 @@ import {
   Shirt,
   Smile,
   Sparkles,
-  Trophy,
   Volume2,
   VolumeX,
   Waves,
@@ -162,6 +161,12 @@ export function World({
   timeOfDay = "day",
 }: WorldProps) {
   const manifest = ROOM_MANIFESTS[place];
+  const [objectStates, setObjectStates] = useState<Record<string, number>>({});
+  const roomItems =
+    manifest?.interactives.filter(
+      (item) =>
+        !item.requiresDecor || player.decor.includes(item.requiresDecor),
+    ) ?? [];
   const [position, setPosition] = useState(() =>
     manifest
       ? {
@@ -469,18 +474,14 @@ export function World({
     setBubble({ id, text: neighbor.greeting });
     chime();
   };
-  const visibleNeighbors =
-    place === "den" || manifest
-      ? []
-      : place === "square"
-        ? NEIGHBORS
-        : NEIGHBORS.filter((n) =>
-            place === "cafe"
-              ? n.id === "milo"
-              : place === "arcade"
-                ? n.id === "pip"
-                : n.id === "cleo",
-          );
+  const visibleNeighbors = manifest
+    ? (manifest.neighbors ?? []).flatMap((at) => {
+        const neighbor = NEIGHBORS.find((n) => n.id === at.id);
+        return neighbor ? [{ ...neighbor, x: at.x, y: at.y }] : [];
+      })
+    : place === "square"
+      ? NEIGHBORS
+      : [];
 
   const portal = (target: string, targetSpawn: { x: number; y: number }) => {
     if (target === "le-shop") {
@@ -517,8 +518,29 @@ export function World({
       );
   };
   const hotspot = (id: string) => {
-    const gameId = manifest?.interactives.find((item) => item.id === id)
-      ?.actionData.gameId;
+    const item = roomItems.find((item) => item.id === id);
+    if (item?.reaction) {
+      stageWalk(
+        Math.min(item.position.x + 190, (manifest?.stageWidth ?? 1920) - 100),
+        650,
+      );
+      setObjectStates((states) => ({ ...states, [id]: (states[id] ?? 0) + 1 }));
+      playPropSound(item.reaction.sound, sound ? undefined : null);
+      notify(item.reaction.message);
+    }
+    if (item?.actionData.roomAction === "games") {
+      onGame();
+      return;
+    }
+    if (item?.actionData.roomAction === "shop") {
+      onShop();
+      return;
+    }
+    if (item?.actionData.roomAction === "leaderboard") {
+      onOpenLeaderboard?.();
+      return;
+    }
+    const gameId = item?.actionData.gameId;
     if (gameId) {
       onActivity(gameId);
       return;
@@ -689,10 +711,11 @@ export function World({
             onStep={(point) => stageWalk(point.x, point.y)}
           />
         )}
-        {manifest?.interactives
+        {roomItems
           .filter(
             (item) =>
-              item.type !== "instrument" || item.id === "lighthouse-foghorn",
+              !item.object &&
+              (item.type !== "instrument" || item.id === "lighthouse-foghorn"),
           )
           .map((item) => {
             const top =
@@ -718,6 +741,16 @@ export function World({
               </button>
             );
           })}
+        {roomItems
+          .filter((item) => item.object)
+          .map((item) => (
+            <RoomObject
+              key={item.id}
+              item={item}
+              state={objectStates[item.id] ?? 0}
+              onActivate={() => hotspot(item.id)}
+            />
+          ))}
         {SHOW_OBSTACLE_DEBUG && <ObstacleDebugOverlay frame={frame} />}
         {frame.space.obstacles.map(
           (obstacle) =>
@@ -804,23 +837,6 @@ export function World({
             </button>
           </>
         )}
-        {place === "water" && (
-          <button
-            type="button"
-            className="room-interactive-prop water-ripples"
-            aria-label="Watering hole ripples"
-            title="Splash water"
-            style={{ left: "50%", top: "68%" }}
-            onClick={() => {
-              playPropSound("splash", sound ? undefined : null);
-              notify(
-                "Splash! Cool savanna water ripples gently under your paws! 💦",
-              );
-            }}
-          >
-            💧
-          </button>
-        )}
         {place === "mt-mist" && (
           <button
             className="room-action"
@@ -828,70 +844,6 @@ export function World({
           >
             Sled Run Race <ArrowUpRight size={17} />
           </button>
-        )}
-        {place === "arcade" && (
-          <>
-            <button className="room-action" onClick={onGame}>
-              <Gamepad2 size={19} /> Choose a game <ArrowUpRight size={17} />
-            </button>
-            <button
-              className="room-action"
-              onClick={onOpenLeaderboard}
-              style={{ top: "80px" }}
-            >
-              <Trophy size={18} /> Arcade Leaderboard
-            </button>
-            <button
-              type="button"
-              className="room-interactive-prop arcade-cabinet-prop"
-              aria-label="Retro arcade cabinet"
-              title="Retro arcade cabinet"
-              style={{ left: "30%", top: "42%" }}
-              onClick={() => {
-                playPropSound("chime", sound ? undefined : null);
-                if (onOpenLeaderboard) {
-                  onOpenLeaderboard();
-                } else {
-                  notify(
-                    "BEEP BOOP! The retro arcade cabinet flashes with high scores! 🕹️",
-                  );
-                }
-              }}
-            >
-              🕹️
-            </button>
-          </>
-        )}
-        {place === "den" && (
-          <button className="room-action" onClick={onShop}>
-            <Home size={18} /> Find something cozy <ArrowUpRight size={17} />
-          </button>
-        )}
-        {place === "cafe" && (
-          <>
-            <button
-              className="room-action"
-              onClick={() => onActivity("smoothie")}
-              style={{ top: "80px" }}
-            >
-              <Coffee size={18} /> Blend smoothies
-            </button>
-            <button
-              type="button"
-              className="room-interactive-prop cafe-blender"
-              aria-label="Smoothie blender"
-              title="Whirl blender"
-              style={{ left: "75%", top: "45%" }}
-              onClick={() => {
-                playPropSound("blender", sound ? undefined : null);
-                notify(
-                  "Whirrrr! Fresh mango smoothie blends to creamy perfection! 🥭🥤",
-                );
-              }}
-            >
-              🍹
-            </button>
-          </>
         )}
         {place === "canyon-rapids" && (
           <button className="room-action" onClick={() => onOpenRiverSurf?.()}>
@@ -979,58 +931,14 @@ export function World({
             </button>
           </>
         )}
-        {player.decor.includes("plant") && place === "den" && (
-          <button
-            type="button"
-            className="den-decoration plant-decor interactive-prop"
-            aria-label="Your happy houseplant"
-            title="Rustle houseplant"
-            onClick={() => {
-              playPropSound("rustle", sound ? undefined : null);
-              notify(
-                "You gave the leafy houseplant a gentle pat. Leaves rustle happily! 🌿",
-              );
-            }}
-          >
-            🪴
-          </button>
-        )}
-        {player.decor.includes("cushion") && place === "den" && (
-          <button
-            type="button"
-            className="den-decoration cushion-decor interactive-prop"
-            aria-label="Your sunny cushion"
-            title="Sit on cushion"
-            onClick={() => {
-              playPropSound("sit", sound ? undefined : null);
-              notify("You sank into the sunny cushion. Purr-fectly cozy! 🛋️✨");
-            }}
-          >
-            🛋️
-          </button>
-        )}
-        {place === "den" && (
-          <button
-            type="button"
-            className="room-interactive-prop den-fireplace"
-            aria-label="Cozy fireplace"
-            title="Warm paws by fireplace"
-            style={{ left: "50%", top: "42%" }}
-            onClick={() => {
-              playPropSound("crackle", sound ? undefined : null);
-              notify(
-                "Crackling savanna pine logs warm your paws! Ahh, toasty! 🔥",
-              );
-            }}
-          >
-            🔥
-          </button>
-        )}
         {visibleNeighbors.map((n) => (
           <button
             key={n.id}
             className={`world-character neighbor ${bubble?.id === n.id ? "talking" : ""}`}
-            style={{ left: `${n.x}%`, top: `${n.y}%` }}
+            style={{
+              left: manifest ? n.x : `${n.x}%`,
+              top: manifest ? n.y : `${n.y}%`,
+            }}
             onClick={() => greet(n.id)}
             aria-label={`Say hello to ${n.name}`}
           >
@@ -1160,7 +1068,7 @@ export function World({
             ),
           )}
           {!compact &&
-            manifest.interactives.map((item) => (
+            roomItems.map((item) => (
               <button
                 key={item.id}
                 className="button-secondary room-nav-tile"
@@ -1276,7 +1184,7 @@ export function World({
           />
           <h3 className="map-activities-title">Things to do here</h3>
           <div className="map-activities">
-            {manifest.interactives.map((item) => (
+            {roomItems.map((item) => (
               <button
                 key={item.id}
                 className="button-secondary map-activity"

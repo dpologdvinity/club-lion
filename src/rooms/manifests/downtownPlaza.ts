@@ -58,7 +58,7 @@ export const downtownPlazaManifest: RoomManifest = {
     },
     {
       targetRoomId: "cafe",
-      targetSpawn: { x: 2300, y: 600 },
+      targetSpawn: { x: 1600, y: 620 },
       triggerBounds: { x1: 2180, y1: 520, x2: 2360, y2: 650 },
       label: "Canopy Café",
     },

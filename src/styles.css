@@ -583,18 +583,6 @@ svg {
   background-size: cover;
   background-position: center 49%;
 }
-.scene-water {
-  background-image: url("/assets/water.webp");
-}
-.scene-cafe {
-  background-image: url("/assets/cafe.webp");
-}
-.scene-arcade {
-  background-image: url("/assets/arcade.webp");
-}
-.scene-den {
-  background-image: url("/assets/den.webp");
-}
 .world-stage {
   flex: 1 1 0%;
   width: 100%;
@@ -922,33 +910,6 @@ svg {
 }
 .room-action:hover {
   background: #ffe3b2;
-}
-.den-decoration {
-  position: absolute;
-  z-index: 3;
-  font-size: 65px;
-  pointer-events: auto;
-  filter: drop-shadow(2px 5px 2px #423b2533);
-}
-.den-decoration.interactive-prop {
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.den-decoration.interactive-prop:hover {
-  transform: scale(1.18);
-}
-.den-decoration.interactive-prop:active {
-  transform: scale(0.95);
-}
-.plant-decor {
-  left: 24%;
-  top: 44%;
-}
-.cushion-decor {
-  right: 21%;
-  top: 58%;
 }
 .chat-toolbar {
   position: absolute;
@@ -4267,9 +4228,6 @@ svg {
   }
   .help-welcome p {
     font-size: 11px;
-  }
-  .den-decoration {
-    font-size: 43px;
   }
 }
 @media (max-width: 370px) {

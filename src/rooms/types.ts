@@ -1,3 +1,4 @@
+import type { PropSound } from "../utils/interactiveProps.ts";
 import type { GameId } from "../games/catalog.ts";
 
 export type RoomPortal = {
@@ -36,6 +37,25 @@ export type RoomObstacle = RoomObstacleBase &
     | { shape: "polygon"; points: [number, number][] }
   );
 
+/** Illustrated objects share the manifest action path with room navigation. */
+export type RoomObjectKind =
+  | "splash"
+  | "lily"
+  | "chimes"
+  | "blender"
+  | "tea"
+  | "oven"
+  | "bubbles"
+  | "cake"
+  | "cabinet"
+  | "prizes"
+  | "disco"
+  | "fireplace"
+  | "lamp"
+  | "books"
+  | "plant"
+  | "cushion";
+
 export type RoomManifest = {
   id: string;
   name: string;
@@ -46,6 +66,7 @@ export type RoomManifest = {
   walkablePolygon: [number, number][];
   depthLayers: DepthLayer[];
   portals: RoomPortal[];
+  neighbors?: { id: string; x: number; y: number }[];
   interactives: {
     id: string;
     label?: string;
@@ -58,7 +79,13 @@ export type RoomManifest = {
       | "secret_clickable"
       | "shop";
     position: { x: number; y: number };
-    actionData: Record<string, unknown> & { gameId?: GameId };
+    object?: { kind: RoomObjectKind; width: number; height: number };
+    reaction?: { message: string; sound: PropSound };
+    requiresDecor?: "plant" | "cushion";
+    actionData: Record<string, unknown> & {
+      gameId?: GameId;
+      roomAction?: "games" | "shop" | "leaderboard";
+    };
   }[];
   ambientAudioPreset: string;
   /** Solid scenery. Optional so rooms without collisions stay valid. */

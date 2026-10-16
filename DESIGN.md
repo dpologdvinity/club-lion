@@ -87,3 +87,9 @@ Copy is friendly, concrete, and short. Real progress owns every coin count, adve
 - Make character greetings, keyboard movement, rewards, and saved looks functional.
 - Do not imply that scripted neighbors are online players.
 - Do not add decorative progress, daily resets, or multiplayer status without implementing them.
+
+## Living neighborhood rooms
+
+The watering hole, Canopy café, arcade and cozy den use independent SVG scenery layers and stage-positioned illustrated objects, never flattened room images. Ambient plants, water, lights and clouds use `sm-*` CSS motion. Object actions also change the illustration: a hopping frog, poured tea, baked pastry, surprise ball, colored lights, switchable hearth/lamp and storybook pages. Reduced motion preserves those visible states while stopping animation.
+
+To expand any room, add its scenery layer in the corresponding `*Scenery.tsx` and a named entry in its `src/rooms/manifests/` file. Existing `object.kind` art can be reused at any stage position and size; a genuinely new object illustration belongs in `RoomObject.tsx` and the `RoomObjectKind` union. `reaction` supplies sound and feedback, `actionData.gameId` launches a catalog game, and `actionData.roomAction` uses the existing games/shop/leaderboard controls. The same entries appear in desktop activity navigation and the phone Map sheet. Purchased den objects use `requiresDecor`, preserving existing ownership. Neighbors, portals and floor obstacles remain manifest data. Add floor collision only around an object's physical footprint; keep arrival spawns and exit lanes clear. Room object state lasts for the current visit and never changes saved purchases or awards coins.

@@ -19,6 +19,12 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 - MouseEvent rounding in zoomed-out rooms required a 2-stage-pixel setup tolerance; obstacle point/segment assertions remain strict. Phone label geometry is checked atomically after layout settles.
 - Baseline full run 38779506997 passed verify, all four browser shards, and PWA. Check the latest run after further changes; do not claim browser success from local verification alone.
 
+## Living neighborhood rooms
+
+- Water, café, arcade and den now use independent illustrated SVG scenery, CSS ambient motion and manifest-owned stage objects. Visible actions include frog hops, tea pouring, oven pastries, surprise balls, light colors, hearth/lamp switches and storybook pages. Saved den decorations, greetings, games, shop and leaderboard remain connected.
+- Add future objects, neighbors and destinations through each room manifest; add new object drawings in `RoomObject.tsx` only when existing kinds do not fit. `DESIGN.md` documents the extension path. Room reactions walk the doll/camera toward their object so phone users see the result.
+- Targeted browser coverage lives in `tests/living-rooms.spec.ts`; uses GitHub Actions. Local room verification passes 791 unit tests plus typecheck, format and build. Check the branch's latest GitHub run before claiming browser success.
+
 ## Remaining follow-ups
 
 - Reference doll refinement: tapered face, lifted eyes with finer liner, softer skin highlights, selected-color hair gradients, longer half-up layers, cascading wave highlights, and woven topknot. Existing saves and wardrobe options preserved. Visual resemblance still needs owner feedback.

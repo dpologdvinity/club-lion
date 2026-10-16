@@ -1,3 +1,7 @@
+import { CozyDenScenery } from "./CozyDenScenery.tsx";
+import { NeighborhoodArcadeScenery } from "./NeighborhoodArcadeScenery.tsx";
+import { CanopyCafeScenery } from "./CanopyCafeScenery.tsx";
+import { WateringHoleScenery } from "./WateringHoleScenery.tsx";
 import { useEffect, useState, type ComponentType } from "react";
 import type { PlaceId } from "../game.ts";
 import "./sceneryMotion.css";
@@ -27,6 +31,10 @@ type Scene = {
 
 /** Each room's illustrated scenery and the stage width its viewBox spans. */
 const ROOM_SCENERY: Partial<Record<PlaceId, Scene>> = {
+  water: { width: 1920, Scenery: WateringHoleScenery },
+  cafe: { width: 1920, Scenery: CanopyCafeScenery },
+  arcade: { width: 1920, Scenery: NeighborhoodArcadeScenery },
+  den: { width: 1920, Scenery: CozyDenScenery },
   "downtown-plaza": { width: 2400, Scenery: DowntownPlazaScenery },
   "club-pulse": { width: 1920, Scenery: ClubPulseScenery, clock: true },
   "wonder-park-entrance": {

@@ -1,3 +1,7 @@
+import { cozyDenManifest } from "./manifests/cozyDen.ts";
+import { neighborhoodArcadeManifest } from "./manifests/neighborhoodArcade.ts";
+import { canopyCafeManifest } from "./manifests/canopyCafe.ts";
+import { wateringHoleManifest } from "./manifests/wateringHole.ts";
 import type { PlaceId } from "../game.ts";
 import type { RoomManifest } from "./types.ts";
 import { downtownPlazaManifest } from "./manifests/downtownPlaza.ts";
@@ -19,6 +23,10 @@ import { lionAquariumManifest } from "./manifests/lionAquarium.ts";
 import { snowflakeRinkManifest } from "./manifests/snowflakeRink.ts";
 
 export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
+  water: wateringHoleManifest,
+  cafe: canopyCafeManifest,
+  arcade: neighborhoodArcadeManifest,
+  den: cozyDenManifest,
   "mt-mist": mtMistBasecampManifest,
   "downtown-plaza": downtownPlazaManifest,
   "wonder-park-entrance": wonderParkEntranceManifest,
