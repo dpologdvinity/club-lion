@@ -13,25 +13,30 @@ test("hoverboard glides to the clicked ground and steps farther with the keyboar
     { key: SAVE_KEY, player },
   );
   await page.goto("/");
-  const ground = page.getByRole("button", { name: "Walk around the village." });
+  const ground = page.locator(".camera-viewport-ground");
+  const left = () =>
+    page
+      .locator(".your-character")
+      .evaluate((el: HTMLElement) => parseFloat(el.style.left));
   await ground.focus();
+  const start = await left();
   await page.keyboard.press("ArrowRight");
-  await expect(page.locator(".your-character")).toHaveCSS("left", /.+/);
-  expect(
-    await page
-      .locator(".your-character")
-      .evaluate((el: HTMLElement) => parseFloat(el.style.left)),
-  ).toBe(47.5);
-  const bounds = await ground.boundingBox();
-  if (!bounds) throw new Error("Ground is missing");
-  await ground.click({
-    position: { x: bounds.width * 0.3, y: bounds.height * 0.86 },
-  });
-  expect(
-    await page
-      .locator(".your-character")
-      .evaluate((el: HTMLElement) => parseFloat(el.style.left)),
-  ).toBeCloseTo(30, 0);
+  expect(await left()).toBeGreaterThan(start);
+  await page
+    .locator(".your-character")
+    .evaluate((el) =>
+      Promise.all(el.getAnimations().map((animation) => animation.finished)),
+    );
+  // Tap open grass left of the doll; the board glides straight there.
+  const stage = (await page.locator(".camera-viewport-stage").boundingBox())!;
+  const before = await left();
+  const target = before - 12;
+  await page.mouse.click(
+    stage.x + (stage.width * target) / 100,
+    // Open grass between the flower row and the square's toys.
+    stage.y + (stage.height * 544) / 864,
+  );
+  expect(await left()).toBeCloseTo(target, 0);
   await expect(page.locator(".sparkle-particle").first()).toBeAttached();
   await expect(page.locator(".sparkle-particle")).toHaveCount(0, {
     timeout: 3000,
@@ -49,7 +54,7 @@ test("reduced motion suppresses hoverboard sparkles", async ({ page }) => {
     { key: SAVE_KEY, player },
   );
   await page.goto("/");
-  await page.getByRole("button", { name: "Walk around the village." }).focus();
+  await page.locator(".camera-viewport-ground").focus();
   await page.keyboard.press("ArrowRight");
   await page.waitForTimeout(200);
   await expect(page.locator(".sparkle-particle")).toHaveCount(0);

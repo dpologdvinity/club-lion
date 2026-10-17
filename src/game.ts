@@ -6,6 +6,11 @@ import {
   SLED_MAX_PAYOUT,
   type SledState,
 } from "./utils/sledPhysics.ts";
+import {
+  BUTTERFLY_COUNT,
+  BUTTERFLY_SPOTS,
+  butterfliesForDay,
+} from "./utils/squareFun.ts";
 import { sanitizeSocialGraph } from "./utils/socialGraph.ts";
 import {
   isKartColorId,
@@ -125,6 +130,8 @@ export type PlayerBase = {
   cakesServed?: number;
   /** Photos of the newest served cakes, oldest first. */
   bakeryCakes?: Cake[];
+  /** Today's Savanna Square butterfly hunt: spots found on `day` (local YYYY-MM-DD). */
+  squareButterflies?: { day: string; found: number[] };
   seekRounds?: number;
   /** Fastest hard Hide & Seek Safari round in milliseconds. */
   seekBestMs?: number;
@@ -459,6 +466,27 @@ function isKartLapMs(value: unknown): value is number {
   );
 }
 
+function isButterflyHunt(
+  value: unknown,
+): value is { day: string; found: number[] } {
+  if (typeof value !== "object" || value === null) return false;
+  const day: unknown = Reflect.get(value, "day");
+  const found: unknown = Reflect.get(value, "found");
+  return (
+    typeof day === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(day) &&
+    Array.isArray(found) &&
+    found.length <= BUTTERFLY_COUNT &&
+    new Set(found).size === found.length &&
+    found.every(
+      (spot) =>
+        Number.isSafeInteger(spot) &&
+        spot >= 0 &&
+        spot < BUTTERFLY_SPOTS.length,
+    )
+  );
+}
+
 export function restorePlayer(raw: string | null): Player {
   if (!raw) return newPlayer();
   try {
@@ -624,6 +652,14 @@ export function restorePlayer(raw: string | null): Player {
       ...(p.bakeryCakes === undefined
         ? {}
         : { bakeryCakes: restoreCakePhotos(p.bakeryCakes) }),
+      ...(isButterflyHunt(p.squareButterflies)
+        ? {
+            squareButterflies: {
+              day: p.squareButterflies.day,
+              found: [...p.squareButterflies.found],
+            },
+          }
+        : {}),
       ...(p.seekRounds === undefined
         ? {}
         : Number.isSafeInteger(p.seekRounds) && p.seekRounds >= 0
@@ -1395,4 +1431,23 @@ export function setKartPrefs<T extends PlayerBase>(
   return player.kartColor === color && player.kartMode === mode
     ? player
     : { ...player, kartColor: color, kartMode: mode };
+}
+
+/** Records one butterfly found in the square today; the fifth earns its stamp once. */
+export function findSquareButterfly<T extends PlayerBase>(
+  player: T,
+  day: string,
+  spot: number,
+): T {
+  if (!butterfliesForDay(day).includes(spot)) return player;
+  const hunt = player.squareButterflies;
+  const found = hunt?.day === day ? hunt.found : [];
+  if (found.includes(spot)) return player;
+  const next = {
+    ...player,
+    squareButterflies: { day, found: [...found, spot] },
+  };
+  return next.squareButterflies.found.length === BUTTERFLY_COUNT
+    ? unlockStamp(next, "square_butterflies")
+    : next;
 }

@@ -1,4 +1,7 @@
 import { RoomObject } from "./RoomObject.tsx";
+import { SquareFun } from "./SquareFun";
+import { dayKey } from "../utils/squareFun";
+import { playInstrumentNote } from "../utils/instrumentSynths";
 import { getSharedAudioBus } from "../utils/audioBus";
 import { speak } from "../utils/speech";
 import {
@@ -11,14 +14,12 @@ import {
 import {
   ArrowLeft,
   ArrowUpRight,
-  Coffee,
   Home,
   Map,
   MapPin,
   Music,
   PawPrint,
   Send,
-  Shirt,
   Smile,
   Sparkles,
   Volume2,
@@ -104,13 +105,14 @@ type WorldProps = {
   onGame: () => void;
   onGreet: (id: string) => void;
   notify: (message: string) => void;
-  onOpenCard?: () => void;
   onOpenCatalog?: () => void;
   onOpenSalon?: () => void;
   onOpenSpy?: () => void;
   onOpenJukebox?: () => void;
   onOpenCondo?: () => void;
   onUnlockStamp?: (stampId: string) => void;
+  /** A square butterfly found today (spot index into BUTTERFLY_SPOTS). */
+  onFindButterfly?: (day: string, spot: number) => void;
   onOpenRiverSurf?: () => void;
   onOpenPetCare?: () => void;
   onOpenPetPicker?: () => void;
@@ -145,13 +147,13 @@ export function World({
   onGame,
   onGreet,
   notify,
-  onOpenCard,
   onOpenCatalog,
   onOpenSalon,
   onOpenSpy,
   onOpenJukebox,
   onOpenCondo,
   onUnlockStamp,
+  onFindButterfly,
   onOpenRiverSurf,
   onOpenPetCare,
   onOpenPetPicker,
@@ -482,9 +484,7 @@ export function World({
         const neighbor = NEIGHBORS.find((n) => n.id === at.id);
         return neighbor ? [{ ...neighbor, x: at.x, y: at.y }] : [];
       })
-    : place === "square"
-      ? NEIGHBORS
-      : [];
+    : [];
 
   const portal = (target: string, targetSpawn: { x: number; y: number }) => {
     if (target === "le-shop") {
@@ -520,16 +520,64 @@ export function World({
         mode,
       );
   };
+  const today = dayKey(new Date());
+  const [dancing, setDancing] = useState(false);
+  const danceTimer = useRef<number | undefined>(undefined);
+  const [twirling, setTwirling] = useState(false);
+  const twirlTimer = useRef<number | undefined>(undefined);
+  useEffect(
+    () => () => {
+      window.clearTimeout(danceTimer.current);
+      window.clearTimeout(twirlTimer.current);
+    },
+    [],
+  );
+  // Any music in the room sets the neighbors dancing for a few seconds.
+  const dance = () => {
+    setDancing(true);
+    window.clearTimeout(danceTimer.current);
+    danceTimer.current = window.setTimeout(() => setDancing(false), 3000);
+  };
+  const playNotes = (notes: number[]) => {
+    notes.forEach((note, i) =>
+      window.setTimeout(
+        () => playInstrumentNote("marimba", note, sound ? undefined : null),
+        i * 150,
+      ),
+    );
+    dance();
+  };
+  const twirl = () => {
+    setTwirling(true);
+    window.clearTimeout(twirlTimer.current);
+    twirlTimer.current = window.setTimeout(() => setTwirling(false), 1000);
+  };
   const hotspot = (id: string) => {
     const item = roomItems.find((item) => item.id === id);
+    const note = item?.actionData.note;
+    if (note !== undefined) {
+      setObjectStates((states) => ({ ...states, [id]: (states[id] ?? 0) + 1 }));
+      playNotes([note]);
+      return;
+    }
     if (item?.reaction) {
       stageWalk(
         Math.min(item.position.x + 190, (manifest?.stageWidth ?? 1920) - 100),
         650,
       );
-      setObjectStates((states) => ({ ...states, [id]: (states[id] ?? 0) + 1 }));
+      const state = (objectStates[id] ?? 0) + 1;
+      setObjectStates((states) => ({ ...states, [id]: state }));
       playPropSound(item.reaction.sound, sound ? undefined : null);
-      notify(item.reaction.message);
+      const steps = item.object?.steps ?? 2;
+      notify(item.reaction.messages?.[state % steps] ?? item.reaction.message);
+      const tune = item.actionData.tune;
+      if (tune && state % steps === tune.step) playNotes(tune.notes);
+    }
+    const travel = item?.actionData.travel;
+    if (travel) {
+      // Let the door wiggle and say its name before the room changes.
+      window.setTimeout(() => navigate(travel), 450);
+      return;
     }
     if (item?.actionData.roomAction === "games") {
       onGame();
@@ -754,6 +802,19 @@ export function World({
               onActivate={() => hotspot(item.id)}
             />
           ))}
+        {manifest?.fun === "square" && (
+          <SquareFun
+            day={today}
+            found={
+              player.squareButterflies?.day === today
+                ? player.squareButterflies.found
+                : []
+            }
+            sound={sound}
+            onFind={(spot) => onFindButterfly?.(today, spot)}
+            onSay={notify}
+          />
+        )}
         {SHOW_OBSTACLE_DEBUG && <ObstacleDebugOverlay frame={frame} />}
         {frame.space.obstacles.map(
           (obstacle) =>
@@ -805,40 +866,6 @@ export function World({
               );
             }}
           />
-        )}
-        {place === "square" && (
-          <>
-            <button
-              className="building-label downtown-label"
-              onClick={() => navigate("downtown-plaza")}
-            >
-              Downtown Plaza <ArrowUpRight size={12} />
-            </button>
-            <button
-              className="building-label cafe-label"
-              onClick={() => navigate("cafe")}
-            >
-              <Coffee size={13} /> Canopy café <ArrowUpRight size={12} />
-            </button>
-            <button className="building-label shop-label" onClick={onShop}>
-              <Shirt size={13} /> Paw & style <ArrowUpRight size={12} />
-            </button>
-            <button
-              type="button"
-              className="room-interactive-prop square-fountain"
-              aria-label="Savanna fountain"
-              title="Plaza fountain"
-              style={{ left: "50%", top: "44%" }}
-              onClick={() => {
-                playPropSound("splash", sound ? undefined : null);
-                notify(
-                  "A sparkling splash of savanna sunshine from the fountain! ⛲✨",
-                );
-              }}
-            >
-              ⛲
-            </button>
-          </>
         )}
         {place === "mt-mist" && (
           <button
@@ -937,7 +964,7 @@ export function World({
         {visibleNeighbors.map((n) => (
           <button
             key={n.id}
-            className={`world-character neighbor ${bubble?.id === n.id ? "talking" : ""}`}
+            className={`world-character neighbor ${bubble?.id === n.id ? "talking" : ""}${dancing ? " is-dancing" : ""}`}
             style={{
               left: manifest ? n.x : `${n.x}%`,
               top: manifest ? n.y : `${n.y}%`,
@@ -985,27 +1012,26 @@ export function World({
           ref={characterRef}
           data-stage-x={manifest ? stagePosition.x : undefined}
           data-stage-y={manifest ? stagePosition.y : undefined}
-          className={`world-character your-character${boardId ? " is-gliding" : ""}${avatarAction === "skate" ? " is-skating" : ""}`}
+          className={`world-character your-character${boardId ? " is-gliding" : ""}${avatarAction === "skate" ? " is-skating" : ""}${twirling ? " is-twirling" : ""}`}
           style={{
             left: `${position.x}%`,
             top: `${position.y}%`,
-            cursor: onOpenCard ? "pointer" : undefined,
+            cursor: "pointer",
             transition: `left ${glideMs}ms cubic-bezier(0.2, 0.6, 0.4, 1), top ${glideMs}ms cubic-bezier(0.2, 0.6, 0.4, 1)`,
           }}
+          // Tapping the doll makes her twirl; the player card opens from the ID Card button.
           onClick={(e) => {
-            if (onOpenCard) {
-              e.stopPropagation();
-              onOpenCard();
-            }
+            e.stopPropagation();
+            twirl();
           }}
-          role={onOpenCard ? "button" : undefined}
-          tabIndex={onOpenCard ? 0 : undefined}
-          aria-label={onOpenCard ? `${player.name}'s player card` : undefined}
+          role="button"
+          tabIndex={0}
+          aria-label={`Twirl ${player.name}`}
           onKeyDown={(e) => {
-            if (onOpenCard && (e.key === "Enter" || e.key === " ")) {
+            if (e.key === "Enter" || e.key === " ") {
               e.stopPropagation();
               e.preventDefault();
-              onOpenCard();
+              twirl();
             }
           }}
         >

@@ -27,7 +27,7 @@ for (const room of [
       assert.ok(item.reaction || item.actionData.gameId);
     }
     assert.equal(room.portals[0].targetRoomId, "square");
-    assert.deepEqual(room.portals[0].targetSpawn, { x: 43, y: 78 });
+    assert.deepEqual(room.portals[0].targetSpawn, { x: 660, y: 639 });
   });
 }
 test("den decorations still require their saved purchases", () => {

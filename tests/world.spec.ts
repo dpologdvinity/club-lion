@@ -41,7 +41,7 @@ test("the world loads, supports movement and chat, and has no horizontal overflo
   await expect(
     page.getByRole("heading", { name: "Welcome to the pride." }),
   ).toBeVisible();
-  const ground = page.getByRole("button", { name: "Walk around the village." });
+  const ground = page.locator(".camera-viewport-ground");
   await ground.focus();
   const before = await page.locator(".your-character").getAttribute("style");
   await page.keyboard.press("ArrowRight");
@@ -735,13 +735,12 @@ test("Phase 1 Action Wheel triggers quick chat, emotes, and mango tossing", asyn
   await expect(page.getByRole("dialog")).toHaveCount(0);
 
   // Click ground to toss
-  const ground = page.getByRole("button", {
-    name: "Walk around the village.",
-  });
-  const groundBox = (await ground.boundingBox())!;
-  await ground.click({
-    position: { x: groundBox.width * 0.7, y: groundBox.height * 0.9 },
-  });
+  // Aim at open grass in the square (stage 900, 580), clear of the toys.
+  const stage = (await page.locator(".camera-viewport-stage").boundingBox())!;
+  await page.mouse.click(
+    stage.x + (stage.width * 900) / 1536,
+    stage.y + (stage.height * 580) / 864,
+  );
   await expect(page.locator(".toast")).toContainText(
     "Splash! 🥭 Mango landed!",
   );

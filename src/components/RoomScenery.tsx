@@ -25,6 +25,11 @@ const CanopyCafeScenery = lazy(() =>
     default: module.CanopyCafeScenery,
   })),
 );
+const SavannaSquareScenery = lazy(() =>
+  import("./SavannaSquareScenery.tsx").then((module) => ({
+    default: module.SavannaSquareScenery,
+  })),
+);
 const WateringHoleScenery = lazy(() =>
   import("./WateringHoleScenery.tsx").then((module) => ({
     default: module.WateringHoleScenery,
@@ -113,6 +118,8 @@ const SnowflakeRinkScenery = lazy(() =>
 
 type Scene = {
   width: number;
+  /** Stage height in scene units; most rooms are 720. */
+  height?: number;
   Scenery: LazyExoticComponent<ComponentType<{ seconds: number }>>;
   /** Some motion still follows game logic (paths, physics, text) and needs the shared clock. */
   clock?: true;
@@ -120,6 +127,7 @@ type Scene = {
 
 /** Each room's illustrated scenery and the stage width its viewBox spans. */
 const ROOM_SCENERY: Partial<Record<PlaceId, Scene>> = {
+  square: { width: 1536, height: 864, Scenery: SavannaSquareScenery },
   water: { width: 1920, Scenery: WateringHoleScenery },
   cafe: { width: 1920, Scenery: CanopyCafeScenery },
   arcade: { width: 1920, Scenery: NeighborhoodArcadeScenery },
@@ -192,11 +200,11 @@ export function RoomScenery({
     };
   }, [clock]);
   if (!scene) return null;
-  const { width, Scenery } = scene;
+  const { width, height = 720, Scenery } = scene;
   return (
     <svg
       className={preview ? "room-scenery room-scenery-preview" : "room-scenery"}
-      viewBox={`0 0 ${width} 720`}
+      viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio={preview ? "xMidYMid slice" : "none"}
       aria-hidden="true"
     >

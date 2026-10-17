@@ -613,14 +613,6 @@ svg {
   background: #fffaf0;
   box-shadow: 0 3px 8px #49381540;
 }
-.cafe-label {
-  left: 9%;
-  top: 40%;
-}
-.shop-label {
-  right: 11%;
-  top: 40%;
-}
 /* Room hotspot feedback: emoji float up from the hotspot and fade out. */
 .hotspot-burst {
   position: absolute;
@@ -3784,14 +3776,6 @@ svg {
     padding: 8px 10px;
     gap: 4px;
   }
-  .cafe-label {
-    left: 6%;
-    top: 40%;
-  }
-  .shop-label {
-    right: 5%;
-    top: 39%;
-  }
   .walk-hint {
     bottom: 11px;
     font-size: 9px;
@@ -5487,10 +5471,6 @@ svg {
   .room-navigation .room-nav-tile:active {
     transform: none;
   }
-}
-.downtown-label {
-  top: 47%;
-  left: 46%;
 }
 .phase-two-art {
   background: #f5e5c7;
@@ -11094,4 +11074,39 @@ textarea {
   gap: 12px;
   padding: 24px;
   text-align: center;
+}
+
+/* Music in the room sets the neighbors dancing; tapping the doll twirls her. */
+.world-character.neighbor.is-dancing .neighbor-idle {
+  animation: neighbor-dance 0.4s ease-in-out infinite alternate;
+}
+@keyframes neighbor-dance {
+  from {
+    transform: translateY(0) rotate(-8deg);
+  }
+  to {
+    transform: translateY(-10px) rotate(8deg);
+  }
+}
+.your-character.is-twirling .avatar-with-companion {
+  animation: doll-twirl 0.9s ease-in-out;
+}
+@keyframes doll-twirl {
+  50% {
+    transform: scaleX(-1) translateY(-8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-character.neighbor.is-dancing .neighbor-idle,
+  .your-character.is-twirling .avatar-with-companion {
+    animation: none;
+  }
+}
+
+/* Inside the camera stage, keep every tap target at least 48 screen px whatever the zoom. */
+.camera-viewport-stage .room-interactive-prop,
+.camera-viewport-stage .world-prop,
+.camera-viewport-stage .world-character.neighbor {
+  min-width: calc(48px / var(--camera-scale, 1));
+  min-height: calc(48px / var(--camera-scale, 1));
 }

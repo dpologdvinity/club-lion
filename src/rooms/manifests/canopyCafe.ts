@@ -18,8 +18,8 @@ export const canopyCafeManifest: RoomManifest = {
     {
       targetRoomId: "square",
       targetSpawn: {
-        x: 43,
-        y: 78,
+        x: 660,
+        y: 639,
       },
       triggerBounds: {
         x1: 0,

@@ -21,8 +21,10 @@ import { petParadiseManifest } from "./manifests/petParadise.ts";
 import { lionSpeedwayManifest } from "./manifests/lionSpeedway.ts";
 import { lionAquariumManifest } from "./manifests/lionAquarium.ts";
 import { snowflakeRinkManifest } from "./manifests/snowflakeRink.ts";
+import { savannaSquareManifest } from "./manifests/savannaSquare.ts";
 
 export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
+  square: savannaSquareManifest,
   water: wateringHoleManifest,
   cafe: canopyCafeManifest,
   arcade: neighborhoodArcadeManifest,

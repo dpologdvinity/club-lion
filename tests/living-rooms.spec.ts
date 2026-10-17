@@ -99,6 +99,13 @@ for (const room of [
     exit: "Downtown Plaza",
   },
   {
+    name: "Savanna Square",
+    action: "Dig in the sandbox",
+    kind: "sandbox",
+    objects: 22,
+    exit: "Downtown Plaza",
+  },
+  {
     name: "Your cozy den",
     action: "Switch the reading lamp",
     kind: "lamp",
@@ -145,7 +152,7 @@ for (const room of [
     ).toEqual([]);
     await page.screenshot({ path: testInfo.outputPath(`${room.kind}.png`) });
     const exit = "exit" in room ? room.exit : "Savanna Square";
-    await tapRoomPath(page, exit);
+    await tapRoomPath(page, exit, true);
     await expect(page.locator(".world-location h2")).toHaveText(exit);
     expect(errors).toEqual([]);
   });

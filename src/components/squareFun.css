@@ -1,0 +1,143 @@
+.square-weather {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.weather-rain {
+  background:
+    linear-gradient(#5a7fa833, #5a7fa833),
+    repeating-linear-gradient(105deg, transparent 0 14px, #d7ecff99 14px 16px);
+  background-size:
+    auto,
+    120px 120px;
+  animation: weather-rain 0.5s linear infinite;
+}
+.weather-snow {
+  background-image:
+    radial-gradient(circle, #fff 0 4px, transparent 5px),
+    radial-gradient(circle, #fff 0 3px, transparent 4px);
+  background-size:
+    90px 90px,
+    140px 140px;
+  background-position:
+    0 0,
+    40px 60px;
+  animation: weather-snow 4s linear infinite;
+}
+.weather-rainbow {
+  background: radial-gradient(
+    circle at 50% 100%,
+    transparent 0 52%,
+    #a77bff66 52% 55%,
+    #4aa8ff66 55% 58%,
+    #4cc97a66 58% 61%,
+    #ffd84d66 61% 64%,
+    #ff9f4366 64% 67%,
+    #ff5a5f66 67% 70%,
+    transparent 70%
+  );
+}
+@keyframes weather-rain {
+  to {
+    background-position:
+      0 0,
+      -30px 120px;
+  }
+}
+@keyframes weather-snow {
+  to {
+    background-position:
+      0 90px,
+      40px 200px;
+  }
+}
+.square-weather-toy,
+.square-butterfly {
+  position: absolute;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border: 0;
+  cursor: pointer;
+}
+.square-weather-toy {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #fff6de;
+  box-shadow: 0 6px 0 #c98a4a;
+  font-size: 54px;
+}
+.square-butterfly {
+  width: 64px;
+  height: 64px;
+  background: none;
+  font-size: 46px;
+  animation: butterfly-flutter 1.4s ease-in-out infinite alternate;
+}
+.square-butterfly:not(:disabled):active,
+.square-weather-toy:not(:disabled):active {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+@keyframes butterfly-flutter {
+  to {
+    transform: translate(-50%, -60%) rotate(8deg);
+  }
+}
+.square-jar {
+  position: absolute;
+  z-index: 5;
+  transform: translate(-50%, -100%);
+  padding: 6px 14px;
+  border-radius: 16px;
+  background: #fff6decc;
+  color: #294b39;
+  font-size: 22px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.square-jar.is-full {
+  background: #ffe08a;
+}
+.square-confetti {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, #ff5a5f 0 6px, transparent 7px),
+    radial-gradient(circle, #4aa8ff 0 6px, transparent 7px),
+    radial-gradient(circle, #ffd84d 0 6px, transparent 7px);
+  background-size:
+    110px 130px,
+    150px 110px,
+    90px 150px;
+  animation: confetti-fall 3s ease-in forwards;
+}
+@keyframes confetti-fall {
+  from {
+    background-position:
+      0 -200px,
+      40px -300px,
+      70px -250px;
+  }
+  to {
+    background-position:
+      0 900px,
+      40px 900px,
+      70px 900px;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .square-weather,
+  .square-butterfly {
+    animation: none;
+  }
+  /* Without its fall-and-fade the confetti would just sit there. */
+  .square-confetti {
+    display: none;
+  }
+}

@@ -1,5 +1,6 @@
 import type { PropSound } from "../utils/interactiveProps.ts";
 import type { GameId } from "../games/catalog.ts";
+import type { PlaceId } from "../game.ts";
 
 export type RoomPortal = {
   targetRoomId: string;
@@ -74,7 +75,16 @@ export type RoomObjectKind =
   | "duck"
   | "sprinkler"
   | "periscope"
-  | "kayak";
+  | "kayak"
+  | "fountain"
+  | "tree"
+  | "bush"
+  | "lanterns"
+  | "bunting"
+  | "sandbox"
+  | "swing"
+  | "door"
+  | "flower";
 
 export type RoomManifest = {
   id: string;
@@ -99,15 +109,32 @@ export type RoomManifest = {
       | "secret_clickable"
       | "shop";
     position: { x: number; y: number };
-    object?: { kind: RoomObjectKind; width: number; height: number };
-    reaction?: { message: string; sound: PropSound };
+    /** `steps` (default 2, on/off) is how many looks a tap cycles through. */
+    object?: {
+      kind: RoomObjectKind;
+      width: number;
+      height: number;
+      steps?: number;
+      /** false hides the visible caption; the button keeps its accessible name. */
+      caption?: false;
+    };
+    /** `messages` gives one read-aloud line per step; `message` covers the rest. */
+    reaction?: { message: string; messages?: string[]; sound: PropSound };
     requiresDecor?: "plant" | "cushion";
     actionData: Record<string, unknown> & {
       gameId?: GameId;
       roomAction?: "games" | "shop" | "leaderboard";
+      /** A picture door: travel here after the reaction. */
+      travel?: PlaceId;
+      /** A music toy: tapping plays this marimba note (0–7). */
+      note?: number;
+      /** Notes hummed when a tap reaches `step`. */
+      tune?: { step: number; notes: number[] };
     };
   }[];
   ambientAudioPreset: string;
+  /** Extra room-wide play layer: the square's weather toy and butterfly hunt. */
+  fun?: "square";
   /** Solid scenery. Optional so rooms without collisions stay valid. */
   obstacles?: RoomObstacle[];
 };

@@ -34,7 +34,7 @@ export const downtownPlazaManifest: RoomManifest = {
     },
     {
       targetRoomId: "square",
-      targetSpawn: { x: 43, y: 78 },
+      targetSpawn: { x: 660, y: 639 },
       triggerBounds: { x1: 950, y1: 675, x2: 1100, y2: 720 },
       label: "Savanna Square",
     },

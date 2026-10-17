@@ -14,16 +14,20 @@ export function RoomObject({
   onActivate: () => void;
 }) {
   if (!item.object) return null;
-  const { kind, width, height } = item.object;
-  const active = state % 2 === 1;
+  const { kind, width, height, steps = 2 } = item.object;
+  const step = state % steps;
+  const active = step !== 0;
+  // Doors and multi-step toys are not on/off switches.
+  const toggle = steps === 2 && kind !== "door";
   return (
     <button
       type="button"
       className={`room-object object-${kind} ${active ? "object-active" : ""}`}
       style={{ left: item.position.x, top: item.position.y, width, height }}
       aria-label={item.label}
-      aria-pressed={item.reaction ? active : undefined}
+      aria-pressed={item.reaction && toggle ? active : undefined}
       data-object-state={state}
+      data-object-step={step}
       onClick={onActivate}
     >
       <svg viewBox="0 0 200 240" preserveAspectRatio="none" aria-hidden="true">
@@ -1032,8 +1036,295 @@ export function RoomObject({
             />
           </g>
         )}
+        {kind === "fountain" && (
+          <g>
+            {step === 0 && (
+              <g className="sm-twinkle" fill="#fffbe0">
+                <circle cx="80" cy="70" r="5" />
+                <circle cx="120" cy="55" r="4" />
+                <circle cx="100" cy="90" r="3" />
+              </g>
+            )}
+            {step === 1 && (
+              <g
+                className="object-splash"
+                fill="#8fd3f4"
+                stroke="#4aa3d1"
+                strokeWidth="3"
+              >
+                <circle cx="70" cy="80" r="9" />
+                <circle cx="130" cy="75" r="10" />
+                <circle cx="100" cy="55" r="8" />
+                <circle cx="55" cy="110" r="7" />
+                <circle cx="145" cy="105" r="7" />
+              </g>
+            )}
+            {step === 2 && (
+              <g className="object-splash">
+                {[
+                  { x: 100, top: 0, w: 16 },
+                  { x: 70, top: 50, w: 11 },
+                  { x: 130, top: 50, w: 11 },
+                ].map((jet) => (
+                  <rect
+                    key={jet.x}
+                    x={jet.x - jet.w}
+                    y={jet.top}
+                    width={jet.w * 2}
+                    height={175 - jet.top}
+                    rx={jet.w}
+                    fill="#eaf8ff"
+                    fillOpacity="0.85"
+                    stroke="#8fd3f4"
+                    strokeWidth="3"
+                  />
+                ))}
+                <g fill="#e8f7ff" stroke="#4aa3d1" strokeWidth="2">
+                  <circle cx="45" cy="70" r="7" />
+                  <circle cx="155" cy="65" r="7" />
+                  <circle cx="100" cy="-8" r="8" />
+                  <circle cx="30" cy="120" r="6" />
+                  <circle cx="170" cy="115" r="6" />
+                </g>
+              </g>
+            )}
+            {step === 3 && (
+              <g fill="none" strokeWidth="9" strokeLinecap="round">
+                <path d="M10 170Q100 -40 190 170" stroke="#ff5a5f" />
+                <path d="M22 170Q100 -18 178 170" stroke="#ff9f43" />
+                <path d="M34 170Q100 4 166 170" stroke="#ffd84d" />
+                <path d="M46 170Q100 26 154 170" stroke="#4cc97a" />
+                <path d="M58 170Q100 48 142 170" stroke="#4aa8ff" />
+                <path d="M70 170Q100 70 130 170" stroke="#a77bff" />
+              </g>
+            )}
+          </g>
+        )}
+        {kind === "tree" && (
+          <g className={step === 1 ? "object-shake" : undefined}>
+            <rect x="88" y="150" width="24" height="90" rx="8" fill="#8a5a30" />
+            <circle
+              cx="100"
+              cy="100"
+              r="70"
+              fill="#5f9a4e"
+              stroke="#3f7238"
+              strokeWidth="5"
+            />
+            <circle cx="60" cy="120" r="40" fill="#6dab58" />
+            <circle cx="140" cy="115" r="42" fill="#6dab58" />
+            {step === 2 && (
+              <text x="100" y="100" fontSize="56" textAnchor="middle">
+                🐒
+              </text>
+            )}
+            {step === 3 && (
+              <g className="object-fall" fontSize="34" textAnchor="middle">
+                <text x="60" y="190">
+                  🥭
+                </text>
+                <text x="105" y="215">
+                  🥭
+                </text>
+                <text x="150" y="195">
+                  🥭
+                </text>
+              </g>
+            )}
+          </g>
+        )}
+        {kind === "bush" && (
+          <g>
+            <path
+              d="M10 230Q0 150 60 140Q80 90 130 110Q190 110 190 230Z"
+              fill="#5f9a4e"
+              stroke="#3f7238"
+              strokeWidth="6"
+            />
+            {active && (
+              <text
+                className="object-pop"
+                x="100"
+                y="120"
+                fontSize="70"
+                textAnchor="middle"
+              >
+                {item.id.endsWith("bunny")
+                  ? "🐰"
+                  : item.id.endsWith("hedgehog")
+                    ? "🦔"
+                    : "🐦"}
+              </text>
+            )}
+          </g>
+        )}
+        {kind === "lanterns" && (
+          <g>
+            <path
+              d="M0 30Q100 90 200 30"
+              fill="none"
+              stroke="#6a4a2a"
+              strokeWidth="4"
+            />
+            {[20, 60, 100, 140, 180].map((x, i) => (
+              <rect
+                key={x}
+                className={active ? "object-glow" : undefined}
+                style={active ? { animationDelay: `${i * 0.15}s` } : undefined}
+                x={x - 13}
+                y={i === 0 || i === 4 ? 40 : i === 2 ? 62 : 52}
+                width="26"
+                height="38"
+                rx="10"
+                fill={active ? "#ffd84d" : "#c98a4a"}
+                stroke="#8a5a30"
+                strokeWidth="4"
+              />
+            ))}
+          </g>
+        )}
+        {kind === "bunting" && (
+          <g className={active ? "sm-sway" : undefined}>
+            <path
+              d="M0 30Q100 70 200 30"
+              fill="none"
+              stroke="#6a4a2a"
+              strokeWidth="4"
+            />
+            {[
+              ["#ff5a5f", 20],
+              ["#ffd84d", 60],
+              ["#4cc97a", 100],
+              ["#4aa8ff", 140],
+              ["#a77bff", 180],
+            ].map(([fill, x]) => (
+              <path
+                key={x}
+                d={`M${Number(x) - 14} 42L${Number(x) + 14} 44L${x} 82Z`}
+                fill={String(fill)}
+              />
+            ))}
+            {active && (
+              <text
+                className="object-pop"
+                x="100"
+                y="45"
+                fontSize="52"
+                textAnchor="middle"
+              >
+                🦜
+              </text>
+            )}
+          </g>
+        )}
+        {kind === "sandbox" && (
+          <g>
+            <path
+              d="M10 150H190L175 230H25Z"
+              fill="#c98a4a"
+              stroke="#8a5a30"
+              strokeWidth="6"
+            />
+            <path d="M25 160H175L165 215H35Z" fill="#f2d9a3" />
+            {active ? (
+              <path
+                className="object-pop"
+                d="M60 205V140h18v-18h14v18h16v-30h14v30h16v-18h14v18h18V205Z"
+                fill="#e8c88a"
+                stroke="#b98f52"
+                strokeWidth="4"
+              />
+            ) : (
+              <path
+                d="M130 200l30-45"
+                stroke="#ff5a5f"
+                strokeWidth="8"
+                strokeLinecap="round"
+              />
+            )}
+          </g>
+        )}
+        {kind === "swing" && (
+          <g>
+            <path
+              d="M20 240L50 20H150L180 240"
+              fill="none"
+              stroke="#8a5a30"
+              strokeWidth="10"
+              strokeLinejoin="round"
+            />
+            <g className={active ? "object-swing" : undefined}>
+              <path
+                d="M75 22V170M125 22V170"
+                stroke="#6a6a7a"
+                strokeWidth="4"
+              />
+              <rect
+                x="60"
+                y="165"
+                width="80"
+                height="16"
+                rx="6"
+                fill="#ee7a9b"
+                stroke="#b24d6c"
+                strokeWidth="4"
+              />
+            </g>
+          </g>
+        )}
+        {kind === "door" && (
+          <g>
+            <path
+              d="M20 235V90Q20 15 100 15Q180 15 180 90V235Z"
+              fill="#fff6de"
+              stroke="#c98a4a"
+              strokeWidth="10"
+            />
+            <text x="100" y="160" fontSize="96" textAnchor="middle">
+              {item.icon}
+            </text>
+          </g>
+        )}
+        {kind === "flower" && (
+          <g key={state} className={state > 0 ? "object-pop" : undefined}>
+            <path d="M100 240V110" stroke="#3f7238" strokeWidth="12" />
+            <path d="M100 190Q60 160 50 190Q80 205 100 190Z" fill="#5f9a4e" />
+            {[0, 72, 144, 216, 288].map((angle) => (
+              <ellipse
+                key={angle}
+                cx="100"
+                cy="62"
+                rx="30"
+                ry="48"
+                transform={`rotate(${angle} 100 100)`}
+                fill={
+                  {
+                    "square-flower-red": "#ff5a5f",
+                    "square-flower-orange": "#ff9f43",
+                    "square-flower-yellow": "#ffd84d",
+                    "square-flower-green": "#4cc97a",
+                    "square-flower-blue": "#4aa8ff",
+                    "square-flower-purple": "#a77bff",
+                  }[item.id] ?? "#ee7a9b"
+                }
+                stroke="#ffffff"
+                strokeWidth="4"
+              />
+            ))}
+            <circle
+              cx="100"
+              cy="100"
+              r="22"
+              fill="#ffe08a"
+              stroke="#c9a02a"
+              strokeWidth="4"
+            />
+          </g>
+        )}
       </svg>
-      <span className="room-object-caption">{item.label}</span>
+      {item.object.caption !== false && (
+        <span className="room-object-caption">{item.label}</span>
+      )}
     </button>
   );
 }

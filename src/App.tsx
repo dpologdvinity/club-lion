@@ -61,6 +61,7 @@ import {
   unlockSecretCatalogItem,
   unlockStamp,
   evaluateStampUnlocks,
+  findSquareButterfly,
   STAMP_DEFINITIONS,
   PLACES,
   SHOP_ITEMS,
@@ -542,12 +543,14 @@ export default function App() {
             onActivity={openGames}
             onGreet={(id) => setPlayer((p) => meetLion(p, id))}
             notify={notify}
-            onOpenCard={() => setPanel("card")}
             onOpenCatalog={() => setPanel("catalog")}
             onOpenSalon={() => setPanel("salon")}
             onOpenSpy={() => setPanel("spy")}
             onOpenJukebox={() => setPanel("jukebox")}
             onOpenCondo={() => setPanel("condo")}
+            onFindButterfly={(day, spot) =>
+              setPlayer((p) => findSquareButterfly(p, day, spot))
+            }
             onUnlockStamp={(stampId) =>
               setPlayer((p) => unlockStamp(p, stampId))
             }

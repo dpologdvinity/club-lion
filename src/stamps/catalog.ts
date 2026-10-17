@@ -16,6 +16,14 @@ export type StampDefinition = {
 
 export const STAMP_DEFINITIONS: StampDefinition[] = [
   {
+    id: "square_butterflies",
+    name: "Butterfly Catcher",
+    category: "world_secrets",
+    description: "Found all five butterflies hiding in Savanna Square.",
+    icon: "🦋",
+    unlockHint: "Look for five butterflies around Savanna Square.",
+  },
+  {
     id: "lighthouse_foghorn",
     name: "Foghorn Mariner",
     title: "Foghorn Mariner",

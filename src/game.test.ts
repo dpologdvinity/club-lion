@@ -1554,3 +1554,73 @@ test("songs, puzzles and rainbows keep counting past the old payout caps", () =>
   assert.equal(restored.animalBandSongs, 99);
   assert.equal(restored.picturePuzzles, 99);
 });
+
+const HUNT_DAY = "2026-10-16";
+
+test("finding five square butterflies earns Butterfly Catcher once", async () => {
+  const { findSquareButterfly } = await import("./game.ts");
+  const { butterfliesForDay } = await import("./utils/squareFun.ts");
+  let player = newPlayer();
+  for (const spot of butterfliesForDay(HUNT_DAY))
+    player = findSquareButterfly(player, HUNT_DAY, spot);
+  assert.equal(player.squareButterflies?.found.length, 5);
+  assert.deepEqual(
+    player.stamps?.filter((id) => id === "square_butterflies"),
+    ["square_butterflies"],
+  );
+});
+
+test("findSquareButterfly ignores a repeat find", async () => {
+  const { findSquareButterfly } = await import("./game.ts");
+  const { butterfliesForDay } = await import("./utils/squareFun.ts");
+  const spot = butterfliesForDay(HUNT_DAY)[0];
+  const once = findSquareButterfly(newPlayer(), HUNT_DAY, spot);
+  assert.equal(findSquareButterfly(once, HUNT_DAY, spot), once);
+});
+
+test("findSquareButterfly ignores a spot that is not hiding a butterfly today", async () => {
+  const { findSquareButterfly } = await import("./game.ts");
+  const { butterfliesForDay, BUTTERFLY_SPOTS } =
+    await import("./utils/squareFun.ts");
+  const hidden = butterfliesForDay(HUNT_DAY);
+  const empty = BUTTERFLY_SPOTS.findIndex((_, i) => !hidden.includes(i));
+  const player = newPlayer();
+  assert.equal(findSquareButterfly(player, HUNT_DAY, empty), player);
+  assert.equal(findSquareButterfly(player, HUNT_DAY, -1), player);
+});
+
+test("a new day starts a fresh hunt", async () => {
+  const { findSquareButterfly } = await import("./game.ts");
+  const { butterfliesForDay } = await import("./utils/squareFun.ts");
+  const [a, b] = butterfliesForDay(HUNT_DAY);
+  const yesterday = findSquareButterfly(
+    findSquareButterfly(newPlayer(), HUNT_DAY, a),
+    HUNT_DAY,
+    b,
+  );
+  const next = "2026-10-17";
+  const spot = butterfliesForDay(next)[0];
+  assert.deepEqual(
+    findSquareButterfly(yesterday, next, spot).squareButterflies,
+    { day: next, found: [spot] },
+  );
+});
+
+test("restorePlayer drops a malformed butterfly hunt", () => {
+  for (const squareButterflies of [
+    { day: 5 },
+    { day: HUNT_DAY, found: [99] },
+    { day: "x", found: [] },
+    { day: HUNT_DAY, found: [1, 1] },
+  ]) {
+    const restored = restorePlayer(
+      JSON.stringify({ ...newPlayer(), name: "Roary", squareButterflies }),
+    );
+    assert.equal(restored.squareButterflies, undefined);
+    assert.equal(restored.name, "Roary");
+  }
+});
+
+test("saves without a butterfly hunt still load", () => {
+  assert.deepEqual(restorePlayer(JSON.stringify(newPlayer())), newPlayer());
+});
