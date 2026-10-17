@@ -36,6 +36,7 @@ Status: Draft (awaiting review)
 ## Architecture
 
 ### game.ts
+
 - Extend Player: `mangoRunBest?: number`.
 - Add `completeMangoRun(player: Player, score: number): Player`:
   - if (!Number.isSafeInteger(score) || score < 0) return player
@@ -44,6 +45,7 @@ Status: Draft (awaiting review)
 - restorePlayer: validate/fill mangoRunBest (>=0 int) if present, else omit or 0? Default undefined is fine; component reads with ?? 0.
 
 ### MangoRun.tsx (new)
+
 - Props: `{ onFinish: (score: number) => void; onClose: () => void }`
 - State: mode 'intro'|'playing'|'gameover', lion pos, obstacles[], mangoes[], lives, mangoesCount, distance, best, invulnUntil (ms), keys set.
 - Bounds: playfield area (matches dialog content area). Clamp lion.
@@ -54,15 +56,18 @@ Status: Draft (awaiting review)
 - Cleanup: cancel rAF, clear intervals/timeouts on unmount.
 
 ### App.tsx
+
 - Add state `activeGame: 'memory'|'mango'|null` when panel==='games'. Opening Games sets activeGame to null (picker).
 - Games panel: null -> GamesPicker (onSelect memory/mango). 'memory' -> MemorySafari (onClose -> reset to picker or close panel? Keep MemorySafari's onClose closes panel for now; or change to return to picker? Match new flow: provide onBack to picker). Alternatively, pass onClose behavior: in picker mode, onClose closes panel; in game mode, onClose returns to picker. Add `onBackToPicker()`.
 
 But minimize changes: add GamesPicker. MemorySafari stays same API but when used from picker, wrap onClose to go back? Easier: Games panel manages substate. Initial open: show picker. Selecting game shows that game with onClose -> back to picker (or panel close if prefer). Current MemorySafari's "Back to pride" closes panel; keep consistent (back to pride = close panel). Picker is just the entry.
 
 ### Panels.tsx
+
 - Add `GamesPicker` component with two cards. Props `{ onSelect: (g:'memory'|'mango')=>void }`.
 
 ### styles.css
+
 - Add `.mango-run`, `.mr-playfield`, `.mr-lion`, `.mr-mango`, `.mr-obstacle`, `.mr-hud`, `.mr-heart`, states (invuln). Reuse tokens (colors.surface, border, accent, etc.), rounded, shadows. Respect reduced motion.
 
 ## Testing

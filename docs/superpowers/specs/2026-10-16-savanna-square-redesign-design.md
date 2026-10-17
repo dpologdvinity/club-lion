@@ -57,7 +57,7 @@ All reactions are read aloud (existing `speak`), need no reading, cannot fail, a
 - Unit tests: weather cycle, butterfly day seeding and reset, save validation and old saves without the field, stamp paid once.
 - `tests/living-rooms.spec.ts`: the square row (illustrated scene, objects work, reduced motion, axe).
 - New `tests/savanna-square.spec.ts`: picture doors travel and speak, weather cycles, finding five butterflies gives the stamp once and survives reload, flower notes play without errors, tap targets are at least 48 px on phone.
-- Existing square tests (`tests/world.spec.ts`, `tests/world-collision.spec.ts`, camera tests) are updated where geometry moves from percent to stage units.
+- Existing square tests (`tests/world.spec.ts`, `tests/world-obstacles.spec.ts`, `tests/world-phase2.spec.ts`) are updated where geometry moves from percent to stage units.
 
 ## Out of scope
 
