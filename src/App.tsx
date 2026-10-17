@@ -64,6 +64,7 @@ import {
   findSquareButterfly,
   completeMangoRun,
   completeHaloHalo,
+  completePeekaboo,
   completeFireflies,
   STAMP_DEFINITIONS,
   PLACES,
@@ -1067,6 +1068,9 @@ export default function App() {
                 }
                 onCompleteFireflies={(score) =>
                   setPlayer((p) => completeFireflies(p, score))
+                }
+                onCompletePeekaboo={(found) =>
+                  setPlayer((p) => completePeekaboo(p, found))
                 }
                 onServeHaloHalo={(layers) =>
                   setPlayer((p) => completeHaloHalo(p, layers))

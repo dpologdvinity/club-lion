@@ -1,0 +1,115 @@
+.peekaboo-game {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.peekaboo-rounds {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: #f2a91b;
+}
+.peekaboo-rounds .is-found {
+  color: #b9a37a;
+}
+.peekaboo-call {
+  min-height: 56px;
+  margin: 0;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 900;
+  color: #2f4b2c;
+}
+.peekaboo-target {
+  font-size: 44px;
+  vertical-align: middle;
+}
+.peekaboo-field {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px;
+  border-radius: 24px;
+  background: linear-gradient(#bfe6ff 0 35%, #8fcf75 35%);
+}
+.peekaboo-bush {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  min-height: 120px;
+  padding: 0;
+  border: 0;
+  border-radius: 20px;
+  background: transparent;
+  overflow: hidden;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.peekaboo-bush:disabled {
+  cursor: default;
+  opacity: 1;
+}
+.peekaboo-animal {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  font-size: 54px;
+  transform: translate(-50%, 70px);
+  transition: transform 160ms ease-out;
+}
+.peekaboo-bush.is-out .peekaboo-animal {
+  transform: translate(-50%, -14px);
+}
+.peekaboo-leaves {
+  position: relative;
+  font-size: 92px;
+  line-height: 1;
+}
+.peekaboo-bush:not(:disabled):hover .peekaboo-leaves,
+.peekaboo-bush:focus-visible .peekaboo-leaves {
+  filter: drop-shadow(0 0 8px #fff4ba);
+}
+.peekaboo-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 24px;
+  text-align: center;
+  background: #fff8ecee;
+}
+.peekaboo-result {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 900;
+}
+.peekaboo-hint {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+}
+.peekaboo-start {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #59361b;
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: reduce) {
+  .peekaboo-animal {
+    transition: none;
+  }
+}

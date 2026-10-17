@@ -1672,3 +1672,22 @@ test("a firefly round saves the best jar once and the catcher stamp at 15", asyn
   );
   assert.equal(tampered.fireflyBest, undefined);
 });
+
+test("peekaboo saves the best first-try finds and the stamp at 6", async () => {
+  const { completePeekaboo } = await import("./game.ts");
+  const start = newPlayer();
+  const some = completePeekaboo(start, 4);
+  assert.equal(some.peekabooBest, 4);
+  assert.equal(some.gamesPlayed, start.gamesPlayed + 1);
+  assert.ok(!(some.stamps ?? []).includes("peekaboo_pro"));
+  const great = completePeekaboo(some, 7);
+  assert.ok((great.stamps ?? []).includes("peekaboo_pro"));
+  assert.equal(completePeekaboo(great, 2).peekabooBest, 7);
+  assert.equal(completePeekaboo(great, 9), great);
+  assert.equal(completePeekaboo(great, -1), great);
+  assert.equal(restorePlayer(JSON.stringify(great)).peekabooBest, 7);
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...great, peekabooBest: 99 })).peekabooBest,
+    undefined,
+  );
+});

@@ -7,6 +7,7 @@ import {
   type SledState,
 } from "./utils/sledPhysics.ts";
 import { isHaloLayers } from "./utils/haloHalo.ts";
+import { PEEKABOO_ROUNDS, PEEKABOO_STAMP_SCORE } from "./utils/peekaboo.ts";
 import { FIREFLY_MAX_SCORE, FIREFLY_STAMP_SCORE } from "./utils/fireflies.ts";
 import {
   BUTTERFLY_COUNT,
@@ -135,6 +136,8 @@ export type PlayerBase = {
   haloHaloServed?: number;
   /** Most fireflies caught in one Pop the Fireflies round. */
   fireflyBest?: number;
+  /** Most first-try finds in one Peekaboo Animals game (out of 8). */
+  peekabooBest?: number;
   /** Photos of the newest served cakes, oldest first. */
   bakeryCakes?: Cake[];
   /** Today's Savanna Square butterfly hunt: spots found on `day` (local YYYY-MM-DD). */
@@ -678,6 +681,11 @@ export function restorePlayer(raw: string | null): Player {
       p.fireflyBest >= 0 &&
       p.fireflyBest <= FIREFLY_MAX_SCORE
         ? { fireflyBest: p.fireflyBest }
+        : {}),
+      ...(Number.isSafeInteger(p.peekabooBest) &&
+      p.peekabooBest >= 0 &&
+      p.peekabooBest <= PEEKABOO_ROUNDS
+        ? { peekabooBest: p.peekabooBest }
         : {}),
       ...(p.bakeryCakes === undefined
         ? {}
@@ -1523,5 +1531,27 @@ export function completeFireflies<T extends PlayerBase>(
   };
   return score >= FIREFLY_STAMP_SCORE
     ? unlockStamp(next, "firefly_catcher")
+    : next;
+}
+
+/** Records a finished Peekaboo game; 6+ first-try finds earn the Peekaboo Pro stamp. */
+export function completePeekaboo<T extends PlayerBase>(
+  player: T,
+  found: number,
+): T {
+  if (
+    !Number.isSafeInteger(found) ||
+    found < 0 ||
+    found > PEEKABOO_ROUNDS ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
+  const next = {
+    ...player,
+    gamesPlayed: player.gamesPlayed + 1,
+    peekabooBest: Math.max(player.peekabooBest ?? 0, found),
+  };
+  return found >= PEEKABOO_STAMP_SCORE
+    ? unlockStamp(next, "peekaboo_pro")
     : next;
 }

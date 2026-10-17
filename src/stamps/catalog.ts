@@ -16,6 +16,14 @@ export type StampDefinition = {
 
 export const STAMP_DEFINITIONS: StampDefinition[] = [
   {
+    id: "peekaboo_pro",
+    name: "Peekaboo Pro",
+    category: "arcade_mastery",
+    description: "Found 6 hiding animals on the first try in one game.",
+    icon: "🙈",
+    unlockHint: "Watch the bushes closely in Peekaboo Animals.",
+  },
+  {
     id: "firefly_catcher",
     name: "Firefly Catcher",
     category: "arcade_mastery",

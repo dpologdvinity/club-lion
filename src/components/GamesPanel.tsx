@@ -40,6 +40,9 @@ const InstrumentContent = lazyPanel(() =>
 const PopTheFireflies = lazyPanel(() =>
   import("./PopTheFireflies").then((module) => module.PopTheFireflies),
 );
+const PeekabooAnimals = lazyPanel(() =>
+  import("./PeekabooAnimals").then((module) => module.PeekabooAnimals),
+);
 const HaloHalo = lazyPanel(() =>
   import("./HaloHalo").then((module) => module.HaloHalo),
 );
@@ -97,6 +100,7 @@ export function GamesPanel({
   onCompletePicturePuzzle,
   onCompleteBalloonRainbow,
   onServeHaloHalo,
+  onCompletePeekaboo,
   onCompleteFireflies,
   onClose,
 }: {
@@ -127,6 +131,7 @@ export function GamesPanel({
   onCompletePicturePuzzle?: (pieces: number) => void;
   onCompleteBalloonRainbow?: () => void;
   onServeHaloHalo?: ComponentProps<typeof HaloHalo>["onServe"];
+  onCompletePeekaboo?: (found: number) => void;
   onCompleteFireflies?: (score: number) => void;
   onClose: () => void;
 }) {
@@ -179,7 +184,8 @@ export function GamesPanel({
           picked === "picture-puzzle" ||
           picked === "balloon-parade" ||
           picked === "halo-halo" ||
-          picked === "fireflies") && (
+          picked === "fireflies" ||
+          picked === "peekaboo") && (
           <button className="game-back" onClick={backToMenu}>
             <ArrowLeft size={14} /> All games
           </button>
@@ -277,6 +283,9 @@ export function GamesPanel({
             best={player.fireflyBest ?? 0}
             onFinish={(score) => onCompleteFireflies?.(score)}
           />
+        )}
+        {picked === "peekaboo" && (
+          <PeekabooAnimals onFinish={(found) => onCompletePeekaboo?.(found)} />
         )}
         {picked === "halo-halo" && (
           <HaloHalo onServe={onServeHaloHalo ?? (() => {})} />

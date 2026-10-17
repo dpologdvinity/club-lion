@@ -58,6 +58,16 @@ export function gameCards(player: PlayerV2) {
       progressLabel: "Best jar",
     },
     {
+      id: "peekaboo",
+      name: "Peekaboo Animals",
+      art: "🙈 🌳 🐘",
+      description:
+        "Watch who peeks out of each bush, then find the one called.",
+      reward: "Find 6 on the first try for a stamp",
+      best: player.peekabooBest ?? 0,
+      progressLabel: "Best finds",
+    },
+    {
       id: "seek",
       name: "Hide & Seek Safari",
       art: "🔍 🦓 🌿",

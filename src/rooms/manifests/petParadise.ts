@@ -29,6 +29,14 @@ export const petParadiseManifest: RoomManifest = {
   ],
   interactives: [
     {
+      id: "pet-peekaboo",
+      label: "Play peekaboo",
+      icon: "🙈",
+      type: "game_launch",
+      position: { x: 300, y: 470 },
+      actionData: { gameId: "peekaboo" },
+    },
+    {
       id: "pet-grooming-station",
       label: "Grooming Spa",
       icon: "🛁",

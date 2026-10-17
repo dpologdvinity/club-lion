@@ -16,6 +16,7 @@ test("arcade metadata preserves card order and reads current save progress", () 
       "bakery",
       "halo-halo",
       "fireflies",
+      "peekaboo",
       "seek",
       "animal-band",
       "shape-sorter",
@@ -109,5 +110,7 @@ test("room manifests own picture labels and preserve every arcade launch", () =>
     "kainan-halo-halo": "halo-halo",
     "arcade-fireflies": "fireflies",
     "water-fireflies": "fireflies",
+    "arcade-peekaboo": "peekaboo",
+    "pet-peekaboo": "peekaboo",
   });
 });
