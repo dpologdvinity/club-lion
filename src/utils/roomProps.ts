@@ -11,13 +11,18 @@ export const CATCH_RADIUS = 110;
 const EDGE = 40;
 const TOP = 60;
 
+/** Catcher id for the player's own doll; neighbor ids never clash with it. */
+export const YOUR_DOLL = "you";
+
 export function catcherAt(
   point: Point,
   neighbors: readonly ({ id: string } & Point)[],
+  doll?: Point,
 ): string | null {
   let best: string | null = null;
   let bestDistance = CATCH_RADIUS;
-  for (const n of neighbors) {
+  const all = doll ? [...neighbors, { id: YOUR_DOLL, ...doll }] : neighbors;
+  for (const n of all) {
     const distance = Math.hypot(n.x - point.x, n.y - point.y);
     if (distance <= bestDistance) {
       best = n.id;

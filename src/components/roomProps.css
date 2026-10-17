@@ -47,3 +47,12 @@
     animation: none;
   }
 }
+/* Held by the doll: smaller, riding beside her hand as she walks. */
+.room-prop.is-in-hand {
+  z-index: 7;
+  width: 64px;
+  height: 64px;
+  font-size: 42px;
+  background: radial-gradient(#fff4baaa 35%, transparent 72%);
+  cursor: pointer;
+}

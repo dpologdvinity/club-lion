@@ -17,6 +17,8 @@ import {
   butterfliesForDay,
 } from "./utils/squareFun.ts";
 import { sanitizeSocialGraph } from "./utils/socialGraph.ts";
+import { clampToStage } from "./utils/roomProps.ts";
+import { ROOM_MANIFESTS } from "./rooms/registry.ts";
 import {
   isKartColorId,
   isKartMode,
@@ -181,6 +183,8 @@ export type PlayerBase = {
   picturePuzzles?: number;
   /** Balloon Parade rainbow arches finished. */
   balloonRainbows?: number;
+  /** Carried room props left away from home, keyed `${roomId}:${propId}` (stage px). */
+  propSpots?: Record<string, { x: number; y: number }>;
 };
 
 export type Player = PlayerBase & {
@@ -711,6 +715,9 @@ export function restorePlayer(raw: string | null): Player {
       ...(p.bakeryCakes === undefined
         ? {}
         : { bakeryCakes: restoreCakePhotos(p.bakeryCakes) }),
+      ...(p.propSpots === undefined
+        ? {}
+        : { propSpots: restorePropSpots(p.propSpots) }),
       ...(isButterflyHunt(p.squareButterflies)
         ? {
             squareButterflies: {
@@ -1490,6 +1497,52 @@ export function setKartPrefs<T extends PlayerBase>(
   return player.kartColor === color && player.kartMode === mode
     ? player
     : { ...player, kartColor: color, kartMode: mode };
+}
+
+/** A known room prop's spot clamped inside its stage, or null for anything else. */
+function propSpot(
+  key: string,
+  point: unknown,
+): { x: number; y: number } | null {
+  if (typeof point !== "object" || point === null) return null;
+  const x: unknown = Reflect.get(point, "x");
+  const y: unknown = Reflect.get(point, "y");
+  if (typeof x !== "number" || typeof y !== "number") return null;
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+  const [roomId, propId] = key.split(":");
+  const room = Object.values(ROOM_MANIFESTS).find((r) => r?.id === roomId);
+  if (!room?.props?.some((prop) => prop.id === propId)) return null;
+  return clampToStage(
+    { x, y },
+    { width: room.stageWidth, height: room.stageHeight },
+  );
+}
+
+/** Keeps only known room props; the key check also caps the size. */
+function restorePropSpots(
+  raw: unknown,
+): Record<string, { x: number; y: number }> {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) return {};
+  return Object.fromEntries(
+    Object.entries(raw).flatMap(([key, point]) => {
+      const spot = propSpot(key, point);
+      return spot ? [[key, spot]] : [];
+    }),
+  );
+}
+
+/** Saves where a carried prop was put down; null sends it back home. */
+export function movePropSpot<T extends PlayerBase>(
+  player: T,
+  roomId: string,
+  propId: string,
+  point: { x: number; y: number } | null,
+): T {
+  const key = `${roomId}:${propId}`;
+  const { [key]: _old, ...rest } = player.propSpots ?? {};
+  if (!point) return { ...player, propSpots: rest };
+  const spot = propSpot(key, point);
+  return spot ? { ...player, propSpots: { ...rest, [key]: spot } } : player;
 }
 
 /** Records one butterfly found in the square today; the fifth earns its stamp once. */

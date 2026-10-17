@@ -62,6 +62,7 @@ import {
   unlockStamp,
   evaluateStampUnlocks,
   findSquareButterfly,
+  movePropSpot,
   completeMangoRun,
   completeHaloHalo,
   completeDressPet,
@@ -556,6 +557,9 @@ export default function App() {
             onOpenCondo={() => setPanel("condo")}
             onFindButterfly={(day, spot) =>
               setPlayer((p) => findSquareButterfly(p, day, spot))
+            }
+            onMoveProp={(roomId, propId, point) =>
+              setPlayer((p) => movePropSpot(p, roomId, propId, point))
             }
             onUnlockStamp={(stampId) =>
               setPlayer((p) => unlockStamp(p, stampId))

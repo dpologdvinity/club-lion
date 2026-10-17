@@ -116,6 +116,12 @@ type WorldProps = {
   onUnlockStamp?: (stampId: string) => void;
   /** A square butterfly found today (spot index into BUTTERFLY_SPOTS). */
   onFindButterfly?: (day: string, spot: number) => void;
+  /** A carried prop was put down (null: given away, back home). */
+  onMoveProp?: (
+    roomId: string,
+    propId: string,
+    point: { x: number; y: number } | null,
+  ) => void;
   onOpenRiverSurf?: () => void;
   onOpenPetCare?: () => void;
   onOpenPetPicker?: () => void;
@@ -157,6 +163,7 @@ export function World({
   onOpenCondo,
   onUnlockStamp,
   onFindButterfly,
+  onMoveProp,
   onOpenRiverSurf,
   onOpenPetCare,
   onOpenPetPicker,
@@ -826,8 +833,11 @@ export function World({
           <RoomProps
             manifest={manifest}
             neighbors={visibleNeighbors}
+            doll={{ ...stagePosition, glideMs }}
+            saved={player.propSpots}
             sound={sound}
             onGive={give}
+            onMove={(propId, point) => onMoveProp?.(manifest.id, propId, point)}
           />
         )}
         {manifest?.fun === "square" && (

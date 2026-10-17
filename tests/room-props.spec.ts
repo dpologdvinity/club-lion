@@ -101,3 +101,70 @@ test("props carry with the keyboard and pass axe", async ({ page }) => {
     .analyze();
   expect(results.violations).toEqual([]);
 });
+
+test("a moved prop stays at its new spot after a reload", async ({ page }) => {
+  await goKainan(page);
+  const banana = page.locator('[data-prop="banana"]');
+  const start = await center(page, '[data-prop="banana"]');
+  await dragTo(page, start, { x: start.x + 90, y: start.y - 40 });
+  const style = await banana.getAttribute("style");
+  // A fresh page load starts in the square; walk back to the Kainan.
+  await goKainan(page);
+  await expect(banana).toHaveAttribute("style", style ?? "");
+});
+
+test("drop a prop on your doll to hold it while she walks, tap it to put it down", async ({
+  page,
+}) => {
+  await goKainan(page);
+  const doll = page.locator(".your-character");
+  const body = await center(page, ".your-character .avatar-with-companion");
+  const start = await center(page, '[data-prop="banana"]');
+  await dragTo(page, start, body);
+  const held = page.getByRole("button", { name: "Put down the banana" });
+  await expect(held).toBeVisible();
+  // Tap open floor where the banana was: it rides along in her hand.
+  const before = await held.getAttribute("style");
+  const dollX = await doll.getAttribute("data-stage-x");
+  const stage = await page.locator(".camera-viewport-stage").boundingBox();
+  if (!stage) throw new Error("no stage");
+  const scale = stage.width / 2400;
+  await page.mouse.click(stage.x + 1310 * scale, stage.y + 585 * scale);
+  await expect(doll).not.toHaveAttribute("data-stage-x", dollX ?? "");
+  await expect(held).not.toHaveAttribute("style", before ?? "");
+  await held.click();
+  const banana = page.getByRole("button", { name: "Pick up the banana" });
+  await expect(banana).toBeVisible();
+  // Put down at her feet.
+  const x = Number(await doll.getAttribute("data-stage-x"));
+  const style = (await banana.getAttribute("style")) ?? "";
+  const left = Number(/left: ([\d.]+)px/.exec(style)?.[1]);
+  expect(Math.abs(left - (x + 60))).toBeLessThan(1);
+});
+
+test("carry a prop to your doll with the keyboard to hold it", async ({
+  page,
+}) => {
+  await goKainan(page);
+  const yoyo = page.getByRole("button", { name: "Pick up the yo-yo" });
+  const doll = page.locator(".your-character");
+  const dollX = Number(await doll.getAttribute("data-stage-x"));
+  const dollY = Number(await doll.getAttribute("data-stage-y"));
+  await yoyo.focus();
+  await page.keyboard.press("Enter");
+  // Arrow steps are 40 px across and 30 px up or down; aim at her body.
+  const style = (await yoyo.getAttribute("style")) ?? "";
+  const [, left, top] = /left: ([\d.]+)px; top: ([\d.]+)px/.exec(style) ?? [];
+  const across = Math.round((dollX - Number(left)) / 40);
+  const down = Math.round((dollY - 100 - Number(top)) / 30);
+  for (let i = 0; i < Math.abs(across); i++)
+    await page.keyboard.press(across > 0 ? "ArrowRight" : "ArrowLeft");
+  for (let i = 0; i < Math.abs(down); i++)
+    await page.keyboard.press(down > 0 ? "ArrowDown" : "ArrowUp");
+  await page.keyboard.press("Enter");
+  const held = page.getByRole("button", { name: "Put down the yo-yo" });
+  await expect(held).toBeVisible();
+  await expect(held).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(yoyo).toBeVisible();
+});

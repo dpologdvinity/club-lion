@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   CATCH_RADIUS,
+  YOUR_DOLL,
   catcherAt,
   clampToStage,
   thanksFor,
@@ -20,6 +21,13 @@ test("a prop dropped near a neighbor goes to the closest one", () => {
     catcherAt({ x: 500 + CATCH_RADIUS + 1, y: 600 }, neighbors),
     null,
   );
+});
+
+test("a prop dropped on your own doll is caught by you, unless a neighbor is closer", () => {
+  const doll = { x: 700, y: 600 };
+  assert.equal(catcherAt({ x: 690, y: 580 }, neighbors, doll), YOUR_DOLL);
+  assert.equal(catcherAt({ x: 560, y: 600 }, neighbors, doll), "milo");
+  assert.equal(catcherAt({ x: 700, y: 300 }, neighbors, doll), null);
 });
 
 test("props stay on the stage however far they are flung", () => {

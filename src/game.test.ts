@@ -1744,3 +1744,48 @@ test("a pet round-up saves the best score once and the stamp when all are in", a
     undefined,
   );
 });
+
+test("movePropSpot keeps a moved prop inside the stage and resets it when null", async () => {
+  const { movePropSpot } = await import("./game.ts");
+  const moved = movePropSpot(newPlayer(), "kainan", "banana", {
+    x: 5000,
+    y: 300,
+  });
+  assert.deepEqual(moved.propSpots, { "kainan:banana": { x: 2360, y: 300 } });
+  const home = movePropSpot(moved, "kainan", "banana", null);
+  assert.deepEqual(home.propSpots, {});
+});
+
+test("movePropSpot ignores unknown rooms, unknown props and bad numbers", async () => {
+  const { movePropSpot } = await import("./game.ts");
+  const player = newPlayer();
+  assert.equal(movePropSpot(player, "kainan", "piano", { x: 1, y: 1 }), player);
+  assert.equal(
+    movePropSpot(player, "nowhere", "banana", { x: 1, y: 1 }),
+    player,
+  );
+  assert.equal(
+    movePropSpot(player, "kainan", "banana", { x: Number.NaN, y: 1 }),
+    player,
+  );
+});
+
+test("saved prop spots restore clamped, and junk or unknown keys are dropped", () => {
+  const save = JSON.stringify({
+    ...newPlayer(),
+    propSpots: {
+      "kainan:banana": { x: 900, y: 9000 },
+      "kainan:piano": { x: 1, y: 1 },
+      "kainan:rice": { x: "1", y: 2 },
+      "nowhere:banana": { x: 1, y: 1 },
+    },
+  });
+  assert.deepEqual(restorePlayer(save).propSpots, {
+    "kainan:banana": { x: 900, y: 700 },
+  });
+  assert.deepEqual(
+    restorePlayer(JSON.stringify({ ...newPlayer(), propSpots: [1] })).propSpots,
+    {},
+  );
+  assert.equal(restorePlayer(JSON.stringify(newPlayer())).propSpots, undefined);
+});

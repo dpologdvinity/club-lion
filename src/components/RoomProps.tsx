@@ -7,14 +7,16 @@ import {
 } from "react";
 import type { RoomManifest } from "../rooms/types.ts";
 import { playCuteSound } from "../utils/cuteSfx.ts";
-import { catcherAt, clampToStage } from "../utils/roomProps.ts";
+import { YOUR_DOLL, catcherAt, clampToStage } from "../utils/roomProps.ts";
 import "./roomProps.css";
 
 type Prop = NonNullable<RoomManifest["props"]>[number];
 type Point = { x: number; y: number };
 
-// shortcut: spots last for the session (rooms remount on travel) and reset on reload; move into the save if kids miss them.
-const spots = new Map<string, Point>();
+/** Where a held prop sits next to the doll's feet point (stage px): beside her hand. */
+const HAND = { x: 78, y: -150 };
+/** The doll's body is this far above her feet; drops aim at the body. */
+const BODY_LIFT = 100;
 
 const KEY_STEPS: Record<string, [number, number]> = {
   ArrowLeft: [-40, 0],
@@ -33,26 +35,42 @@ type Drag = {
   moved: boolean;
 };
 
-/** Pick up, carry and drop props anywhere; drop one on a neighbor to give it. */
+/**
+ * Pick up, carry and drop props anywhere; drop one on a neighbor to give it,
+ * or on your own doll to hold it while she walks.
+ */
 export function RoomProps({
   manifest,
   neighbors,
+  doll,
+  saved,
   sound,
   onGive,
+  onMove,
 }: {
   manifest: RoomManifest;
   neighbors: readonly ({ id: string } & Point)[];
+  /** The player's doll: feet in stage px and her current glide time. */
+  doll: Point & { glideMs: number };
+  /** Saved spots keyed `${roomId}:${propId}`. */
+  saved: Readonly<Record<string, Point>> | undefined;
   sound: boolean;
   onGive: (neighborId: string, prop: Prop) => void;
+  /** Persist a put-down spot; null sends the prop back home. */
+  onMove: (propId: string, point: Point | null) => void;
 }) {
   const props = manifest.props ?? [];
-  const key = (id: string) => `${manifest.id}:${id}`;
   const [places, setPlaces] = useState<Record<string, Point>>(() =>
     Object.fromEntries(
-      props.map((p) => [p.id, spots.get(key(p.id)) ?? { x: p.x, y: p.y }]),
+      props.map((p) => [
+        p.id,
+        saved?.[`${manifest.id}:${p.id}`] ?? { x: p.x, y: p.y },
+      ]),
     ),
   );
   const [held, setHeld] = useState<string | null>(null);
+  // Session-only: the prop in the doll's hand.
+  const [inHand, setInHand] = useState<string | null>(null);
   const [hops, setHops] = useState<Record<string, number>>({});
   const [given, setGiven] = useState<string[]>([]);
   const drag = useRef<Drag | null>(null);
@@ -68,24 +86,43 @@ export function RoomProps({
       width: manifest.stageWidth,
       height: manifest.stageHeight,
     });
-    spots.set(key(id), spot);
     setPlaces((all) => ({ ...all, [id]: spot }));
     return spot;
   };
   const hop = (id: string) =>
     setHops((all) => ({ ...all, [id]: (all[id] ?? 0) + 1 }));
 
+  const putDown = (prop: Prop) => {
+    setInHand(null);
+    onMove(prop.id, place(prop.id, { x: doll.x + 60, y: doll.y }));
+    cue("pop");
+    hop(prop.id);
+  };
+
   const drop = (prop: Prop, point: Point) => {
-    const catcher = catcherAt(point, neighbors);
+    const catcher = catcherAt(point, neighbors, {
+      x: doll.x,
+      y: doll.y - BODY_LIFT,
+    });
     if (!catcher) {
+      onMove(prop.id, point);
       cue("pop");
+      hop(prop.id);
+      return;
+    }
+    if (catcher === YOUR_DOLL) {
+      // One prop in hand at a time: the old one goes down at her feet.
+      const old = props.find((p) => p.id === inHand && p.id !== prop.id);
+      if (old) putDown(old);
+      setInHand(prop.id);
+      cue("boing");
       hop(prop.id);
       return;
     }
     cue("sparkle");
     onGive(catcher, prop);
     // The neighbor takes it; a fresh one appears back at its starting spot.
-    spots.set(key(prop.id), { x: prop.x, y: prop.y });
+    onMove(prop.id, null);
     setGiven((all) => [...all, prop.id]);
     timers.current.push(
       window.setTimeout(() => {
@@ -96,6 +133,9 @@ export function RoomProps({
   };
 
   const down = (prop: Prop, event: PointerEvent<HTMLButtonElement>) => {
+    // A drag that ended off the button never clicked; forget its skip.
+    skipClick.current = false;
+    if (inHand === prop.id) return;
     const box = event.currentTarget.getBoundingClientRect();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     drag.current = {
@@ -138,6 +178,10 @@ export function RoomProps({
       skipClick.current = false;
       return;
     }
+    if (inHand === prop.id) {
+      putDown(prop);
+      return;
+    }
     if (held === prop.id) {
       setHeld(null);
       drop(prop, places[prop.id]);
@@ -153,7 +197,7 @@ export function RoomProps({
     if (!step || held !== prop.id) return;
     event.preventDefault();
     const at = places[prop.id];
-    place(prop.id, { x: at.x + step[0], y: at.y + step[1] });
+    onMove(prop.id, place(prop.id, { x: at.x + step[0], y: at.y + step[1] }));
   };
 
   return (
@@ -161,14 +205,27 @@ export function RoomProps({
       {props.map((prop) => {
         if (given.includes(prop.id)) return null;
         const at = places[prop.id];
+        const holding = inHand === prop.id;
         return (
           <button
             key={prop.id}
             type="button"
-            className={`room-prop${held === prop.id ? " is-held" : ""}`}
-            style={{ left: at.x, top: at.y }}
-            aria-label={`Pick up the ${prop.label}`}
-            aria-pressed={held === prop.id}
+            className={`room-prop${held === prop.id ? " is-held" : ""}${holding ? " is-in-hand" : ""}`}
+            style={
+              holding
+                ? {
+                    left: doll.x + HAND.x,
+                    top: doll.y + HAND.y,
+                    transition: `left ${doll.glideMs}ms cubic-bezier(0.2, 0.6, 0.4, 1), top ${doll.glideMs}ms cubic-bezier(0.2, 0.6, 0.4, 1)`,
+                  }
+                : { left: at.x, top: at.y }
+            }
+            aria-label={
+              holding
+                ? `Put down the ${prop.label}`
+                : `Pick up the ${prop.label}`
+            }
+            aria-pressed={holding ? undefined : held === prop.id}
             data-prop={prop.id}
             onPointerDown={(event) => down(prop, event)}
             onPointerMove={move}
