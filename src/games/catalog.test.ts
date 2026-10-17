@@ -17,6 +17,7 @@ test("arcade metadata preserves card order and reads current save progress", () 
       "halo-halo",
       "fireflies",
       "peekaboo",
+      "dress-pet",
       "seek",
       "animal-band",
       "shape-sorter",
@@ -112,5 +113,7 @@ test("room manifests own picture labels and preserve every arcade launch", () =>
     "water-fireflies": "fireflies",
     "arcade-peekaboo": "peekaboo",
     "pet-peekaboo": "peekaboo",
+    "arcade-dress-pet": "dress-pet",
+    "pet-dress-up": "dress-pet",
   });
 });

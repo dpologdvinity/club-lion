@@ -68,6 +68,15 @@ export function gameCards(player: PlayerV2) {
       progressLabel: "Best finds",
     },
     {
+      id: "dress-pet",
+      name: "Dress-the-Pet",
+      art: "🐶 🎩 🕶️",
+      description: "Dress any pet for the theme card, then show it off.",
+      reward: "Match all four items for a stamp",
+      best: player.petShows ?? 0,
+      progressLabel: "Shows",
+    },
+    {
       id: "seek",
       name: "Hide & Seek Safari",
       art: "🔍 🦓 🌿",

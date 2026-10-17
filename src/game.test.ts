@@ -1691,3 +1691,27 @@ test("peekaboo saves the best first-try finds and the stamp at 6", async () => {
     undefined,
   );
 });
+
+test("a pet show counts once; a 3-star show earns the Pet Stylist stamp", async () => {
+  const { completeDressPet } = await import("./game.ts");
+  const start = newPlayer();
+  const shown = completeDressPet(start, "beach", { hat: "crown" });
+  assert.equal(shown.petShows, 1);
+  assert.equal(shown.gamesPlayed, start.gamesPlayed + 1);
+  assert.ok(!(shown.stamps ?? []).includes("pet_stylist"));
+  const perfect = completeDressPet(shown, "beach", {
+    hat: "sunhat",
+    eyes: "shades",
+    neck: "lei",
+    extra: "beachball",
+  });
+  assert.equal(perfect.petShows, 2);
+  assert.ok((perfect.stamps ?? []).includes("pet_stylist"));
+  assert.equal(completeDressPet(perfect, "beach", {}), perfect);
+  assert.equal(completeDressPet(perfect, "moon", { hat: "crown" }), perfect);
+  assert.equal(restorePlayer(JSON.stringify(perfect)).petShows, 2);
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...perfect, petShows: -2 })).petShows,
+    undefined,
+  );
+});

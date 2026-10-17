@@ -64,6 +64,7 @@ import {
   findSquareButterfly,
   completeMangoRun,
   completeHaloHalo,
+  completeDressPet,
   completePeekaboo,
   completeFireflies,
   STAMP_DEFINITIONS,
@@ -1071,6 +1072,9 @@ export default function App() {
                 }
                 onCompletePeekaboo={(found) =>
                   setPlayer((p) => completePeekaboo(p, found))
+                }
+                onShowPet={(theme, outfit) =>
+                  setPlayer((p) => completeDressPet(p, theme, outfit))
                 }
                 onServeHaloHalo={(layers) =>
                   setPlayer((p) => completeHaloHalo(p, layers))

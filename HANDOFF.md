@@ -25,6 +25,7 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 - Big arcade: `neighborhoodArcade.ts` (`ARCADE_WIDTH` 5200, one cabinet per `GameId`), scenery reads the width; cabinet colors and icon screens in `RoomObject.tsx`; tests `neighborhoodArcade.test.ts`, `tests/big-arcade.spec.ts`. A new game needs a cabinet here too (the unit test enforces it).
 - Pop the Fireflies: rules `src/utils/fireflies.ts`, `PopTheFireflies.tsx`, `completeFireflies`, stamp `firefly_catcher`, e2e `tests/fireflies.spec.ts` (real-time round; a fake clock made taps miss). Any absolutely-positioned button with a centering transform needs a `:active` override, or the global `button:active` transform makes taps miss.
 - Peekaboo Animals: rules `src/utils/peekaboo.ts`, `PeekabooAnimals.tsx`, `completePeekaboo`, stamp `peekaboo_pro`, e2e `tests/peekaboo.spec.ts`.
+- Dress-the-Pet: rules `src/utils/dressPet.ts`, `DressThePet.tsx` (uses `PetPicture`), `completeDressPet`, stamp `pet_stylist`, e2e `tests/dress-pet.spec.ts`.
 
 ## Living neighborhood rooms
 

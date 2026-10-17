@@ -43,6 +43,9 @@ const PopTheFireflies = lazyPanel(() =>
 const PeekabooAnimals = lazyPanel(() =>
   import("./PeekabooAnimals").then((module) => module.PeekabooAnimals),
 );
+const DressThePet = lazyPanel(() =>
+  import("./DressThePet").then((module) => module.DressThePet),
+);
 const HaloHalo = lazyPanel(() =>
   import("./HaloHalo").then((module) => module.HaloHalo),
 );
@@ -100,6 +103,7 @@ export function GamesPanel({
   onCompletePicturePuzzle,
   onCompleteBalloonRainbow,
   onServeHaloHalo,
+  onShowPet,
   onCompletePeekaboo,
   onCompleteFireflies,
   onClose,
@@ -131,6 +135,7 @@ export function GamesPanel({
   onCompletePicturePuzzle?: (pieces: number) => void;
   onCompleteBalloonRainbow?: () => void;
   onServeHaloHalo?: ComponentProps<typeof HaloHalo>["onServe"];
+  onShowPet?: ComponentProps<typeof DressThePet>["onShow"];
   onCompletePeekaboo?: (found: number) => void;
   onCompleteFireflies?: (score: number) => void;
   onClose: () => void;
@@ -185,7 +190,8 @@ export function GamesPanel({
           picked === "balloon-parade" ||
           picked === "halo-halo" ||
           picked === "fireflies" ||
-          picked === "peekaboo") && (
+          picked === "peekaboo" ||
+          picked === "dress-pet") && (
           <button className="game-back" onClick={backToMenu}>
             <ArrowLeft size={14} /> All games
           </button>
@@ -286,6 +292,12 @@ export function GamesPanel({
         )}
         {picked === "peekaboo" && (
           <PeekabooAnimals onFinish={(found) => onCompletePeekaboo?.(found)} />
+        )}
+        {picked === "dress-pet" && (
+          <DressThePet
+            species={player.pet?.species ?? "lion"}
+            onShow={onShowPet ?? (() => {})}
+          />
         )}
         {picked === "halo-halo" && (
           <HaloHalo onServe={onServeHaloHalo ?? (() => {})} />

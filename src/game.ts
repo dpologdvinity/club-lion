@@ -7,6 +7,7 @@ import {
   type SledState,
 } from "./utils/sledPhysics.ts";
 import { isHaloLayers } from "./utils/haloHalo.ts";
+import { isPetOutfit, isPetThemeId, scoreOutfit } from "./utils/dressPet.ts";
 import { PEEKABOO_ROUNDS, PEEKABOO_STAMP_SCORE } from "./utils/peekaboo.ts";
 import { FIREFLY_MAX_SCORE, FIREFLY_STAMP_SCORE } from "./utils/fireflies.ts";
 import {
@@ -138,6 +139,8 @@ export type PlayerBase = {
   fireflyBest?: number;
   /** Most first-try finds in one Peekaboo Animals game (out of 8). */
   peekabooBest?: number;
+  /** Pet fashion shows finished in Dress-the-Pet. */
+  petShows?: number;
   /** Photos of the newest served cakes, oldest first. */
   bakeryCakes?: Cake[];
   /** Today's Savanna Square butterfly hunt: spots found on `day` (local YYYY-MM-DD). */
@@ -686,6 +689,9 @@ export function restorePlayer(raw: string | null): Player {
       p.peekabooBest >= 0 &&
       p.peekabooBest <= PEEKABOO_ROUNDS
         ? { peekabooBest: p.peekabooBest }
+        : {}),
+      ...(Number.isSafeInteger(p.petShows) && p.petShows >= 0
+        ? { petShows: p.petShows }
         : {}),
       ...(p.bakeryCakes === undefined
         ? {}
@@ -1553,5 +1559,29 @@ export function completePeekaboo<T extends PlayerBase>(
   };
   return found >= PEEKABOO_STAMP_SCORE
     ? unlockStamp(next, "peekaboo_pro")
+    : next;
+}
+
+/** Counts one Dress-the-Pet show; a 3-star look earns the Pet Stylist stamp. */
+export function completeDressPet<T extends PlayerBase>(
+  player: T,
+  theme: unknown,
+  outfit: unknown,
+): T {
+  const shows = player.petShows ?? 0;
+  if (
+    !isPetThemeId(theme) ||
+    !isPetOutfit(outfit) ||
+    !Number.isSafeInteger(shows + 1) ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
+  const next = {
+    ...player,
+    gamesPlayed: player.gamesPlayed + 1,
+    petShows: shows + 1,
+  };
+  return scoreOutfit(theme, outfit) === 3
+    ? unlockStamp(next, "pet_stylist")
     : next;
 }
