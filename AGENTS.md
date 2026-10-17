@@ -1,6 +1,6 @@
 # Club Lion
 
-Browser game for kids 3+ (the owner's ~3-year-old sister, plus the owner, 20). Plays on iPad, phone and laptop in Safari/Chrome as an installable PWA. No App Store. Illustrated 2D SVG rooms, fashion-doll avatars (Y2K glam doll style, see `gallery/avatars/` references), rides, a kart race and mini games. Say "doll" in UI copy, identifiers and comments; never use the brand name. The age-category / Toca Boca-style redesign comes later; brainstorm with the owner before starting it.
+Browser game for children, Club Penguin style (started for the owner's ~3-year-old sister; the audience widened to children generally on 2026-10-17). Plays on iPad, phone and laptop in Safari/Chrome as an installable PWA. No App Store. Illustrated 2D SVG rooms, fashion-doll avatars (Y2K glam doll style, see `gallery/avatars/` references), rides, a kart race and mini games. Say "doll" in UI copy, identifiers and comments; never use the brand name. The age-category / Toca Boca-style redesign comes later; brainstorm with the owner before starting it.
 
 Stack: React 19, TypeScript strict, Vite 8, Node 22+. Saves are localStorage. Design: `DESIGN.md`. Interaction rules: `UX-CONTRACT.md`. Current state and open work: `HANDOFF.md`.
 

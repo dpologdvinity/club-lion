@@ -28,6 +28,18 @@ export const sunsetBeachManifest: RoomManifest = {
       label: "Coastal Pier & Boardwalk",
     },
   ],
+  props: [
+    { id: "shell", emoji: "🐚", label: "seashell", x: 1000, y: 565 },
+    { id: "ball", emoji: "🏐", label: "beach ball", x: 1150, y: 565 },
+    {
+      id: "melon",
+      emoji: "🍉",
+      label: "watermelon",
+      x: 1350,
+      y: 565,
+      food: true,
+    },
+  ],
   interactives: [
     {
       id: "beach-seek-lookout",

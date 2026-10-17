@@ -22,6 +22,10 @@ export const snowflakeRinkManifest: RoomManifest = {
       label: "Mt. Mist Alpine Basecamp",
     },
   ],
+  props: [
+    { id: "scarf", emoji: "🧣", label: "scarf", x: 1100, y: 565 },
+    { id: "cookie", emoji: "🍪", label: "cookie", x: 1500, y: 565, food: true },
+  ],
   interactives: [
     {
       id: "rink-skate",

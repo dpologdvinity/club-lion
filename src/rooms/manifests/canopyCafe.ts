@@ -30,6 +30,25 @@ export const canopyCafeManifest: RoomManifest = {
       label: "Savanna Square",
     },
   ],
+  props: [
+    {
+      id: "cupcake",
+      emoji: "🧁",
+      label: "cupcake",
+      x: 860,
+      y: 565,
+      food: true,
+    },
+    {
+      id: "smoothie",
+      emoji: "🥤",
+      label: "smoothie",
+      x: 1040,
+      y: 565,
+      food: true,
+    },
+    { id: "cookie", emoji: "🍪", label: "cookie", x: 1450, y: 565, food: true },
+  ],
   interactives: [
     {
       id: "cafe-smoothies",

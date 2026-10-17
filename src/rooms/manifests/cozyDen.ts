@@ -30,6 +30,11 @@ export const cozyDenManifest: RoomManifest = {
       label: "Savanna Square",
     },
   ],
+  props: [
+    { id: "teddy", emoji: "🧸", label: "teddy bear", x: 860, y: 565 },
+    { id: "book", emoji: "📚", label: "storybook", x: 1040, y: 565 },
+    { id: "yoyo", emoji: "🪀", label: "yo-yo", x: 1300, y: 565 },
+  ],
   interactives: [
     {
       id: "den-fire",

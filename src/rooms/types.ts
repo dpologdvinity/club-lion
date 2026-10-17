@@ -141,6 +141,15 @@ export type RoomManifest = {
     };
   }[];
   ambientAudioPreset: string;
+  /** Toys and snacks a child can pick up, carry anywhere and give to a neighbor. */
+  props?: {
+    id: string;
+    emoji: string;
+    label: string;
+    x: number;
+    y: number;
+    food?: true;
+  }[];
   /** Extra room-wide play layer: the square's weather toy and butterfly hunt. */
   fun?: "square";
   /** Solid scenery. Optional so rooms without collisions stay valid. */

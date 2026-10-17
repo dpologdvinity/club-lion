@@ -105,6 +105,25 @@ export const downtownPlazaManifest: RoomManifest = {
       label: "Lola's Kainan",
     },
   ],
+  props: [
+    {
+      id: "pretzel",
+      emoji: "🥨",
+      label: "pretzel",
+      x: 1300,
+      y: 580,
+      food: true,
+    },
+    {
+      id: "icecream",
+      emoji: "🍦",
+      label: "ice cream",
+      x: 1040,
+      y: 580,
+      food: true,
+    },
+    { id: "balloon", emoji: "🎈", label: "balloon", x: 1180, y: 580 },
+  ],
   interactives: [
     {
       id: "plaza-bubble-cart",

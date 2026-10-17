@@ -1,4 +1,6 @@
 import { RoomObject } from "./RoomObject.tsx";
+import { RoomProps } from "./RoomProps.tsx";
+import { thanksFor } from "../utils/roomProps.ts";
 import { SquareFun } from "./SquareFun";
 import { dayKey } from "../utils/squareFun";
 import { playInstrumentNote } from "../utils/instrumentSynths";
@@ -479,6 +481,14 @@ export function World({
     chime();
     speak(neighbor.greeting);
   };
+  // A neighbor thanks you for a carried toy or snack, and everyone dances.
+  const give = (id: string, prop: { emoji: string; food?: true }) => {
+    const text = thanksFor(prop);
+    setBubble({ id, text });
+    chime();
+    speak(text);
+    dance();
+  };
   const visibleNeighbors = manifest
     ? (manifest.neighbors ?? []).flatMap((at) => {
         const neighbor = NEIGHBORS.find((n) => n.id === at.id);
@@ -802,6 +812,14 @@ export function World({
               onActivate={() => hotspot(item.id)}
             />
           ))}
+        {manifest?.props && (
+          <RoomProps
+            manifest={manifest}
+            neighbors={visibleNeighbors}
+            sound={sound}
+            onGive={give}
+          />
+        )}
         {manifest?.fun === "square" && (
           <SquareFun
             day={today}

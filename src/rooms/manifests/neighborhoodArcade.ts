@@ -30,6 +30,18 @@ export const neighborhoodArcadeManifest: RoomManifest = {
       label: "Savanna Square",
     },
   ],
+  props: [
+    { id: "bear", emoji: "🧸", label: "prize bear", x: 860, y: 565 },
+    {
+      id: "popcorn",
+      emoji: "🍿",
+      label: "popcorn",
+      x: 1040,
+      y: 565,
+      food: true,
+    },
+    { id: "balloon", emoji: "🎈", label: "balloon", x: 1500, y: 565 },
+  ],
   interactives: [
     {
       id: "arcade-mango-run",

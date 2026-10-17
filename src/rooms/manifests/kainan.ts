@@ -25,6 +25,26 @@ export const kainanManifest: RoomManifest = {
   ],
   // Beside the stage-centre arrival, so Lola is in the first view even on a phone.
   neighbors: [{ id: "lola", x: 1080, y: 660 }],
+  props: [
+    {
+      id: "rice",
+      emoji: "🍚",
+      label: "bowl of rice",
+      x: 1420,
+      y: 565,
+      food: true,
+    },
+    {
+      id: "halo",
+      emoji: "🍧",
+      label: "halo-halo",
+      x: 1540,
+      y: 565,
+      food: true,
+    },
+    { id: "banana", emoji: "🍌", label: "banana", x: 1300, y: 565, food: true },
+    { id: "yoyo", emoji: "🪀", label: "yo-yo", x: 1700, y: 565 },
+  ],
   interactives: [
     {
       id: "kainan-door-plaza",

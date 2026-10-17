@@ -1,0 +1,49 @@
+.room-prop {
+  position: absolute;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  /* 48 screen px whatever the camera zoom. */
+  min-width: calc(48px / var(--camera-scale, 1));
+  min-height: calc(48px / var(--camera-scale, 1));
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(#ffffff55 30%, transparent 70%);
+  transform: translate(-50%, -50%);
+  font-size: 58px;
+  line-height: 1;
+  cursor: grab;
+  touch-action: none;
+  pointer-events: auto;
+}
+.room-prop:not(:disabled):active {
+  transform: translate(-50%, -50%);
+  cursor: grabbing;
+}
+.room-prop > span {
+  filter: drop-shadow(0 6px 2px #40352b40);
+}
+.room-prop.is-held {
+  z-index: 7;
+  outline: 5px dashed #fff4ba;
+}
+.room-prop:focus-visible {
+  outline: 5px solid #fff4ba;
+  outline-offset: 4px;
+}
+.room-prop-hop {
+  animation: room-prop-hop 420ms ease-out;
+}
+@keyframes room-prop-hop {
+  40% {
+    transform: translateY(-28px) scale(1.15);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .room-prop-hop {
+    animation: none;
+  }
+}

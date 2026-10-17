@@ -30,6 +30,18 @@ export const wateringHoleManifest: RoomManifest = {
       label: "Savanna Square",
     },
   ],
+  props: [
+    { id: "duck", emoji: "🦆", label: "rubber duck", x: 880, y: 565 },
+    {
+      id: "melon",
+      emoji: "🍉",
+      label: "watermelon",
+      x: 1060,
+      y: 565,
+      food: true,
+    },
+    { id: "bucket", emoji: "🪣", label: "bucket", x: 1450, y: 565 },
+  ],
   interactives: [
     {
       id: "lagoon-splash",
