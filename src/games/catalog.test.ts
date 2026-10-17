@@ -10,6 +10,7 @@ test("arcade metadata preserves card order and reads current save progress", () 
   assert.deepEqual(
     cards.map((card) => card.id),
     [
+      "mango-run",
       "bubble-pop",
       "coloring-book",
       "bakery",
@@ -66,6 +67,7 @@ test("room manifests own picture labels and preserve every arcade launch", () =>
   );
   assert.deepEqual(launches, {
     "arcade-bee": "bee",
+    "arcade-mango-run": "mango-run",
     "arcade-memory": "memory",
     "arcade-steps": "paw",
     "cafe-cake": "bakery",

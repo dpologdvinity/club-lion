@@ -5,13 +5,13 @@ import {
   type KeyboardEvent,
   type PointerEvent,
 } from "react";
+import { playBoing } from "../utils/worldPropSounds";
 import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
   ArrowUp,
   Gamepad2,
-  Heart,
   Pause,
   Play,
   RotateCcw,
@@ -49,7 +49,6 @@ const MANGO_SIZE = 26;
 const SCROLL_SPEED = 95;
 const DISTANCE_POINTS = 0.1;
 const MANGO_POINTS = 10;
-const START_LIVES = 3;
 const INVULN_MS = 500;
 const SLOW_MOTION = 0.6;
 const LION_START: Point = { x: 56, y: (FIELD_H - LION_SIZE) / 2 };
@@ -139,7 +138,6 @@ export function MangoRun({
 }) {
   const reduced = usePrefersReducedMotion();
   const [mode, setMode] = useState<Mode>("intro");
-  const [lives, setLives] = useState(START_LIVES);
   const [mangoesCount, setMangoesCount] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
   const [runBest, setRunBest] = useState(best);
@@ -159,7 +157,6 @@ export function MangoRun({
   const distance = useRef(0);
   const elapsed = useRef(0);
   const collected = useRef(0);
-  const livesNow = useRef(START_LIVES);
   const nextSpawnDistance = useRef(0);
   const safeTrail = useRef(true);
   const invulnUntil = useRef(0);
@@ -228,6 +225,17 @@ export function MangoRun({
     return () => document.removeEventListener("keydown", onEscape, true);
   }, [mode]);
 
+  // The child decides when the run ends; that is the only finish line.
+  const allDone = () => {
+    const score =
+      Math.floor(distance.current * DISTANCE_POINTS) +
+      collected.current * MANGO_POINTS;
+    releaseSteering();
+    setFinalScore(score);
+    finish.current(score);
+    setMode("gameover");
+  };
+
   const start = () => {
     window.clearTimeout(flash.current);
     lion.current = LION_START;
@@ -237,11 +245,9 @@ export function MangoRun({
     distance.current = 0;
     elapsed.current = 0;
     collected.current = 0;
-    livesNow.current = START_LIVES;
     nextSpawnDistance.current = SCROLL_SPEED * 0.7;
     safeTrail.current = true;
     invulnUntil.current = 0;
-    setLives(START_LIVES);
     setMangoesCount(0);
     setFinalScore(0);
     setRunBest(best);
@@ -348,8 +354,8 @@ export function MangoRun({
       }
 
       if (hitRock) {
-        livesNow.current -= 1;
-        setLives(livesNow.current);
+        // No lives to lose: a bump is a silly bounce, then the run goes on.
+        playBoing();
         invulnUntil.current = elapsed.current + INVULN_MS;
         window.clearTimeout(flash.current);
         if (reduced) {
@@ -361,24 +367,13 @@ export function MangoRun({
             INVULN_MS,
           );
         }
-        setAnnouncement(
-          livesNow.current > 0
-            ? `${livesNow.current} ${livesNow.current === 1 ? "life" : "lives"} left.`
-            : "Out of lives.",
-        );
+        setAnnouncement("Boing!");
       }
 
       const score =
         Math.floor(distance.current * DISTANCE_POINTS) +
         collected.current * MANGO_POINTS;
 
-      if (livesNow.current <= 0) {
-        releaseSteering();
-        setFinalScore(score);
-        finish.current(score);
-        setMode("gameover");
-        return;
-      }
       setFrame({
         obstacles: moving,
         mangoes: rolling,
@@ -440,7 +435,7 @@ export function MangoRun({
           </p>
           <div className="game-features">
             <span>
-              <Sparkles size={15} /> Endless. Three lives.
+              <Sparkles size={15} /> Run as long as you like.
             </span>
             <span>Best run: {best}</span>
           </div>
@@ -457,20 +452,13 @@ export function MangoRun({
       {(mode === "playing" || mode === "paused") && (
         <>
           <div className="mr-hud game-stats">
-            <span
-              className="mr-lives"
-              role="img"
-              aria-label={`${lives} lives left`}
+            <button
+              type="button"
+              className="button button-primary mr-done"
+              onClick={allDone}
             >
-              {Array.from({ length: START_LIVES }, (_, index) => (
-                <Heart
-                  key={index}
-                  className="mr-heart"
-                  size={17}
-                  fill={index < lives ? "currentColor" : "none"}
-                />
-              ))}
-            </span>
+              All done!
+            </button>
             <span>
               <Gamepad2 size={17} /> {frame.score} points
             </span>

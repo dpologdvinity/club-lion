@@ -4,6 +4,15 @@ import type { PlayerV2 } from "../game.ts";
 export function gameCards(player: PlayerV2) {
   return [
     {
+      id: "mango-run",
+      name: "Mango Run",
+      art: "🦁 🥭 🌴",
+      description: "Run down the trail and grab mangoes. Bumps just bounce.",
+      reward: "Stop whenever you like to keep your best run",
+      best: player.mangoRunBest ?? 0,
+      progressLabel: "Best",
+    },
+    {
       id: "bubble-pop",
       name: "Bubble Pop",
       art: "🫧 🦁 ⭐",

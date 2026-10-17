@@ -32,6 +32,14 @@ export const neighborhoodArcadeManifest: RoomManifest = {
   ],
   interactives: [
     {
+      id: "arcade-mango-run",
+      label: "Run for mangoes",
+      icon: "🥭",
+      type: "game_launch",
+      position: { x: 1150, y: 600 },
+      actionData: { gameId: "mango-run" },
+    },
+    {
       id: "arcade-memory",
       label: "Memory Safari",
       icon: "🃏",

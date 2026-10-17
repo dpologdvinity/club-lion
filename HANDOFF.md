@@ -19,6 +19,8 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 - MouseEvent rounding in zoomed-out rooms required a 2-stage-pixel setup tolerance; obstacle point/segment assertions remain strict. Phone label geometry is checked atomically after layout settles.
 - Baseline full run 38779506997 passed verify, all four browser shards, and PWA. Check the latest run after further changes; do not claim browser success from local verification alone.
 
+- Mango Run is back (it was dropped from the arcade in 9692c47): toddler rules with no lives and an All done! button; card in `src/games/catalog.ts`, arcade hotspot `arcade-mango-run`, e2e in `tests/mango-run.spec.ts`.
+
 ## Living neighborhood rooms
 
 - Savanna Square is now a manifest room (`src/rooms/manifests/savannaSquare.ts`, `SavannaSquareScenery.tsx`, `SquareFun.tsx`) with multi-step objects (`object.steps`, `reaction.messages`), picture doors (`actionData.travel`), flower notes (`actionData.note`, `tune`), a weather toy and a daily butterfly hunt. Rooms that lead back to the square use stage-unit arrival points (660, 639). Spec and plan live in `docs/superpowers/`.

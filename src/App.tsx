@@ -62,6 +62,7 @@ import {
   unlockStamp,
   evaluateStampUnlocks,
   findSquareButterfly,
+  completeMangoRun,
   STAMP_DEFINITIONS,
   PLACES,
   SHOP_ITEMS,
@@ -1047,6 +1048,9 @@ export default function App() {
                   setPlayer((p) => recordFashionShowResult(p, res));
                   notify("Runway show complete!");
                 }}
+                onCompleteMangoRun={(score) =>
+                  setPlayer((p) => completeMangoRun(p, score))
+                }
                 onCompleteBubblePop={(score) =>
                   setPlayer((p) => completeBubblePop(p, score))
                 }

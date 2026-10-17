@@ -37,6 +37,9 @@ const TopModelsRunway = lazyPanel(() =>
 const InstrumentContent = lazyPanel(() =>
   import("./InstrumentModal").then((module) => module.InstrumentContent),
 );
+const MangoRun = lazyPanel(() =>
+  import("./MangoRun").then((module) => module.MangoRun),
+);
 const BubblePop = lazyPanel(() =>
   import("./BubblePop").then((module) => module.BubblePop),
 );
@@ -79,6 +82,7 @@ export function GamesPanel({
   onCompleteFishing,
   onCompleteFashion,
   onCompleteBubblePop,
+  onCompleteMangoRun,
   onColorPage,
   onServeCake,
   onCompleteSeek,
@@ -106,6 +110,7 @@ export function GamesPanel({
     stars: number;
   }) => void;
   onCompleteBubblePop?: (score: number) => void;
+  onCompleteMangoRun?: (score: number) => void;
   onColorPage?: (pageId: string, fills: PageFills, finish: boolean) => void;
   onServeCake?: ComponentProps<typeof MangoBakery>["onServe"];
   onCompleteSeek?: ComponentProps<typeof HideAndSeekSafari>["onComplete"];
@@ -155,6 +160,7 @@ export function GamesPanel({
           picked === "runway" ||
           picked === "instrument" ||
           picked === "bubble-pop" ||
+          picked === "mango-run" ||
           picked === "coloring-book" ||
           picked === "bakery" ||
           picked === "seek" ||
@@ -207,6 +213,13 @@ export function GamesPanel({
             </div>
             <InstrumentContent instrument="piano" onClose={onClose} />
           </div>
+        )}
+        {picked === "mango-run" && (
+          <MangoRun
+            best={player.mangoRunBest ?? 0}
+            onFinish={(score) => onCompleteMangoRun?.(score)}
+            onClose={onClose}
+          />
         )}
         {picked === "bubble-pop" && (
           <BubblePop
