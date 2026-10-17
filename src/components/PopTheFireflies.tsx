@@ -58,7 +58,7 @@ export function PopTheFireflies({
         setFlies((all) =>
           all.length >= MAX_ON_SCREEN
             ? all
-            : [...all, makeFirefly(++nextId.current)],
+            : [...all, makeFirefly(++nextId.current, Math.random, all)],
         );
       }
     }, TICK_MS);
@@ -72,11 +72,10 @@ export function PopTheFireflies({
     paid.current = false;
     setScore(0);
     setElapsed(0);
-    setFlies(
-      Array.from({ length: FIREFLY_START }, () =>
-        makeFirefly(++nextId.current),
-      ),
-    );
+    const first: Firefly[] = [];
+    for (let i = 0; i < FIREFLY_START; i++)
+      first.push(makeFirefly(++nextId.current, Math.random, first));
+    setFlies(first);
     setAnnouncement("Tap the fireflies while they glow!");
     setPhase("play");
   };

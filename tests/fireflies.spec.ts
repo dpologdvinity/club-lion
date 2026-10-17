@@ -24,11 +24,25 @@ test("catch glowing fireflies; the night ends and saves the jar once", async ({
   await open(page);
   await page.getByRole("button", { name: "Let's catch!" }).click();
   const jar = page.locator(".firefly-jar strong");
-  // A glowing firefly can blink off between the check and the tap; keep trying.
+  // Tap a firefly the moment it glows: a slow runner's pointer click can outlast the glow.
   await expect(async () => {
-    await page.locator('.firefly[data-lit="true"]').first().click();
+    await page.evaluate(() =>
+      document
+        .querySelector<HTMLButtonElement>('.firefly[data-lit="true"]')
+        ?.click(),
+    );
     expect(Number(await jar.textContent())).toBeGreaterThan(0);
   }).toPass({ timeout: 15_000 });
+  // A real pointer tap reaches the firefly: it is caught or wiggles.
+  const jarBefore = Number(await jar.textContent());
+  await page.locator(".firefly").first().click();
+  await expect
+    .poll(
+      async () =>
+        Number(await jar.textContent()) > jarBefore ||
+        (await page.locator(".firefly-wiggle").count()) > 0,
+    )
+    .toBe(true);
   const before = await saved(page);
   // The night is a real 30 seconds; a fake clock made taps miss the glow.
   await expect(page.locator(".firefly-result")).toBeVisible({

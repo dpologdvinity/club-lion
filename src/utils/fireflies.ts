@@ -39,16 +39,26 @@ export function catchPoints(fly: Firefly, now: number): 0 | 1 | 3 {
   return fly.golden ? 3 : 1;
 }
 
+/** Percent apart new fireflies try to stay, so a glowing one never hides under another. */
+export const MIN_GAP = 14;
+const PLACE_TRIES = 6;
+
 export function makeFirefly(
   id: number,
   random: () => number = Math.random,
+  others: readonly Firefly[] = [],
 ): Firefly {
   const golden = random() < 0.125;
   const period = 1600 + Math.round(random() * 1000);
+  let spot = { x: 50, y: 46 };
+  for (let tryIndex = 0; tryIndex < PLACE_TRIES; tryIndex++) {
+    spot = { x: 8 + random() * 84, y: 12 + random() * 68 };
+    if (others.every((o) => Math.hypot(o.x - spot.x, o.y - spot.y) >= MIN_GAP))
+      break;
+  }
   return {
     id,
-    x: 8 + random() * 84,
-    y: 12 + random() * 68,
+    ...spot,
     phase: Math.round(random() * period),
     period,
     golden,

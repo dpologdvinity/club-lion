@@ -4,6 +4,7 @@ import {
   FIREFLY_MAX_SCORE,
   FIREFLY_STAMP_SCORE,
   GRACE_MS,
+  MIN_GAP,
   catchPoints,
   isLit,
   makeFirefly,
@@ -49,4 +50,13 @@ test("new fireflies stay inside the meadow and blink at kid-friendly speeds", ()
 test("the score cap is above any real round and the stamp is reachable", () => {
   assert.ok(FIREFLY_MAX_SCORE >= 100);
   assert.ok(FIREFLY_STAMP_SCORE < FIREFLY_MAX_SCORE);
+});
+
+test("a new firefly keeps clear of the others when there is room", () => {
+  const first = makeFirefly(1, () => 0.5);
+  let calls = 0;
+  // The first spot lands right on top of the old firefly; the next is clear.
+  const rolls = [0.9, 0.5, 0.5, 0.5, 0.9, 0.1, 0.1, 0.5];
+  const second = makeFirefly(2, () => rolls[calls++ % rolls.length], [first]);
+  assert.ok(Math.hypot(second.x - first.x, second.y - first.y) >= MIN_GAP);
 });
