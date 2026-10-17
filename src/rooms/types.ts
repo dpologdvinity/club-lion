@@ -92,7 +92,11 @@ export type RoomObjectKind =
   | "fan"
   | "shelf"
   | "jeepney"
-  | "karaoke";
+  | "karaoke"
+  | "digspot"
+  | "volcano"
+  | "dinoegg"
+  | "sifter";
 
 export type RoomManifest = {
   id: string;
@@ -138,6 +142,8 @@ export type RoomManifest = {
       note?: number;
       /** Notes hummed when a tap reaches `step`. */
       tune?: { step: number; notes: number[] };
+      /** A dig spot: digging every one in the room earns the Fossil Finder stamp. */
+      fossil?: true;
     };
   }[];
   ambientAudioPreset: string;

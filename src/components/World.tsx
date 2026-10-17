@@ -1,4 +1,5 @@
 import { RoomObject } from "./RoomObject.tsx";
+import { foundAllFossils } from "../rooms/manifests/dinoDig.ts";
 import { RoomProps } from "./RoomProps.tsx";
 import { thanksFor } from "../utils/roomProps.ts";
 import { SquareFun } from "./SquareFun";
@@ -582,6 +583,15 @@ export function World({
       notify(item.reaction.messages?.[state % steps] ?? item.reaction.message);
       const tune = item.actionData.tune;
       if (tune && state % steps === tune.step) playNotes(tune.notes);
+      // Only the tap that uncovers the last fossil celebrates.
+      if (
+        item.actionData.fossil &&
+        !foundAllFossils(objectStates, roomItems) &&
+        foundAllFossils({ ...objectStates, [id]: state }, roomItems)
+      ) {
+        onUnlockStamp?.("fossil_finder");
+        notify("You found every fossil! 🦴 You're a real paleontologist!");
+      }
     }
     const travel = item?.actionData.travel;
     if (travel) {

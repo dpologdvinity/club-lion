@@ -32,6 +32,14 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     unlockHint: "Watch the bushes closely in Peekaboo Animals.",
   },
   {
+    id: "fossil_finder",
+    name: "Fossil Finder",
+    category: "world_secrets",
+    description: "Dug up every fossil at Dino Dig.",
+    icon: "🦴",
+    unlockHint: "Dig in every sandy spot at Dino Dig.",
+  },
+  {
     id: "firefly_catcher",
     name: "Firefly Catcher",
     category: "arcade_mastery",

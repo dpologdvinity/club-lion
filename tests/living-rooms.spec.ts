@@ -113,6 +113,13 @@ for (const room of [
     exit: "Downtown Plaza",
   },
   {
+    name: "Dino Dig",
+    action: "Shake the sand sifter",
+    kind: "sifter",
+    objects: 8,
+    exit: "Downtown Plaza",
+  },
+  {
     name: "Your cozy den",
     action: "Switch the reading lamp",
     kind: "lamp",

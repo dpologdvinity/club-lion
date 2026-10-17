@@ -35,6 +35,7 @@ const PLACE_IDS = [
   "lion-aquarium",
   "snowflake-rink",
   "kainan",
+  "dino-dig",
 ] as const;
 
 const uniqueTracks = [

@@ -1756,6 +1756,190 @@ export function RoomObject({
             )}
           </g>
         )}
+        {kind === "digspot" && (
+          <g>
+            <ellipse cx="100" cy="200" rx="95" ry="34" fill="#c98d4a" />
+            {step === 0 && (
+              <path
+                d="M20 200Q100 120 180 200Z"
+                fill="#e2b06a"
+                stroke="#b07a3a"
+                strokeWidth="5"
+              />
+            )}
+            {step >= 1 && (
+              <>
+                <ellipse cx="100" cy="200" rx="70" ry="22" fill="#6e4628" />
+                <g className="object-pop" fill="#e2b06a">
+                  <circle cx="30" cy="170" r="12" />
+                  <circle cx="170" cy="165" r="10" />
+                  <circle cx="150" cy="140" r="7" />
+                </g>
+                <path
+                  d="M150 190L190 110"
+                  stroke="#8a5a30"
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                />
+                <path d="M178 100L200 112L190 130L170 120Z" fill="#9aa4ae" />
+              </>
+            )}
+            {step === 2 && (
+              <text
+                key={state}
+                className="object-pop"
+                x="100"
+                y="196"
+                fontSize="64"
+                textAnchor="middle"
+              >
+                {{
+                  "dig-skull": "💀",
+                  "dig-bone": "🦴",
+                  "dig-shell": "🐚",
+                  "dig-tooth": "🦷",
+                }[item.id] ?? "🦴"}
+              </text>
+            )}
+          </g>
+        )}
+        {kind === "volcano" && (
+          <g>
+            <path
+              d="M10 235L80 70H120L190 235Z"
+              fill="#8a5a3c"
+              stroke="#5e3a22"
+              strokeWidth="6"
+            />
+            <path
+              d="M80 70Q100 90 120 70L112 105Q100 95 88 105Z"
+              fill={step === 2 ? "#ff6a2a" : "#5e3a22"}
+            />
+            {step === 1 && (
+              <g className="sm-bob" fill="#c9c3bb">
+                <circle cx="95" cy="45" r="18" />
+                <circle cx="115" cy="25" r="14" />
+                <circle cx="100" cy="5" r="10" />
+              </g>
+            )}
+            {step === 2 && (
+              <g className="object-splash">
+                <path
+                  d="M100 70Q60 0 30 40M100 70Q140 0 170 40M100 70V-20"
+                  stroke="#ff8a2a"
+                  strokeWidth="14"
+                  fill="none"
+                  strokeLinecap="round"
+                />
+                <g fill="#ffd84d">
+                  <circle cx="30" cy="40" r="10" />
+                  <circle cx="170" cy="40" r="10" />
+                  <circle cx="100" cy="-20" r="12" />
+                </g>
+                <path
+                  d="M88 105Q70 170 60 235H80Q92 170 100 110Z"
+                  fill="#ff6a2a"
+                />
+              </g>
+            )}
+          </g>
+        )}
+        {kind === "dinoegg" && (
+          <g>
+            <ellipse cx="100" cy="215" rx="90" ry="22" fill="#a8823e" />
+            <path
+              d="M15 205Q100 240 185 205"
+              stroke="#7a5a26"
+              strokeWidth="8"
+              fill="none"
+            />
+            {step < 3 && (
+              <g className={step === 1 ? "object-shake" : undefined}>
+                <ellipse
+                  cx="100"
+                  cy="130"
+                  rx="62"
+                  ry="82"
+                  fill="#f2ecd2"
+                  stroke="#b8ad84"
+                  strokeWidth="5"
+                />
+                <g fill="#7fc47a">
+                  <circle cx="75" cy="100" r="10" />
+                  <circle cx="120" cy="150" r="13" />
+                  <circle cx="110" cy="80" r="7" />
+                </g>
+                {step === 2 && (
+                  <path
+                    d="M45 125L70 110L85 130L105 112L125 132L150 115"
+                    stroke="#6e5a3a"
+                    strokeWidth="5"
+                    fill="none"
+                  />
+                )}
+                {step === 2 && (
+                  <circle cx="100" cy="125" r="6" fill="#2b2b2b" />
+                )}
+              </g>
+            )}
+            {step === 3 && (
+              <g key={state} className="object-pop">
+                <path
+                  d="M40 210Q50 160 80 170L70 205Z"
+                  fill="#f2ecd2"
+                  stroke="#b8ad84"
+                  strokeWidth="4"
+                />
+                <path
+                  d="M160 210Q150 160 120 170L130 205Z"
+                  fill="#f2ecd2"
+                  stroke="#b8ad84"
+                  strokeWidth="4"
+                />
+                <text x="100" y="190" fontSize="96" textAnchor="middle">
+                  🦕
+                </text>
+              </g>
+            )}
+          </g>
+        )}
+        {kind === "sifter" && (
+          <g className={active ? "object-shake" : undefined}>
+            <rect
+              x="20"
+              y="90"
+              width="160"
+              height="60"
+              rx="10"
+              fill="#c98a4a"
+              stroke="#8a5a30"
+              strokeWidth="6"
+            />
+            <path
+              d="M30 100H170M30 115H170M30 130H170M60 95V145M100 95V145M140 95V145"
+              stroke="#5e3a22"
+              strokeWidth="3"
+            />
+            <path
+              d="M40 150L30 235M160 150L170 235"
+              stroke="#8a5a30"
+              strokeWidth="8"
+            />
+            <ellipse cx="100" cy="225" rx="60" ry="12" fill="#e2b06a" />
+            {active && (
+              <text
+                key={state}
+                className="object-pop"
+                x="100"
+                y="80"
+                fontSize="54"
+                textAnchor="middle"
+              >
+                💎
+              </text>
+            )}
+          </g>
+        )}
         {kind === "door" && (
           <g>
             <path

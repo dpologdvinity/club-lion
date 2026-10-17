@@ -117,6 +117,11 @@ const SnowflakeRinkScenery = lazy(() =>
   })),
 );
 
+const DinoDigScenery = lazy(() =>
+  import("./DinoDigScenery.tsx").then((module) => ({
+    default: module.DinoDigScenery,
+  })),
+);
 const KainanScenery = lazy(() =>
   import("./KainanScenery.tsx").then((module) => ({
     default: module.KainanScenery,
@@ -156,6 +161,7 @@ const ROOM_SCENERY: Partial<Record<PlaceId, Scene>> = {
   "lion-aquarium": { width: 2400, Scenery: LionAquariumScenery },
   "snowflake-rink": { width: 2400, Scenery: SnowflakeRinkScenery },
   kainan: { width: 2400, Scenery: KainanScenery },
+  "dino-dig": { width: 2400, Scenery: DinoDigScenery },
   "penthouse-condo": { width: 1920, Scenery: PenthouseCondoScenery },
   "secret-scout-base": { width: 1920, Scenery: ScoutBaseScenery, clock: true },
   "splash-oasis-entry": {

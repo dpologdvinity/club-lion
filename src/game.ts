@@ -113,7 +113,8 @@ export type PlaceId =
   | "lion-speedway"
   | "lion-aquarium"
   | "snowflake-rink"
-  | "kainan";
+  | "kainan"
+  | "dino-dig";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -363,6 +364,12 @@ export const PLACES: {
     name: "Lola's Kainan",
     subtitle: "Filipino home cooking",
     imageClass: "scene-kainan",
+  },
+  {
+    id: "dino-dig",
+    name: "Dino Dig",
+    subtitle: "Dig up fossils & hatch an egg",
+    imageClass: "scene-dinodig",
   },
 ];
 
