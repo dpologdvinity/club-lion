@@ -1,27 +1,69 @@
 import { memo } from "react";
+import { ARCADE_WIDTH as W } from "../rooms/manifests/neighborhoodArcade.ts";
+
+const MID = W / 2;
+const LIGHTS = Array.from(
+  { length: Math.floor((W - 400) / 245) + 1 },
+  (_, i) => 235 + i * 245,
+);
+const FLOOR_LINES = Array.from(
+  { length: Math.floor(W / 240) + 1 },
+  (_, i) => i * 240,
+);
+const STARS = [240, 1200, 1760, 2600, 3400, 4300, 4960];
+
+function Neon({ x, text, color }: { x: number; text: string; color: string }) {
+  return (
+    <g>
+      <rect
+        x={x - 300}
+        y="45"
+        width="600"
+        height="90"
+        rx="34"
+        fill="#343e5e"
+        stroke={color}
+        strokeWidth="7"
+      />
+      <text
+        x={x}
+        y="108"
+        fontSize="52"
+        fontWeight="900"
+        textAnchor="middle"
+        fill={color}
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
 
 export const NeighborhoodArcadeScenery = memo(
   function NeighborhoodArcadeScenery() {
     return (
       <>
-        <path fill="#4c5878" d="M0 0H1920V720H0Z" />
-        <path d="M0 0H1920L1780 120H140Z" fill="#394964" />
-        <path d="M140 120H1780V530H140Z" fill="#6e7896" />
-        <path d="M140 120V530L0 620V0M1780 120V530L1920 620V0" fill="#56627e" />
-        <path d="M0 530H1920V720H0Z" fill="#bf9b9b" />
+        <path fill="#4c5878" d={`M0 0H${W}V720H0Z`} />
+        <path d={`M0 0H${W}L${W - 140} 120H140Z`} fill="#394964" />
+        <path d={`M140 120H${W - 140}V530H140Z`} fill="#6e7896" />
+        <path
+          d={`M140 120V530L0 620V0M${W - 140} 120V530L${W} 620V0`}
+          fill="#56627e"
+        />
+        <path d={`M0 530H${W}V720H0Z`} fill="#bf9b9b" />
         {[550, 590, 645, 715].map((y) => (
-          <path key={y} d={`M0 ${y}H1920`} stroke="#997f91" strokeWidth="3" />
+          <path key={y} d={`M0 ${y}H${W}`} stroke="#997f91" strokeWidth="3" />
         ))}
-        {[0, 240, 480, 720, 960, 1200, 1440, 1680, 1920].map((x) => (
+        {FLOOR_LINES.map((x) => (
           <path
             key={x}
-            d={`M${960 + (x - 960) * 0.7} 530L${x} 720`}
+            d={`M${MID + (x - MID) * 0.85} 530L${x} 720`}
             stroke="#997f91"
             strokeWidth="3"
           />
         ))}
         <rect
-          x="530"
+          x={MID - 430}
           y="35"
           width="860"
           height="112"
@@ -30,44 +72,27 @@ export const NeighborhoodArcadeScenery = memo(
           stroke="#f4d7a4"
           strokeWidth="8"
         />
-        <text x="960" y="113" fontSize="70" textAnchor="middle" fill="#343e5e">
+        <text x={MID} y="113" fontSize="70" textAnchor="middle" fill="#343e5e">
           THE ARCADE
         </text>
-        <path d="M175 177H1745M175 192H1745" stroke="#f4c983" strokeWidth="5" />
+        <Neon x={1200} text="PLAY ALL DAY" color="#ff8fab" />
+        <Neon x={W - 1200} text="GAMES GALORE" color="#7fe0d0" />
+        <path
+          d={`M175 177H${W - 175}M175 192H${W - 175}`}
+          stroke="#f4c983"
+          strokeWidth="5"
+        />
         <g fill="#fce9b4">
-          {[235, 480, 725, 970, 1215, 1460, 1705].map((x) => (
+          {LIGHTS.map((x, i) => (
             <g key={x} transform={`translate(${x} 178)`}>
-              <g className="sm-twinkle">
+              <g
+                className="sm-twinkle"
+                style={{ "--sm-delay": `${-(i % 5) * 0.4}s` }}
+              >
                 <circle r="10" />
               </g>
             </g>
           ))}
-        </g>
-        <path d="M180 220H1110V540H180Z" fill="#3c4966" />
-        <path d="M180 220h930v28H180Z" fill="#8c9fa5" />
-        <g transform="translate(1490 405)">
-          <path
-            d="M0 110l50-110h180l60 110Z"
-            fill="#394760"
-            stroke="#c3d9cf"
-            strokeWidth="5"
-          />
-          {[0, 1, 2].map((row) =>
-            [0, 1, 2].map((col) => (
-              <path
-                key={`${row}-${col}`}
-                className="sm-pulse"
-                d={`M${45 + col * 65 - row * 10} ${25 + row * 28}h52l10 20h-65Z`}
-                fill={["#e9b273", "#91c7b7", "#d5a6bd"][(row + col) % 3]}
-              />
-            )),
-          )}
-        </g>
-        <g transform="translate(1170 245)">
-          <path d="M0 0h210v75H0Z" fill="#e6c38f" />
-          <text x="105" y="48" textAnchor="middle" fontSize="29" fill="#35435d">
-            SURPRISES
-          </text>
         </g>
         <g transform="translate(65 330)">
           <path
@@ -88,7 +113,7 @@ export const NeighborhoodArcadeScenery = memo(
           </text>
         </g>
         <g fill="#ead2a3">
-          {[240, 1200, 1760].map((x) => (
+          {STARS.map((x) => (
             <path
               key={x}
               d={`M${x} 595l8 17 19 3-14 14 3 19-16-9-17 9 4-19-14-14 19-3Z`}

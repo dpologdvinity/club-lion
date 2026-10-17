@@ -136,7 +136,7 @@ const ROOM_SCENERY: Partial<Record<PlaceId, Scene>> = {
   square: { width: 1536, height: 864, Scenery: SavannaSquareScenery },
   water: { width: 1920, Scenery: WateringHoleScenery },
   cafe: { width: 1920, Scenery: CanopyCafeScenery },
-  arcade: { width: 1920, Scenery: NeighborhoodArcadeScenery },
+  arcade: { width: 5200, Scenery: NeighborhoodArcadeScenery },
   den: { width: 1920, Scenery: CozyDenScenery },
   "downtown-plaza": { width: 2400, Scenery: DowntownPlazaScenery },
   "club-pulse": { width: 1920, Scenery: ClubPulseScenery, clock: true },

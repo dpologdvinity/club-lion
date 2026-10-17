@@ -22,6 +22,7 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 - Mango Run is back (it was dropped from the arcade in 9692c47): toddler rules with no lives and an All done! button; card in `src/games/catalog.ts`, arcade hotspot `arcade-mango-run`, e2e in `tests/mango-run.spec.ts`.
 - Lola's Kainan (`src/rooms/manifests/kainan.ts`, `KainanScenery.tsx`) adds eight object kinds to `RoomObject.tsx`, neighbor Lola, the rondalla room track and the Halo-Halo game (`src/utils/haloHalo.ts`, `HaloHalo.tsx`, `completeHaloHalo`, stamp `halo_halo_chef`); e2e in `tests/halo-halo.spec.ts` and the living-rooms row.
 - Carry-anywhere props: `RoomManifest.props`, `RoomProps.tsx` (+ `roomProps.css`), pure rules in `src/utils/roomProps.ts`; e2e `tests/room-props.spec.ts`. Next idea: persist spots in the save and let the doll hold a prop.
+- Big arcade: `neighborhoodArcade.ts` (`ARCADE_WIDTH` 5200, one cabinet per `GameId`), scenery reads the width; cabinet colors and icon screens in `RoomObject.tsx`; tests `neighborhoodArcade.test.ts`, `tests/big-arcade.spec.ts`. A new game needs a cabinet here too (the unit test enforces it).
 
 ## Living neighborhood rooms
 

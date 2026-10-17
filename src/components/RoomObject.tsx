@@ -3,6 +3,22 @@ import "./roomObjects.css";
 
 type Item = RoomManifest["interactives"][number];
 
+const CABINET_COLORS = [
+  "#b57863",
+  "#7a6fb0",
+  "#4f8f9a",
+  "#c0607a",
+  "#5f9a6a",
+  "#c98a3a",
+];
+
+/** Each cabinet keeps its own color, picked from its id. */
+function cabinetColor(id: string): string {
+  let sum = 0;
+  for (const char of id) sum += char.charCodeAt(0);
+  return CABINET_COLORS[sum % CABINET_COLORS.length];
+}
+
 /** Objects live in stage space, so adding one never depends on screen size. */
 export function RoomObject({
   item,
@@ -35,7 +51,7 @@ export function RoomObject({
           <>
             <path
               d="M20 8H175L185 180V235H15V180L28 145Z"
-              fill="#b57863"
+              fill={cabinetColor(item.id)}
               stroke="#523f51"
               strokeWidth="7"
             />
@@ -84,6 +100,13 @@ export function RoomObject({
               <g fill="#a4c7b1" stroke="#f1d89d" strokeWidth="3">
                 <path d="m100 48 18 24h-11v16H93V72H82ZM100 130l-18-24h11V90h14v16h11ZM44 90l20-16v10h17v13H64v10ZM153 90l-20 17V97h-17V84h17V74Z" />
               </g>
+            )}
+            {!["memory", "bee", "paw"].includes(
+              item.actionData.gameId ?? "",
+            ) && (
+              <text x="97" y="112" fontSize="64" textAnchor="middle">
+                {item.icon}
+              </text>
             )}
             <path d="M25 155H175L180 185H20Z" fill="#e8c69b" />
             <circle cx="60" cy="165" r="10" fill="#688a79" />
