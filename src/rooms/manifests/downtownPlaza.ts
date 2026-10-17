@@ -98,6 +98,12 @@ export const downtownPlazaManifest: RoomManifest = {
       triggerBounds: { x1: 1150, y1: 675, x2: 1290, y2: 720 },
       label: "Lion Speedway",
     },
+    {
+      targetRoomId: "kainan",
+      targetSpawn: { x: 280, y: 620 },
+      triggerBounds: { x1: 1500, y1: 675, x2: 1640, y2: 720 },
+      label: "Lola's Kainan",
+    },
   ],
   interactives: [
     {

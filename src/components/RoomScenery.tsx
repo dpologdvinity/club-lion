@@ -116,6 +116,12 @@ const SnowflakeRinkScenery = lazy(() =>
   })),
 );
 
+const KainanScenery = lazy(() =>
+  import("./KainanScenery.tsx").then((module) => ({
+    default: module.KainanScenery,
+  })),
+);
+
 type Scene = {
   width: number;
   /** Stage height in scene units; most rooms are 720. */
@@ -148,6 +154,7 @@ const ROOM_SCENERY: Partial<Record<PlaceId, Scene>> = {
   "lion-speedway": { width: 2400, Scenery: LionSpeedwayScenery },
   "lion-aquarium": { width: 2400, Scenery: LionAquariumScenery },
   "snowflake-rink": { width: 2400, Scenery: SnowflakeRinkScenery },
+  kainan: { width: 2400, Scenery: KainanScenery },
   "penthouse-condo": { width: 1920, Scenery: PenthouseCondoScenery },
   "secret-scout-base": { width: 1920, Scenery: ScoutBaseScenery, clock: true },
   "splash-oasis-entry": {

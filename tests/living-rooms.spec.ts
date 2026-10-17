@@ -106,6 +106,13 @@ for (const room of [
     exit: "Downtown Plaza",
   },
   {
+    name: "Lola's Kainan",
+    action: "Turn the lechon",
+    kind: "lechon",
+    objects: 9,
+    exit: "Downtown Plaza",
+  },
+  {
     name: "Your cozy den",
     action: "Switch the reading lamp",
     kind: "lamp",

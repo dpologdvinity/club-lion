@@ -1,0 +1,180 @@
+.halo-game {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.halo-order {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 96px;
+  padding: 8px 12px;
+  border-radius: 24px;
+  background: #fff8ec;
+  box-shadow: inset 0 -4px 0 #e7c79a66;
+}
+.halo-order-who {
+  font-size: 48px;
+  line-height: 1;
+}
+.halo-order-free {
+  font-size: 22px;
+  font-weight: 800;
+  color: #6a3f8f;
+}
+.halo-mode,
+.halo-undo,
+.halo-serve,
+.halo-next {
+  display: grid;
+  place-items: center;
+  min-width: 64px;
+  min-height: 64px;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.halo-mode {
+  margin-left: auto;
+  background: #efe3ff;
+  color: #6a3f8f;
+}
+.halo-mode[aria-pressed="true"] {
+  background: #8a5cc7;
+  color: #fff;
+}
+.halo-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 280px;
+  border-radius: 24px;
+  background: linear-gradient(#ffe7c2, #f6c98b);
+}
+.halo-glass {
+  width: 170px;
+  height: 260px;
+}
+.halo-glass-small {
+  width: 56px;
+  height: 88px;
+}
+.halo-glass-small text {
+  font-size: 30px;
+}
+.halo-layer-drop {
+  animation: halo-drop 260ms ease-out;
+}
+@keyframes halo-drop {
+  from {
+    transform: translateY(-40px);
+    opacity: 0.4;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.halo-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  border-radius: 24px;
+  background: #fff8ecee;
+  overflow: hidden;
+}
+.halo-confetti-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.halo-confetti {
+  position: absolute;
+  width: 10px;
+  height: 14px;
+  border-radius: 3px;
+  animation: halo-confetti 1.6s ease-in infinite;
+}
+@keyframes halo-confetti {
+  from {
+    transform: translateY(0) rotate(0);
+  }
+  to {
+    transform: translateY(380px) rotate(360deg);
+  }
+}
+.halo-thanks {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 900;
+  color: #6a3f8f;
+}
+.halo-stars {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  color: #f2a91b;
+}
+.halo-next {
+  width: 72px;
+  height: 72px;
+  background: var(--accent);
+  color: #59361b;
+  box-shadow: inset 0 -4px 0 #c76c2455;
+}
+.halo-actions {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+.halo-undo {
+  background: #fff8ec;
+  color: #8a5a30;
+}
+.halo-serve {
+  width: 80px;
+  height: 80px;
+  background: #4cc97a;
+  color: #fff;
+  box-shadow: inset 0 -5px 0 #2f8f52;
+}
+.halo-undo:disabled,
+.halo-serve:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.halo-tray {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+.halo-ingredient {
+  display: grid;
+  place-items: center;
+  min-height: 72px;
+  padding: 0;
+  border: 3px solid #fff;
+  border-radius: 20px;
+  box-shadow: inset 0 -4px 0 #00000022;
+  font-size: 34px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+@media (max-width: 420px) {
+  .halo-tray {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .halo-layer-drop,
+  .halo-confetti {
+    animation: none;
+  }
+}

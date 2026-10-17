@@ -1272,6 +1272,467 @@ export function RoomObject({
             </g>
           </g>
         )}
+        {kind === "ricecooker" && (
+          <g>
+            <rect
+              x="30"
+              y="110"
+              width="140"
+              height="120"
+              rx="30"
+              fill="#fff6f0"
+              stroke="#d98aa0"
+              strokeWidth="6"
+            />
+            <rect x="60" y="170" width="80" height="22" rx="8" fill="#f7c6d4" />
+            <circle
+              cx="150"
+              cy="200"
+              r="7"
+              fill={active ? "#ff5a5f" : "#9ccf8a"}
+            />
+            <g
+              className={step === 1 ? "object-shake" : undefined}
+              transform={step === 2 ? "rotate(-28 40 110)" : undefined}
+            >
+              <path
+                d="M30 115Q100 50 170 115Z"
+                fill="#fff6f0"
+                stroke="#d98aa0"
+                strokeWidth="6"
+              />
+              <rect
+                x="88"
+                y="66"
+                width="24"
+                height="14"
+                rx="6"
+                fill="#d98aa0"
+              />
+            </g>
+            {step === 1 && (
+              <g
+                className="sm-bob"
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth="8"
+                strokeLinecap="round"
+              >
+                <path d="M80 50Q65 30 80 10" />
+                <path d="M120 50Q135 30 120 10" />
+              </g>
+            )}
+            {step === 2 && (
+              <g className="object-pop">
+                <ellipse
+                  cx="100"
+                  cy="112"
+                  rx="60"
+                  ry="22"
+                  fill="#ffffff"
+                  stroke="#e8e0d0"
+                  strokeWidth="4"
+                />
+                <text x="100" y="105" fontSize="40" textAnchor="middle">
+                  🍚
+                </text>
+              </g>
+            )}
+          </g>
+        )}
+        {kind === "pot" && (
+          <g>
+            <path d="M40 150V230H160V150Z" fill="#5a6470" />
+            <rect
+              x="20"
+              y="138"
+              width="160"
+              height="22"
+              rx="10"
+              fill="#7d8894"
+            />
+            <rect x="4" y="150" width="26" height="14" rx="6" fill="#3e4650" />
+            <rect
+              x="170"
+              y="150"
+              width="26"
+              height="14"
+              rx="6"
+              fill="#3e4650"
+            />
+            <ellipse cx="100" cy="142" rx="72" ry="14" fill="#e9b25b" />
+            {step >= 1 && (
+              <g className={step === 1 ? "object-swing" : undefined}>
+                <path
+                  d="M100 140L150 40"
+                  stroke="#b07a46"
+                  strokeWidth="12"
+                  strokeLinecap="round"
+                />
+                <ellipse cx="100" cy="142" rx="22" ry="8" fill="#b07a46" />
+              </g>
+            )}
+            {step === 2 && (
+              <g
+                className="object-splash"
+                fill="#fff4cf"
+                stroke="#e9b25b"
+                strokeWidth="3"
+              >
+                <circle cx="60" cy="118" r="10" />
+                <circle cx="100" cy="104" r="12" />
+                <circle cx="140" cy="118" r="9" />
+                <circle cx="80" cy="84" r="7" />
+                <circle cx="124" cy="80" r="6" />
+              </g>
+            )}
+            <text x="60" y="146" fontSize="22">
+              🍅
+            </text>
+            <text x="120" y="148" fontSize="22">
+              🥬
+            </text>
+          </g>
+        )}
+        {kind === "lechon" && (
+          <g>
+            <rect
+              x="10"
+              y="200"
+              width="180"
+              height="20"
+              rx="10"
+              fill="#c9a77a"
+            />
+            <path
+              d="M20 205Q100 230 180 205"
+              fill="none"
+              stroke="#8a5a30"
+              strokeWidth="8"
+            />
+            <g key={state} className={active ? "object-shake" : undefined}>
+              <ellipse
+                cx="100"
+                cy="150"
+                rx="78"
+                ry="46"
+                fill="#b9652b"
+                stroke="#7a3a14"
+                strokeWidth="6"
+              />
+              <ellipse cx="80" cy="135" rx="40" ry="16" fill="#e39a55" />
+              <circle
+                cx="172"
+                cy="140"
+                r="26"
+                fill="#b9652b"
+                stroke="#7a3a14"
+                strokeWidth="6"
+              />
+              <circle cx="182" cy="134" r="4" fill="#3b1c0b" />
+              <ellipse cx="194" cy="148" rx="8" ry="6" fill="#e86b5c" />
+            </g>
+            <rect x="0" y="146" width="200" height="8" rx="4" fill="#9aa4ae" />
+            {active && (
+              <g className="sm-twinkle" fill="#fff4ba">
+                <circle cx="40" cy="90" r="6" />
+                <circle cx="100" cy="80" r="5" />
+                <circle cx="160" cy="92" r="6" />
+              </g>
+            )}
+          </g>
+        )}
+        {kind === "halohalo" && (
+          <g>
+            <rect
+              x="30"
+              y="40"
+              width="140"
+              height="190"
+              rx="22"
+              fill="#b98ae0"
+              stroke="#6a3f8f"
+              strokeWidth="6"
+            />
+            <rect
+              x="50"
+              y="60"
+              width="100"
+              height="70"
+              rx="14"
+              fill="#efe3ff"
+            />
+            <text x="100" y="112" fontSize="52" textAnchor="middle">
+              🍧
+            </text>
+            <rect
+              x="60"
+              y="150"
+              width="80"
+              height="60"
+              rx="12"
+              fill="#6a3f8f"
+            />
+            <path
+              d="M75 160H125L118 200Q100 206 82 200Z"
+              fill="#fff"
+              fillOpacity="0.85"
+            />
+            <rect x="80" y="182" width="40" height="14" fill="#8a5cc7" />
+            <rect x="80" y="170" width="40" height="12" fill="#f2b84b" />
+            <g className="sm-twinkle" fill="#fff4ba">
+              <circle cx="40" cy="30" r="6" />
+              <circle cx="170" cy="22" r="5" />
+            </g>
+          </g>
+        )}
+        {kind === "fan" && (
+          <g>
+            <circle
+              cx="100"
+              cy="110"
+              r="90"
+              fill="#e8f7ff"
+              stroke="#4aa3d1"
+              strokeWidth="8"
+            />
+            <g
+              className={step === 0 ? undefined : "sm-spin"}
+              style={{
+                transformBox: "view-box",
+                transformOrigin: "100px 110px",
+                animationDuration: step === 2 ? "0.25s" : "1.2s",
+              }}
+            >
+              {[0, 120, 240].map((angle) => (
+                <ellipse
+                  key={angle}
+                  cx="100"
+                  cy="62"
+                  rx="22"
+                  ry="44"
+                  fill="#7cc4ea"
+                  transform={`rotate(${angle} 100 110)`}
+                />
+              ))}
+            </g>
+            <circle cx="100" cy="110" r="16" fill="#4aa3d1" />
+            {step === 2 && (
+              <g
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth="6"
+                strokeLinecap="round"
+              >
+                <path d="M190 80Q210 90 190 100" />
+                <path d="M195 120Q220 130 195 140" />
+              </g>
+            )}
+          </g>
+        )}
+        {kind === "shelf" && (
+          <g>
+            <rect
+              x="10"
+              y="20"
+              width="180"
+              height="215"
+              rx="10"
+              fill="#c98a4a"
+              stroke="#8a5a30"
+              strokeWidth="6"
+            />
+            <rect x="10" y="4" width="180" height="30" rx="8" fill="#ff5a5f" />
+            <text
+              x="100"
+              y="26"
+              fontSize="20"
+              fontWeight="900"
+              fill="#fff"
+              textAnchor="middle"
+            >
+              SARI-SARI
+            </text>
+            {[90, 150, 210].map((y) => (
+              <rect
+                key={y}
+                x="18"
+                y={y}
+                width="164"
+                height="8"
+                fill="#8a5a30"
+              />
+            ))}
+            <g fontSize="30" textAnchor="middle">
+              <text x="55" y="84">
+                🥫
+              </text>
+              <text x="100" y="84">
+                🧃
+              </text>
+              <text x="145" y="84">
+                🍬
+              </text>
+              <text x="55" y="144">
+                🍞
+              </text>
+              <text x="100" y="144">
+                🥭
+              </text>
+              <text x="145" y="144">
+                🥥
+              </text>
+              <text x="55" y="204">
+                🍪
+              </text>
+              <text x="100" y="204">
+                🧴
+              </text>
+              <text x="145" y="204">
+                🍭
+              </text>
+            </g>
+            {step > 0 && (
+              <text
+                key={step}
+                className="object-pop"
+                x="100"
+                y="-12"
+                fontSize="60"
+                textAnchor="middle"
+              >
+                {["", "🥭", "🍞", "🍬"][step]}
+              </text>
+            )}
+          </g>
+        )}
+        {kind === "jeepney" && (
+          <g className={step === 1 ? "object-shake" : undefined}>
+            <path
+              d="M10 200V110Q10 80 40 80H170Q190 80 190 110V200Z"
+              fill="#e94b3c"
+              stroke="#8a2318"
+              strokeWidth="5"
+            />
+            <rect
+              x="20"
+              y="40"
+              width="160"
+              height="40"
+              rx="12"
+              fill="#ffd84d"
+              stroke="#c9a02a"
+              strokeWidth="5"
+            />
+            <text
+              x="100"
+              y="68"
+              fontSize="18"
+              fontWeight="900"
+              fill="#8a2318"
+              textAnchor="middle"
+            >
+              KAINAN
+            </text>
+            {[30, 75, 120].map((x) => (
+              <rect
+                key={x}
+                x={x}
+                y="96"
+                width="38"
+                height="40"
+                rx="6"
+                fill="#bfe6ff"
+              />
+            ))}
+            <rect x="10" y="150" width="180" height="10" fill="#4aa8ff" />
+            <rect x="10" y="164" width="180" height="8" fill="#ffd84d" />
+            <circle cx="50" cy="208" r="22" fill="#333" />
+            <circle cx="150" cy="208" r="22" fill="#333" />
+            <circle cx="50" cy="208" r="9" fill="#ccc" />
+            <circle cx="150" cy="208" r="9" fill="#ccc" />
+            <path d="M100 40L90 20H110Z" fill="#c0c7cf" />
+            {step === 1 && (
+              <text
+                className="object-pop"
+                x="170"
+                y="40"
+                fontSize="40"
+                textAnchor="middle"
+              >
+                📣
+              </text>
+            )}
+            {step === 2 && (
+              <g className="object-pop" fontSize="28">
+                <text x="34" y="128">
+                  🦁
+                </text>
+                <text x="80" y="128">
+                  🐵
+                </text>
+                <text x="125" y="128">
+                  🐰
+                </text>
+              </g>
+            )}
+          </g>
+        )}
+        {kind === "karaoke" && (
+          <g>
+            <rect
+              x="40"
+              y="90"
+              width="120"
+              height="145"
+              rx="14"
+              fill="#3b2a5a"
+              stroke="#1f1433"
+              strokeWidth="6"
+            />
+            <rect
+              x="52"
+              y="102"
+              width="96"
+              height="58"
+              rx="8"
+              fill={active ? "#ff8fab" : "#5a4a7a"}
+            />
+            <circle
+              cx="100"
+              cy="196"
+              r="26"
+              fill="#1f1433"
+              stroke="#8a7ab0"
+              strokeWidth="5"
+            />
+            <circle cx="100" cy="196" r="10" fill="#8a7ab0" />
+            <path
+              d="M150 90Q180 60 170 30"
+              fill="none"
+              stroke="#333"
+              strokeWidth="5"
+            />
+            <rect x="158" y="8" width="24" height="34" rx="12" fill="#c0c7cf" />
+            {active ? (
+              <g className="sm-bob" fontSize="34" textAnchor="middle">
+                <text x="70" y="140">
+                  🎵
+                </text>
+                <text x="130" y="140">
+                  🎶
+                </text>
+                <text x="40" y="60">
+                  ✨
+                </text>
+              </g>
+            ) : (
+              <text x="100" y="140" fontSize="30" textAnchor="middle">
+                🎤
+              </text>
+            )}
+          </g>
+        )}
         {kind === "door" && (
           <g>
             <path

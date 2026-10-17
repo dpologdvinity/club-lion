@@ -14,6 +14,7 @@ test("arcade metadata preserves card order and reads current save progress", () 
       "bubble-pop",
       "coloring-book",
       "bakery",
+      "halo-halo",
       "seek",
       "animal-band",
       "shape-sorter",
@@ -46,6 +47,8 @@ test("arcade metadata preserves card order and reads current save progress", () 
     progressed.find((card) => card.id === "picture-puzzle")?.progressLabel,
     "Pictures finished",
   );
+  const served = gameCards({ ...player, haloHaloServed: 4 });
+  assert.equal(served.find((card) => card.id === "halo-halo")?.best, 4);
   assert.ok(
     cards.every((card) => card.best === 0),
     "previous card values are unchanged",
@@ -85,5 +88,6 @@ test("room manifests own picture labels and preserve every arcade launch", () =>
     "plaza-shape-sorter": "shape-sorter",
     "plaza-picture-puzzle": "picture-puzzle",
     "midway-balloon-parade": "balloon-parade",
+    "kainan-halo-halo": "halo-halo",
   });
 });

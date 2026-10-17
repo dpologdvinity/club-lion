@@ -6,6 +6,7 @@ import {
   SLED_MAX_PAYOUT,
   type SledState,
 } from "./utils/sledPhysics.ts";
+import { isHaloLayers } from "./utils/haloHalo.ts";
 import {
   BUTTERFLY_COUNT,
   BUTTERFLY_SPOTS,
@@ -108,7 +109,8 @@ export type PlaceId =
   | "pet-paradise"
   | "lion-speedway"
   | "lion-aquarium"
-  | "snowflake-rink";
+  | "snowflake-rink"
+  | "kainan";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -128,6 +130,8 @@ export type PlayerBase = {
   djBeatDropBest?: number;
   smoothiesServed?: number;
   cakesServed?: number;
+  /** Halo-halo cups served at Lola's Kainan. */
+  haloHaloServed?: number;
   /** Photos of the newest served cakes, oldest first. */
   bakeryCakes?: Cake[];
   /** Today's Savanna Square butterfly hunt: spots found on `day` (local YYYY-MM-DD). */
@@ -345,6 +349,12 @@ export const PLACES: {
     subtitle: "Skate under the Christmas lights",
     imageClass: "scene-rink",
   },
+  {
+    id: "kainan",
+    name: "Lola's Kainan",
+    subtitle: "Filipino home cooking",
+    imageClass: "scene-kainan",
+  },
 ];
 
 export const NEIGHBORS = [
@@ -374,6 +384,15 @@ export const NEIGHBORS = [
     x: 67,
     y: 83,
     greeting: "Psst… try the arcade! There are fun games to play. 🎮",
+  },
+  {
+    id: "lola",
+    name: "Lola",
+    color: "copper" as const,
+    accessory: "flower",
+    x: 20,
+    y: 85,
+    greeting: "Kain tayo! Let's eat! Try my halo-halo. 🍧",
   },
 ];
 
@@ -649,6 +668,9 @@ export function restorePlayer(raw: string | null): Player {
         : Number.isSafeInteger(p.cakesServed) && p.cakesServed >= 0
           ? { cakesServed: p.cakesServed }
           : {}),
+      ...(Number.isSafeInteger(p.haloHaloServed) && p.haloHaloServed >= 0
+        ? { haloHaloServed: p.haloHaloServed }
+        : {}),
       ...(p.bakeryCakes === undefined
         ? {}
         : { bakeryCakes: restoreCakePhotos(p.bakeryCakes) }),
@@ -1450,4 +1472,26 @@ export function findSquareButterfly<T extends PlayerBase>(
   return next.squareButterflies.found.length === BUTTERFLY_COUNT
     ? unlockStamp(next, "square_butterflies")
     : next;
+}
+
+/** Counts one served halo-halo cup; the first cup earns the Halo-Halo Chef stamp. */
+export function completeHaloHalo<T extends PlayerBase>(
+  player: T,
+  layers: unknown,
+): T {
+  const served = player.haloHaloServed ?? 0;
+  if (
+    !isHaloLayers(layers) ||
+    !Number.isSafeInteger(served + 1) ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
+  return unlockStamp(
+    {
+      ...player,
+      gamesPlayed: player.gamesPlayed + 1,
+      haloHaloServed: served + 1,
+    },
+    "halo_halo_chef",
+  );
 }

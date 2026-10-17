@@ -16,6 +16,14 @@ export type StampDefinition = {
 
 export const STAMP_DEFINITIONS: StampDefinition[] = [
   {
+    id: "halo_halo_chef",
+    name: "Halo-Halo Chef",
+    category: "arcade_mastery",
+    description: "Served a halo-halo at Lola's Kainan.",
+    icon: "🍧",
+    unlockHint: "Build a halo-halo cup at Lola's Kainan.",
+  },
+  {
     id: "square_butterflies",
     name: "Butterfly Catcher",
     category: "world_secrets",

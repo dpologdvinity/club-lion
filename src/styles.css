@@ -5163,6 +5163,9 @@ svg {
 .scene-rink {
   background: #dce9f5;
 }
+.scene-kainan {
+  background: #f4b860;
+}
 .camera-world {
   aspect-ratio: auto;
   width: 100%;

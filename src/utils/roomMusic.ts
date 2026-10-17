@@ -349,6 +349,35 @@ const PET_PARADISE_PIZZICATO: RoomMusicTrack = {
   ],
 };
 
+// A plucked rondalla tune, like a bandurria at a fiesta.
+const KAINAN_RONDALLA: RoomMusicTrack = {
+  id: "kainan-rondalla",
+  bpm: 112,
+  stepsPerBeat: 2,
+  beatsPerBar: 4,
+  loopSteps: 32,
+  scale: MAJOR,
+  root: 62,
+  layers: [
+    {
+      voice: "pizzicato",
+      level: 0.85,
+      pattern: bars(
+        "4 . 4 5 4 . 2 .",
+        "0 . 2 4 5 . 4 .",
+        "7 . 5 4 2 . 4 .",
+        "2 . 1 2 0 . . .",
+      ),
+    },
+    {
+      voice: "pizzicato",
+      transpose: -12,
+      level: 0.65,
+      pattern: steps("0 . 4 . 0 . 4 .", 4),
+    },
+  ],
+};
+
 const CONDO_LOUNGE: RoomMusicTrack = {
   id: "condo-lounge",
   bpm: 84,
@@ -510,6 +539,7 @@ export const ROOM_MUSIC_TRACKS: Record<PlaceId, RoomMusicTrack> = {
   "lion-speedway": LION_SPEEDWAY_RACE,
   "lion-aquarium": COASTAL_PIER_BELLS,
   "snowflake-rink": MT_MIST_PADS,
+  kainan: KAINAN_RONDALLA,
 };
 
 const TRACKS_BY_ROOM: Partial<Record<string, RoomMusicTrack>> =

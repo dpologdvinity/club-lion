@@ -1624,3 +1624,29 @@ test("restorePlayer drops a malformed butterfly hunt", () => {
 test("saves without a butterfly hunt still load", () => {
   assert.deepEqual(restorePlayer(JSON.stringify(newPlayer())), newPlayer());
 });
+
+test("serving a halo-halo counts once per cup and the first cup earns its stamp", async () => {
+  const { completeHaloHalo } = await import("./game.ts");
+  const first = completeHaloHalo(newPlayer(), ["ice", "ube", "icecream"]);
+  assert.equal(first.haloHaloServed, 1);
+  assert.equal(first.gamesPlayed, 1);
+  assert.deepEqual(first.stamps, ["halo_halo_chef"]);
+  const second = completeHaloHalo(first, ["flan"]);
+  assert.equal(second.haloHaloServed, 2);
+  assert.deepEqual(second.stamps, ["halo_halo_chef"]);
+  for (const bad of [[], ["rocks"], Array(7).fill("ice")])
+    assert.equal(completeHaloHalo(first, bad), first);
+  const full = { ...first, haloHaloServed: Number.MAX_SAFE_INTEGER };
+  assert.equal(completeHaloHalo(full, ["ice"]), full);
+});
+
+test("halo-halo progress survives a save and bad counts are dropped", async () => {
+  const { completeHaloHalo } = await import("./game.ts");
+  const played = completeHaloHalo(newPlayer(), ["ice"]);
+  assert.equal(restorePlayer(JSON.stringify(played)).haloHaloServed, 1);
+  const tampered = restorePlayer(
+    JSON.stringify({ ...played, haloHaloServed: -3 }),
+  );
+  assert.equal(tampered.haloHaloServed, undefined);
+  assert.equal(migratePlayerSave(played).haloHaloServed, 1);
+});

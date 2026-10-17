@@ -22,6 +22,7 @@ import { lionSpeedwayManifest } from "./manifests/lionSpeedway.ts";
 import { lionAquariumManifest } from "./manifests/lionAquarium.ts";
 import { snowflakeRinkManifest } from "./manifests/snowflakeRink.ts";
 import { savannaSquareManifest } from "./manifests/savannaSquare.ts";
+import { kainanManifest } from "./manifests/kainan.ts";
 
 export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
   square: savannaSquareManifest,
@@ -45,4 +46,5 @@ export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
   "lion-speedway": lionSpeedwayManifest,
   "lion-aquarium": lionAquariumManifest,
   "snowflake-rink": snowflakeRinkManifest,
+  kainan: kainanManifest,
 };

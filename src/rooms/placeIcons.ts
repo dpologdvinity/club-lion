@@ -24,6 +24,7 @@ export const PLACE_ICONS: Record<PlaceId, string> = {
   "lion-speedway": "🏁",
   "lion-aquarium": "🐠",
   "snowflake-rink": "⛸️",
+  kainan: "🍲",
 };
 
 export const SHOP_ICON = "🛍️";

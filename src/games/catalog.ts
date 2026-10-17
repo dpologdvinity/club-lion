@@ -40,6 +40,15 @@ export function gameCards(player: PlayerV2) {
       progressLabel: "Orders served",
     },
     {
+      id: "halo-halo",
+      name: "Lola's Halo-Halo",
+      art: "🍧 🍠 🍮",
+      description: "Tap yummy layers into a tall glass, then serve it.",
+      reward: "Every cup gets stars. Make it your own way too",
+      best: player.haloHaloServed ?? 0,
+      progressLabel: "Cups served",
+    },
+    {
       id: "seek",
       name: "Hide & Seek Safari",
       art: "🔍 🦓 🌿",

@@ -20,6 +20,7 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 - Baseline full run 38779506997 passed verify, all four browser shards, and PWA. Check the latest run after further changes; do not claim browser success from local verification alone.
 
 - Mango Run is back (it was dropped from the arcade in 9692c47): toddler rules with no lives and an All done! button; card in `src/games/catalog.ts`, arcade hotspot `arcade-mango-run`, e2e in `tests/mango-run.spec.ts`.
+- Lola's Kainan (`src/rooms/manifests/kainan.ts`, `KainanScenery.tsx`) adds eight object kinds to `RoomObject.tsx`, neighbor Lola, the rondalla room track and the Halo-Halo game (`src/utils/haloHalo.ts`, `HaloHalo.tsx`, `completeHaloHalo`, stamp `halo_halo_chef`); e2e in `tests/halo-halo.spec.ts` and the living-rooms row.
 
 ## Living neighborhood rooms
 

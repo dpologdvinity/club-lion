@@ -84,7 +84,15 @@ export type RoomObjectKind =
   | "sandbox"
   | "swing"
   | "door"
-  | "flower";
+  | "flower"
+  | "ricecooker"
+  | "pot"
+  | "lechon"
+  | "halohalo"
+  | "fan"
+  | "shelf"
+  | "jeepney"
+  | "karaoke";
 
 export type RoomManifest = {
   id: string;
