@@ -16,6 +16,14 @@ export type StampDefinition = {
 
 export const STAMP_DEFINITIONS: StampDefinition[] = [
   {
+    id: "firefly_catcher",
+    name: "Firefly Catcher",
+    category: "arcade_mastery",
+    description: "Caught 15 fireflies in one Pop the Fireflies round.",
+    icon: "✨",
+    unlockHint: "Catch 15 glowing fireflies before the night ends.",
+  },
+  {
     id: "halo_halo_chef",
     name: "Halo-Halo Chef",
     category: "arcade_mastery",

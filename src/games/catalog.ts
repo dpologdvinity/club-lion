@@ -49,6 +49,15 @@ export function gameCards(player: PlayerV2) {
       progressLabel: "Cups served",
     },
     {
+      id: "fireflies",
+      name: "Pop the Fireflies",
+      art: "✨ 🫙 🌙",
+      description: "Catch fireflies while they glow. Golden ones are worth 3!",
+      reward: "Catch 15 in one night for a stamp",
+      best: player.fireflyBest ?? 0,
+      progressLabel: "Best jar",
+    },
+    {
       id: "seek",
       name: "Hide & Seek Safari",
       art: "🔍 🦓 🌿",

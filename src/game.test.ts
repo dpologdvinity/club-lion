@@ -1650,3 +1650,25 @@ test("halo-halo progress survives a save and bad counts are dropped", async () =
   assert.equal(tampered.haloHaloServed, undefined);
   assert.equal(migratePlayerSave(played).haloHaloServed, 1);
 });
+
+test("a firefly round saves the best jar once and the catcher stamp at 15", async () => {
+  const { completeFireflies } = await import("./game.ts");
+  const start = newPlayer();
+  const low = completeFireflies(start, 9);
+  assert.equal(low.fireflyBest, 9);
+  assert.equal(low.gamesPlayed, start.gamesPlayed + 1);
+  assert.ok(!(low.stamps ?? []).includes("firefly_catcher"));
+  const high = completeFireflies(low, 16);
+  assert.equal(high.fireflyBest, 16);
+  assert.ok((high.stamps ?? []).includes("firefly_catcher"));
+  assert.equal(completeFireflies(high, 4).fireflyBest, 16);
+  assert.equal(completeFireflies(high, -1), high);
+  assert.equal(completeFireflies(high, 1.5), high);
+  assert.equal(completeFireflies(high, 100000), high);
+  assert.equal(restorePlayer(JSON.stringify(high)).fireflyBest, 16);
+  assert.equal(migratePlayerSave(high).fireflyBest, 16);
+  const tampered = restorePlayer(
+    JSON.stringify({ ...high, fireflyBest: "lots" }),
+  );
+  assert.equal(tampered.fireflyBest, undefined);
+});

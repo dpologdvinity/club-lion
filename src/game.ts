@@ -7,6 +7,7 @@ import {
   type SledState,
 } from "./utils/sledPhysics.ts";
 import { isHaloLayers } from "./utils/haloHalo.ts";
+import { FIREFLY_MAX_SCORE, FIREFLY_STAMP_SCORE } from "./utils/fireflies.ts";
 import {
   BUTTERFLY_COUNT,
   BUTTERFLY_SPOTS,
@@ -132,6 +133,8 @@ export type PlayerBase = {
   cakesServed?: number;
   /** Halo-halo cups served at Lola's Kainan. */
   haloHaloServed?: number;
+  /** Most fireflies caught in one Pop the Fireflies round. */
+  fireflyBest?: number;
   /** Photos of the newest served cakes, oldest first. */
   bakeryCakes?: Cake[];
   /** Today's Savanna Square butterfly hunt: spots found on `day` (local YYYY-MM-DD). */
@@ -670,6 +673,11 @@ export function restorePlayer(raw: string | null): Player {
           : {}),
       ...(Number.isSafeInteger(p.haloHaloServed) && p.haloHaloServed >= 0
         ? { haloHaloServed: p.haloHaloServed }
+        : {}),
+      ...(Number.isSafeInteger(p.fireflyBest) &&
+      p.fireflyBest >= 0 &&
+      p.fireflyBest <= FIREFLY_MAX_SCORE
+        ? { fireflyBest: p.fireflyBest }
         : {}),
       ...(p.bakeryCakes === undefined
         ? {}
@@ -1494,4 +1502,26 @@ export function completeHaloHalo<T extends PlayerBase>(
     },
     "halo_halo_chef",
   );
+}
+
+/** Records a finished firefly round; a jar of 15 or more earns the Firefly Catcher stamp. */
+export function completeFireflies<T extends PlayerBase>(
+  player: T,
+  score: number,
+): T {
+  if (
+    !Number.isSafeInteger(score) ||
+    score < 0 ||
+    score > FIREFLY_MAX_SCORE ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
+  const next = {
+    ...player,
+    gamesPlayed: player.gamesPlayed + 1,
+    fireflyBest: Math.max(player.fireflyBest ?? 0, score),
+  };
+  return score >= FIREFLY_STAMP_SCORE
+    ? unlockStamp(next, "firefly_catcher")
+    : next;
 }

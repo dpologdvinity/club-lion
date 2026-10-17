@@ -37,6 +37,9 @@ const TopModelsRunway = lazyPanel(() =>
 const InstrumentContent = lazyPanel(() =>
   import("./InstrumentModal").then((module) => module.InstrumentContent),
 );
+const PopTheFireflies = lazyPanel(() =>
+  import("./PopTheFireflies").then((module) => module.PopTheFireflies),
+);
 const HaloHalo = lazyPanel(() =>
   import("./HaloHalo").then((module) => module.HaloHalo),
 );
@@ -94,6 +97,7 @@ export function GamesPanel({
   onCompletePicturePuzzle,
   onCompleteBalloonRainbow,
   onServeHaloHalo,
+  onCompleteFireflies,
   onClose,
 }: {
   player: PlayerV2;
@@ -123,6 +127,7 @@ export function GamesPanel({
   onCompletePicturePuzzle?: (pieces: number) => void;
   onCompleteBalloonRainbow?: () => void;
   onServeHaloHalo?: ComponentProps<typeof HaloHalo>["onServe"];
+  onCompleteFireflies?: (score: number) => void;
   onClose: () => void;
 }) {
   const [picked, setPicked] = useState<GameId | null>(initialGame);
@@ -173,7 +178,8 @@ export function GamesPanel({
           picked === "shape-sorter" ||
           picked === "picture-puzzle" ||
           picked === "balloon-parade" ||
-          picked === "halo-halo") && (
+          picked === "halo-halo" ||
+          picked === "fireflies") && (
           <button className="game-back" onClick={backToMenu}>
             <ArrowLeft size={14} /> All games
           </button>
@@ -264,6 +270,12 @@ export function GamesPanel({
         {picked === "picture-puzzle" && (
           <PicturePuzzle
             onPictureDone={(pieces) => onCompletePicturePuzzle?.(pieces)}
+          />
+        )}
+        {picked === "fireflies" && (
+          <PopTheFireflies
+            best={player.fireflyBest ?? 0}
+            onFinish={(score) => onCompleteFireflies?.(score)}
           />
         )}
         {picked === "halo-halo" && (

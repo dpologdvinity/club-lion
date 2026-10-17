@@ -44,6 +44,14 @@ export const wateringHoleManifest: RoomManifest = {
   ],
   interactives: [
     {
+      id: "water-fireflies",
+      label: "Catch fireflies",
+      icon: "✨",
+      type: "game_launch",
+      position: { x: 280, y: 470 },
+      actionData: { gameId: "fireflies" },
+    },
+    {
       id: "lagoon-splash",
       label: "Splash the lagoon",
       icon: "💦",

@@ -64,6 +64,7 @@ import {
   findSquareButterfly,
   completeMangoRun,
   completeHaloHalo,
+  completeFireflies,
   STAMP_DEFINITIONS,
   PLACES,
   SHOP_ITEMS,
@@ -1063,6 +1064,9 @@ export default function App() {
                 }
                 onCompletePicturePuzzle={(pieces) =>
                   setPlayer((p) => completePicturePuzzle(p, pieces))
+                }
+                onCompleteFireflies={(score) =>
+                  setPlayer((p) => completeFireflies(p, score))
                 }
                 onServeHaloHalo={(layers) =>
                   setPlayer((p) => completeHaloHalo(p, layers))

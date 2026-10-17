@@ -19,7 +19,7 @@ for (const room of [
     name: "The arcade",
     action: "Drop a surprise ball",
     kind: "prizes",
-    objects: 23,
+    objects: 24,
   },
   {
     name: "Sunset Beach",
