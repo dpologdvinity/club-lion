@@ -14,7 +14,7 @@ test("the big arcade has a cabinet for every game and each one opens", async ({
     .getByRole("button", { name: /^The arcade/ })
     .click();
   await expect(page.locator(".world-location h2")).toHaveText("The arcade");
-  await expect(page.locator(".object-cabinet")).toHaveCount(24);
+  await expect(page.locator(".object-cabinet")).toHaveCount(25);
   // Wherever you arrive, a friend is in view.
   await expect
     .poll(() =>
@@ -41,7 +41,7 @@ test("the big arcade passes axe", async ({ page }) => {
     .getByRole("dialog")
     .getByRole("button", { name: /^The arcade/ })
     .click();
-  await expect(page.locator(".object-cabinet")).toHaveCount(24);
+  await expect(page.locator(".object-cabinet")).toHaveCount(25);
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa"])
     .include(".camera-viewport")

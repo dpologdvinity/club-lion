@@ -23,10 +23,11 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 - Lola's Kainan (`src/rooms/manifests/kainan.ts`, `KainanScenery.tsx`) adds eight object kinds to `RoomObject.tsx`, neighbor Lola, the rondalla room track and the Halo-Halo game (`src/utils/haloHalo.ts`, `HaloHalo.tsx`, `completeHaloHalo`, stamp `halo_halo_chef`); e2e in `tests/halo-halo.spec.ts` and the living-rooms row.
 - Dino Dig (`src/rooms/manifests/dinoDig.ts` with `foundAllFossils`, `DinoDigScenery.tsx`, kinds digspot/volcano/dinoegg/sifter, `actionData.fossil`, stamp `fossil_finder`); e2e `tests/dino-dig.spec.ts` and a living-rooms row.
 - Carry-anywhere props: `RoomManifest.props`, `RoomProps.tsx` (+ `roomProps.css`), pure rules in `src/utils/roomProps.ts`; e2e `tests/room-props.spec.ts`. Next idea: persist spots in the save and let the doll hold a prop.
-- Big arcade: `neighborhoodArcade.ts` (`ARCADE_WIDTH` 5200, one cabinet per `GameId`), scenery reads the width; cabinet colors and icon screens in `RoomObject.tsx`; tests `neighborhoodArcade.test.ts`, `tests/big-arcade.spec.ts`. A new game needs a cabinet here too (the unit test enforces it).
+- Big arcade: `neighborhoodArcade.ts` (`ARCADE_WIDTH` 6000, one cabinet per `GameId`), scenery reads the width; cabinet colors and icon screens in `RoomObject.tsx`; tests `neighborhoodArcade.test.ts`, `tests/big-arcade.spec.ts`. A new game needs a cabinet here too (the unit test enforces it).
 - Pop the Fireflies: rules `src/utils/fireflies.ts`, `PopTheFireflies.tsx`, `completeFireflies`, stamp `firefly_catcher`, e2e `tests/fireflies.spec.ts` (real-time round; a fake clock made taps miss). Any absolutely-positioned button with a centering transform needs a `:active` override, or the global `button:active` transform makes taps miss.
 - Peekaboo Animals: rules `src/utils/peekaboo.ts`, `PeekabooAnimals.tsx`, `completePeekaboo`, stamp `peekaboo_pro`, e2e `tests/peekaboo.spec.ts`.
 - Dress-the-Pet: rules `src/utils/dressPet.ts`, `DressThePet.tsx` (uses `PetPicture`), `completeDressPet`, stamp `pet_stylist`, e2e `tests/dress-pet.spec.ts`.
+- Pet Round-Up: fixed-step rules `src/utils/petRoundUp.ts` (field and pen in percent), `PetRoundUp.tsx`, `completePetRoundUp`, stamp `pet_wrangler`, e2e `tests/pet-round-up.spec.ts` (reduced motion keeps pets still so drags land).
 
 ## Living neighborhood rooms
 

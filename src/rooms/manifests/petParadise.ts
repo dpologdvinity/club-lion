@@ -29,6 +29,14 @@ export const petParadiseManifest: RoomManifest = {
   ],
   interactives: [
     {
+      id: "pet-round-up",
+      label: "Round up pets",
+      icon: "🏡",
+      type: "game_launch",
+      position: { x: 920, y: 330 },
+      actionData: { gameId: "pet-round-up" },
+    },
+    {
       id: "pet-dress-up",
       label: "Dress up a pet",
       icon: "🎀",

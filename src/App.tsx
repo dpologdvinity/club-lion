@@ -65,6 +65,7 @@ import {
   completeMangoRun,
   completeHaloHalo,
   completeDressPet,
+  completePetRoundUp,
   completePeekaboo,
   completeFireflies,
   STAMP_DEFINITIONS,
@@ -1075,6 +1076,9 @@ export default function App() {
                 }
                 onShowPet={(theme, outfit) =>
                   setPlayer((p) => completeDressPet(p, theme, outfit))
+                }
+                onCompletePetRoundUp={(score) =>
+                  setPlayer((p) => completePetRoundUp(p, score))
                 }
                 onServeHaloHalo={(layers) =>
                   setPlayer((p) => completeHaloHalo(p, layers))

@@ -1,6 +1,6 @@
 import type { RoomManifest } from "../types.ts";
 
-export const ARCADE_WIDTH = 5800;
+export const ARCADE_WIDTH = 6000;
 
 /** The big arcade: one cabinet for every game, with the prize machine in the middle. */
 export const neighborhoodArcadeManifest: RoomManifest = {
@@ -268,6 +268,15 @@ export const neighborhoodArcadeManifest: RoomManifest = {
       object: { kind: "cabinet", width: 185, height: 290 },
     },
     {
+      id: "arcade-pet-round-up",
+      label: "Pet Round-Up",
+      icon: "🏡",
+      type: "game_launch",
+      position: { x: 5795, y: 520 },
+      actionData: { gameId: "pet-round-up" },
+      object: { kind: "cabinet", width: 185, height: 290 },
+    },
+    {
       id: "arcade-disco",
       label: "Change the dance lights",
       icon: "🪩",
@@ -285,7 +294,7 @@ export const neighborhoodArcadeManifest: RoomManifest = {
       label: "Choose a game",
       icon: "🎮",
       type: "activity",
-      position: { x: 5720, y: 560 },
+      position: { x: 5930, y: 560 },
       actionData: { roomAction: "games" },
     },
     {
@@ -301,6 +310,6 @@ export const neighborhoodArcadeManifest: RoomManifest = {
   // Phones arrive at the door and the desktop map mid-hall; a friend waits at each.
   neighbors: [
     { id: "milo", x: 400, y: 650 },
-    { id: "pip", x: 2600, y: 650 },
+    { id: "pip", x: 2700, y: 650 },
   ],
 };

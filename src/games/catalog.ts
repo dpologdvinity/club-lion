@@ -77,6 +77,15 @@ export function gameCards(player: PlayerV2) {
       progressLabel: "Shows",
     },
     {
+      id: "pet-round-up",
+      name: "Pet Round-Up",
+      art: "🐶 🐰 🏡",
+      description: "Shoo the wandering pets into their pen before time is up.",
+      reward: "Get every pet in for a stamp",
+      best: player.petRoundUpBest ?? 0,
+      progressLabel: "Best score",
+    },
+    {
       id: "seek",
       name: "Hide & Seek Safari",
       art: "🔍 🦓 🌿",

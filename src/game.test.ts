@@ -1715,3 +1715,32 @@ test("a pet show counts once; a 3-star show earns the Pet Stylist stamp", async 
     undefined,
   );
 });
+
+test("a pet round-up saves the best score once and the stamp when all are in", async () => {
+  const { completePetRoundUp } = await import("./game.ts");
+  const start = newPlayer();
+  assert.equal(restorePlayer(JSON.stringify(start)).petRoundUpBest, undefined);
+  const low = completePetRoundUp(start, 5);
+  assert.equal(low.petRoundUpBest, 5);
+  assert.equal(low.gamesPlayed, start.gamesPlayed + 1);
+  assert.ok(!(low.stamps ?? []).includes("pet_wrangler"));
+  const high = completePetRoundUp(low, 40);
+  assert.equal(high.petRoundUpBest, 40);
+  assert.ok((high.stamps ?? []).includes("pet_wrangler"));
+  assert.equal(completePetRoundUp(high, 3).petRoundUpBest, 40);
+  assert.equal(completePetRoundUp(high, -1), high);
+  assert.equal(completePetRoundUp(high, 2.5), high);
+  assert.equal(completePetRoundUp(high, 100000), high);
+  assert.equal(restorePlayer(JSON.stringify(high)).petRoundUpBest, 40);
+  assert.equal(migratePlayerSave(high).petRoundUpBest, 40);
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...high, petRoundUpBest: "lots" }))
+      .petRoundUpBest,
+    undefined,
+  );
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...high, petRoundUpBest: 100000 }))
+      .petRoundUpBest,
+    undefined,
+  );
+});

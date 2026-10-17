@@ -16,6 +16,14 @@ export type StampDefinition = {
 
 export const STAMP_DEFINITIONS: StampDefinition[] = [
   {
+    id: "pet_wrangler",
+    name: "Pet Wrangler",
+    category: "arcade_mastery",
+    description: "Herded every pet into the pen in one Pet Round-Up.",
+    icon: "🐾",
+    unlockHint: "Get all the pets into the pen before time runs out.",
+  },
+  {
     id: "pet_stylist",
     name: "Pet Stylist",
     category: "arcade_mastery",

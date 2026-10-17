@@ -10,6 +10,7 @@ import { isHaloLayers } from "./utils/haloHalo.ts";
 import { isPetOutfit, isPetThemeId, scoreOutfit } from "./utils/dressPet.ts";
 import { PEEKABOO_ROUNDS, PEEKABOO_STAMP_SCORE } from "./utils/peekaboo.ts";
 import { FIREFLY_MAX_SCORE, FIREFLY_STAMP_SCORE } from "./utils/fireflies.ts";
+import { ROUNDUP_MAX_SCORE, ROUNDUP_STAMP_SCORE } from "./utils/petRoundUp.ts";
 import {
   BUTTERFLY_COUNT,
   BUTTERFLY_SPOTS,
@@ -142,6 +143,8 @@ export type PlayerBase = {
   peekabooBest?: number;
   /** Pet fashion shows finished in Dress-the-Pet. */
   petShows?: number;
+  /** Best Pet Round-Up score: pets penned, plus seconds left if all got in. */
+  petRoundUpBest?: number;
   /** Photos of the newest served cakes, oldest first. */
   bakeryCakes?: Cake[];
   /** Today's Savanna Square butterfly hunt: spots found on `day` (local YYYY-MM-DD). */
@@ -699,6 +702,11 @@ export function restorePlayer(raw: string | null): Player {
         : {}),
       ...(Number.isSafeInteger(p.petShows) && p.petShows >= 0
         ? { petShows: p.petShows }
+        : {}),
+      ...(Number.isSafeInteger(p.petRoundUpBest) &&
+      p.petRoundUpBest >= 0 &&
+      p.petRoundUpBest <= ROUNDUP_MAX_SCORE
+        ? { petRoundUpBest: p.petRoundUpBest }
         : {}),
       ...(p.bakeryCakes === undefined
         ? {}
@@ -1590,5 +1598,27 @@ export function completeDressPet<T extends PlayerBase>(
   };
   return scoreOutfit(theme, outfit) === 3
     ? unlockStamp(next, "pet_stylist")
+    : next;
+}
+
+/** Records a finished Pet Round-Up; penning every pet earns the Pet Wrangler stamp. */
+export function completePetRoundUp<T extends PlayerBase>(
+  player: T,
+  score: number,
+): T {
+  if (
+    !Number.isSafeInteger(score) ||
+    score < 0 ||
+    score > ROUNDUP_MAX_SCORE ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
+  const next = {
+    ...player,
+    gamesPlayed: player.gamesPlayed + 1,
+    petRoundUpBest: Math.max(player.petRoundUpBest ?? 0, score),
+  };
+  return score >= ROUNDUP_STAMP_SCORE
+    ? unlockStamp(next, "pet_wrangler")
     : next;
 }
