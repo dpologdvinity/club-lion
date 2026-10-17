@@ -87,9 +87,17 @@ test("a wrong colour wiggles in rainbow order, and the full arch pays once and e
   await openParade(page);
   await page.getByRole("button", { name: "Rainbow mode" }).click();
 
-  // The first stripe is red, so tapping purple only wiggles and nothing is lost.
+  // The first stripe is red, so any other colour only wiggles and nothing is lost.
+  // Any wrong colour will do: a phone's short sky may not show a given one for a while.
   await expect
-    .poll(() => tapBalloon(page, "Purple"), { timeout: 30_000 })
+    .poll(
+      async () => {
+        for (const color of RAINBOW.slice(1))
+          if (await tapBalloon(page, color)) return true;
+        return false;
+      },
+      { timeout: 30_000 },
+    )
     .toBe(true);
   await expect(page.locator(".bp-wiggle")).toHaveCount(1);
   await expect(page.locator(".bp-arc.is-built")).toHaveCount(0);
