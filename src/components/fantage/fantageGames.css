@@ -934,3 +934,14 @@
 .balloon-angle.selected {
   background: linear-gradient(#fff6c8, #ffd95a);
 }
+
+.fg-title {
+  margin: 0 0 8px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 30px;
+  color: #ffffff;
+  -webkit-text-stroke: 1.5px #0f3a78;
+  paint-order: stroke fill;
+  text-shadow: 0 3px 0 #0f3a78;
+}

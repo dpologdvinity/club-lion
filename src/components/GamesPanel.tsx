@@ -4,7 +4,11 @@ import type { PageFills } from "../utils/coloringBook.ts";
 import type { PlayerV2 } from "../game.ts";
 
 import { gameCards, type GameId } from "../games/catalog.ts";
-import { isFantageGame, type FantageGameId } from "../games/fantage.ts";
+import {
+  fantageGame,
+  isFantageGame,
+  type FantageGameId,
+} from "../games/fantage.ts";
 import { FANTAGE_COMPONENTS } from "./fantage/registry";
 import { lazyPanel } from "./lazyPanel";
 
@@ -186,6 +190,10 @@ export function GamesPanel({
         <button className="game-back" onClick={backToMenu}>
           <ArrowLeft size={14} /> All games
         </button>
+        <h3 className="fg-title">
+          <span aria-hidden="true">{fantageGame(picked).icon}</span>{" "}
+          {fantageGame(picked).name}
+        </h3>
         <Game
           key={picked}
           onFinish={(score) => onCompleteFantage?.(picked, score)}
