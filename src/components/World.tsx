@@ -793,6 +793,32 @@ export function World({
         reducedMotion={reducedMotion}
       >
         {manifest && <SafeRoomScenery place={place} />}
+        {/* Fantage-style yellow arrows at the edge exits. The room-path bar
+            names the same exits for keyboards and screen readers. */}
+        {manifest?.portals
+          .filter(
+            (p) =>
+              p.triggerBounds.x2 <= 260 ||
+              p.triggerBounds.x1 >= manifest.stageWidth - 260,
+          )
+          .map((p) => {
+            const left = p.triggerBounds.x2 <= 260;
+            return (
+              <button
+                key={`edge-${p.targetRoomId}`}
+                type="button"
+                className={`edge-arrow ${left ? "is-left" : "is-right"}`}
+                style={{
+                  left: left ? 46 : manifest.stageWidth - 46,
+                  top: (p.triggerBounds.y1 + p.triggerBounds.y2) / 2,
+                }}
+                aria-hidden="true"
+                tabIndex={-1}
+                title={p.label}
+                onClick={() => portal(p.targetRoomId, p.targetSpawn)}
+              />
+            );
+          })}
         {place === "club-pulse" && (
           <DanceFloor
             floorBounds={CLUB_PULSE_DANCE_FLOOR_BOUNDS}
