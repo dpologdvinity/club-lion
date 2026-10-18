@@ -128,3 +128,25 @@
 .room-scenery text {
   font-family: "Lilita One", sans-serif;
 }
+
+/* Game machines twinkle so children spot them around town. */
+.object-cabinet::after {
+  content: "⭐";
+  position: absolute;
+  top: -0.6em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: calc(28px / var(--camera-scale, 1));
+  animation: cabinet-twinkle 1.6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes cabinet-twinkle {
+  to {
+    transform: translateX(-50%) scale(1.25) rotate(18deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .object-cabinet::after {
+    animation: none;
+  }
+}
