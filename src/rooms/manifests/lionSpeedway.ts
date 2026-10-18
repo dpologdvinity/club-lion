@@ -26,6 +26,18 @@ export const lionSpeedwayManifest: RoomManifest = {
       label: "Downtown Plaza",
     },
   ],
+  props: [
+    { id: "car", emoji: "🏎️", label: "toy race car", x: 500, y: 565 },
+    { id: "flag", emoji: "🏁", label: "racing flag", x: 800, y: 565 },
+    {
+      id: "juice",
+      emoji: "🧃",
+      label: "juice box",
+      x: 1850,
+      y: 565,
+      food: true,
+    },
+  ],
   interactives: [
     {
       id: "kart-race-gate",

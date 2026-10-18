@@ -148,6 +148,12 @@ for (const room of [
     await tapRoomPath(page, room.action, true);
     await expect(object).toHaveAttribute("data-object-state", "2");
     await expect(object).toBeInViewport();
+    // Square butterflies perch on toys; catch them first, as a child would.
+    const butterflies = page.locator(".square-butterfly");
+    for (let left = await butterflies.count(); left > 0; left--) {
+      await butterflies.first().dispatchEvent("click");
+      await expect(butterflies).toHaveCount(left - 1);
+    }
     await object.click();
     await expect(object).toHaveAttribute("data-object-state", "3");
     await page.emulateMedia({ reducedMotion: "reduce" });

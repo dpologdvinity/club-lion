@@ -28,6 +28,18 @@ export const coastalPierManifest: RoomManifest = {
       label: "Lion Aquarium",
     },
   ],
+  props: [
+    { id: "shell", emoji: "🐚", label: "seashell", x: 600, y: 565 },
+    { id: "crab", emoji: "🦀", label: "toy crab", x: 1550, y: 565 },
+    {
+      id: "icecream",
+      emoji: "🍦",
+      label: "ice cream",
+      x: 2250,
+      y: 565,
+      food: true,
+    },
+  ],
   interactives: [
     {
       id: "lighthouse-foghorn",

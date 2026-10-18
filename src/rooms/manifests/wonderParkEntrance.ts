@@ -39,6 +39,17 @@ export const wonderParkEntranceManifest: RoomManifest = {
       label: "Carnival Midway",
     },
   ],
+  props: [
+    {
+      id: "lollipop",
+      emoji: "🍭",
+      label: "lollipop",
+      x: 1150,
+      y: 565,
+      food: true,
+    },
+    { id: "balloon", emoji: "🎈", label: "balloon", x: 2050, y: 565 },
+  ],
   interactives: [
     {
       id: "coaster-ticket-gate",

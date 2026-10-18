@@ -22,6 +22,11 @@ export const lionAquariumManifest: RoomManifest = {
       label: "Coastal Pier & Boardwalk",
     },
   ],
+  props: [
+    { id: "fish", emoji: "🐟", label: "fish plush", x: 400, y: 565 },
+    { id: "cookie", emoji: "🍪", label: "cookie", x: 1300, y: 565, food: true },
+    { id: "octopus", emoji: "🐙", label: "octopus plush", x: 2250, y: 565 },
+  ],
   interactives: [
     {
       id: "aquarium-feed-fish",

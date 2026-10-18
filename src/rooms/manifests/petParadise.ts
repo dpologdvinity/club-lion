@@ -27,6 +27,18 @@ export const petParadiseManifest: RoomManifest = {
       label: "Downtown Plaza",
     },
   ],
+  props: [
+    { id: "bone", emoji: "🦴", label: "chew bone", x: 400, y: 565, food: true },
+    { id: "ball", emoji: "🎾", label: "tennis ball", x: 2000, y: 565 },
+    {
+      id: "fish",
+      emoji: "🐟",
+      label: "fish treat",
+      x: 2250,
+      y: 565,
+      food: true,
+    },
+  ],
   interactives: [
     {
       id: "pet-round-up",

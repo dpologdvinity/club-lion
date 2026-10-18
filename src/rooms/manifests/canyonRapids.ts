@@ -26,6 +26,18 @@ export const canyonRapidsManifest: RoomManifest = {
       label: "Downtown Plaza",
     },
   ],
+  props: [
+    { id: "backpack", emoji: "🎒", label: "backpack", x: 500, y: 565 },
+    {
+      id: "juice",
+      emoji: "🧃",
+      label: "juice box",
+      x: 1400,
+      y: 565,
+      food: true,
+    },
+    { id: "rock", emoji: "🪨", label: "shiny rock", x: 2150, y: 565 },
+  ],
   interactives: [
     {
       id: "river-surf-dock",

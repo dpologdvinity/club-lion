@@ -28,6 +28,18 @@ export const mtMistBasecampManifest: RoomManifest = {
       label: "Snowflake Rink",
     },
   ],
+  props: [
+    {
+      id: "cocoa",
+      emoji: "☕",
+      label: "hot cocoa",
+      x: 600,
+      y: 565,
+      food: true,
+    },
+    { id: "mittens", emoji: "🧤", label: "mittens", x: 1600, y: 565 },
+    { id: "sled", emoji: "🛷", label: "toy sled", x: 2200, y: 565 },
+  ],
   interactives: [
     {
       id: "sled-run-gate",
