@@ -1,3 +1,8 @@
+import {
+  CHATTER_EVERY_MS,
+  CHATTER_SHOW_MS,
+  chatterFor,
+} from "../utils/chatter.ts";
 import { RoomObject } from "./RoomObject.tsx";
 import { PINS, pinForDay } from "../utils/pins.ts";
 import { foundAllFossils } from "../rooms/manifests/dinoDig.ts";
@@ -507,6 +512,26 @@ export function World({
         return neighbor ? [{ ...neighbor, x: at.x, y: at.y }] : [];
       })
     : [];
+
+  // Now and then a neighbour says something, so the room feels busy.
+  const neighborIds = visibleNeighbors.map((n) => n.id).join(",");
+  const [chatter, setChatter] = useState<{ id: string; text: string } | null>(
+    null,
+  );
+  useEffect(() => {
+    if (!neighborIds) return;
+    let tick = 0;
+    let hide = 0;
+    const id = window.setInterval(() => {
+      setChatter(chatterFor(neighborIds.split(","), tick++));
+      hide = window.setTimeout(() => setChatter(null), CHATTER_SHOW_MS);
+    }, CHATTER_EVERY_MS);
+    return () => {
+      window.clearInterval(id);
+      window.clearTimeout(hide);
+      setChatter(null);
+    };
+  }, [neighborIds]);
 
   const portal = (target: string, targetSpawn: { x: number; y: number }) => {
     if (target === "le-shop") {
@@ -1069,8 +1094,14 @@ export function World({
             onClick={() => greet(n.id)}
             aria-label={`Say hello to ${n.name}`}
           >
-            {bubble?.id === n.id && (
+            {bubble?.id === n.id ? (
               <span className="speech-bubble">{bubble.text}</span>
+            ) : (
+              chatter?.id === n.id && (
+                <span className="speech-bubble is-chatter" aria-hidden="true">
+                  {chatter.text}
+                </span>
+              )
             )}
             <span className="neighbor-idle">
               <Avatar
