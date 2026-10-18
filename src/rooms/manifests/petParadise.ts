@@ -40,6 +40,7 @@ export const petParadiseManifest: RoomManifest = {
       food: true,
     },
   ],
+  neighbors: [{ id: "sol", x: 1130, y: 600 }],
   interactives: [
     {
       id: "pet-round-up",

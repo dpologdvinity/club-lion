@@ -27,6 +27,7 @@ export const snowflakeRinkManifest: RoomManifest = {
     { id: "scarf", emoji: "🧣", label: "scarf", x: 1100, y: 565 },
     { id: "cookie", emoji: "🍪", label: "cookie", x: 1500, y: 565, food: true },
   ],
+  neighbors: [{ id: "luna", x: 490, y: 600 }],
   interactives: [
     {
       id: "rink-skate",

@@ -30,6 +30,7 @@ export const wonderParkMidwayManifest: RoomManifest = {
       label: "Wonder Park Entrance",
     },
   ],
+  neighbors: [{ id: "kai", x: 1710, y: 600 }],
   interactives: [
     {
       id: "midway-strongman",

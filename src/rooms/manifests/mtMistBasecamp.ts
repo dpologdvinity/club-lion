@@ -41,6 +41,7 @@ export const mtMistBasecampManifest: RoomManifest = {
     { id: "mittens", emoji: "🧤", label: "mittens", x: 1600, y: 565 },
     { id: "sled", emoji: "🛷", label: "toy sled", x: 2200, y: 565 },
   ],
+  neighbors: [{ id: "mei", x: 500, y: 600 }],
   interactives: [
     {
       id: "sled-run-gate",

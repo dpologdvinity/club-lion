@@ -51,6 +51,7 @@ export const clubPulseManifest: RoomManifest = {
       label: "Downtown Plaza",
     },
   ],
+  neighbors: [{ id: "nia", x: 740, y: 690 }],
   interactives: [
     {
       id: CLUB_PULSE_DJ_BOOTH_ID,

@@ -39,6 +39,7 @@ export const canyonRapidsManifest: RoomManifest = {
     },
     { id: "rock", emoji: "🪨", label: "shiny rock", x: 2150, y: 565 },
   ],
+  neighbors: [{ id: "zara", x: 1270, y: 600 }],
   interactives: [
     {
       id: "canyon-echo-cave",

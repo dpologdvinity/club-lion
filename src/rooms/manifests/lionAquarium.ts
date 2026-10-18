@@ -28,6 +28,7 @@ export const lionAquariumManifest: RoomManifest = {
     { id: "cookie", emoji: "🍪", label: "cookie", x: 1300, y: 565, food: true },
     { id: "octopus", emoji: "🐙", label: "octopus plush", x: 2250, y: 565 },
   ],
+  neighbors: [{ id: "ava", x: 590, y: 600 }],
   interactives: [
     {
       id: "aquarium-feed-fish",

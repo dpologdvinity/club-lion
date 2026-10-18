@@ -35,6 +35,7 @@ export const splashOasisEntryManifest: RoomManifest = {
       label: "Lazy River Oasis",
     },
   ],
+  neighbors: [{ id: "rio", x: 1320, y: 600 }],
   interactives: [
     {
       id: "tsunami-wave-pool",

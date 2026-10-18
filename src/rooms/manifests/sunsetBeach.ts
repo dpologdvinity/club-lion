@@ -41,6 +41,7 @@ export const sunsetBeachManifest: RoomManifest = {
       food: true,
     },
   ],
+  neighbors: [{ id: "theo", x: 260, y: 600 }],
   interactives: [
     {
       id: "beach-seek-lookout",

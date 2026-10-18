@@ -41,6 +41,7 @@ export const coastalPierManifest: RoomManifest = {
       food: true,
     },
   ],
+  neighbors: [{ id: "ivy", x: 700, y: 600 }],
   interactives: [
     {
       id: "lighthouse-foghorn",
