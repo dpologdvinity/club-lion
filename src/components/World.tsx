@@ -1,4 +1,5 @@
 import { RoomObject } from "./RoomObject.tsx";
+import { PINS, pinForDay } from "../utils/pins.ts";
 import { foundAllFossils } from "../rooms/manifests/dinoDig.ts";
 import { RoomProps } from "./RoomProps.tsx";
 import { thanksFor } from "../utils/roomProps.ts";
@@ -116,6 +117,8 @@ type WorldProps = {
   onUnlockStamp?: (stampId: string) => void;
   /** A square butterfly found today (spot index into BUTTERFLY_SPOTS). */
   onFindButterfly?: (day: string, spot: number) => void;
+  /** Today's Pin of the Day was picked up. */
+  onCollectPin?: (day: string, pinId: string) => void;
   /** A carried prop was put down (null: given away, back home). */
   onMoveProp?: (
     roomId: string,
@@ -163,6 +166,7 @@ export function World({
   onOpenCondo,
   onUnlockStamp,
   onFindButterfly,
+  onCollectPin,
   onMoveProp,
   onOpenRiverSurf,
   onOpenPetCare,
@@ -636,6 +640,14 @@ export function World({
       notify(
         "Walk across the tiles with arrow keys to light your path. Press a tile to play its chime.",
       );
+    } else if (id === "plaza-pin-board") {
+      const pin = pinForDay(today);
+      const room = PLACES.find((p) => p.id === pin.room)?.name ?? "the world";
+      notify(
+        player.pins?.includes(pin.id)
+          ? `📌 You already found today's pin. Come back tomorrow!`
+          : `📌 Today's pin is hiding somewhere in ${room}. Look up high!`,
+      );
     } else if (id === "marble-lion-fountain")
       notify(
         "A little splash of sunshine! The lion fountain keeps the plaza cool.",
@@ -840,6 +852,27 @@ export function World({
             onMove={(propId, point) => onMoveProp?.(manifest.id, propId, point)}
           />
         )}
+        {(() => {
+          const pin = pinForDay(today);
+          if (pin.room !== place || player.pins?.includes(pin.id)) return null;
+          return (
+            <button
+              type="button"
+              className="day-pin"
+              style={{ left: pin.x, top: pin.y }}
+              aria-label={`Pick up the ${pin.label} pin`}
+              onClick={() => {
+                onCollectPin?.(today, pin.id);
+                const count = (player.pins?.length ?? 0) + 1;
+                notify(
+                  `📌 You found today's ${pin.label} pin! ${count} of ${PINS.length} in your collection.`,
+                );
+              }}
+            >
+              <span aria-hidden="true">{pin.emoji}</span>
+            </button>
+          );
+        })()}
         {manifest?.fun === "square" && (
           <SquareFun
             day={today}

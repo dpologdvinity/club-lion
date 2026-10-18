@@ -16,6 +16,14 @@ export type StampDefinition = {
 
 export const STAMP_DEFINITIONS: StampDefinition[] = [
   {
+    id: "pin_collector",
+    name: "Pin Collector",
+    category: "world_secrets",
+    description: "Found 5 different Pins of the Day.",
+    icon: "📌",
+    unlockHint: "Look for a new pin hiding in the world every day.",
+  },
+  {
     id: "pet_wrangler",
     name: "Pet Wrangler",
     category: "arcade_mastery",

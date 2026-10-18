@@ -56,3 +56,38 @@
   background: radial-gradient(#fff4baaa 35%, transparent 72%);
   cursor: pointer;
 }
+/* Pin of the Day: a twinkling collectible high in the room. */
+.day-pin {
+  position: absolute;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  min-width: calc(48px / var(--camera-scale, 1));
+  min-height: calc(48px / var(--camera-scale, 1));
+  padding: 0;
+  border: 4px solid #fff4ba;
+  border-radius: 50%;
+  background: radial-gradient(#fffbe8, #ffd84d);
+  box-shadow: 0 0 18px 6px #fff4ba99;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  cursor: pointer;
+  pointer-events: auto;
+  animation: day-pin-twinkle 1.6s ease-in-out infinite alternate;
+}
+/* The global button:active transform would knock the pin off its spot mid-tap. */
+.day-pin:not(:disabled):active {
+  transform: translate(-50%, -50%);
+}
+@keyframes day-pin-twinkle {
+  to {
+    box-shadow: 0 0 28px 12px #fff4bacc;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .day-pin {
+    animation: none;
+  }
+}

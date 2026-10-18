@@ -132,6 +132,14 @@ export const downtownPlazaManifest: RoomManifest = {
   ],
   interactives: [
     {
+      id: "plaza-pin-board",
+      label: "Pin hint board",
+      icon: "📌",
+      type: "activity",
+      position: { x: 700, y: 450 },
+      actionData: {},
+    },
+    {
       id: "plaza-bubble-cart",
       label: "Bubble Pop",
       icon: "🫧",

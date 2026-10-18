@@ -1789,3 +1789,38 @@ test("saved prop spots restore clamped, and junk or unknown keys are dropped", (
   );
   assert.equal(restorePlayer(JSON.stringify(newPlayer())).propSpots, undefined);
 });
+
+test("collecting today's pin keeps it once; five pins earn the Pin Collector stamp", async () => {
+  const { collectPin } = await import("./game.ts");
+  const { pinForDay } = await import("./utils/pins.ts");
+  const days = [
+    "2026-11-01",
+    "2026-11-02",
+    "2026-11-03",
+    "2026-11-04",
+    "2026-11-05",
+    "2026-11-06",
+    "2026-11-07",
+    "2026-11-08",
+    "2026-11-09",
+  ];
+  let player = newPlayer();
+  const today = pinForDay(days[0]);
+  player = collectPin(player, days[0], today.id);
+  assert.deepEqual(player.pins, [today.id]);
+  assert.equal(collectPin(player, days[0], today.id), player);
+  const wrong = days
+    .map((d) => pinForDay(d).id)
+    .find((id) => id !== pinForDay(days[1]).id);
+  assert.equal(collectPin(player, days[1], wrong ?? "nope"), player);
+  for (const day of days) player = collectPin(player, day, pinForDay(day).id);
+  assert.ok((player.pins ?? []).length >= 5);
+  assert.ok((player.stamps ?? []).includes("pin_collector"));
+  assert.deepEqual(restorePlayer(JSON.stringify(player)).pins, player.pins);
+  assert.deepEqual(
+    restorePlayer(
+      JSON.stringify({ ...player, pins: ["fake", today.id, today.id, 3] }),
+    ).pins,
+    [today.id],
+  );
+});

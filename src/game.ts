@@ -7,6 +7,7 @@ import {
   type SledState,
 } from "./utils/sledPhysics.ts";
 import { isHaloLayers } from "./utils/haloHalo.ts";
+import { PIN_STAMP_COUNT, isPinId, pinForDay } from "./utils/pins.ts";
 import { isPetOutfit, isPetThemeId, scoreOutfit } from "./utils/dressPet.ts";
 import { PEEKABOO_ROUNDS, PEEKABOO_STAMP_SCORE } from "./utils/peekaboo.ts";
 import { FIREFLY_MAX_SCORE, FIREFLY_STAMP_SCORE } from "./utils/fireflies.ts";
@@ -151,6 +152,8 @@ export type PlayerBase = {
   bakeryCakes?: Cake[];
   /** Today's Savanna Square butterfly hunt: spots found on `day` (local YYYY-MM-DD). */
   squareButterflies?: { day: string; found: number[] };
+  /** Pin of the Day ids collected, one per day, oldest first. */
+  pins?: string[];
   seekRounds?: number;
   /** Fastest hard Hide & Seek Safari round in milliseconds. */
   seekBestMs?: number;
@@ -718,6 +721,9 @@ export function restorePlayer(raw: string | null): Player {
       ...(p.propSpots === undefined
         ? {}
         : { propSpots: restorePropSpots(p.propSpots) }),
+      ...(Array.isArray(p.pins)
+        ? { pins: [...new Set<string>(p.pins.filter(isPinId))] }
+        : {}),
       ...(isButterflyHunt(p.squareButterflies)
         ? {
             squareButterflies: {
@@ -1561,6 +1567,20 @@ export function findSquareButterfly<T extends PlayerBase>(
   };
   return next.squareButterflies.found.length === BUTTERFLY_COUNT
     ? unlockStamp(next, "square_butterflies")
+    : next;
+}
+
+/** Keeps today's pin once; the fifth different pin earns the Pin Collector stamp. */
+export function collectPin<T extends PlayerBase>(
+  player: T,
+  day: string,
+  pinId: string,
+): T {
+  const pins = player.pins ?? [];
+  if (pinForDay(day).id !== pinId || pins.includes(pinId)) return player;
+  const next = { ...player, pins: [...pins, pinId] };
+  return next.pins.length >= PIN_STAMP_COUNT
+    ? unlockStamp(next, "pin_collector")
     : next;
 }
 

@@ -62,6 +62,7 @@ import {
   unlockStamp,
   evaluateStampUnlocks,
   findSquareButterfly,
+  collectPin,
   movePropSpot,
   completeMangoRun,
   completeHaloHalo,
@@ -555,6 +556,9 @@ export default function App() {
             onOpenSpy={() => setPanel("spy")}
             onOpenJukebox={() => setPanel("jukebox")}
             onOpenCondo={() => setPanel("condo")}
+            onCollectPin={(day, pinId) =>
+              setPlayer((p) => collectPin(p, day, pinId))
+            }
             onFindButterfly={(day, spot) =>
               setPlayer((p) => findSquareButterfly(p, day, spot))
             }
