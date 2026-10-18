@@ -27,24 +27,28 @@ test("stamp album filters categories, supports keyboard tabs, traps focus, and f
   await expect(album).toBeVisible();
   await expect(album.getByText(collected(0))).toBeVisible();
   await expect(album.getByRole("progressbar")).toHaveAttribute("value", "0");
-  await expect(album.getByRole("listitem")).toHaveCount(total);
+  await expect(album.getByRole("tabpanel").getByRole("listitem")).toHaveCount(
+    total,
+  );
   await expect(
     album.getByText("Find the coffee steam secret in Le Shop."),
   ).toBeVisible();
   await album.getByRole("tab", { name: "World Secrets", exact: true }).click();
-  await expect(album.getByRole("listitem")).toHaveCount(
+  await expect(album.getByRole("tabpanel").getByRole("listitem")).toHaveCount(
     inCategory("world_secrets"),
   );
   await page.keyboard.press("ArrowRight");
   await expect(
     album.getByRole("tab", { name: "Coastal Secrets", exact: true }),
   ).toBeFocused();
-  await expect(album.getByRole("listitem")).toHaveCount(inCategory("secrets"));
+  await expect(album.getByRole("tabpanel").getByRole("listitem")).toHaveCount(
+    inCategory("secrets"),
+  );
   await page.keyboard.press("ArrowRight");
   await expect(
     album.getByRole("tab", { name: "Park Thrills", exact: true }),
   ).toBeFocused();
-  await expect(album.getByRole("listitem")).toHaveCount(
+  await expect(album.getByRole("tabpanel").getByRole("listitem")).toHaveCount(
     inCategory("park_thrills"),
   );
   await page.keyboard.press("End");

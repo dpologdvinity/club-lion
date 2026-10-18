@@ -7,6 +7,7 @@ import {
   type StampCategory,
 } from "../utils/stampDefinitions";
 import { Dialog } from "./Dialog";
+import { PINS } from "../utils/pins";
 
 const CATEGORIES: { id: StampCategory | "all"; label: string }[] = [
   { id: "all", label: "All" },
@@ -54,6 +55,27 @@ export function StampBook({
             max={total}
           />
         </div>
+        <section className="pin-shelf" aria-labelledby={`${id}-pins`}>
+          <h3 id={`${id}-pins`}>
+            📌 Pin collection:{" "}
+            {PINS.filter((pin) => player.pins?.includes(pin.id)).length} /{" "}
+            {PINS.length}
+          </h3>
+          <ul>
+            {PINS.map((pin) => {
+              const found = player.pins?.includes(pin.id) ?? false;
+              return (
+                <li
+                  key={pin.id}
+                  className={found ? "is-found" : undefined}
+                  aria-label={found ? `${pin.label} pin` : "Pin not found yet"}
+                >
+                  <span aria-hidden="true">{found ? pin.emoji : "?"}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
         <div
           className="stamp-tabs"
           role="tablist"

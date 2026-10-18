@@ -5630,6 +5630,35 @@ svg {
   border-color: var(--text);
   background: var(--text);
 }
+.pin-shelf h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.pin-shelf ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+.pin-shelf li {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 3px dashed #d8c7a8;
+  border-radius: 50%;
+  background: #fff8ec;
+  color: #a08c6a;
+  font-size: 22px;
+  font-weight: 900;
+}
+.pin-shelf li.is-found {
+  border: 3px solid #f2c94c;
+  background: radial-gradient(#fffbe8, #ffe08a);
+  font-size: 28px;
+}
 .stamp-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
