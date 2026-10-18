@@ -1273,7 +1273,20 @@ export function World({
           </button>
           {emotesOpen && (
             <div className="emote-popover" aria-label="Emotes">
-              {["👋", "❤️", "☀️", "🌼", "🎉", "🦁"].map((emoji) => (
+              {[
+                "👋",
+                "❤️",
+                "☀️",
+                "🌼",
+                "🎉",
+                "🦁",
+                "😂",
+                "😍",
+                "😎",
+                "🥳",
+                "😴",
+                "⭐",
+              ].map((emoji) => (
                 <button
                   key={emoji}
                   aria-label={`Send ${emoji} emote`}
