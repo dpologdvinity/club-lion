@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  ArrowRight,
   Check,
   Coffee,
   Home,
@@ -16,8 +15,7 @@ import {
   type PlaceId,
   type PlayerV2,
 } from "../game";
-import { SafeRoomScenery } from "./SafeRoomScenery";
-import { ROOM_MANIFESTS } from "../rooms/registry";
+import { IslandArt, MAP_SPOTS } from "./IslandMap";
 import { PLACE_ICONS } from "../rooms/placeIcons";
 import { Lion } from "./Lion";
 
@@ -29,34 +27,32 @@ export function WorldMap({
   onNavigate: (place: PlaceId) => void;
 }) {
   return (
-    <div className="map-grid">
-      {PLACES.map((destination) => (
-        <button
-          className={`map-destination ${place === destination.id ? "selected" : ""}`}
-          key={destination.id}
-          onClick={() => onNavigate(destination.id)}
-        >
-          <span className="map-icon" aria-hidden="true">
-            {PLACE_ICONS[destination.id]}
-          </span>
-          <span className={`scene map-image ${destination.imageClass}`}>
-            {ROOM_MANIFESTS[destination.id] && (
-              <SafeRoomScenery place={destination.id} preview />
-            )}
-          </span>
-          <span className="map-destination-copy">
-            <span>
-              <strong>{destination.name}</strong>
-              <small>{destination.subtitle}</small>
+    <div className="map-grid map-island">
+      <IslandArt />
+      {PLACES.map((destination) => {
+        const [x, y] = MAP_SPOTS[destination.id];
+        return (
+          <button
+            className={`map-destination ${place === destination.id ? "selected" : ""}`}
+            key={destination.id}
+            style={{ "--map-x": `${x}%`, "--map-y": `${y}%` }}
+            onClick={() => onNavigate(destination.id)}
+          >
+            <span className="map-icon" aria-hidden="true">
+              {PLACE_ICONS[destination.id]}
             </span>
-            {place === destination.id ? (
-              <span className="here-label">You’re here</span>
-            ) : (
-              <ArrowRight size={18} />
-            )}
-          </span>
-        </button>
-      ))}
+            <span className="map-destination-copy">
+              <span>
+                <strong>{destination.name}</strong>
+                <small>{destination.subtitle}</small>
+              </span>
+              {place === destination.id && (
+                <span className="here-label">You’re here</span>
+              )}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }
