@@ -23,6 +23,7 @@ export const penthouseCondoManifest: RoomManifest = {
       label: "Downtown Plaza",
     },
   ],
+  neighbors: [{ id: "ruby", x: 650, y: 600 }],
   interactives: [
     {
       id: "condo-furniture-editor",

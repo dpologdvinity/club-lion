@@ -39,6 +39,7 @@ export const lionSpeedwayManifest: RoomManifest = {
       food: true,
     },
   ],
+  neighbors: [{ id: "max", x: 1120, y: 690 }],
   interactives: [
     {
       id: "speedway-traffic-light",

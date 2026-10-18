@@ -28,6 +28,7 @@ export const secretScoutBaseManifest: RoomManifest = {
       label: "Secret Tunnel to Downtown Plaza",
     },
   ],
+  neighbors: [{ id: "jay", x: 850, y: 670 }],
   interactives: [
     {
       id: "spy-terminal",

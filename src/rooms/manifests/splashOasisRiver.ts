@@ -28,6 +28,7 @@ export const splashOasisRiverManifest: RoomManifest = {
       label: "Splash Oasis",
     },
   ],
+  neighbors: [{ id: "bea", x: 1180, y: 600 }],
   interactives: [
     {
       id: "lazy-river-current",

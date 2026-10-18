@@ -134,6 +134,7 @@ export const wateringHoleManifest: RoomManifest = {
   ],
   ambientAudioPreset: "savanna-water",
   neighbors: [
+    { id: "finn", x: 740, y: 600 },
     {
       id: "cleo",
       x: 1590,
