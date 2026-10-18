@@ -1,6 +1,13 @@
-# Handoff (2026-10-15)
+# Handoff (2026-10-18)
 
 Read `AGENTS.md` for project rules, commands, and the code map.
+
+## Fantage overhaul (2026-10-18)
+
+- Look: a framed game window with a Fantage HUD (`GameHud.tsx`), flat-vector rooms (Savanna Square redrawn in `SavannaSquareScenery.tsx`), outlined name tags, pale-blue speech bubbles, yellow edge arrows at exits, an island map on wide screens (`IslandMap.tsx`, pins in `MAP_SPOTS`).
+- Doll: pixel sprites made by `scripts/pixel/*.mts` into `public/assets/pixel/doll/` (grey layers recoloured with SVG filters in `src/components/avatar/pixelDoll.ts`). Optional look fields `hairKitId`, `dressId`, `shoeKitId`, `costumeId`; salon bangs and streak have their own sprites. Reference art stays local in `inspo/` (gitignored, never commit it: the repo is public).
+- Games around town: one row per game in `src/games/fantage.ts` (room, spot, card, max/stamp score, stamp); cabinets join their room through `gameCabinets()` in each manifest; components in `src/components/fantage/` with `registry.tsx`; save field `fantageBest`; `completeFantageGame`. `src/rooms/gameCabinets.test.ts` keeps machines clear of everything else; e2e in `tests/fantage-games.spec.ts`.
+- Neighbours are dolls with their own looks (`NEIGHBORS` in `game.ts`), placed on clear floor in most rooms.
 
 ## Current state
 
