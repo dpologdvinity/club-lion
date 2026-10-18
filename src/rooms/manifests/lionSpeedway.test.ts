@@ -24,6 +24,7 @@ test("lionSpeedwayManifest is structurally valid with a walkable paddock", () =>
       "kart-race-gate",
       "winner-podium",
       "speedway-flag",
+      "fg-go-cart",
     ],
   );
 });

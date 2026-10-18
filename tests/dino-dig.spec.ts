@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { tapRoomPath } from "./room-paths";
+import { roomToys } from "./room-objects";
 
 test("digging up every fossil at Dino Dig earns the Fossil Finder stamp once", async ({
   page,
@@ -14,7 +15,8 @@ test("digging up every fossil at Dino Dig earns the Fossil Finder stamp once", a
     .getByRole("button", { name: /^Dino Dig/ })
     .click();
   await expect(page.locator(".world-location h2")).toHaveText("Dino Dig");
-  await expect(page.locator(".room-object")).toHaveCount(8);
+  // Game machines stand in many rooms; count the room's own toys.
+  await expect.poll(() => roomToys(page)).toBe(8);
   for (const find of ["skull", "leg bone", "shell fossil", "giant tooth"]) {
     await tapRoomPath(page, `Dig for a ${find}`, true);
     await tapRoomPath(page, `Dig for a ${find}`, true);

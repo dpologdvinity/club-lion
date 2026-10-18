@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const snowflakeRinkManifest: RoomManifest = {
@@ -66,6 +67,7 @@ export const snowflakeRinkManifest: RoomManifest = {
       object: { kind: "snowglobe", width: 140, height: 170 },
       reaction: { message: "Whoosh! Snow swirls all around.", sound: "chime" },
     },
+    ...gameCabinets("snowflake-rink"),
   ],
   ambientAudioPreset: "rink-ambient",
 };

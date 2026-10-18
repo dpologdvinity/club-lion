@@ -18,7 +18,13 @@ test("snowflakeRinkManifest is structurally valid with skate and cocoa hotspots"
   }
   assert.deepEqual(
     manifest.interactives.map((item) => item.id),
-    ["rink-skate", "rink-hot-cocoa", "rink-snowman", "rink-snowglobe"],
+    [
+      "rink-skate",
+      "rink-hot-cocoa",
+      "rink-snowman",
+      "rink-snowglobe",
+      "fg-snow-day",
+    ],
   );
 });
 

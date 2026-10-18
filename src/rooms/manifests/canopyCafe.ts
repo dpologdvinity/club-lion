@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const canopyCafeManifest: RoomManifest = {
@@ -130,6 +131,7 @@ export const canopyCafeManifest: RoomManifest = {
         height: 210,
       },
     },
+    ...gameCabinets("cafe"),
   ],
   ambientAudioPreset: "canopy-cafe",
   neighbors: [

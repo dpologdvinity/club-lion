@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 import type { FloorBounds } from "../../utils/danceFloorRhythm.ts";
 
@@ -74,6 +75,7 @@ export const clubPulseManifest: RoomManifest = {
         bounds: CLUB_PULSE_DANCE_FLOOR_BOUNDS,
       },
     },
+    ...gameCabinets("club-pulse"),
   ],
   obstacles: [
     {

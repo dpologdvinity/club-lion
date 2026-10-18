@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 type Items = RoomManifest["interactives"];
@@ -147,6 +148,7 @@ export const dinoDigManifest: RoomManifest = {
         sound: "rustle",
       },
     },
+    ...gameCabinets("dino-dig"),
   ],
   ambientAudioPreset: "dino-dig",
 };

@@ -23,7 +23,6 @@ import { lionAquariumManifest } from "./manifests/lionAquarium.ts";
 import { snowflakeRinkManifest } from "./manifests/snowflakeRink.ts";
 import { savannaSquareManifest } from "./manifests/savannaSquare.ts";
 import { kainanManifest } from "./manifests/kainan.ts";
-import { gameHallManifest } from "./manifests/gameHall.ts";
 import { dinoDigManifest } from "./manifests/dinoDig.ts";
 
 export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
@@ -49,6 +48,5 @@ export const ROOM_MANIFESTS: Partial<Record<PlaceId, RoomManifest>> = {
   "lion-aquarium": lionAquariumManifest,
   "snowflake-rink": snowflakeRinkManifest,
   kainan: kainanManifest,
-  "game-hall": gameHallManifest,
   "dino-dig": dinoDigManifest,
 };

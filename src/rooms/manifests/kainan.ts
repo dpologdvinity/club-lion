@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 /** Lola's Kainan: a Filipino carinderia off Downtown Plaza. */
@@ -223,6 +224,7 @@ export const kainanManifest: RoomManifest = {
         sound: "chime",
       },
     },
+    ...gameCabinets("kainan"),
   ],
   ambientAudioPreset: "kainan-ambient",
 };

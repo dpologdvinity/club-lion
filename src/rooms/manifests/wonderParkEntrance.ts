@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const wonderParkEntranceManifest: RoomManifest = {
@@ -116,6 +117,7 @@ export const wonderParkEntranceManifest: RoomManifest = {
         sound: "bubble",
       },
     },
+    ...gameCabinets("wonder-park-entrance"),
   ],
   obstacles: [
     {

@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const coastalPierManifest: RoomManifest = {
@@ -72,6 +73,7 @@ export const coastalPierManifest: RoomManifest = {
         sound: "rustle",
       },
     },
+    ...gameCabinets("coastal-pier"),
   ],
   ambientAudioPreset: "ocean-surf",
   obstacles: [

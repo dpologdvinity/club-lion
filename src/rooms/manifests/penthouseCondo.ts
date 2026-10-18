@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const penthouseCondoManifest: RoomManifest = {
@@ -39,6 +40,7 @@ export const penthouseCondoManifest: RoomManifest = {
       position: { x: 800, y: 350 },
       actionData: { action: "open_jukebox" },
     },
+    ...gameCabinets("penthouse-condo"),
   ],
   obstacles: [
     {

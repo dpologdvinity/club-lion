@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const petParadiseManifest: RoomManifest = {
@@ -114,6 +115,7 @@ export const petParadiseManifest: RoomManifest = {
         sound: "bubble",
       },
     },
+    ...gameCabinets("pet-paradise"),
   ],
   ambientAudioPreset: "pet-spa-ambient",
   obstacles: [

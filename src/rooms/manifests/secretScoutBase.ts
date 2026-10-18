@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const secretScoutBaseManifest: RoomManifest = {
@@ -54,6 +55,7 @@ export const secretScoutBaseManifest: RoomManifest = {
       object: { kind: "periscope", width: 140, height: 190 },
       reaction: { message: "Periscope up! All clear, agent.", sound: "chime" },
     },
+    ...gameCabinets("secret-scout-base"),
   ],
   obstacles: [
     {

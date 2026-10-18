@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const sunsetBeachManifest: RoomManifest = {
@@ -88,6 +89,7 @@ export const sunsetBeachManifest: RoomManifest = {
         sound: "splash",
       },
     },
+    ...gameCabinets("sunset-beach"),
   ],
   ambientAudioPreset: "ocean-surf",
   obstacles: [

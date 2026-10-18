@@ -8,7 +8,6 @@ import {
 } from "react";
 import type { PlaceId } from "../game.ts";
 import "./sceneryMotion.css";
-import { GAME_HALL_WIDTH } from "../rooms/manifests/gameHall.ts";
 import { ARCADE_WIDTH } from "../rooms/manifests/neighborhoodArcade.ts";
 
 // Scenery loads when a room is first shown, so startup skips every room's artwork.
@@ -123,11 +122,6 @@ const DinoDigScenery = lazy(() =>
     default: module.DinoDigScenery,
   })),
 );
-const GameHallScenery = lazy(() =>
-  import("./GameHallScenery.tsx").then((module) => ({
-    default: module.GameHallScenery,
-  })),
-);
 const KainanScenery = lazy(() =>
   import("./KainanScenery.tsx").then((module) => ({
     default: module.KainanScenery,
@@ -167,7 +161,6 @@ const ROOM_SCENERY: Partial<Record<PlaceId, Scene>> = {
   "lion-aquarium": { width: 2400, Scenery: LionAquariumScenery },
   "snowflake-rink": { width: 2400, Scenery: SnowflakeRinkScenery },
   kainan: { width: 2400, Scenery: KainanScenery },
-  "game-hall": { width: GAME_HALL_WIDTH, Scenery: GameHallScenery },
   "dino-dig": { width: 2400, Scenery: DinoDigScenery },
   "penthouse-condo": { width: 1920, Scenery: PenthouseCondoScenery },
   "secret-scout-base": { width: 1920, Scenery: ScoutBaseScenery, clock: true },

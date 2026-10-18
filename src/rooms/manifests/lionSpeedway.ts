@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const lionSpeedwayManifest: RoomManifest = {
@@ -106,6 +107,7 @@ export const lionSpeedwayManifest: RoomManifest = {
         sound: "chime",
       },
     },
+    ...gameCabinets("lion-speedway"),
   ],
   obstacles: [
     {

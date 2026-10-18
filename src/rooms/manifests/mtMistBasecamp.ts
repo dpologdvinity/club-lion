@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const mtMistBasecampManifest: RoomManifest = {
@@ -75,6 +76,7 @@ export const mtMistBasecampManifest: RoomManifest = {
         sound: "chime",
       },
     },
+    ...gameCabinets("mt-mist"),
   ],
   ambientAudioPreset: "alpine-wind",
   obstacles: [

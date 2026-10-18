@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const splashOasisRiverManifest: RoomManifest = {
@@ -36,6 +37,7 @@ export const splashOasisRiverManifest: RoomManifest = {
       position: { x: 1400, y: 400 },
       actionData: { rideId: "lazy-river-current" },
     },
+    ...gameCabinets("splash-oasis-river"),
   ],
   ambientAudioPreset: "tropical-splash-ambient",
   obstacles: [

@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { tapRoomPath } from "./room-paths";
+import { roomToys } from "./room-objects";
 
 for (const room of [
   {
@@ -139,7 +140,8 @@ for (const room of [
       .click();
     await expect(page.locator(".world-location h2")).toHaveText(room.name);
     await expect(page.locator(".camera-viewport .room-scenery")).toHaveCount(1);
-    await expect(page.locator(".room-object")).toHaveCount(room.objects);
+    // Game machines stand in many rooms; count the room's own toys.
+    await expect.poll(() => roomToys(page)).toBe(room.objects);
     const object = page.locator(`.object-${room.kind}`);
     await expect(object).toHaveAttribute("data-object-state", "0");
     await tapRoomPath(page, room.action, true);

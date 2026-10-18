@@ -24,12 +24,6 @@ export const neighborhoodArcadeManifest: RoomManifest = {
       triggerBounds: { x1: 0, y1: 565, x2: 120, y2: 700 },
       label: "Savanna Square",
     },
-    {
-      targetRoomId: "game-hall",
-      targetSpawn: { x: 300, y: 640 },
-      triggerBounds: { x1: 5910, y1: 565, x2: 6000, y2: 700 },
-      label: "Game Hall",
-    },
   ],
   props: [
     { id: "bear", emoji: "🧸", label: "prize bear", x: 760, y: 565 },

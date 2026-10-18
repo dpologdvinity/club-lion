@@ -23,6 +23,7 @@ test("lionAquariumManifest is structurally valid with feeding and touch hotspots
       "aquarium-touch-pool",
       "aquarium-jellyfish",
       "aquarium-treasure",
+      "fg-pearly-pop",
     ],
   );
 });

@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const splashOasisEntryManifest: RoomManifest = {
@@ -79,6 +80,7 @@ export const splashOasisEntryManifest: RoomManifest = {
       object: { kind: "sprinkler", width: 150, height: 170 },
       reaction: { message: "Whoosh! Sprinkles everywhere!", sound: "splash" },
     },
+    ...gameCabinets("splash-oasis-entry"),
   ],
   ambientAudioPreset: "tropical-splash-ambient",
   obstacles: [

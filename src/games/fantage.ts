@@ -1,11 +1,14 @@
 /**
- * Our own remakes of the Fantage mini-games, played in the Game Hall. One row
- * per game drives its arcade card, its save field, its stamp and its cabinet,
- * so a new game is a row here plus a component in components/fantage.
+ * Our own remakes of the Fantage mini-games, scattered through the world like
+ * in Fantage: each row puts a game cabinet in a themed room (`room`, `spot`
+ * where it stands) and drives its arcade card, save field and stamp. A new
+ * game is a row here plus a component in components/fantage.
  */
 export const FANTAGE_GAMES = [
   {
     id: "memory-mixup",
+    room: "cafe",
+    spot: { x: 390, y: 535 },
     name: "Memory Mixup",
     art: "🃏 🍓 🃏",
     description: "Flip two cards at a time to find the matching snacks.",
@@ -23,6 +26,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "snack-tac-toe",
+    room: "kainan",
+    spot: { x: 590, y: 540 },
     name: "Snack Tac Toe",
     art: "🍩 ❌ 🍪",
     description: "Three in a row with donuts and cookies against Pip.",
@@ -40,6 +45,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "whack-a-veggie",
+    room: "pet-paradise",
+    spot: { x: 760, y: 585 },
     name: "Whack A Veggie",
     art: "🥕 🔨 🥦",
     description: "Bonk the veggies as they pop out of the garden.",
@@ -57,6 +64,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "bullseye",
+    room: "wonder-park-midway",
+    spot: { x: 950, y: 540 },
     name: "Bullseye",
     art: "🎯 🏹 ⭐",
     description: "Throw when the dart lines up with the gliding target.",
@@ -74,6 +83,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "mad-math",
+    room: "secret-scout-base",
+    spot: { x: 730, y: 540 },
     name: "Mad Math",
     art: "🍎 ➕ 🔢",
     description: "Count the snacks and tap the right number.",
@@ -91,6 +102,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "staries",
+    room: "mt-mist",
+    spot: { x: 800, y: 540 },
     name: "Staries",
     art: "⭐ ✨ 🌙",
     description: "Join the stars in order to draw pictures in the sky.",
@@ -108,6 +121,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "type-boo",
+    room: "club-pulse",
+    spot: { x: 640, y: 420 },
     name: "Type Boo",
     art: "👻 🔤 💜",
     description: "Tap the letter the friendly ghost is holding.",
@@ -125,6 +140,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "candy-swap",
+    room: "penthouse-condo",
+    spot: { x: 1540, y: 540 },
     name: "Candy Swap",
     art: "🍬 🍭 🍫",
     description: "Swap two candies to line up three or more of a kind.",
@@ -142,6 +159,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "buzzer-beater",
+    room: "club-pulse",
+    spot: { x: 1280, y: 420 },
     name: "Buzzer Beater",
     art: "🏀 🗑️ ⏱️",
     description: "Shoot when the power meter is in the green.",
@@ -159,6 +178,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "mouse-out",
+    room: "kainan",
+    spot: { x: 400, y: 540 },
     name: "Mouse Out",
     art: "🐭 🧀 🧱",
     description: "Guide the mouse through the maze to the cheese.",
@@ -176,6 +197,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "stained-glass",
+    room: "penthouse-condo",
+    spot: { x: 380, y: 540 },
     name: "Stained Glass",
     art: "🪟 🎨 🌈",
     description: "Pick colours and fill every pane of the windows.",
@@ -193,6 +216,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "snow-day",
+    room: "snowflake-rink",
+    spot: { x: 1900, y: 540 },
     name: "Snow Day",
     art: "❄️ 🐧 ⛄",
     description: "Tap the sliding penguins to toss a snowball.",
@@ -210,6 +235,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "bricks-breaking",
+    room: "splash-oasis-river",
+    spot: { x: 1870, y: 560 },
     name: "Bricks Breaking",
     art: "🧱 ⚪ 🏓",
     description: "Bounce the ball with the paddle to break every brick.",
@@ -227,6 +254,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "galaxy-hero",
+    room: "canyon-rapids",
+    spot: { x: 1990, y: 540 },
     name: "Galaxy Hero",
     art: "🚀 ☄️ 🌟",
     description: "Steer your ship and zap the falling meteors.",
@@ -244,6 +273,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "pearly-pop",
+    room: "lion-aquarium",
+    spot: { x: 1750, y: 540 },
     name: "Pearly Pop",
     art: "🔴 🟡 🔵",
     description: "Tap groups of matching pearls to pop them.",
@@ -261,6 +292,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "magic-pop",
+    room: "wonder-park-entrance",
+    spot: { x: 400, y: 540 },
     name: "Magic Pop",
     art: "🪄 🫧 ✨",
     description: "Pop the bubbles that match the wand's magic colour.",
@@ -278,6 +311,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "jelly-fishin",
+    room: "coastal-pier",
+    spot: { x: 440, y: 540 },
     name: "Jelly Fishin'",
     art: "🛶 🪼 🎣",
     description: "Drop the hook when a jelly drifts under the boat.",
@@ -295,6 +330,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "bobo-fish",
+    room: "coastal-pier",
+    spot: { x: 1680, y: 540 },
     name: "BoBo Fish",
     art: "🐠 🐟 🐡",
     description: "Steer BoBo to gobble smaller fish and grow big.",
@@ -312,6 +349,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "bubble-bug",
+    room: "water",
+    spot: { x: 1280, y: 535 },
     name: "Bubble Bug",
     art: "🐞 🫧 🔵",
     description: "Shoot bubbles up a column to make groups of three.",
@@ -329,6 +368,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "boxy",
+    room: "dino-dig",
+    spot: { x: 750, y: 540 },
     name: "Boxy",
     art: "📦 🤖 🎯",
     description: "Push every box onto a goal. Reset any time.",
@@ -346,6 +387,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "check-mate",
+    room: "penthouse-condo",
+    spot: { x: 1150, y: 540 },
     name: "Check Mate",
     art: "♞ ⭐ ♛",
     description: "Learn how chess pieces move by collecting stars.",
@@ -363,6 +406,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "king-me",
+    room: "penthouse-condo",
+    spot: { x: 770, y: 540 },
     name: "King Me",
     art: "🔴 ⚫ 👑",
     description: "Checkers against Pip. Jump pieces and get crowned.",
@@ -380,6 +425,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "go-cart",
+    room: "lion-speedway",
+    spot: { x: 1360, y: 540 },
     name: "Go Cart",
     art: "🏎️ 🪙 🚧",
     description: "Switch lanes to grab coins on the race track.",
@@ -397,6 +444,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "putt-putt",
+    room: "sunset-beach",
+    spot: { x: 460, y: 540 },
     name: "Putt Putt Revolution",
     art: "⛳ 🏌️ 🌀",
     description: "Tap where the ball should roll. Bounce it into the cup.",
@@ -414,6 +463,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "rocket-board",
+    room: "mt-mist",
+    spot: { x: 1200, y: 540 },
     name: "Rocket Board",
     art: "🛹 🚀 ⭐",
     description: "Hold Boost to fly up, let go to float down. Grab stars!",
@@ -431,6 +482,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "slide-splash",
+    room: "splash-oasis-entry",
+    spot: { x: 1160, y: 540 },
     name: "Slide n Splash",
     art: "🛝 🤸 💦",
     description: "Jump off the slide and tap tricks before the splash.",
@@ -448,6 +501,8 @@ export const FANTAGE_GAMES = [
   },
   {
     id: "splash-power-up",
+    room: "splash-oasis-entry",
+    spot: { x: 2200, y: 540 },
     name: "Splash Power-Up",
     art: "🎈 💦 🐳",
     description: "Launch water balloons at the bucket, duck and whale.",

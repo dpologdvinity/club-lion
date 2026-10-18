@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const canyonRapidsManifest: RoomManifest = {
@@ -71,6 +72,7 @@ export const canyonRapidsManifest: RoomManifest = {
       object: { kind: "kayak", width: 190, height: 150 },
       reaction: { message: "Paddle paddle! Splash!", sound: "splash" },
     },
+    ...gameCabinets("canyon-rapids"),
   ],
   ambientAudioPreset: "canyon-rapids-ambient",
   obstacles: [

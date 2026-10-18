@@ -37,27 +37,38 @@ async function openGame(page: Page, name: string) {
   await page.getByRole("button", { name: `Play ${name}` }).click();
 }
 
-test("the Game Hall next to the arcade has a cabinet for every hall game", async ({
+test("game cabinets stand around town and open their games", async ({
   page,
 }) => {
+  test.setTimeout(150_000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
-  await page.getByRole("button", { name: "Map", exact: true }).click();
-  await page
-    .getByRole("dialog")
-    .getByRole("button", { name: /^Game Hall/ })
-    .click();
-  await expect(page.locator(".world-location h2")).toHaveText("Game Hall");
-  await expect(page.locator(".object-cabinet")).toHaveCount(27);
-  await tapRoomPath(page, "Snack Tac Toe", true);
-  await expect(
-    page.getByRole("button", { name: "Start Snack Tac Toe" }),
-  ).toBeVisible();
-  const results = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa"])
-    .analyze();
-  expect(results.violations).toEqual([]);
+  for (const [room, game, start] of [
+    ["Canopy café", "Memory Mixup", "Start Memory Mixup"],
+    ["Luxury Penthouse", "Check Mate", "Start Check Mate"],
+    ["Coastal Pier", "Jelly Fishin'", "Start Jelly Fishin'"],
+  ]) {
+    await page
+      .getByRole("button", { name: "Map", exact: true })
+      .first()
+      .click();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: new RegExp(`^${room}`) })
+      .click();
+    await expect(
+      page.getByRole("button", { name: game, exact: true }).first(),
+    ).toBeAttached();
+    await tapRoomPath(page, game, true);
+    await expect(page.getByRole("button", { name: start })).toBeVisible();
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  }
   expect(errors).toEqual([]);
 });
 

@@ -121,7 +121,7 @@ test("room manifests own picture labels and preserve every arcade launch", () =>
     "arcade-pet-round-up": "pet-round-up",
     "pet-round-up": "pet-round-up",
     ...Object.fromEntries(
-      FANTAGE_GAMES.map((game) => [`hall-${game.id}`, game.id]),
+      FANTAGE_GAMES.map((game) => [`fg-${game.id}`, game.id]),
     ),
   });
 });

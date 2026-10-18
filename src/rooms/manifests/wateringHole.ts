@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const wateringHoleManifest: RoomManifest = {
@@ -129,6 +130,7 @@ export const wateringHoleManifest: RoomManifest = {
         height: 210,
       },
     },
+    ...gameCabinets("water"),
   ],
   ambientAudioPreset: "savanna-water",
   neighbors: [

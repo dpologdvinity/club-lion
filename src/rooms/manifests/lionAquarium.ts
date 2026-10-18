@@ -1,3 +1,4 @@
+import { gameCabinets } from "../gameCabinets.ts";
 import type { RoomManifest } from "../types.ts";
 
 export const lionAquariumManifest: RoomManifest = {
@@ -67,6 +68,7 @@ export const lionAquariumManifest: RoomManifest = {
       object: { kind: "treasure", width: 170, height: 150 },
       reaction: { message: "Clink! Shiny gold coins inside!", sound: "chime" },
     },
+    ...gameCabinets("lion-aquarium"),
   ],
   obstacles: [
     {
