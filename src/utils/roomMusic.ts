@@ -541,6 +541,7 @@ export const ROOM_MUSIC_TRACKS: Record<PlaceId, RoomMusicTrack> = {
   "snowflake-rink": MT_MIST_PADS,
   kainan: KAINAN_RONDALLA,
   "dino-dig": CANYON_RAPIDS_DRUMS,
+  "game-hall": CLUB_PULSE_GROOVE,
 };
 
 const TRACKS_BY_ROOM: Partial<Record<string, RoomMusicTrack>> =

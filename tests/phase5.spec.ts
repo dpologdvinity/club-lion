@@ -349,7 +349,7 @@ test("Global Environmental Lighting controls cycle Day, Sunset, Dusk, Night stat
   expect(errors).toEqual([]);
 });
 
-test("World Map lists all 23 destinations with seamless room traversal", async ({
+test("World Map lists all 24 destinations with seamless room traversal", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -363,7 +363,7 @@ test("World Map lists all 23 destinations with seamless room traversal", async (
   await expect(mapDialog).toBeVisible();
 
   const destinations = mapDialog.locator(".map-destination");
-  await expect(destinations).toHaveCount(23);
+  await expect(destinations).toHaveCount(24);
 
   // Navigate to Coastal Pier directly from map
   await mapDialog

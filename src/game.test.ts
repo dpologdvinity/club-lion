@@ -1063,6 +1063,14 @@ test("dressAvatar allows free, owned, or already-worn pieces only", async () => 
   );
 });
 
+test("each migrated save gets its own starter look", async () => {
+  const { migratePlayerSave, STARTER_AVATAR_LOOK } = await import("./game.ts");
+  const first = migratePlayerSave(newPlayer());
+  first.look.boardId = "hover_leaf";
+  assert.equal(STARTER_AVATAR_LOOK.boardId, undefined);
+  assert.equal(migratePlayerSave(newPlayer()).look.boardId, undefined);
+});
+
 test("dressAvatar wears pixel outfits and old saves load without them", async () => {
   const { dressAvatar, migratePlayerSave, validateAvatarLook } =
     await import("./game.ts");

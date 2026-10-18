@@ -4,6 +4,8 @@ import type { PageFills } from "../utils/coloringBook.ts";
 import type { PlayerV2 } from "../game.ts";
 
 import { gameCards, type GameId } from "../games/catalog.ts";
+import { isFantageGame, type FantageGameId } from "../games/fantage.ts";
+import { FANTAGE_COMPONENTS } from "./fantage/registry";
 import { lazyPanel } from "./lazyPanel";
 
 // Each game's code stays out of the startup bundle.
@@ -110,6 +112,7 @@ export function GamesPanel({
   onCompletePetRoundUp,
   onCompletePeekaboo,
   onCompleteFireflies,
+  onCompleteFantage,
   onClose,
 }: {
   player: PlayerV2;
@@ -143,6 +146,7 @@ export function GamesPanel({
   onCompletePetRoundUp?: (score: number) => void;
   onCompletePeekaboo?: (found: number) => void;
   onCompleteFireflies?: (score: number) => void;
+  onCompleteFantage?: (id: FantageGameId, score: number) => void;
   onClose: () => void;
 }) {
   const [picked, setPicked] = useState<GameId | null>(initialGame);
@@ -175,6 +179,20 @@ export function GamesPanel({
     }
   };
 
+  if (isFantageGame(picked)) {
+    const Game = FANTAGE_COMPONENTS[picked];
+    return (
+      <>
+        <button className="game-back" onClick={backToMenu}>
+          <ArrowLeft size={14} /> All games
+        </button>
+        <Game
+          key={picked}
+          onFinish={(score) => onCompleteFantage?.(picked, score)}
+        />
+      </>
+    );
+  }
   if (picked)
     return (
       <>

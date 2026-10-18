@@ -93,6 +93,11 @@ import { DEFAULT_PET_CARE_STATE, performPetCare } from "./utils/petCare.ts";
 import { OUTFITS } from "./components/avatar/pixelOutfits.ts";
 import { SHOE_KIT } from "./components/avatar/pixelShoeKit.ts";
 import { COSTUMES } from "./components/avatar/pixelCostumes.ts";
+import {
+  FANTAGE_GAMES,
+  fantageGame,
+  type FantageGameId,
+} from "./games/fantage.ts";
 
 export * from "./types/world.ts";
 
@@ -121,7 +126,8 @@ export type PlaceId =
   | "lion-aquarium"
   | "snowflake-rink"
   | "kainan"
-  | "dino-dig";
+  | "dino-dig"
+  | "game-hall";
 export type AdventureId = "neighbors" | "game" | "home";
 export type PlayerBase = {
   name: string;
@@ -147,6 +153,8 @@ export type PlayerBase = {
   fireflyBest?: number;
   /** Most first-try finds in one Peekaboo Animals game (out of 8). */
   peekabooBest?: number;
+  /** Best score in each Game Hall mini-game. */
+  fantageBest?: Partial<Record<FantageGameId, number>>;
   /** Pet fashion shows finished in Dress-the-Pet. */
   petShows?: number;
   /** Best Pet Round-Up score: pets penned, plus seconds left if all got in. */
@@ -383,6 +391,12 @@ export const PLACES: {
     name: "Dino Dig",
     subtitle: "Dig up fossils & hatch an egg",
     imageClass: "scene-dinodig",
+  },
+  {
+    id: "game-hall",
+    name: "Game Hall",
+    subtitle: "Classic mini-games, new friends",
+    imageClass: "scene-game-hall",
   },
 ];
 
@@ -740,6 +754,9 @@ export function restorePlayer(raw: string | null): Player {
       p.peekabooBest <= PEEKABOO_ROUNDS
         ? { peekabooBest: p.peekabooBest }
         : {}),
+      ...(p.fantageBest === undefined
+        ? {}
+        : { fantageBest: restoreFantageBest(p.fantageBest) }),
       ...(Number.isSafeInteger(p.petShows) && p.petShows >= 0
         ? { petShows: p.petShows }
         : {}),
@@ -902,9 +919,10 @@ export function migratePlayerSave(save: unknown): PlayerV2 {
     v1Save && typeof v1Save === "object"
       ? (v1Save as Record<string, unknown>)
       : {};
+  // A fresh copy: callers may edit the look, never the shared starter.
   const look = validateAvatarLook(raw.look)
     ? (raw.look as AvatarLook)
-    : STARTER_AVATAR_LOOK;
+    : { ...STARTER_AVATAR_LOOK };
   const pet = restorePetState(raw.pet);
   const petCare = restorePetCare(v1.petCare);
   const moodQuote =
@@ -1681,6 +1699,51 @@ export function completeFireflies<T extends PlayerBase>(
   return score >= FIREFLY_STAMP_SCORE
     ? unlockStamp(next, "firefly_catcher")
     : next;
+}
+
+/** Keeps only known Game Hall games with whole scores inside their range. */
+function restoreFantageBest(
+  raw: unknown,
+): Partial<Record<FantageGameId, number>> {
+  if (!raw || typeof raw !== "object") return {};
+  const best: Partial<Record<FantageGameId, number>> = {};
+  for (const game of FANTAGE_GAMES) {
+    const score: unknown = Reflect.get(raw, game.id);
+    if (
+      typeof score === "number" &&
+      Number.isSafeInteger(score) &&
+      score >= 0 &&
+      score <= game.maxScore
+    )
+      best[game.id] = score;
+  }
+  return best;
+}
+
+/** Records a finished Game Hall game: best score, games played, stamp once. */
+export function completeFantageGame<T extends PlayerBase>(
+  player: T,
+  id: FantageGameId,
+  score: number,
+): T {
+  const game = fantageGame(id);
+  if (
+    game.id !== id ||
+    !Number.isSafeInteger(score) ||
+    score < 0 ||
+    score > game.maxScore ||
+    !Number.isSafeInteger(player.gamesPlayed + 1)
+  )
+    return player;
+  const next = {
+    ...player,
+    gamesPlayed: player.gamesPlayed + 1,
+    fantageBest: {
+      ...player.fantageBest,
+      [id]: Math.max(player.fantageBest?.[id] ?? 0, score),
+    },
+  };
+  return score >= game.stampScore ? unlockStamp(next, game.stamp.id) : next;
 }
 
 /** Records a finished Peekaboo game; 6+ first-try finds earn the Peekaboo Pro stamp. */

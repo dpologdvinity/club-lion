@@ -19,20 +19,21 @@ export function nextWeather(current: Weather): Weather {
 
 export const BUTTERFLY_COUNT = 5;
 
-/** Hiding spots in square stage units (1536 × 864): flower beds, bushes, the fountain rim, the tree and the paths. */
+/**
+ * Hiding spots in square stage units (1536 × 864), just beside the flower
+ * beds, bushes, the fountain, the tree and the paths. Each stays clear of
+ * every other tap target at phone size (see squareFun.test.ts), and off the
+ * open lawn below the flower row, where taps mean "walk here".
+ */
 export const BUTTERFLY_SPOTS: readonly { x: number; y: number }[] = [
-  { x: 210, y: 520 },
-  { x: 420, y: 470 },
-  { x: 640, y: 430 },
-  { x: 900, y: 430 },
-  { x: 1120, y: 470 },
-  { x: 1330, y: 530 },
-  { x: 160, y: 640 },
-  { x: 470, y: 640 },
-  { x: 770, y: 560 },
-  { x: 1060, y: 640 },
-  { x: 1380, y: 660 },
-  { x: 880, y: 640 },
+  { x: 130, y: 430 },
+  { x: 410, y: 530 },
+  { x: 1110, y: 420 },
+  { x: 1290, y: 530 },
+  { x: 140, y: 650 },
+  { x: 870, y: 660 },
+  { x: 1150, y: 550 },
+  { x: 1220, y: 640 },
 ];
 
 /** The child's local calendar day, so the hunt resets at their midnight. */

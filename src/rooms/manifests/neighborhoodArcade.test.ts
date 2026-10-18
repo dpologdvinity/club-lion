@@ -2,10 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { migratePlayerSave, newPlayer } from "../../game.ts";
 import { gameCards } from "../../games/catalog.ts";
+import { isFantageGame } from "../../games/fantage.ts";
 import { neighborhoodArcadeManifest as arcade } from "./neighborhoodArcade.ts";
 
+// Game Hall games have their cabinets in the Game Hall, next door.
 const ALL_GAMES = [
-  ...gameCards(migratePlayerSave(newPlayer())).map((card) => card.id),
+  ...gameCards(migratePlayerSave(newPlayer()))
+    .map((card) => card.id)
+    .filter((id) => !isFantageGame(id)),
   "memory",
   "bee",
   "paw",

@@ -1,4 +1,5 @@
 import type { PlayerV2 } from "../game.ts";
+import { FANTAGE_GAMES } from "./fantage.ts";
 
 /** Arcade cards in display order, with progress from the current save. */
 export function gameCards(player: PlayerV2) {
@@ -184,6 +185,15 @@ export function gameCards(player: PlayerV2) {
       best: 0,
       progressLabel: "Best",
     },
+    ...FANTAGE_GAMES.map((game) => ({
+      id: game.id,
+      name: game.name,
+      art: game.art,
+      description: game.description,
+      reward: game.reward,
+      best: player.fantageBest?.[game.id] ?? 0,
+      progressLabel: game.progressLabel,
+    })),
   ] as const;
 }
 

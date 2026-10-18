@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { migratePlayerSave, newPlayer } from "../game.ts";
 import { ROOM_MANIFESTS } from "../rooms/registry.ts";
 import { gameCards } from "./catalog.ts";
+import { FANTAGE_GAMES } from "./fantage.ts";
 
 test("arcade metadata preserves card order and reads current save progress", () => {
   const player = migratePlayerSave(newPlayer());
@@ -30,6 +31,7 @@ test("arcade metadata preserves card order and reads current save progress", () 
       "fishing",
       "runway",
       "instrument",
+      ...FANTAGE_GAMES.map((game) => game.id),
     ],
   );
   assert.ok(cards.every((card) => card.best === 0));
@@ -118,5 +120,8 @@ test("room manifests own picture labels and preserve every arcade launch", () =>
     "pet-dress-up": "dress-pet",
     "arcade-pet-round-up": "pet-round-up",
     "pet-round-up": "pet-round-up",
+    ...Object.fromEntries(
+      FANTAGE_GAMES.map((game) => [`hall-${game.id}`, game.id]),
+    ),
   });
 });

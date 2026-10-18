@@ -1,3 +1,5 @@
+import { FANTAGE_GAMES } from "../games/fantage.ts";
+
 export type StampCategory =
   | "world_secrets"
   | "park_thrills"
@@ -474,4 +476,9 @@ export const STAMP_DEFINITIONS: StampDefinition[] = [
     icon: "🌐",
     unlockHint: "Host a custom server in the community server browser.",
   },
+  ...FANTAGE_GAMES.map((game): StampDefinition => ({
+    ...game.stamp,
+    category: "arcade_mastery",
+    icon: game.icon,
+  })),
 ];

@@ -23,6 +23,15 @@
         "value": "jukebox-eq-bounce",
         "createdAt": "2026-10-04T10:20:54.063Z",
         "reason": "Reviewer: src/styles.css uses ease-in-out for jukebox equalizer bars rising and falling; the animation name is not bounce or elastic easing. The same animation exists in the parent of 0626e73."
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/components/fantage/fantageGames.css"
+        ],
+        "createdAt": "2026-10-18T11:35:11.993Z",
+        "reason": "agent judgement: flagged rules are inset bottom-edge bevels on maze walls, Boxy walls and snow lanes (pixel-game depth), not one-sided accent borders on cards"
       }
     ]
   }

@@ -5169,6 +5169,9 @@ svg {
 .scene-dinodig {
   background: #e8b26a;
 }
+.scene-game-hall {
+  background: #7cc8ff;
+}
 .camera-world {
   aspect-ratio: auto;
   width: 100%;

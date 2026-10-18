@@ -53,6 +53,7 @@ import {
   completeDressPet,
   completePetRoundUp,
   completePeekaboo,
+  completeFantageGame,
   completeFireflies,
   STAMP_DEFINITIONS,
   PLACES,
@@ -937,6 +938,9 @@ export default function App() {
                 }
                 onCompleteFireflies={(score) =>
                   setPlayer((p) => completeFireflies(p, score))
+                }
+                onCompleteFantage={(id, score) =>
+                  setPlayer((p) => completeFantageGame(p, id, score))
                 }
                 onCompletePeekaboo={(found) =>
                   setPlayer((p) => completePeekaboo(p, found))
