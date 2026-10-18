@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+  <title>Illustrated doll fitting</title>
+  <style>
+    body {
+      margin: 0;
+      background: #eadbd8;
+      color: #392932;
+      font:
+        18px system-ui,
+        sans-serif;
+    }
+    main {
+      display: flex;
+      gap: 2rem;
+      max-width: 1000px;
+      margin: auto;
+      padding: 24px;
+    }
+    #doll {
+      flex: 1;
+      min-width: 0;
+    }
+    #doll svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 90vh;
+    }
+    aside {
+      max-width: 270px;
+    }
+    h1 {
+      font-size: 1.5rem;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 52px;
+    }
+    input {
+      width: 24px;
+      height: 24px;
+    }
+    p {
+      line-height: 1.5;
+    }
+    a {
+      color: inherit;
+    }
+    @media (max-width: 600px) {
+      main {
+        flex-direction: column;
+      }
+      #doll svg {
+        max-height: 65vh;
+      }
+      aside {
+        max-width: none;
+      }
+    }
+  </style>
+  <main>
+    <div id="doll"></div>
+    <aside>
+      <h1>Illustrated doll fitting</h1>
+      <p>
+        Actual illustrated layers, assembled separately. This is a fitting
+        preview, not the game renderer.
+      </p>
+      <form id="layers"></form>
+      <p>
+        The full wardrobe, makeup, accessories, and action poses still need
+        production fitting.
+      </p>
+      <a href="../doll-replacement-concept.png">Approved reference</a>
+    </aside>
+  </main>
+  <script type="module">
+    import { generateIllustratedDollSvg } from "/src/components/avatar/illustrated.ts";
+    const assets = Object.fromEntries(
+      [
+        "base-warm",
+        "hair-blowout",
+        "top-holo-halter",
+        "bottom-flares-indigo",
+        "shoes-lavender-platforms",
+      ].map((id) => [id, `${id}.png`]),
+    );
+    const choices = [
+      ["hair-back", "Hair behind body"],
+      ["hair-front", "Face-framing hair"],
+      ["top", "Halter top"],
+      ["bottom", "Embroidered flares"],
+      ["shoes", "Platforms"],
+      ["jewelry", "Silver hoops"],
+    ];
+    const form = document.querySelector("#layers");
+    for (const [slot, label] of choices) {
+      const row = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = slot;
+      input.checked = true;
+      row.append(input, document.createTextNode(label));
+      form.append(row);
+    }
+    function render() {
+      const hidden = [...form.querySelectorAll("input")]
+        .filter((input) => !input.checked)
+        .map((input) => input.name);
+      document.querySelector("#doll").innerHTML = generateIllustratedDollSvg(
+        assets,
+        hidden,
+      );
+    }
+    form.addEventListener("change", render);
+    render();
+  </script>
+</html>

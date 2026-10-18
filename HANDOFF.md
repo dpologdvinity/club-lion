@@ -38,6 +38,12 @@ Read `AGENTS.md` for project rules, commands, and the code map.
 - Add future objects, neighbors and destinations through each room manifest; add new object drawings in `RoomObject.tsx` only when existing kinds do not fit. `DESIGN.md` documents the extension path. Room reactions walk the doll/camera toward their object so phone users see the result.
 - Targeted browser coverage lives in `tests/living-rooms.spec.ts`; uses GitHub Actions. Local room verification passes 791 unit tests plus typecheck, format and build. Check the branch's latest GitHub run before claiming browser success.
 
+## Illustrated doll replacement in progress
+
+- Owner approved `gallery/avatars/doll-replacement-concept.png`, rejected further simplified SVG approximations, and requires full mix-and-match customization.
+- New actual illustrated layer fitting proof: `gallery/avatars/illustrated/preview.html`, separate body/hair/halter/flares/platform PNGs, and `assembled-preview.png`. Compositor and fitting transforms: `src/components/avatar/illustrated.ts`; focused checks in its unit test and `tests/illustrated-doll.spec.ts`.
+- This is authoring work, **not the production Avatar renderer**. No saved look fields or wardrobe options were removed. Complete the remaining variant/makeup/accessory/action fitting listed in `gallery/avatars/illustrated/README.md` before switching the game. Do not claim that the new illustration is in-game.
+
 ## Remaining follow-ups
 
 - Reference doll refinement: tapered face, lifted eyes with finer liner, softer skin highlights, selected-color hair gradients, longer half-up layers, cascading wave highlights, and woven topknot. Existing saves and wardrobe options preserved. Visual resemblance still needs owner feedback.
