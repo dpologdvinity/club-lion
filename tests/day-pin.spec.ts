@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 import { tapRoomPath } from "./room-paths";
 
 test("the plaza board hints today's pin; picking it up keeps it once", async ({
@@ -43,4 +44,27 @@ test("the plaza board hints today's pin; picking it up keeps it once", async ({
   await page.reload();
   await expect(page.locator(".day-pin")).toHaveCount(0);
   expect(errors).toEqual([]);
+});
+
+test("the Stamp Book shows the pin collection", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    const save = JSON.parse(
+      localStorage.getItem("club-lion-player-v1") ?? "{}",
+    );
+    localStorage.setItem(
+      "club-lion-player-v1",
+      JSON.stringify({ ...save, pins: ["mango", "frog"] }),
+    );
+  });
+  await page.reload();
+  await page.getByRole("button", { name: "Stamp Book" }).first().click();
+  const shelf = page.locator(".pin-shelf");
+  await expect(shelf.getByRole("heading")).toContainText("2 / 14");
+  await expect(shelf.locator("li.is-found")).toHaveCount(2);
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa"])
+    .include(".pin-shelf")
+    .analyze();
+  expect(results.violations).toEqual([]);
 });
