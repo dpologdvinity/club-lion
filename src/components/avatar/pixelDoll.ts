@@ -6,6 +6,7 @@
  */
 import type { AvatarLook } from "../../types/world.ts";
 import {
+  BANGS_OPTIONS,
   EYE_COLORS,
   resolveBottomId,
   resolveShoeId,
@@ -93,6 +94,10 @@ export function renderPixelDoll(
   const shoeKit = SHOE_KIT.find((entry) => entry.id === look.shoeKitId);
   const costume = COSTUMES.find((entry) => entry.id === look.costumeId);
   const showHair = !costume?.hidesHair;
+  const bangs = BANGS_OPTIONS.find((option) => option.id === look.bangsId)?.id;
+  const streak = /^#[0-9a-f]{6}$/i.test(look.hairStreak ?? "")
+    ? String(look.hairStreak)
+    : undefined;
   const p = idPrefix;
   const defs =
     levelFilter(`${p}-skin`, [
@@ -111,6 +116,16 @@ export function renderPixelDoll(
       mix(hair, 0.32),
       mix(hair, 0.62),
     ]) +
+    (streak
+      ? levelFilter(`${p}-streak`, [
+          mix(streak, -0.5),
+          mix(streak, -0.3),
+          mix(streak, -0.15),
+          hexToRgb(streak),
+          hexToRgb(streak),
+          mix(streak, 0.4),
+        ])
+      : "") +
     levelFilter(`${p}-eyes`, [
       [26, 15, 10],
       hexToRgb(iris[2]),
@@ -153,7 +168,10 @@ export function renderPixelDoll(
         ? ""
         : kitSprite
           ? sprite(`${kitSprite}-front`)
-          : sprite(`hair-front-${shape}`, `${p}-hair`)
+          : sprite(
+              bangs ? `hair-bangs-${bangs}` : `hair-front-${shape}`,
+              `${p}-hair`,
+            ) + (streak ? sprite("hair-streak", `${p}-streak`) : "")
     }</g>` +
     (costume
       ? `<g class="avatar-costume costume-${dashed(costume.id)}">${sprite(`costume-${costume.id}`)}</g>`

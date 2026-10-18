@@ -169,13 +169,14 @@ export function SalonModal({
                 draft.hairKitId ? undefined : draft.hairId,
                 (hairId) => update({ hairId, hairKitId: undefined }),
               )}
-              {pills(
-                "Bangs & Fringe",
-                "bangs",
-                BANGS_OPTIONS,
-                draft.bangsId ?? "none",
-                (bangsId) => update({ bangsId }),
-              )}
+              {!draft.hairKitId &&
+                pills(
+                  "Bangs & Fringe",
+                  "bangs",
+                  BANGS_OPTIONS,
+                  draft.bangsId ?? "none",
+                  (bangsId) => update({ bangsId }),
+                )}
               {!draft.hairKitId &&
                 swatches("Base color", null, HAIR_COLORS, hairColorId, (id) =>
                   update({
@@ -184,17 +185,18 @@ export function SalonModal({
                       draft.hairColor,
                   }),
                 )}
-              {swatches(
-                "Highlight streak",
-                null,
-                HAIR_STREAKS,
-                streakId,
-                (id) =>
-                  update({
-                    hairStreak:
-                      HAIR_STREAKS.find((s) => s.id === id)?.hex || undefined,
-                  }),
-              )}
+              {!draft.hairKitId &&
+                swatches(
+                  "Highlight streak",
+                  null,
+                  HAIR_STREAKS,
+                  streakId,
+                  (id) =>
+                    update({
+                      hairStreak:
+                        HAIR_STREAKS.find((s) => s.id === id)?.hex || undefined,
+                    }),
+                )}
             </>
           )}
 

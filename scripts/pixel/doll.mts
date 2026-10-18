@@ -87,6 +87,24 @@ const FRINGE = {
   spiky: `<path d="M11 32Q9 14 20 9L22 2L27 8L32 0L36 8L42 2L44 10Q55 16 53 32Q50 24 44 22Q42 26 37 23Q33 28 28 23Q23 27 20 22Q14 25 11 32Z" fill="${G.base}"/>`,
 };
 
+/** Salon bangs: each is a whole front layer (fringe, strands and shine). */
+const BANGS: Record<string, string> = {
+  none: `<path d="M11 30Q9 6 32 5Q55 6 53 30Q50 16 32 14Q14 16 11 30Z" fill="${G.base}"/>`,
+  curtain_bangs: `<path d="M10 34Q8 6 32 5Q56 6 54 34Q52 24 46 18Q40 15 33 17Q32 12 31 17Q24 15 18 18Q12 24 10 34Z" fill="${G.base}"/>`,
+  blunt_bangs: FRINGE.blunt,
+  wispy_tendrils: `${FRINGE.side}<path d="M13 30Q11 36 13 40M51 30Q53 36 51 40" fill="none" stroke="${G.base}" stroke-width="1.6"/>`,
+  baby_edges: `<path d="M11 30Q9 6 32 5Q55 6 53 30Q50 16 32 14Q14 16 11 30Z" fill="${G.base}"/><path d="M20 17q-3 2 0 4q3 1 1 3M44 17q3 2 0 4q-3 1 -1 3" fill="none" stroke="${G.deep}" stroke-width="1"/>`,
+  side_sweep: FRINGE.side,
+};
+
+const frontDetails =
+  `<path d="M24 10Q22 15 21 20M32 8Q31 14 30 19M40 10Q42 14 43 19" ${strand}/>` +
+  `<path d="M17 15Q28 9 44 12" ${shine}/>` +
+  `<path d="M19 18Q23 15 27 14" fill="none" stroke="${G.light}" stroke-width="1"/>`;
+
+/** A highlight streak through the front hair, one grey level, recoloured in game. */
+const STREAK = `<path d="M22 6Q18 14 16 30" fill="none" stroke="${G.light}" stroke-width="3.2"/><path d="M38 6Q40 12 41 20" fill="none" stroke="${G.light}" stroke-width="2.4"/>`;
+
 function hairFront(shape: HairShape): string {
   const fringe =
     shape === "pixie"
@@ -232,6 +250,12 @@ await renderAll([
     { name: `hair-back-${shape}`, svg: HAIR_BACK[shape] || "<g/>", grey: true },
     { name: `hair-front-${shape}`, svg: hairFront(shape), grey: true },
   ]),
+  ...Object.entries(BANGS).map(([id, fringe]) => ({
+    name: `hair-bangs-${id}`,
+    svg: fringe + frontDetails,
+    grey: true,
+  })),
+  { name: "hair-streak", svg: STREAK, grey: true, outline: false as const },
   ...Object.entries(TOP_LOOKS).map(([id, look]) => ({
     name: `top-${id}`,
     svg: top(look),
