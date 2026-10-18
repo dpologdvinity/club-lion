@@ -40,6 +40,20 @@ export const canyonRapidsManifest: RoomManifest = {
   ],
   interactives: [
     {
+      id: "canyon-echo-cave",
+      label: "Shout into the echo cave",
+      icon: "🗣️",
+      type: "activity",
+      position: { x: 750, y: 530 },
+      actionData: { tune: { step: 1, notes: [7, 7, 4, 4, 2, 2] } },
+      object: { kind: "echocave", width: 220, height: 180, caption: false },
+      reaction: {
+        message: "Hello… hello… hello!",
+        messages: ["The cave is quiet.", "Hello… hello… hello!"],
+        sound: "chime",
+      },
+    },
+    {
       id: "river-surf-dock",
       label: "River Surf Rapids",
       icon: "🏄",

@@ -60,14 +60,14 @@ for (const room of [
     name: "Carnival Midway",
     action: "Pop some popcorn",
     kind: "popcorn",
-    objects: 1,
+    objects: 3,
     exit: "Wonder Park Entrance",
   },
   {
     name: "Wonder Park Entrance",
     action: "Float the balloons",
     kind: "balloons",
-    objects: 1,
+    objects: 2,
     exit: "Carnival Midway",
   },
   {
@@ -81,7 +81,7 @@ for (const room of [
     name: "Lion Speedway",
     action: "Wave the checkered flag",
     kind: "flag",
-    objects: 1,
+    objects: 3,
     exit: "Downtown Plaza",
   },
   {
@@ -95,7 +95,7 @@ for (const room of [
     name: "Canyon Rapids",
     action: "Paddle the kayak",
     kind: "kayak",
-    objects: 1,
+    objects: 2,
     exit: "Downtown Plaza",
   },
   {

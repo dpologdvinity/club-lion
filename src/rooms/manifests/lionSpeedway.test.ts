@@ -18,7 +18,13 @@ test("lionSpeedwayManifest is structurally valid with a walkable paddock", () =>
   }
   assert.deepEqual(
     manifest.interactives.map((item) => item.id),
-    ["kart-race-gate", "winner-podium", "speedway-flag"],
+    [
+      "speedway-traffic-light",
+      "speedway-tires",
+      "kart-race-gate",
+      "winner-podium",
+      "speedway-flag",
+    ],
   );
 });
 

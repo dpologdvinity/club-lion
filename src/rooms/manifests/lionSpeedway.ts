@@ -40,6 +40,44 @@ export const lionSpeedwayManifest: RoomManifest = {
   ],
   interactives: [
     {
+      id: "speedway-traffic-light",
+      label: "Change the race light",
+      icon: "🚦",
+      type: "activity",
+      position: { x: 350, y: 530 },
+      actionData: { tune: { step: 0, notes: [4, 4, 7] } },
+      object: {
+        kind: "trafficlight",
+        width: 110,
+        height: 240,
+        steps: 3,
+        caption: false,
+      },
+      reaction: {
+        message: "Ready?",
+        messages: [
+          "Green! GO GO GO!",
+          "Red light: stop!",
+          "Yellow: get ready…",
+        ],
+        sound: "chime",
+      },
+    },
+    {
+      id: "speedway-tires",
+      label: "Bounce on the tires",
+      icon: "🛞",
+      type: "activity",
+      position: { x: 930, y: 530 },
+      actionData: {},
+      object: { kind: "tires", width: 150, height: 150, caption: false },
+      reaction: {
+        message: "Boing!",
+        messages: ["The tires wait.", "Boing boing!"],
+        sound: "bubble",
+      },
+    },
+    {
       id: "kart-race-gate",
       label: "Race karts",
       icon: "🏎️",

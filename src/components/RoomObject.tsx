@@ -1940,6 +1940,238 @@ export function RoomObject({
             )}
           </g>
         )}
+        {kind === "ticketbooth" && (
+          <g className={step === 1 ? "object-shake" : undefined}>
+            <rect
+              x="25"
+              y="70"
+              width="150"
+              height="165"
+              rx="10"
+              fill="#ff8fab"
+              stroke="#c0507a"
+              strokeWidth="6"
+            />
+            <path
+              d="M15 75L100 15L185 75Z"
+              fill="#ffd84d"
+              stroke="#c9a02a"
+              strokeWidth="6"
+            />
+            <rect
+              x="50"
+              y="100"
+              width="100"
+              height="60"
+              rx="8"
+              fill="#bfe6ff"
+            />
+            <text
+              x="100"
+              y="205"
+              fontSize="26"
+              fontWeight="900"
+              fill="#fff"
+              textAnchor="middle"
+            >
+              TICKETS
+            </text>
+            <circle cx="100" cy="45" r="12" fill="#c9a02a" />
+            {step === 1 && (
+              <g
+                className="object-pop"
+                stroke="#ffd84d"
+                strokeWidth="6"
+                strokeLinecap="round"
+              >
+                <path d="M70 30L55 20M130 30L145 20M100 25V5" />
+              </g>
+            )}
+            {step === 2 && (
+              <text
+                key={state}
+                className="object-pop"
+                x="100"
+                y="150"
+                fontSize="52"
+                textAnchor="middle"
+              >
+                🎟️
+              </text>
+            )}
+          </g>
+        )}
+        {kind === "strongman" && (
+          <g>
+            <rect
+              x="85"
+              y="20"
+              width="30"
+              height="210"
+              rx="8"
+              fill="#fff8ec"
+              stroke="#c98a4a"
+              strokeWidth="5"
+            />
+            {[60, 100, 140, 180].map((y) => (
+              <path
+                key={y}
+                d={`M85 ${y}H115`}
+                stroke="#ff8fab"
+                strokeWidth="4"
+              />
+            ))}
+            <circle
+              cx="100"
+              cy="18"
+              r="18"
+              fill="#ffd84d"
+              stroke="#c9a02a"
+              strokeWidth="5"
+            />
+            <rect
+              x="78"
+              y={[200, 150, 90, 30][step]}
+              width="44"
+              height="22"
+              rx="8"
+              fill="#e94b3c"
+              className={step > 0 ? "object-pop" : undefined}
+              key={state}
+            />
+            <rect
+              x="40"
+              y="225"
+              width="120"
+              height="15"
+              rx="6"
+              fill="#8a5a30"
+            />
+            {step === 3 && (
+              <g className="sm-twinkle" fill="#ffd84d">
+                <circle cx="55" cy="10" r="7" />
+                <circle cx="150" cy="20" r="6" />
+                <circle cx="140" cy="-5" r="5" />
+              </g>
+            )}
+          </g>
+        )}
+        {kind === "duckpond" && (
+          <g>
+            <ellipse
+              cx="100"
+              cy="190"
+              rx="95"
+              ry="45"
+              fill="#4aa8ff"
+              stroke="#2b6fb0"
+              strokeWidth="6"
+            />
+            <ellipse cx="100" cy="185" rx="75" ry="30" fill="#8fd3f4" />
+            <g className="sm-bob" fontSize="34" textAnchor="middle">
+              <text x="60" y="195">
+                🦆
+              </text>
+              <text x="105" y="180">
+                🦆
+              </text>
+              <text x="145" y="200">
+                🦆
+              </text>
+            </g>
+            {step > 0 && (
+              <text
+                key={state}
+                className="object-pop"
+                x="100"
+                y="120"
+                fontSize="56"
+                textAnchor="middle"
+              >
+                {["", "⭐", "🧸", "🍬"][step]}
+              </text>
+            )}
+          </g>
+        )}
+        {kind === "trafficlight" && (
+          <g>
+            <rect x="92" y="150" width="16" height="90" fill="#555" />
+            <rect
+              x="45"
+              y="5"
+              width="110"
+              height="160"
+              rx="18"
+              fill="#333"
+              stroke="#111"
+              strokeWidth="5"
+            />
+            <circle
+              cx="100"
+              cy="40"
+              r="20"
+              fill={step === 1 ? "#ff3b30" : "#5a2a28"}
+            />
+            <circle
+              cx="100"
+              cy="85"
+              r="20"
+              fill={step === 2 ? "#ffd60a" : "#5a5228"}
+            />
+            <circle
+              cx="100"
+              cy="130"
+              r="20"
+              fill={step === 0 ? "#34c759" : "#28502e"}
+            />
+          </g>
+        )}
+        {kind === "tires" && (
+          <g key={state} className={active ? "object-pop" : undefined}>
+            {[180, 135, 90].map((y, i) => (
+              <g key={y}>
+                <ellipse cx="100" cy={y} rx="80" ry="28" fill="#2b2b2b" />
+                <ellipse
+                  cx="100"
+                  cy={y}
+                  rx="40"
+                  ry="12"
+                  fill={["#ff5a5f", "#ffd84d", "#4aa8ff"][i]}
+                />
+              </g>
+            ))}
+            {active && (
+              <text x="160" y="60" fontSize="40" textAnchor="middle">
+                ✨
+              </text>
+            )}
+          </g>
+        )}
+        {kind === "echocave" && (
+          <g>
+            <path
+              d="M5 235Q20 40 100 30Q180 40 195 235Z"
+              fill="#a85e2c"
+              stroke="#7a4220"
+              strokeWidth="6"
+            />
+            <path d="M45 235Q55 110 100 100Q145 110 155 235Z" fill="#2b1a10" />
+            {active && (
+              <g
+                key={state}
+                className="object-pop"
+                fill="none"
+                stroke="#fff4ba"
+                strokeWidth="6"
+                strokeLinecap="round"
+              >
+                <path d="M100 150Q120 170 100 190" />
+                <path d="M120 135Q150 170 120 205" />
+                <path d="M140 120Q180 170 140 220" />
+              </g>
+            )}
+          </g>
+        )}
         {kind === "door" && (
           <g>
             <path

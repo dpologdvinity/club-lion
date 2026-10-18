@@ -96,7 +96,13 @@ export type RoomObjectKind =
   | "digspot"
   | "volcano"
   | "dinoegg"
-  | "sifter";
+  | "sifter"
+  | "ticketbooth"
+  | "strongman"
+  | "duckpond"
+  | "trafficlight"
+  | "tires"
+  | "echocave";
 
 export type RoomManifest = {
   id: string;

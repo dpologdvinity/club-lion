@@ -31,6 +31,56 @@ export const wonderParkMidwayManifest: RoomManifest = {
   ],
   interactives: [
     {
+      id: "midway-strongman",
+      label: "Swing the strongman hammer",
+      icon: "🔔",
+      type: "activity",
+      position: { x: 330, y: 540 },
+      actionData: { tune: { step: 3, notes: [0, 2, 4, 7] } },
+      object: {
+        kind: "strongman",
+        width: 140,
+        height: 260,
+        steps: 4,
+        caption: false,
+      },
+      reaction: {
+        message: "Bonk!",
+        messages: [
+          "Grab the big hammer!",
+          "Bonk! A little hop.",
+          "BONK! Higher!",
+          "DING! You rang the bell!",
+        ],
+        sound: "chime",
+      },
+    },
+    {
+      id: "midway-duck-pond",
+      label: "Pick a lucky duck",
+      icon: "🦆",
+      type: "activity",
+      position: { x: 1300, y: 540 },
+      actionData: {},
+      object: {
+        kind: "duckpond",
+        width: 180,
+        height: 140,
+        steps: 4,
+        caption: false,
+      },
+      reaction: {
+        message: "Quack!",
+        messages: [
+          "The ducks swim round and round.",
+          "Quack! This duck has a star!",
+          "Quack! This one has a teddy!",
+          "Quack! A candy prize!",
+        ],
+        sound: "splash",
+      },
+    },
+    {
       id: "spinning-mango-teacups",
       label: "Ride Mango Teacups",
       icon: "🥭",
