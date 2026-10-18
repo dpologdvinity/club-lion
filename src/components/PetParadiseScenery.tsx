@@ -83,6 +83,7 @@ function ClawTub({
         stroke="#d9c5b4"
         strokeWidth="4"
       />
+      <path d="M-100-40Q-100 8-70 10H70Q100 8 100-40Z" fill={mat("fabric")} />
       <ellipse
         cx="0"
         cy="-40"
@@ -260,6 +261,14 @@ const PetProps = memo(function PetProps(): JSX.Element {
           stroke="#c96a8a"
           strokeWidth="5"
         />
+        <rect
+          x="-130"
+          y="-70"
+          width="260"
+          height="70"
+          rx="35"
+          fill={mat("fabric")}
+        />
         {[-60, 0, 60].map((dx) => (
           <rect
             key={dx}
@@ -285,6 +294,10 @@ const PetPortalDoor = memo(function PetPortalDoor(): JSX.Element {
         fill="#7b4f7a"
         stroke="#f2c879"
         strokeWidth="6"
+      />
+      <path
+        d="M28 560V476Q28 440 64 440Q100 440 100 476V560Z"
+        fill={mat("wood")}
       />
       <PawPrint x={64} y={500} scale={0.5} fill="#f2c879" opacity={0.85} />
     </>

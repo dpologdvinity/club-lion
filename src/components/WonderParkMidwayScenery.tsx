@@ -247,6 +247,7 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
           stroke="#451a03"
           strokeWidth="4"
         />
+        <ellipse cx="0" cy="55" rx="280" ry="54" fill={mat("wood")} />
         <ellipse
           cx="0"
           cy="46"
@@ -256,6 +257,7 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
           stroke="#b45309"
           strokeWidth="6"
         />
+        <ellipse cx="0" cy="46" rx="270" ry="50" fill={mat("planks")} />
 
         {/* Outer Marquee Ring Bulbs on Platform */}
         {Array.from({ length: 24 }, (_, i) => {
@@ -471,6 +473,7 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
           stroke="#451a03"
           strokeWidth="4"
         />
+        <ellipse cx="0" cy="50" rx="265" ry="46" fill={mat("wood")} />
         <ellipse
           cx="0"
           cy="40"
@@ -480,6 +483,7 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
           stroke="#b45309"
           strokeWidth="6"
         />
+        <ellipse cx="0" cy="40" rx="255" ry="42" fill={mat("planks")} />
 
         {/* Center Mirrored Pillar & Golden Lion Reliefs */}
         <rect
@@ -1109,6 +1113,7 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
         <rect x="-86" y="-22" width="172" height="24" rx="8" fill="#b45309" />
         <rect x="-86" y="-22" width="172" height="8" rx="4" fill="#fbbf24" />
         <rect x="-20" y="-470" width="40" height="450" fill="#e11d48" />
+        <rect x="-20" y="-470" width="40" height="450" fill={mat("metal")} />
         <rect x="-9" y="-470" width="18" height="450" fill="#fb7185" />
         {Array.from({ length: 15 }, (_, i) => (
           <g

@@ -218,6 +218,7 @@ const CondoRoomBackdrop = React.memo(function CondoRoomBackdrop() {
           patternUnits="userSpaceOnUse"
         >
           <rect width="220" height="60" fill="#7a4a2b" />
+          <rect width="220" height="60" fill={mat("wood")} />
           <path
             d="M0 0H220M0 30H220M55 0V30M165 30V60"
             stroke="#4e2c18"
@@ -275,6 +276,10 @@ const CondoRoomBackdrop = React.memo(function CondoRoomBackdrop() {
         fill="#e8a0a8"
         stroke="#b8677a"
         strokeWidth="4"
+      />
+      <path
+        d="M160 40H236Q218 200 232 350Q196 362 160 350Z"
+        fill={mat("fabric")}
       />
       <path
         d="M720 40H644Q662 200 648 350Q684 362 720 350Z"
@@ -395,6 +400,14 @@ const CondoRoomBackdrop = React.memo(function CondoRoomBackdrop() {
           stroke="#c9a227"
           strokeWidth="6"
         />
+        <rect
+          x="-70"
+          y="-90"
+          width="140"
+          height="170"
+          rx="6"
+          fill={mat("wood")}
+        />
         <rect x="-50" y="-68" width="40" height="40" rx="3" fill="#e8a0a8" />
         <rect x="2" y="-68" width="40" height="40" rx="3" fill="#f6c565" />
         <rect x="-50" y="-16" width="40" height="40" rx="3" fill="#3d9c9c" />
@@ -432,6 +445,14 @@ const CondoRoomBackdrop = React.memo(function CondoRoomBackdrop() {
           fill="#d64558"
           stroke="#7a1f30"
           strokeWidth="5"
+        />
+        <rect
+          x="-48"
+          y="250"
+          width="96"
+          height="190"
+          rx="14"
+          fill={mat("fabric")}
         />
         <path
           d="M-56 256Q0 196 56 256Z"
@@ -549,6 +570,14 @@ const CondoRoomBackdrop = React.memo(function CondoRoomBackdrop() {
           strokeWidth="4"
         />
         <rect
+          x="1458"
+          y="430"
+          width="244"
+          height="80"
+          rx="22"
+          fill={mat("fabric")}
+        />
+        <rect
           x="1432"
           y="480"
           width="36"
@@ -601,6 +630,7 @@ const CondoRoomBackdrop = React.memo(function CondoRoomBackdrop() {
           stroke="#7a3e22"
           strokeWidth="3"
         />
+        <path d="M-30 520H30L22 580H-22Z" fill={mat("plaster")} />
         <path
           d="M0 520Q-4 480 0 440"
           fill="none"

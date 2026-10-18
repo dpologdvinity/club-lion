@@ -316,7 +316,9 @@ const ScoutHQStatic = React.memo(function ScoutHQStatic() {
       </defs>
 
       <rect x="0" y="0" width="1920" height="500" fill="url(#ssb-wall)" />
+      <rect x="0" y="0" width="1920" height="500" fill={mat("metal")} />
       <rect x="0" y="500" width="1920" height="220" fill="url(#ssb-floor)" />
+      <rect x="0" y="500" width="1920" height="220" fill={mat("tile")} />
 
       {PILLAR_XS.map((x) => (
         <g key={x}>
@@ -501,6 +503,14 @@ const ScoutHQStatic = React.memo(function ScoutHQStatic() {
             stroke="#2c3e44"
             strokeWidth="5"
           />
+          <rect
+            x="-70"
+            y="-150"
+            width="140"
+            height="230"
+            rx="8"
+            fill={mat("metal")}
+          />
           {Array.from({ length: 6 }, (_, unit) => (
             <rect
               key={unit}
@@ -565,6 +575,14 @@ const ScoutHQStatic = React.memo(function ScoutHQStatic() {
           fill="#141c1f"
           stroke="#2c3e44"
           strokeWidth="3"
+        />
+        <rect
+          x="-160"
+          y="0"
+          width="320"
+          height="40"
+          rx="6"
+          fill={mat("metal")}
         />
         <rect
           x="-80"

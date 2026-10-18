@@ -770,6 +770,7 @@ const LionAquariumStage = memo(function LionAquariumStage() {
         stroke="#8ad9ef"
         strokeWidth="3"
       />
+      <ellipse cx="1560" cy="606" rx="182" ry="34" fill={mat("water")} />
       <ellipse cx="1520" cy="596" rx="60" ry="8" fill="#e8fbff" opacity=".5" />
       <StarfishAndCrab />
 

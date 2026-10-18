@@ -40,6 +40,10 @@ function Pine({ x, y, s }: PineSpec): JSX.Element {
         fill="#3d705d"
       />
       <path
+        d="M0-155L-38-80H38ZM0-112L-54-35H54ZM0-70L-65 8H65Z"
+        fill={mat("leaves")}
+      />
+      <path
         d="M0-155L-20-115H20ZM0-112L-26-73H26ZM0-70L-35-29H35Z"
         fill="#e7f2ee"
       />
@@ -103,6 +107,7 @@ const MtMistBackdrop = memo(function MtMistBackdrop(): JSX.Element {
         fill={mat("snow")}
       />
       <path d="M0 560Q500 525 1100 565T2400 545V720H0Z" fill="#f1f6f4" />
+      <path d="M0 560Q500 525 1100 565T2400 545V720H0Z" fill={mat("snow")} />
 
       {PINES.map((p, i) => (
         <Pine key={i} x={p.x} y={p.y} s={p.s} />
@@ -150,6 +155,14 @@ const MtMistLandmarks = memo(function MtMistLandmarks(): JSX.Element {
           stroke="#654b35"
           strokeWidth="7"
         />
+        <rect
+          x="-255"
+          y="-220"
+          width="510"
+          height="235"
+          rx="10"
+          fill={mat("planks")}
+        />
         {Array.from({ length: 8 }, (_, i) => (
           <path
             key={i}
@@ -164,6 +177,7 @@ const MtMistLandmarks = memo(function MtMistLandmarks(): JSX.Element {
           stroke="#563f30"
           strokeWidth="7"
         />
+        <path d="M-310-210L0-380L310-210Z" fill={mat("planks")} />
         <path
           d="M-310-210L0-380L310-210L264-205L0-345L-269-197Z"
           fill="#fffdf9"
@@ -195,6 +209,14 @@ const MtMistLandmarks = memo(function MtMistLandmarks(): JSX.Element {
           stroke="#edc987"
           strokeWidth="5"
         />
+        <rect
+          x="-49"
+          y="-108"
+          width="98"
+          height="123"
+          rx="6"
+          fill={mat("wood")}
+        />
         <circle cx="26" cy="-44" r="5" fill="#edc987" />
         <rect
           x="-175"
@@ -205,6 +227,14 @@ const MtMistLandmarks = memo(function MtMistLandmarks(): JSX.Element {
           fill="#fff1d4"
           stroke="#674c34"
           strokeWidth="4"
+        />
+        <rect
+          x="-175"
+          y="-258"
+          width="350"
+          height="48"
+          rx="10"
+          fill={mat("wood")}
         />
         <text
           y="-225"
@@ -229,6 +259,14 @@ const MtMistLandmarks = memo(function MtMistLandmarks(): JSX.Element {
           fill="#f3dfb2"
           stroke="#846042"
           strokeWidth="5"
+        />
+        <rect
+          x="-145"
+          y="-130"
+          width="290"
+          height="56"
+          rx="8"
+          fill={mat("wood")}
         />
         <text
           y="-92"

@@ -266,6 +266,7 @@ const ClubPulseStage = memo(function ClubPulseStage() {
       {/* ========================================================= */}
       {/* Upper Steel Truss Beam */}
       <rect x="0" y="0" width="1920" height="42" fill="#0f1118" />
+      <rect x="0" y="0" width="1920" height="42" fill={mat("metal")} />
       <path
         d="M0 40 L1920 40 M0 20 L1920 20"
         stroke="#272d3b"
@@ -665,6 +666,14 @@ const ClubPulseStage = memo(function ClubPulseStage() {
           stroke="#334155"
           strokeWidth="6"
         />
+        <rect
+          x="-95"
+          y="-225"
+          width="190"
+          height="235"
+          rx="14"
+          fill={mat("fabric")}
+        />
         {/* Metal Corner Protectors */}
         <polygon points="-95,-225 -65,-225 -95,-195" fill="#64748b" />
         <polygon points="95,-225 65,-225 95,-195" fill="#64748b" />
@@ -758,6 +767,14 @@ const ClubPulseStage = memo(function ClubPulseStage() {
           fill="#0c0e14"
           stroke="#334155"
           strokeWidth="6"
+        />
+        <rect
+          x="-95"
+          y="-225"
+          width="190"
+          height="235"
+          rx="14"
+          fill={mat("fabric")}
         />
         {/* Metal Corner Protectors */}
         <polygon points="-95,-225 -65,-225 -95,-195" fill="#64748b" />
@@ -872,6 +889,14 @@ const ClubPulseStage = memo(function ClubPulseStage() {
           fill="#110e20"
           stroke="#4f46e5"
           strokeWidth="6"
+        />
+        <rect
+          x="-380"
+          y="-200"
+          width="760"
+          height="190"
+          rx="24"
+          fill={mat("metal")}
         />
 
         {/* Dynamic 16-Bar Audio Equalizer Visualizer */}
@@ -1307,6 +1332,14 @@ const ClubPulseStage = memo(function ClubPulseStage() {
           fill="#110d24"
           stroke="#00f0ff"
           strokeWidth="3"
+        />
+        <rect
+          x="-90"
+          y="-130"
+          width="160"
+          height="120"
+          rx="12"
+          fill={mat("glass")}
         />
         {/* Backlight Bar Glow */}
         <rect

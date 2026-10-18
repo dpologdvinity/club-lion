@@ -246,6 +246,12 @@ const RiverPalm = memo(function RiverPalm({
         strokeWidth="11"
         strokeLinecap="round"
       />
+      <path
+        d="M0 0Q-12-120 8-210Q16-250-10-280"
+        fill="none"
+        stroke={mat("bamboo")}
+        strokeWidth="11"
+      />
       {Array.from({ length: 9 }, (_, i) => {
         const t = i / 9;
         return (

@@ -60,9 +60,13 @@ function Pine({
   return (
     <g transform={`translate(${x} ${y}) scale(${s})`}>
       <rect x="-7" y="-26" width="14" height="30" fill="#5b3f2a" />
+      <rect x="-7" y="-26" width="14" height="30" fill={mat("wood")} />
       <path d="M0-190L-46-120H46Z" fill={shade} />
+      <path d="M0-190L-46-120H46Z" fill={mat("leaves")} />
       <path d="M0-140L-62-64H62Z" fill={shade} />
+      <path d="M0-140L-62-64H62Z" fill={mat("leaves")} />
       <path d="M0-80L-78-6H78Z" fill={shade} />
+      <path d="M0-80L-78-6H78Z" fill={mat("leaves")} />
       <path d="M0-190L-18-168H18Z" fill="#f4f9ff" />
       <path d="M0-140L-26-118H26Z" fill="#f4f9ff" opacity=".85" />
       <path d="M0-80L-30-58H30Z" fill="#f4f9ff" opacity=".85" />

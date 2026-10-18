@@ -494,6 +494,14 @@ const WonderParkAboveTrain = React.memo(function WonderParkAboveTrain() {
           stroke="#b45309"
           strokeWidth="6"
         />
+        <rect
+          x="-175"
+          y="-195"
+          width="350"
+          height="185"
+          rx="18"
+          fill={mat("plaster")}
+        />
 
         {/* Ornate Cedar Lap Siding Panels */}
         <rect
@@ -864,6 +872,14 @@ const WonderParkAboveTrain = React.memo(function WonderParkAboveTrain() {
           stroke="#78350f"
           strokeWidth="6"
         />
+        <rect
+          x="-70"
+          y="-120"
+          width="140"
+          height="120"
+          rx="12"
+          fill={mat("plaster")}
+        />
         {/* Bell-shaped Verdigris Copper Roof */}
         <path
           d="M-85 -120 Q0 -195 85 -120 Z"
@@ -871,6 +887,7 @@ const WonderParkAboveTrain = React.memo(function WonderParkAboveTrain() {
           stroke="#115e59"
           strokeWidth="4"
         />
+        <path d="M-85 -120 Q0 -195 85 -120 Z" fill={mat("metal")} />
         <line
           x1="0"
           y1="-175"
@@ -1035,6 +1052,7 @@ const WonderParkAboveTrain = React.memo(function WonderParkAboveTrain() {
           stroke="#bae6fd"
           strokeWidth="5"
         />
+        <ellipse cx="130" cy="55" rx="190" ry="46" fill={mat("water")} />
         {/* Splash Ripples */}
         <ellipse
           cx="130"

@@ -52,9 +52,13 @@ function Pine({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
     <g transform={`translate(${x} ${y}) scale(${scale})`}>
       <ellipse cy="2" rx="34" ry="7" fill="#7a3a20" opacity=".25" />
       <rect x="-5" y="-26" width="10" height="28" rx="2" fill="#6b4226" />
+      <rect x="-5" y="-26" width="10" height="28" rx="2" fill={mat("wood")} />
       <path d="M0-128L-30-74H30Z" fill="#2c6e49" />
+      <path d="M0-128L-30-74H30Z" fill={mat("leaves")} />
       <path d="M0-104L-40-46H40Z" fill="#357d52" />
+      <path d="M0-104L-40-46H40Z" fill={mat("leaves")} />
       <path d="M0-76L-48-18H48Z" fill="#40905e" />
+      <path d="M0-76L-48-18H48Z" fill={mat("leaves")} />
       <path
         d="M0-128L-30-74H0Z M0-104L-40-46H0Z M0-76L-48-18H0Z"
         fill="#2a6040"

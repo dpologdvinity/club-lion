@@ -349,8 +349,16 @@ const LionSpeedwayStage = memo(function LionSpeedwayStage() {
         fill="#9fd88a"
       />
       <path
+        d="M0 330Q260 250 520 300T1040 290T1560 280T2080 300T2400 280V420H0Z"
+        fill={mat("grass")}
+      />
+      <path
         d="M0 360Q300 310 620 350T1240 340T1880 350T2400 330V420H0Z"
         fill="#7cc46a"
+      />
+      <path
+        d="M0 360Q300 310 620 350T1240 340T1880 350T2400 330V420H0Z"
+        fill={mat("grass")}
       />
       {[60, 1040, 1330, 2300].map((x, i) => (
         <g key={x} transform={`translate(${x} ${350 - (i % 2) * 14})`}>
@@ -399,6 +407,7 @@ const LionSpeedwayStage = memo(function LionSpeedwayStage() {
       {/* Grandstand with a cheering crowd */}
       <g>
         <path d="M80 400V200H1000V400Z" fill="#c9cfdc" />
+        <path d="M80 400V200H1000V400Z" fill={mat("plaster")} />
         {[0, 1, 2, 3].map((row) => (
           <rect
             key={row}
@@ -429,6 +438,7 @@ const LionSpeedwayStage = memo(function LionSpeedwayStage() {
           <path key={x} d={`M${x} 400V150`} stroke="#9aa1b3" strokeWidth="12" />
         ))}
         <path d="M50 160L540 110L1030 160V190H50Z" fill="#fff" />
+        <path d="M50 160L540 110L1030 160V190H50Z" fill={mat("metal")} />
         {Array.from({ length: 7 }, (_, i) => {
           const x1 = 50 + (i * 2 + 1) * 70;
           const x2 = x1 + 70;
@@ -458,6 +468,7 @@ const LionSpeedwayStage = memo(function LionSpeedwayStage() {
       {/* Pit garages with team colors and a little control tower */}
       <g>
         <rect x="1400" y="200" width="560" height="50" fill="#fff" />
+        <rect x="1400" y="200" width="560" height="50" fill={mat("plaster")} />
         <rect x="1400" y="200" width="560" height="14" fill="#2b2233" />
         <rect x="1590" y="120" width="180" height="80" rx="10" fill="#eef0f6" />
         <rect x="1606" y="134" width="148" height="40" rx="6" fill="#7fd3ff" />
@@ -495,12 +506,28 @@ const LionSpeedwayStage = memo(function LionSpeedwayStage() {
           fill="#2b2233"
         />
         <rect
+          x="1980"
+          y="110"
+          width="260"
+          height="200"
+          rx="16"
+          fill={mat("metal")}
+        />
+        <rect
           x="1994"
           y="124"
           width="232"
           height="172"
           rx="10"
           fill="#1a1724"
+        />
+        <rect
+          x="1994"
+          y="124"
+          width="232"
+          height="172"
+          rx="10"
+          fill={mat("glass")}
         />
         {(["lion", "zebra", "giraffe", "hippo"] as const).map((kind, i) => (
           <g key={kind} transform={`translate(2010 ${142 + i * 40})`}>

@@ -257,6 +257,12 @@ const SplashPalm = memo(function SplashPalm({
         strokeWidth="13"
         strokeLinecap="round"
       />
+      <path
+        d="M0 0Q14-130-4-230Q-14-280 20-300"
+        fill="none"
+        stroke={mat("bamboo")}
+        strokeWidth="13"
+      />
       {Array.from({ length: 10 }, (_, i) => {
         const t = i / 10;
         const py = -t * 290;

@@ -49,6 +49,12 @@ function BeachPalm({
         strokeWidth="14"
         strokeLinecap="round"
       />
+      <path
+        d="M0 0Q-4-120 30-220Q48-270 70-300"
+        fill="none"
+        stroke={mat("bamboo")}
+        strokeWidth="24"
+      />
       {Array.from({ length: 11 }, (_, i) => {
         const t = i / 11;
         const px = -2 + t * 70 + Math.sin(t * 3) * 8;
