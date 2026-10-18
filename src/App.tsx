@@ -67,6 +67,7 @@ import {
 import { usePlayer } from "./usePlayer";
 import { useLightingPrefs } from "./useLightingPrefs";
 import { Lion } from "./components/Lion";
+import { Avatar } from "./components/Avatar";
 import { Dialog } from "./components/Dialog";
 import { World } from "./components/World";
 import { Sidebar } from "./components/Sidebar";
@@ -324,7 +325,7 @@ export default function App() {
                 aria-label="Customize your lion"
               >
                 <span className="header-avatar">
-                  <Lion color={player.color} accessory={player.accessory} />
+                  <Avatar look={player.look} size={36} framing="portrait" />
                 </span>
                 <ChevronDown size={16} />
               </button>
