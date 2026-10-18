@@ -9,7 +9,7 @@ import {
   Shirt,
 } from "lucide-react";
 import { isAdventureComplete, type AdventureId, type PlayerV2 } from "../game";
-import { Lion } from "./Lion";
+import { Avatar } from "./Avatar";
 
 const ADVENTURES = [
   {
@@ -50,11 +50,11 @@ export function Sidebar({
   return (
     <aside className="sidebar">
       <section className="profile-panel">
-        <h2 className="panel-label">Your lion</h2>
+        <h2 className="panel-label">You</h2>
         <div className="profile-content">
           <div className="profile-portrait">
             <span className="portrait-sun" />
-            <Lion color={player.color} accessory={player.accessory} />
+            <Avatar look={player.look} size={120} framing="portrait" />
             <span className="portrait-leaf leaf-left">❧</span>
             <span className="portrait-leaf leaf-right">❧</span>
           </div>
