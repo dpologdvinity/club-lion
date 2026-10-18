@@ -8,9 +8,9 @@ import { COSTUMES } from "../../src/components/avatar/pixelCostumes.ts";
 
 const HOOD = `<ellipse cx="32" cy="26" rx="21.5" ry="20.5"/>`;
 const TORSO = `<path d="M23 48Q32 44 41 48L42 66Q32 68 22 66Z"/>`;
-const ARMS = `<path d="M24 48L19.5 51L16.5 64L22.5 65.5L25 56Z"/><path d="M40 48L44.5 51L47.5 64L41.5 65.5L39 56Z"/>`;
+const ARMS = `<path d="M24 48L21 51L19.8 64.6L25.6 65.2L26 56Z"/><path d="M40 48L43 51L44.2 64.6L38.4 65.2L38 56Z"/>`;
 const HANDS = (c: string) =>
-  `<circle cx="19.5" cy="65" r="2.8" fill="${c}"/><circle cx="44.5" cy="65" r="2.8" fill="${c}"/>`;
+  `<circle cx="23" cy="66" r="2.8" fill="${c}"/><circle cx="41" cy="66" r="2.8" fill="${c}"/>`;
 const LEGS = `<rect x="24" y="64" width="7.6" height="23" rx="2"/><rect x="32.4" y="64" width="7.6" height="23" rx="2"/>`;
 const FEET = (c: string) =>
   `<ellipse cx="27.6" cy="87.4" rx="4.6" ry="2.6" fill="${c}"/><ellipse cx="36.4" cy="87.4" rx="4.6" ry="2.6" fill="${c}"/>`;
@@ -46,7 +46,7 @@ function hockey(c: string): string {
     HANDS("#26262e") +
     `<path d="M11 26Q11 3 32 3Q53 3 53 26L48.6 27Q48 13 32 12Q16 13 15.4 27Z" fill="${c}"/>` +
     `<path d="M15 21H49" stroke="${shade(c, -0.3)}" stroke-width="1.2"/>` +
-    `<path d="M17 66L47 88" stroke="#c89a5a" stroke-width="2"/><path d="M45 88H53V90H45Z" fill="#26262e"/>`
+    `<path d="M23 66L47 88" stroke="#c89a5a" stroke-width="2"/><path d="M45 88H53V90H45Z" fill="#26262e"/>`
   );
 }
 
@@ -115,7 +115,7 @@ const ART: Record<string, string> = {
     `<path d="M23 48L32 56L41 48" fill="none" stroke="#ffffff" stroke-width="1.6"/>` +
     `<path d="M23 59H41L45 71Q32 73 19 71Z" fill="#d8202a"/><path d="M27 60L25 71M32 60V72M37 60L39 71" stroke="#ffffff" stroke-width="1"/>` +
     FEET("#ffffff") +
-    `<circle cx="17" cy="64" r="5.6" fill="#7aa8ff"/><circle cx="47" cy="64" r="5.6" fill="#7aa8ff"/><path d="M13 62L21 66M15 68L19 60M43 62L51 66M45 68L49 60" stroke="#d8e8ff" stroke-width="0.8"/>`,
+    `<circle cx="21" cy="65" r="5.6" fill="#7aa8ff"/><circle cx="43" cy="65" r="5.6" fill="#7aa8ff"/><path d="M17 63L25 67M19 69L23 61M39 63L47 67M41 69L45 61" stroke="#d8e8ff" stroke-width="0.8"/>`,
   canoe_yellow: canoe(
     "#f2b632",
     "#a8642a",
@@ -147,7 +147,7 @@ const ART: Record<string, string> = {
     dress("#f6c83a") +
     `<path d="M23 60H41L41 70H33L32 66L31 70H23Z" fill="#ffffff"/>` +
     FEET("#ffffff") +
-    `<path d="M45 64L47 40" stroke="#c8a040" stroke-width="2.4"/><path d="M43 41H51L49 44H45Z" fill="#f2c84a"/><path d="M47 40Q41 34 46 26Q47 31 50 28Q53 34 47 40Z" fill="#ff7a2a"/><path d="M47 39Q44 35 47 31Q49 34 47 39Z" fill="#ffd84d"/>`,
+    `<path d="M41 64L45 40" stroke="#c8a040" stroke-width="2.4"/><path d="M43 41H51L49 44H45Z" fill="#f2c84a"/><path d="M47 40Q41 34 46 26Q47 31 50 28Q53 34 47 40Z" fill="#ff7a2a"/><path d="M47 39Q44 35 47 31Q49 34 47 39Z" fill="#ffd84d"/>`,
   eagle_mascot: faceHole(
     `<g fill="#f4f4f8">${HOOD}</g><path d="M10 34Q22 46 32 46Q42 46 54 34L50 50Q32 56 14 50Z" fill="#f2c84a"/>` +
       `<path d="M10 16Q32 0 54 16L52 20Q32 6 12 20Z" fill="#7a3ac0"/>` +

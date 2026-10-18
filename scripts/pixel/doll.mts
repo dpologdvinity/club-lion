@@ -18,10 +18,10 @@ import {
 /* ------------------------------------------------------------- body */
 
 const body = `
-  <path d="M25 50L21 52L18 63L21 64.5L24 56Z" fill="${G.base}"/>
-  <path d="M39 50L43 52L46 63L43 64.5L40 56Z" fill="${G.base}"/>
-  <circle cx="19.5" cy="64.5" r="2.4" fill="${G.base}"/>
-  <circle cx="44.5" cy="64.5" r="2.4" fill="${G.base}"/>
+  <path d="M25 50L22.4 52.4L21.6 64L24.6 64.4L25.4 57Z" fill="${G.base}"/>
+  <path d="M39 50L41.6 52.4L42.4 64L39.4 64.4L38.6 57Z" fill="${G.base}"/>
+  <circle cx="23" cy="65.4" r="2.4" fill="${G.base}"/>
+  <circle cx="41" cy="65.4" r="2.4" fill="${G.base}"/>
   <rect x="25" y="64" width="6" height="21" rx="2" fill="${G.base}"/>
   <rect x="33" y="64" width="6" height="21" rx="2" fill="${G.base}"/>
   <ellipse cx="27.6" cy="86" rx="3.6" ry="2" fill="${G.base}"/>
@@ -132,13 +132,13 @@ function top(look: TopLook): string {
   const parts: string[] = [];
   if (look.cut === "jacket" || look.cut === "hoodie")
     parts.push(
-      `<path d="M25 49L21 52L18 62L21 63L24 55Z" fill="${f}"/>`,
-      `<path d="M39 49L43 52L46 62L43 63L40 55Z" fill="${f}"/>`,
+      `<path d="M25 49L22.2 52.2L21.4 62.6L24.6 62.9L25.4 55Z" fill="${f}"/>`,
+      `<path d="M39 49L41.8 52.2L42.6 62.6L39.4 62.9L38.6 55Z" fill="${f}"/>`,
     );
   if (look.cut === "tee")
     parts.push(
-      `<path d="M25 49L21 51L19.5 56L23 57L24.5 53Z" fill="${f}"/>`,
-      `<path d="M39 49L43 51L44.5 56L41 57L39.5 53Z" fill="${f}"/>`,
+      `<path d="M25 49L22 51.4L21.4 56.6L24.6 57L25.2 53Z" fill="${f}"/>`,
+      `<path d="M39 49L42 51.4L42.6 56.6L39.4 57L38.8 53Z" fill="${f}"/>`,
     );
   if (look.cut === "tank" || look.cut === "halter" || look.cut === "tube")
     parts.push(

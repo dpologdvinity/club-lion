@@ -110,14 +110,14 @@ function sleeves(r: OutfitRecipe): string {
   const f = r.sleeves ?? r.top;
   switch (r.bodice) {
     case "tee":
-      return `<path d="M25 49L21 51L19.5 56.5L23 57.5L24.5 53Z" fill="${f}"/><path d="M39 49L43 51L44.5 56.5L41 57.5L39.5 53Z" fill="${f}"/>`;
+      return `<path d="M25 49L22 51.4L21.4 57L24.6 57.4L25.2 53Z" fill="${f}"/><path d="M39 49L42 51.4L42.6 57L39.4 57.4L38.8 53Z" fill="${f}"/>`;
     case "puff":
-      return `<circle cx="23" cy="51.5" r="3.4" fill="${f}"/><circle cx="41" cy="51.5" r="3.4" fill="${f}"/>`;
+      return `<circle cx="23.6" cy="51.8" r="3.4" fill="${f}"/><circle cx="40.4" cy="51.8" r="3.4" fill="${f}"/>`;
     case "long":
     case "vest":
-      return `<path d="M25 49L21 52L18 63L21 63.5L24 55Z" fill="${f}"/><path d="M39 49L43 52L46 63L43 63.5L40 55Z" fill="${f}"/>`;
+      return `<path d="M25 49L22.2 52.2L21.4 63.4L24.6 63.6L25.4 55Z" fill="${f}"/><path d="M39 49L41.8 52.2L42.6 63.4L39.4 63.6L38.6 55Z" fill="${f}"/>`;
     case "offshoulder":
-      return `<path d="M23 52L20 55L18.5 62L21.5 62.5L23.5 57Z" fill="${f}"/><path d="M41 52L44 55L45.5 62L42.5 62.5L40.5 57Z" fill="${f}"/>`;
+      return `<path d="M23.4 52L21.6 55L21.2 62L24.4 62.4L25 57Z" fill="${f}"/><path d="M40.6 52L42.4 55L42.8 62L39.6 62.4L39 57Z" fill="${f}"/>`;
     default:
       return "";
   }
