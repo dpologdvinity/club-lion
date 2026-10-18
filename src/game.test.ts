@@ -1063,6 +1063,44 @@ test("dressAvatar allows free, owned, or already-worn pieces only", async () => 
   );
 });
 
+test("dressAvatar wears pixel outfits and old saves load without them", async () => {
+  const { dressAvatar, migratePlayerSave, validateAvatarLook } =
+    await import("./game.ts");
+  const player = migratePlayerSave(newPlayer());
+  const outfit = {
+    topId: "star_baby_tee",
+    bottomId: "denim_mini",
+    shoesId: "jelly_sandals",
+  };
+  const dressed = dressAvatar(player, { ...outfit, dressId: "spring_sprite" });
+  assert.equal(dressed.look.dressId, "spring_sprite");
+  assert.equal(dressAvatar(player, { ...outfit, dressId: "bogus" }), player);
+  assert.equal(
+    dressAvatar(player, { ...outfit, shoeKitId: "shoe_001" }).look.shoeKitId,
+    "shoe_001",
+  );
+  assert.equal(dressAvatar(player, { ...outfit, shoeKitId: "nope" }), player);
+  assert.equal(
+    dressAvatar(player, { ...outfit, costumeId: "teddy_bear" }).look.costumeId,
+    "teddy_bear",
+  );
+  assert.equal(dressAvatar(player, { ...outfit, costumeId: "nope" }), player);
+  assert.equal(dressAvatar(dressed, outfit).look.dressId, undefined);
+
+  const restored = migratePlayerSave(
+    JSON.parse(
+      JSON.stringify({
+        ...dressed,
+        look: { ...dressed.look, hairKitId: "kit_07" },
+      }),
+    ),
+  );
+  assert.equal(restored.look.dressId, "spring_sprite");
+  assert.equal(restored.look.hairKitId, "kit_07");
+  assert.ok(validateAvatarLook(DEFAULT_AVATAR_LOOK), "old looks still load");
+  assert.ok(!validateAvatarLook({ ...DEFAULT_AVATAR_LOOK, dressId: 7 }));
+});
+
 test("saves keep the new look fields and drop retired premium unlock ids", async () => {
   const { migratePlayerSave } = await import("./game.ts");
   const save = {

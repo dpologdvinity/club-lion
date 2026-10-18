@@ -11,3 +11,7 @@ dist
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Third-party reference art (e.g. Fantage screenshots): local only, never commit.
+inspo/
+gallery/fantage/

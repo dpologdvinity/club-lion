@@ -52,9 +52,9 @@ export const savannaSquareManifest: RoomManifest = {
   ],
   neighbors: [
     // Close to the default arrival so all three are in the first view, even on a phone.
-    { id: "milo", x: 560, y: 600 },
-    { id: "cleo", x: 980, y: 520 },
-    { id: "pip", x: 1000, y: 640 },
+    { id: "milo", x: 500, y: 650 },
+    { id: "cleo", x: 1060, y: 620 },
+    { id: "pip", x: 960, y: 745 },
   ],
   interactives: [
     {

@@ -41,6 +41,10 @@ function offlineServiceWorker(): Plugin {
           "icons/icon-512.png",
           "icons/icon-maskable-512.png",
           "icons/apple-touch-icon.png",
+          // The pixel doll builds sprite paths at runtime, so list them all.
+          ...listPublicFiles("public").filter((path) =>
+            path.startsWith("assets/pixel/"),
+          ),
         ],
       );
       this.emitFile({

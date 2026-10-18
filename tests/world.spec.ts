@@ -561,8 +561,8 @@ test("an invalid saved lighting preference recovers instead of blanking the worl
   page,
 }) => {
   await page.addInitScript(() => {
-    localStorage.setItem("clubLion.autoTime", "false");
-    localStorage.setItem("clubLion.timeOfDay", "invalid");
+    localStorage.setItem("clubLion.autoClock", "false");
+    localStorage.setItem("clubLion.lighting", "invalid");
   });
   await page.goto("/");
   await expect(
@@ -833,6 +833,8 @@ test("closet mixes free tops, bottoms, and shoes onto the avatar and locks shop 
   await page.getByRole("button", { name: "Closet", exact: true }).click();
   const closet = page.getByRole("dialog", { name: "My Closet" });
   await expect(closet).toBeVisible();
+  // The closet opens on whole outfits; separates live under Tops.
+  await closet.getByRole("button", { name: "Tops", exact: true }).click();
   await expect(
     closet.getByRole("button", { name: /Moto Jacket/ }),
   ).toBeDisabled();

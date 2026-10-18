@@ -144,9 +144,9 @@ const WATER_RIDE_HOTSPOTS: Record<string, WaterRideId> = {
 };
 
 /** In-world avatar widths, large enough for the doll face to read. */
-const WORLD_AVATAR_SIZE = { map: 118, stage: 184 } as const;
+const WORLD_AVATAR_SIZE = { map: 118, stage: 92 } as const;
 /** How far above the avatar's feet a hotspot label moves to clear the head. */
-const AVATAR_LABEL_LIFT = 330;
+const AVATAR_LABEL_LIFT = 210;
 
 export function World({
   player,
@@ -1047,7 +1047,12 @@ export function World({
               <span className="speech-bubble">{bubble.text}</span>
             )}
             <span className="neighbor-idle">
-              <Lion color={n.color} accessory={n.accessory} />
+              <Avatar
+                look={n.look}
+                size={
+                  manifest ? WORLD_AVATAR_SIZE.stage : WORLD_AVATAR_SIZE.map
+                }
+              />
             </span>
             <span className="character-name">
               {n.name}

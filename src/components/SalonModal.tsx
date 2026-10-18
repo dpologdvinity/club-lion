@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
+import { PicturePicker } from "./PicturePicker";
+import { HAIR_KIT } from "./avatar/pixelHairKit.ts";
 import { Dialog } from "./Dialog";
 import { Avatar } from "./Avatar";
 import { type AvatarLook, type PlayerBase } from "../game";
@@ -152,12 +154,20 @@ export function SalonModal({
 
           {tab === "hair" && (
             <>
+              <PicturePicker
+                legend="Hairstyle"
+                options={HAIR_KIT}
+                selected={draft.hairKitId}
+                pick={(hairKitId) => update({ hairKitId })}
+                preview={(hairKitId) => ({ ...draft, hairKitId })}
+                framing="portrait"
+              />
               {pills(
-                "Hairstyle",
+                "Dye-it-yourself styles",
                 "hair",
                 HAIR_STYLE_OPTIONS,
-                draft.hairId,
-                (hairId) => update({ hairId }),
+                draft.hairKitId ? undefined : draft.hairId,
+                (hairId) => update({ hairId, hairKitId: undefined }),
               )}
               {pills(
                 "Bangs & Fringe",
@@ -166,13 +176,14 @@ export function SalonModal({
                 draft.bangsId ?? "none",
                 (bangsId) => update({ bangsId }),
               )}
-              {swatches("Base color", null, HAIR_COLORS, hairColorId, (id) =>
-                update({
-                  hairColor:
-                    HAIR_COLORS.find((c) => c.id === id)?.hex ??
-                    draft.hairColor,
-                }),
-              )}
+              {!draft.hairKitId &&
+                swatches("Base color", null, HAIR_COLORS, hairColorId, (id) =>
+                  update({
+                    hairColor:
+                      HAIR_COLORS.find((c) => c.id === id)?.hex ??
+                      draft.hairColor,
+                  }),
+                )}
               {swatches(
                 "Highlight streak",
                 null,

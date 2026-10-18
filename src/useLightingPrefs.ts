@@ -6,26 +6,24 @@ import {
   type TimeOfDay,
 } from "./utils/environmentalLighting.ts";
 
-export const AUTO_TIME_KEY = "clubLion.autoTime";
-export const TIME_OF_DAY_KEY = "clubLion.timeOfDay";
+// New keys: older saves stored the clock sync as on, and the game now starts bright.
+export const AUTO_TIME_KEY = "clubLion.autoClock";
+export const TIME_OF_DAY_KEY = "clubLion.lighting";
 
 function readAutoTime(): boolean {
   try {
     return decodeAutoTime(localStorage.getItem(AUTO_TIME_KEY));
   } catch {
-    return true;
+    return false;
   }
 }
 
 function readTimeOfDay(autoTime: boolean): TimeOfDay {
   if (autoTime) return calculateTimeOfDayFromLocalTime();
   try {
-    return (
-      decodeTimeOfDay(localStorage.getItem(TIME_OF_DAY_KEY)) ??
-      calculateTimeOfDayFromLocalTime()
-    );
+    return decodeTimeOfDay(localStorage.getItem(TIME_OF_DAY_KEY)) ?? "day";
   } catch {
-    return calculateTimeOfDayFromLocalTime();
+    return "day";
   }
 }
 

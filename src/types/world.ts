@@ -147,6 +147,14 @@ export type AvatarLook = {
   eyewearId?: string;
   boardId?: string;
   handheldId?: string;
+  /** Pixel hair kit style (`kit_01`…); overrides `hairId` when known. */
+  hairKitId?: string;
+  /** Pixel one-piece outfit; replaces the top and bottoms when known. */
+  dressId?: string;
+  /** Pixel shoe kit pair (`shoe_001`…); replaces `shoesId` when known. */
+  shoeKitId?: string;
+  /** Pixel costume worn over everything (`teddy_bear`…). */
+  costumeId?: string;
 };
 
 export const DEFAULT_AVATAR_LOOK: AvatarLook = {
@@ -207,7 +215,11 @@ export function validateAvatarLook(look: unknown): look is AvatarLook {
     hasOptionalString("headwearId") &&
     hasOptionalString("eyewearId") &&
     hasOptionalString("boardId") &&
-    hasOptionalString("handheldId")
+    hasOptionalString("handheldId") &&
+    hasOptionalString("hairKitId") &&
+    hasOptionalString("dressId") &&
+    hasOptionalString("shoeKitId") &&
+    hasOptionalString("costumeId")
   );
 }
 

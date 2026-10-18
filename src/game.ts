@@ -90,6 +90,9 @@ import {
   type PetSpecies,
 } from "./utils/petSpecies.ts";
 import { DEFAULT_PET_CARE_STATE, performPetCare } from "./utils/petCare.ts";
+import { OUTFITS } from "./components/avatar/pixelOutfits.ts";
+import { SHOE_KIT } from "./components/avatar/pixelShoeKit.ts";
+import { COSTUMES } from "./components/avatar/pixelCostumes.ts";
 
 export * from "./types/world.ts";
 
@@ -391,6 +394,14 @@ export const NEIGHBORS = [
     accessory: "hat",
     x: 24,
     y: 61,
+    look: {
+      ...DEFAULT_AVATAR_LOOK,
+      skinTone: "bronze",
+      hairId: "pixie_spikes",
+      hairColor: "#3a2418",
+      dressId: "boombox_set",
+      shoeKitId: "shoe_040",
+    },
     greeting: "Hey, neighbor! The café makes the best mango smoothies. ☀️",
   },
   {
@@ -400,6 +411,13 @@ export const NEIGHBORS = [
     accessory: "flower",
     x: 75,
     y: 59,
+    look: {
+      ...DEFAULT_AVATAR_LOOK,
+      skinTone: "fair",
+      hairKitId: "kit_26",
+      dressId: "peach_ruffle",
+      shoeKitId: "shoe_010",
+    },
     greeting: "Welcome to the pride! Your mane looks absolutely lovely. 🌼",
   },
   {
@@ -409,6 +427,13 @@ export const NEIGHBORS = [
     accessory: "glasses",
     x: 67,
     y: 83,
+    look: {
+      ...DEFAULT_AVATAR_LOOK,
+      skinTone: "almond",
+      hairKitId: "kit_16",
+      dressId: "super_tee",
+      shoeKitId: "shoe_029",
+    },
     greeting: "Psst… try the arcade! There are fun games to play. 🎮",
   },
   {
@@ -418,6 +443,14 @@ export const NEIGHBORS = [
     accessory: "flower",
     x: 20,
     y: 85,
+    look: {
+      ...DEFAULT_AVATAR_LOOK,
+      skinTone: "honey",
+      hairId: "messy_bun",
+      hairColor: "#c9c9d2",
+      dressId: "island_maxi",
+      shoeKitId: "shoe_005",
+    },
     greeting: "Kain tayo! Let's eat! Try my halo-halo. 🍧",
   },
 ];
@@ -1078,9 +1111,28 @@ export function canWearClothing(
  */
 export function dressAvatar<T extends PlayerBase & { look?: AvatarLook }>(
   player: T,
-  outfit: { topId: string; bottomId: string; shoesId: string },
+  outfit: {
+    topId: string;
+    bottomId: string;
+    shoesId: string;
+    dressId?: string;
+    shoeKitId?: string;
+    costumeId?: string;
+  },
 ): T {
   const look = player.look ?? DEFAULT_AVATAR_LOOK;
+  if (outfit.dressId !== undefined && !Object.hasOwn(OUTFITS, outfit.dressId))
+    return player;
+  if (
+    outfit.shoeKitId !== undefined &&
+    !SHOE_KIT.some((entry) => entry.id === outfit.shoeKitId)
+  )
+    return player;
+  if (
+    outfit.costumeId !== undefined &&
+    !COSTUMES.some((entry) => entry.id === outfit.costumeId)
+  )
+    return player;
   const allowed = (
     options: readonly ClothingOption[],
     id: string,
@@ -1102,6 +1154,9 @@ export function dressAvatar<T extends PlayerBase & { look?: AvatarLook }>(
       topId: outfit.topId,
       bottomId: outfit.bottomId,
       shoesId: outfit.shoesId,
+      dressId: outfit.dressId,
+      shoeKitId: outfit.shoeKitId,
+      costumeId: outfit.costumeId,
     },
   } as T;
 }

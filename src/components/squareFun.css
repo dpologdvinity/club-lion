@@ -71,8 +71,9 @@
   font-size: 54px;
 }
 .square-butterfly {
-  width: 64px;
-  height: 64px;
+  /* Never under 48 screen px, however far the camera zooms out. */
+  width: max(64px, calc(48px / var(--camera-scale, 1)));
+  height: max(64px, calc(48px / var(--camera-scale, 1)));
   background: none;
   font-size: 46px;
   animation: butterfly-flutter 1.4s ease-in-out infinite alternate;

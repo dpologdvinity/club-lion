@@ -1,21 +1,27 @@
 import React from "react";
 import type { AvatarLook, EntityAction } from "../types/world.ts";
 import { DEFAULT_AVATAR_LOOK } from "../types/world.ts";
-import { PORTRAIT_VIEWBOX, generateAvatarLayersString } from "./avatarSvg.ts";
+import {
+  PIXEL_FEET_VIEWBOX,
+  PIXEL_OUTFIT_VIEWBOX,
+  PIXEL_PORTRAIT_VIEWBOX,
+  PIXEL_VIEWBOX,
+  renderPixelDoll,
+} from "./avatar/pixelDoll.ts";
 
 export interface AvatarProps extends React.SVGProps<SVGSVGElement> {
   look?: AvatarLook;
   action?: EntityAction | string;
   size?: number;
-  /** "portrait" crops to head and shoulders so the face reads large. */
-  framing?: "full" | "portrait";
+  /** "portrait" crops to head and shoulders; "outfit" / "feet" to clothes / shoes. */
+  framing?: "full" | "portrait" | "outfit" | "feet";
   /** Slightly larger head so faces stay readable at small world sizes. */
   headBoost?: boolean;
 }
 
 /**
- * Renders a vector Y2K fashion-doll avatar SVG with layered clothing,
- * glam makeup looks, hairstyles, accessories, and action animations.
+ * Renders the Fantage-style pixel doll: a bald base body on a hoverboard with
+ * hair, top, bottoms and shoes as stacked pixel-art layers, like Fantage.
  *
  * Canvas coordinates: universal 120×160 coordinate space. Memoized because
  * the world re-renders every walking frame while the look rarely changes.
@@ -25,7 +31,8 @@ export const Avatar = React.memo(function Avatar({
   action = "idle",
   size,
   framing = "full",
-  headBoost = false,
+  // Kept so callers stay valid; the chibi head is already big at any size.
+  headBoost: _headBoost = false,
   width,
   height,
   className = "",
@@ -42,14 +49,23 @@ export const Avatar = React.memo(function Avatar({
 
   // Gradient and clip IDs must be unique per instance on the page
   const idPrefix = `av${React.useId()}`;
-  const innerLayers = React.useMemo(() => {
-    return generateAvatarLayersString(look, action, idPrefix, headBoost);
-  }, [look, action, idPrefix, headBoost]);
+  const innerLayers = React.useMemo(
+    () => renderPixelDoll(look, String(action), idPrefix),
+    [look, action, idPrefix],
+  );
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox={portrait ? PORTRAIT_VIEWBOX : "0 0 120 160"}
+      viewBox={
+        portrait
+          ? PIXEL_PORTRAIT_VIEWBOX
+          : framing === "outfit"
+            ? PIXEL_OUTFIT_VIEWBOX
+            : framing === "feet"
+              ? PIXEL_FEET_VIEWBOX
+              : PIXEL_VIEWBOX
+      }
       width={renderWidth}
       height={renderHeight}
       className={`chibi-avatar action-${action}${portrait ? " framing-portrait" : ""} ${className}`.trim()}
@@ -57,7 +73,7 @@ export const Avatar = React.memo(function Avatar({
       aria-label={props["aria-label"] || "Chibi avatar"}
       style={{
         display: "inline-block",
-        overflow: portrait ? "hidden" : "visible",
+        overflow: framing === "full" ? "visible" : "hidden",
         verticalAlign: "middle",
         ...style,
       }}

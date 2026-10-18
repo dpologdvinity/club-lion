@@ -159,15 +159,12 @@ test("decodeTimeOfDay falls back to null for invalid or missing input", () => {
   assert.equal(decodeTimeOfDay(undefined), null);
 });
 
-test("decodeAutoTime defaults to true when unset", () => {
-  assert.equal(decodeAutoTime(null), true);
-  assert.equal(decodeAutoTime(undefined), true);
-});
-
-test("decodeAutoTime only turns off on the literal string false", () => {
+test("decodeAutoTime is off unless the player turned the clock sync on", () => {
+  assert.equal(decodeAutoTime(null), false);
+  assert.equal(decodeAutoTime(undefined), false);
   assert.equal(decodeAutoTime("false"), false);
+  assert.equal(decodeAutoTime("garbage"), false);
   assert.equal(decodeAutoTime("true"), true);
-  assert.equal(decodeAutoTime("garbage"), true);
 });
 
 test("generateFireflies returns requested count with normalized coordinates", () => {

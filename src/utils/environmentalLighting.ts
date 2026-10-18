@@ -17,8 +17,9 @@ export function decodeTimeOfDay(value: unknown): TimeOfDay | null {
   return isTimeOfDay(value) ? value : null;
 }
 
+/** Fantage is always bright: following the real clock is opt-in. */
 export function decodeAutoTime(value: unknown): boolean {
-  return value !== "false";
+  return value === "true";
 }
 
 export type LightingProfile = {
