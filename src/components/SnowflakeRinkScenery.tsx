@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo, type CSSProperties } from "react";
 
 const STAGE_WIDTH = 2400;
@@ -213,6 +214,10 @@ const SnowflakeRinkStage = memo(function SnowflakeRinkStage() {
         fill="#8fa8cc"
       />
       <path
+        d="M0 420L180 250L330 360L520 200L700 350L880 230L1080 380L1260 210L1460 340L1640 190L1860 350L2040 240L2240 360L2400 280V480H0Z"
+        fill={mat("snow")}
+      />
+      <path
         d="M180 250L210 280L195 282L180 268L160 282ZM520 200L556 236L530 232L520 224L500 236ZM1260 210L1296 246L1270 242L1260 234L1240 246ZM1640 190L1678 230L1650 226L1640 216L1618 230ZM2240 360L2268 384L2246 380L2240 374L2222 384Z"
         fill="#f4f9ff"
       />
@@ -392,6 +397,13 @@ const SnowflakeRinkStage = memo(function SnowflakeRinkStage() {
         height={720 - ICE_TOP}
         fill="url(#sr-ice)"
       />
+      <rect
+        x="0"
+        y={ICE_TOP}
+        width={STAGE_WIDTH}
+        height={720 - ICE_TOP}
+        fill={mat("ice")}
+      />
       <path
         d="M0 610H2400"
         stroke="#3b6fd8"
@@ -415,6 +427,7 @@ const SnowflakeRinkStage = memo(function SnowflakeRinkStage() {
 
       {/* Boards and snow piles behind the walkway */}
       <rect x="0" y="494" width={STAGE_WIDTH} height="18" fill="#7a4a2e" />
+      <rect x="0" y="494" width={STAGE_WIDTH} height="18" fill={mat("wood")} />
       <rect
         x="0"
         y="490"

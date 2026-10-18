@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import React from "react";
 
 const PILLAR_XS: readonly number[] = [0, 480, 960, 1440, 1900];
@@ -425,6 +426,14 @@ const ScoutHQStatic = React.memo(function ScoutHQStatic() {
           stroke="#243b42"
           strokeWidth="6"
         />
+        <rect
+          x="-140"
+          y="-100"
+          width="280"
+          height="190"
+          rx="10"
+          fill={mat("glass")}
+        />
         <text
           x="-120"
           y="-75"
@@ -459,6 +468,14 @@ const ScoutHQStatic = React.memo(function ScoutHQStatic() {
           fill="#0a1215"
           stroke="#243b42"
           strokeWidth="6"
+        />
+        <rect
+          x="-140"
+          y="-100"
+          width="280"
+          height="190"
+          rx="10"
+          fill={mat("glass")}
         />
         <text
           x="-120"

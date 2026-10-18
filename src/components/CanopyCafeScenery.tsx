@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo } from "react";
 
 export const CanopyCafeScenery = memo(function CanopyCafeScenery() {
@@ -7,6 +8,10 @@ export const CanopyCafeScenery = memo(function CanopyCafeScenery() {
       <path
         d="M0 160Q250 15 480 130T1000 100T1500 110T1920 60V540H0Z"
         fill="#71976b"
+      />
+      <path
+        d="M0 160Q250 15 480 130T1000 100T1500 110T1920 60V540H0Z"
+        fill={mat("leaves")}
       />
       {[80, 380, 1510, 1820].map((x) => (
         <g key={x}>
@@ -20,7 +25,9 @@ export const CanopyCafeScenery = memo(function CanopyCafeScenery() {
         </g>
       ))}
       <path d="M90 175H1840V540H90Z" fill="#e6c991" />
+      <path d="M90 175H1840V540H90Z" fill={mat("wood")} />
       <path d="M120 200H1810V500H120Z" fill="#f4dfb5" />
+      <path d="M120 200H1810V500H120Z" fill={mat("plaster")} />
       {[220, 710, 1450].map((x) => (
         <g key={x}>
           <path
@@ -41,9 +48,14 @@ export const CanopyCafeScenery = memo(function CanopyCafeScenery() {
         </g>
       ))}
       <path d="M30 205L220 60H1700L1900 205Z" fill="#355f49" />
+      <path d="M30 205L220 60H1700L1900 205Z" fill={mat("planks")} />
       <path
         d="M30 205H1900V232Q1860 260 1820 232Q1780 260 1740 232Q1700 260 1660 232H270Q225 260 180 232Q130 260 80 232H30Z"
         fill="#5b8c5b"
+      />
+      <path
+        d="M30 205H1900V232Q1860 260 1820 232Q1780 260 1740 232Q1700 260 1660 232H270Q225 260 180 232Q130 260 80 232H30Z"
+        fill={mat("fabric")}
       />
       <rect
         x="710"
@@ -55,10 +67,19 @@ export const CanopyCafeScenery = memo(function CanopyCafeScenery() {
         stroke="#263f30"
         strokeWidth="6"
       />
+      <rect
+        x="710"
+        y="100"
+        width="500"
+        height="95"
+        rx="24"
+        fill={mat("wood")}
+      />
       <text x="960" y="163" textAnchor="middle" fontSize="49" fill="#334d36">
         CANOPY CAFÉ
       </text>
       <path d="M0 525H1920V720H0Z" fill="#bb8c58" />
+      <path d="M0 525H1920V720H0Z" fill={mat("planks")} />
       {[545, 590, 640, 695].map((y) => (
         <path key={y} d={`M0 ${y}H1920`} stroke="#997044" strokeWidth="4" />
       ))}
@@ -71,7 +92,9 @@ export const CanopyCafeScenery = memo(function CanopyCafeScenery() {
         />
       ))}
       <path d="M350 450H1450V545H350Z" fill="#855a3d" />
+      <path d="M350 450H1450V545H350Z" fill={mat("wood")} />
       <path d="M330 442H1470V465H330Z" fill="#f1be78" />
+      <path d="M330 442H1470V465H330Z" fill={mat("wood")} />
       {[405, 680, 1060, 1390].map((x) => (
         <path key={x} d={`M${x} 480v48`} stroke="#b78250" strokeWidth="6" />
       ))}

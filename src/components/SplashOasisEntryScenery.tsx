@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo } from "react";
 import {
   calculateBucketCycle,
@@ -584,8 +585,16 @@ const EntrySkyline = memo(function EntrySkyline() {
         fill="#b5e6d4"
       />
       <path
+        d="M0 360Q240 290 520 336T1080 320T1660 300T2240 320T2800 296V440H0Z"
+        fill={mat("grass")}
+      />
+      <path
         d="M0 392Q300 340 640 380T1300 368T1980 372T2800 360V440H0Z"
         fill="#74c9a2"
+      />
+      <path
+        d="M0 392Q300 340 640 380T1300 368T1980 372T2800 360V440H0Z"
+        fill={mat("grass")}
       />
       {JUNGLE_PALMS.map((px, i) => {
         const top = 300 + (i % 3) * 18;
@@ -708,6 +717,7 @@ const EntrySkyline = memo(function EntrySkyline() {
       {/* Wave generator house behind the pool */}
       <g>
         <rect x="690" y="345" width="420" height="88" fill="#f3e1c1" />
+        <rect x="690" y="345" width="420" height="88" fill={mat("plaster")} />
         <rect x="690" y="408" width="420" height="25" fill="#e4cba0" />
         <rect x="680" y="332" width="440" height="16" rx="4" fill="#ff7a5c" />
         <path d="M680 348H1120" stroke="#c2412f" strokeWidth="3" opacity=".6" />
@@ -814,6 +824,13 @@ const EntryDeck = memo(function EntryDeck() {
         fill="#fff7ea"
         stroke="#e0ad78"
         strokeWidth="4"
+      />
+      <ellipse
+        cx={cx}
+        cy={cy + 6}
+        rx={rx + 30}
+        ry={ry + 20}
+        fill={mat("stone")}
       />
       <ellipse cx={cx} cy={cy + 2} rx={rx + 10} ry={ry + 6} fill="#e5d2b0" />
       <g clipPath="url(#soe-pool-clip)">
@@ -1262,6 +1279,14 @@ const FortressFrame = memo(function FortressFrame() {
         fill="#c98a4b"
         stroke="#6a4020"
         strokeWidth="4"
+      />
+      <rect
+        x="-158"
+        y="-200"
+        width="316"
+        height="46"
+        rx="8"
+        fill={mat("wood")}
       />
       <path
         d="M-146-186q80-4 150 0t140 0M-146-168q90-4 170 0t120 0"

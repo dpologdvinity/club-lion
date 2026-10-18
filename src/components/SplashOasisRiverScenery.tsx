@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo } from "react";
 
 // The lazy river is one closed loop around a central island: the front channel
@@ -398,6 +399,10 @@ const RiverBackdrop = memo(function RiverBackdrop() {
         d="M0 250Q300 222 640 246T1300 240T1960 236T2800 248V560H0Z"
         fill="#469f6c"
       />
+      <path
+        d="M0 250Q300 222 640 246T1300 240T1960 236T2800 248V560H0Z"
+        fill={mat("grass")}
+      />
       {FERNS.map((f) => (
         <Fern key={f.x} x={f.x} y={f.y} s={f.s} />
       ))}
@@ -477,8 +482,16 @@ const RiverBackdrop = memo(function RiverBackdrop() {
         fill="#76857a"
       />
       <path
+        d="M2250 470Q2240 300 2300 220Q2330 120 2440 96Q2560 40 2680 80Q2800 90 2800 160V470Z"
+        fill={mat("rock")}
+      />
+      <path
         d="M2290 470Q2290 330 2350 250Q2400 170 2480 160Q2600 140 2700 180Q2790 200 2800 260V470Z"
         fill="#8d9b8f"
+      />
+      <path
+        d="M2290 470Q2290 330 2350 250Q2400 170 2480 160Q2600 140 2700 180Q2790 200 2800 260V470Z"
+        fill={mat("rock")}
       />
       <path
         d="M2360 440V330Q2360 236 2470 236Q2580 236 2580 330V440Z"
@@ -511,6 +524,10 @@ const RiverBackdrop = memo(function RiverBackdrop() {
       <path
         d="M2290 160Q2400 70 2520 90Q2640 50 2760 110Q2700 130 2620 120Q2520 140 2420 130Q2340 150 2290 160Z"
         fill="#4f9a5a"
+      />
+      <path
+        d="M2290 160Q2400 70 2520 90Q2640 50 2760 110Q2700 130 2620 120Q2520 140 2420 130Q2340 150 2290 160Z"
+        fill={mat("leaves")}
       />
       {[2330, 2400, 2610, 2690].map((fx, i) => (
         <path
@@ -816,6 +833,7 @@ const Boardwalk = memo(function Boardwalk() {
           <path key={px} d={`M${px - 8} 0V-236H${px + 8}V0Z`} fill="#b88a4a" />
         ))}
         <rect x="-118" y="-118" width="236" height="118" fill="#d9a85f" />
+        <rect x="-118" y="-118" width="236" height="118" fill={mat("bamboo")} />
         {Array.from({ length: 12 }, (_, i) => (
           <path
             key={i}

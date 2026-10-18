@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import React from "react";
 
 // Dusk skyline seen through the den's arched window. Lights are positioned
@@ -282,6 +283,10 @@ const CondoRoomBackdrop = React.memo(function CondoRoomBackdrop() {
         strokeWidth="4"
       />
       <path
+        d="M720 40H644Q662 200 648 350Q684 362 720 350Z"
+        fill={mat("fabric")}
+      />
+      <path
         d="M186 60Q200 180 190 330M694 60Q680 180 690 330"
         fill="none"
         stroke="#c97a8e"
@@ -499,6 +504,14 @@ const CondoRoomBackdrop = React.memo(function CondoRoomBackdrop() {
           fill="#7d3a4c"
           stroke="#e0a96d"
           strokeWidth="6"
+        />
+        <rect
+          x="560"
+          y="575"
+          width="800"
+          height="90"
+          rx="30"
+          fill={mat("fabric")}
         />
         <rect
           x="600"

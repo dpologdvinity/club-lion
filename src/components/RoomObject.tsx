@@ -1,5 +1,6 @@
 import type { RoomManifest } from "../rooms/types.ts";
 import "./roomObjects.css";
+import { mat } from "./MaterialDefs";
 
 type Item = RoomManifest["interactives"][number];
 
@@ -55,12 +56,14 @@ export function RoomObject({
               stroke="#523f51"
               strokeWidth="7"
             />
+            <path d="M20 8H175L185 180V235H15V180L28 145Z" fill={mat("wood")} />
             <path
               d="M32 35H163V139H32Z"
               fill="#334e60"
               stroke="#f4d69d"
               strokeWidth="7"
             />
+            <path d="M32 35H163V139H32Z" fill={mat("glass")} />
             {item.actionData.gameId === "memory" && (
               <g fill="#f1d89d" stroke="#b78aa0" strokeWidth="3">
                 {[0, 1, 2, 3].map((i) => (
@@ -123,6 +126,7 @@ export function RoomObject({
               stroke="#8c7049"
               strokeWidth="6"
             />
+            <path d="M35 160H165L150 230H50Z" fill={mat("wood")} />
             <ellipse cx="100" cy="160" rx="65" ry="18" fill="#b9e1d1" />
             <path d="M138 160V90" stroke="#dcc18a" strokeWidth="9" />
             <circle
@@ -149,6 +153,7 @@ export function RoomObject({
         {kind === "cake" && (
           <>
             <path d="M15 190H185V225H15Z" fill="#ae845a" />
+            <path d="M15 190H185V225H15Z" fill={mat("wood")} />
             <ellipse cx="100" cy="185" rx="88" ry="15" fill="#f1dfb7" />
             <path d="M45 135H155V180H45Z" fill="#d9ad72" />
             <path
@@ -171,6 +176,7 @@ export function RoomObject({
         {kind === "splash" && (
           <>
             <ellipse cx="100" cy="190" rx="95" ry="30" fill="#a0dfd2" />
+            <ellipse cx="100" cy="190" rx="95" ry="30" fill={mat("water")} />
             <g
               className={active ? "object-splash" : "sm-bob"}
               fill="#d5fff0"
@@ -196,7 +202,9 @@ export function RoomObject({
         {kind === "lily" && (
           <>
             <ellipse cx="55" cy="195" rx="50" ry="24" fill="#658e55" />
+            <ellipse cx="55" cy="195" rx="50" ry="24" fill={mat("leaves")} />
             <ellipse cx="150" cy="165" rx="47" ry="22" fill="#82ac65" />
+            <ellipse cx="150" cy="165" rx="47" ry="22" fill={mat("leaves")} />
             <g
               transform={`translate(${active ? 108 : 12} ${active ? -30 : 0})`}
             >
@@ -242,12 +250,14 @@ export function RoomObject({
               stroke="#755b48"
               strokeWidth="5"
             />
+            <path d="M40 185H160L170 235H30Z" fill={mat("metal")} />
             <path
               d="M50 45H150L140 185H60Z"
               fill="#d2eee0"
               stroke="#648578"
               strokeWidth="5"
             />
+            <path d="M50 45H150L140 185H60Z" fill={mat("glass")} />
             <path
               className="sm-pulse"
               d="M55 100Q100 80 145 100L138 178H62Z"
@@ -266,6 +276,7 @@ export function RoomObject({
         {kind === "tea" && (
           <>
             <ellipse cx="65" cy="216" rx="60" ry="15" fill="#e5bc83" />
+            <ellipse cx="65" cy="216" rx="60" ry="15" fill={mat("wood")} />
             <path
               d="M15 145H110L95 210H30Z"
               fill="#f7e6bf"
@@ -320,12 +331,28 @@ export function RoomObject({
               strokeWidth="6"
             />
             <rect
+              x="12"
+              y="20"
+              width="176"
+              height="215"
+              rx="18"
+              fill={mat("metal")}
+            />
+            <rect
               x="32"
               y="85"
               width="136"
               height="125"
               rx="12"
               fill={active ? "#edbc72" : "#5d6258"}
+            />
+            <rect
+              x="32"
+              y="85"
+              width="136"
+              height="125"
+              rx="12"
+              fill={mat("glass")}
             />
             <path d="M40 76H160" stroke="#f4d6a0" strokeWidth="10" />
             <circle cx="55" cy="48" r="12" fill="#f7dfac" />
@@ -353,12 +380,28 @@ export function RoomObject({
               strokeWidth="6"
             />
             <rect
+              x="18"
+              y="5"
+              width="164"
+              height="230"
+              rx="22"
+              fill={mat("metal")}
+            />
+            <rect
               x="35"
               y="25"
               width="130"
               height="135"
               rx="14"
               fill="#d5e5d0"
+            />
+            <rect
+              x="35"
+              y="25"
+              width="130"
+              height="135"
+              rx="14"
+              fill={mat("glass")}
             />
             {[0, 1, 2, 3, 4, 5].map((i) => (
               <circle
@@ -386,6 +429,7 @@ export function RoomObject({
                 stroke="#e9d9aa"
                 strokeWidth="6"
               />
+              <circle cx="100" cy="117" r="65" fill={mat("metal")} />
               <path
                 d="M37 105h126M40 135h120M55 160h90M65 60q-25 55 0 110M100 53v129M135 60q25 55 0 110"
                 fill="none"
@@ -403,6 +447,7 @@ export function RoomObject({
               stroke="#765744"
               strokeWidth="6"
             />
+            <path d="M15 70H185V238H15Z" fill={mat("brick")} />
             <path d="M48 235V135Q100 72 152 135V235" fill="#4d4945" />
             <path d="M0 52H200V82H0ZM25 35H175V52H25Z" fill="#d1ac83" />
             {!active && (
@@ -468,6 +513,7 @@ export function RoomObject({
               stroke="#876044"
               strokeWidth="5"
             />
+            <path d="M45 155H155L135 235H65Z" fill={mat("plaster")} />
             <g
               className={active ? "object-chime" : "sm-sway"}
               fill="#6d965e"
@@ -490,6 +536,14 @@ export function RoomObject({
               stroke="#b68343"
               strokeWidth="6"
             />
+            <path
+              d={
+                active
+                  ? "M10 115Q100 150 190 115L180 220Q100 235 20 220Z"
+                  : "M10 90Q100 65 190 90L180 220Q100 235 20 220Z"
+              }
+              fill={mat("fabric")}
+            />
             <circle cx="100" cy="158" r="32" fill="#f7d88f" />
             <path
               d="M100 108v-16M100 208v16M50 158H34M150 158h16"
@@ -506,6 +560,7 @@ export function RoomObject({
               stroke="#b98f52"
               strokeWidth="5"
             />
+            <path d="M15 235Q100 215 185 235V150H15Z" fill={mat("sand")} />
             <path
               d={
                 active
@@ -515,6 +570,14 @@ export function RoomObject({
               fill="#f2d9a3"
               stroke="#b98f52"
               strokeWidth="5"
+            />
+            <path
+              d={
+                active
+                  ? "M40 160V70h30V40h20V70h20V30h20V70h20V160Z"
+                  : "M45 160V105h28V85h54V105h28V160Z"
+              }
+              fill={mat("sand")}
             />
             <path d="M90 160v-30q10-18 20 0v30" fill="#b98f52" />
             {active && (
@@ -610,6 +673,7 @@ export function RoomObject({
               stroke="#7b4b26"
               strokeWidth="6"
             />
+            <path d="M20 235V150H180V235Z" fill={mat("wood")} />
             <path
               d={
                 active
@@ -619,6 +683,14 @@ export function RoomObject({
               fill="#cf8d54"
               stroke="#7b4b26"
               strokeWidth="6"
+            />
+            <path
+              d={
+                active
+                  ? "M20 150Q10 70 60 50L150 30Q190 60 180 150Z"
+                  : "M20 150Q20 95 100 95Q180 95 180 150Z"
+              }
+              fill={mat("wood")}
             />
             <rect x="88" y="150" width="24" height="28" fill="#f7d34d" />
             {active && (
@@ -640,6 +712,7 @@ export function RoomObject({
               stroke="#b4c7e0"
               strokeWidth="5"
             />
+            <circle cx="100" cy="190" r="48" fill={mat("snow")} />
             <circle
               cx="100"
               cy="120"
@@ -648,6 +721,7 @@ export function RoomObject({
               stroke="#b4c7e0"
               strokeWidth="5"
             />
+            <circle cx="100" cy="120" r="36" fill={mat("snow")} />
             <g className={active ? "object-chime" : undefined}>
               <path
                 d="M60 90H140M78 90V45H122V90"
@@ -682,6 +756,7 @@ export function RoomObject({
               stroke="#6d4830"
               strokeWidth="5"
             />
+            <path d="M45 235H155L145 195H55Z" fill={mat("wood")} />
             <circle
               cx="100"
               cy="120"
@@ -691,6 +766,7 @@ export function RoomObject({
               stroke="#8fb4d8"
               strokeWidth="5"
             />
+            <circle cx="100" cy="120" r="75" fill={mat("glass")} />
             <path
               d="M80 190L100 110L120 190Z"
               fill="#5f9a6a"
@@ -781,6 +857,7 @@ export function RoomObject({
                 stroke="#b24d6c"
                 strokeWidth="5"
               />
+              <circle cx="90" cy="165" r="52" fill={mat("fabric")} />
               <path
                 d="M52 150Q90 185 128 140M45 175Q95 200 135 165M70 118Q110 150 120 120"
                 fill="none"
@@ -799,6 +876,7 @@ export function RoomObject({
               stroke="#7aa3b8"
               strokeWidth="5"
             />
+            <path d="M45 110H155L145 235H55Z" fill={mat("glass")} />
             <path
               d={active ? "M35 95H165L158 110H42Z" : "M40 80H160V110H40Z"}
               fill="#e5546e"
@@ -993,6 +1071,7 @@ export function RoomObject({
               stroke="#3f8fb8"
               strokeWidth="5"
             />
+            <path d="M70 235H130L120 190H80Z" fill={mat("metal")} />
             <circle cx="100" cy="185" r="16" fill="#e5546e" />
             <g
               className={active ? "sm-pulse" : undefined}
@@ -1017,6 +1096,7 @@ export function RoomObject({
               stroke="#3e4652"
               strokeWidth="5"
             />
+            <path d="M40 235H160V200H40Z" fill={mat("metal")} />
             <g className={active ? "object-chime" : undefined}>
               <path
                 d={
@@ -1027,6 +1107,14 @@ export function RoomObject({
                 fill="#7d8a9a"
                 stroke="#3e4652"
                 strokeWidth="5"
+              />
+              <path
+                d={
+                  active
+                    ? "M88 200V40H140V75H112V200Z"
+                    : "M88 200V150H140V185H112V200Z"
+                }
+                fill={mat("metal")}
               />
               <rect
                 x="122"
@@ -1046,6 +1134,10 @@ export function RoomObject({
               fill="#f08a3c"
               stroke="#b95a22"
               strokeWidth="5"
+            />
+            <path
+              d="M10 180Q100 225 190 180Q100 160 10 180Z"
+              fill={mat("wood")}
             />
             <path
               d={active ? "M40 110L160 210" : "M30 150L170 165"}
@@ -1126,6 +1218,14 @@ export function RoomObject({
         {kind === "tree" && (
           <g className={step === 1 ? "object-shake" : undefined}>
             <rect x="88" y="150" width="24" height="90" rx="8" fill="#8a5a30" />
+            <rect
+              x="88"
+              y="150"
+              width="24"
+              height="90"
+              rx="8"
+              fill={mat("wood")}
+            />
             <circle
               cx="100"
               cy="100"
@@ -1134,6 +1234,7 @@ export function RoomObject({
               stroke="#3f7238"
               strokeWidth="5"
             />
+            <circle cx="100" cy="100" r="70" fill={mat("leaves")} />
             <circle cx="60" cy="120" r="40" fill="#6dab58" />
             <circle cx="140" cy="115" r="42" fill="#6dab58" />
             {step === 2 && (
@@ -1163,6 +1264,10 @@ export function RoomObject({
               fill="#5f9a4e"
               stroke="#3f7238"
               strokeWidth="6"
+            />
+            <path
+              d="M10 230Q0 150 60 140Q80 90 130 110Q190 110 190 230Z"
+              fill={mat("leaves")}
             />
             {active && (
               <text
@@ -1248,7 +1353,9 @@ export function RoomObject({
               stroke="#8a5a30"
               strokeWidth="6"
             />
+            <path d="M10 150H190L175 230H25Z" fill={mat("wood")} />
             <path d="M25 160H175L165 215H35Z" fill="#f2d9a3" />
+            <path d="M25 160H175L165 215H35Z" fill={mat("sand")} />
             {active ? (
               <path
                 className="object-pop"
@@ -1366,6 +1473,7 @@ export function RoomObject({
         {kind === "pot" && (
           <g>
             <path d="M40 150V230H160V150Z" fill="#5a6470" />
+            <path d="M40 150V230H160V150Z" fill={mat("metal")} />
             <rect
               x="20"
               y="138"
@@ -1565,6 +1673,14 @@ export function RoomObject({
               stroke="#8a5a30"
               strokeWidth="6"
             />
+            <rect
+              x="10"
+              y="20"
+              width="180"
+              height="215"
+              rx="10"
+              fill={mat("wood")}
+            />
             <rect x="10" y="4" width="180" height="30" rx="8" fill="#ff5a5f" />
             <text
               x="100"
@@ -1636,6 +1752,10 @@ export function RoomObject({
               fill="#e94b3c"
               stroke="#8a2318"
               strokeWidth="5"
+            />
+            <path
+              d="M10 200V110Q10 80 40 80H170Q190 80 190 110V200Z"
+              fill={mat("metal")}
             />
             <rect
               x="20"
@@ -1714,6 +1834,14 @@ export function RoomObject({
               strokeWidth="6"
             />
             <rect
+              x="40"
+              y="90"
+              width="120"
+              height="145"
+              rx="14"
+              fill={mat("fabric")}
+            />
+            <rect
               x="52"
               y="102"
               width="96"
@@ -1759,13 +1887,17 @@ export function RoomObject({
         {kind === "digspot" && (
           <g>
             <ellipse cx="100" cy="200" rx="95" ry="34" fill="#c98d4a" />
+            <ellipse cx="100" cy="200" rx="95" ry="34" fill={mat("sand")} />
             {step === 0 && (
-              <path
-                d="M20 200Q100 120 180 200Z"
-                fill="#e2b06a"
-                stroke="#b07a3a"
-                strokeWidth="5"
-              />
+              <>
+                <path
+                  d="M20 200Q100 120 180 200Z"
+                  fill="#e2b06a"
+                  stroke="#b07a3a"
+                  strokeWidth="5"
+                />
+                <path d="M20 200Q100 120 180 200Z" fill={mat("sand")} />
+              </>
             )}
             {step >= 1 && (
               <>
@@ -1811,6 +1943,7 @@ export function RoomObject({
               stroke="#5e3a22"
               strokeWidth="6"
             />
+            <path d="M10 235L80 70H120L190 235Z" fill={mat("rock")} />
             <path
               d="M80 70Q100 90 120 70L112 105Q100 95 88 105Z"
               fill={step === 2 ? "#ff6a2a" : "#5e3a22"}
@@ -1915,6 +2048,14 @@ export function RoomObject({
               stroke="#8a5a30"
               strokeWidth="6"
             />
+            <rect
+              x="20"
+              y="90"
+              width="160"
+              height="60"
+              rx="10"
+              fill={mat("wood")}
+            />
             <path
               d="M30 100H170M30 115H170M30 130H170M60 95V145M100 95V145M140 95V145"
               stroke="#5e3a22"
@@ -1951,6 +2092,14 @@ export function RoomObject({
               fill="#ff8fab"
               stroke="#c0507a"
               strokeWidth="6"
+            />
+            <rect
+              x="25"
+              y="70"
+              width="150"
+              height="165"
+              rx="10"
+              fill={mat("wood")}
             />
             <path
               d="M15 75L100 15L185 75Z"
@@ -2013,6 +2162,14 @@ export function RoomObject({
               stroke="#c98a4a"
               strokeWidth="5"
             />
+            <rect
+              x="85"
+              y="20"
+              width="30"
+              height="210"
+              rx="8"
+              fill={mat("wood")}
+            />
             {[60, 100, 140, 180].map((y) => (
               <path
                 key={y}
@@ -2068,6 +2225,7 @@ export function RoomObject({
               strokeWidth="6"
             />
             <ellipse cx="100" cy="185" rx="75" ry="30" fill="#8fd3f4" />
+            <ellipse cx="100" cy="185" rx="75" ry="30" fill={mat("water")} />
             <g className="sm-bob" fontSize="34" textAnchor="middle">
               <text x="60" y="195">
                 🦆
@@ -2105,6 +2263,14 @@ export function RoomObject({
               fill="#333"
               stroke="#111"
               strokeWidth="5"
+            />
+            <rect
+              x="45"
+              y="5"
+              width="110"
+              height="160"
+              rx="18"
+              fill={mat("metal")}
             />
             <circle
               cx="100"
@@ -2155,6 +2321,7 @@ export function RoomObject({
               stroke="#7a4220"
               strokeWidth="6"
             />
+            <path d="M5 235Q20 40 100 30Q180 40 195 235Z" fill={mat("rock")} />
             <path d="M45 235Q55 110 100 100Q145 110 155 235Z" fill="#2b1a10" />
             {active && (
               <g
@@ -2179,6 +2346,10 @@ export function RoomObject({
               fill="#fff6de"
               stroke="#c98a4a"
               strokeWidth="10"
+            />
+            <path
+              d="M20 235V90Q20 15 100 15Q180 15 180 90V235Z"
+              fill={mat("wood")}
             />
             <text x="100" y="160" fontSize="96" textAnchor="middle">
               {item.icon}

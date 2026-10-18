@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo, type CSSProperties } from "react";
 
 const STAGE_WIDTH = 2400;
@@ -359,6 +360,7 @@ const CanyonWalls = memo(function CanyonWalls() {
       {/* Middle canyon walls, hazier with distance */}
       <g clipPath="url(#cr-mid-clip)">
         <rect x="880" y="260" width="1060" height="200" fill="#d78a5e" />
+        <rect x="880" y="260" width="1060" height="200" fill={mat("rock")} />
         {[300, 330, 362, 396, 428].map((y, i) => (
           <path
             key={y}
@@ -384,6 +386,7 @@ const CanyonWalls = memo(function CanyonWalls() {
       {(["cr-west-clip", "cr-east-clip"] as const).map((clip) => (
         <g key={clip} clipPath={`url(#${clip})`}>
           <rect y="60" width={STAGE_WIDTH} height="400" fill="#c56b3f" />
+          <rect y="60" width={STAGE_WIDTH} height="400" fill={mat("rock")} />
           {STRATA.map(({ y, color }, i) => (
             <path
               key={y}
@@ -422,6 +425,7 @@ const CanyonWalls = memo(function CanyonWalls() {
       ))}
       {/* The east wall faces away from the sun, so its cliff face sits in shade */}
       <path d={EAST_WALL} fill="url(#cr-east-shade)" />
+      <path d={EAST_WALL} fill={mat("rock")} />
       {/* Sunlit rims along the tops of both walls */}
       <path
         d="M0 104L70 92L150 100L210 84L300 96L380 88L470 112L560 132L590 160L640 168L690 214L730 222L770 278L810 288L840 344L880 356L920 412L960 424"
@@ -808,6 +812,14 @@ const Bank = memo(function Bank() {
           />
         ))}
         <rect x="-84" y="-10" width="172" height="22" rx="4" fill="#c58a52" />
+        <rect
+          x="-84"
+          y="-10"
+          width="172"
+          height="22"
+          rx="4"
+          fill={mat("planks")}
+        />
         {[-84, -41, 2, 45].map((px) => (
           <path
             key={px}

@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo } from "react";
 import { ARCADE_WIDTH as W } from "../rooms/manifests/neighborhoodArcade.ts";
 
@@ -46,11 +47,17 @@ export const NeighborhoodArcadeScenery = memo(
         <path fill="#4c5878" d={`M0 0H${W}V720H0Z`} />
         <path d={`M0 0H${W}L${W - 140} 120H140Z`} fill="#394964" />
         <path d={`M140 120H${W - 140}V530H140Z`} fill="#6e7896" />
+        <path d={`M140 120H${W - 140}V530H140Z`} fill={mat("brick")} />
         <path
           d={`M140 120V530L0 620V0M${W - 140} 120V530L${W} 620V0`}
           fill="#56627e"
         />
+        <path
+          d={`M140 120V530L0 620V0M${W - 140} 120V530L${W} 620V0`}
+          fill={mat("wood")}
+        />
         <path d={`M0 530H${W}V720H0Z`} fill="#bf9b9b" />
+        <path d={`M0 530H${W}V720H0Z`} fill={mat("carpet")} />
         {[550, 590, 645, 715].map((y) => (
           <path key={y} d={`M0 ${y}H${W}`} stroke="#997f91" strokeWidth="3" />
         ))}
@@ -101,6 +108,7 @@ export const NeighborhoodArcadeScenery = memo(
             stroke="#f4d9aa"
             strokeWidth="6"
           />
+          <path d="M0 0h135v190H0Z" fill={mat("wood")} />
           <path d="M25 32h85v75H25Z" fill="#4d5f6b" />
           <path
             d="M40 83l16-30 17 20 20-35"

@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo } from "react";
 
 const FLOOR_TOP = 540;
@@ -69,6 +70,10 @@ const DinoDigStage = memo(function DinoDigStage() {
         fill="#c9773f"
       />
       <path
+        d="M0 420L120 300H420L520 420ZM1500 430L1620 280H1980L2100 430ZM700 440L780 360H1000L1080 440Z"
+        fill={mat("rock")}
+      />
+      <path
         d="M120 300H420L430 320H110ZM1620 280H1980L1990 300H1610Z"
         fill="#a85e2c"
       />
@@ -79,6 +84,13 @@ const DinoDigStage = memo(function DinoDigStage() {
         height={FLOOR_TOP - 420}
         fill="#e0a45e"
       />
+      <rect
+        x="0"
+        y="420"
+        width="2400"
+        height={FLOOR_TOP - 420}
+        fill={mat("sand")}
+      />
       <Skeleton x={760} />
       {/* Dig tent with flags */}
       <g transform="translate(1900 300)">
@@ -88,6 +100,7 @@ const DinoDigStage = memo(function DinoDigStage() {
           stroke="#b8ad84"
           strokeWidth="6"
         />
+        <path d="M0 240L120 40L240 240Z" fill={mat("fabric")} />
         <path d="M100 240L120 120L140 240Z" fill="#8a5a30" />
         <path d="M120 40V0" stroke="#6e4628" strokeWidth="6" />
         <path
@@ -120,6 +133,13 @@ const DinoDigStage = memo(function DinoDigStage() {
         height={720 - FLOOR_TOP}
         fill="#e8b26a"
       />
+      <rect
+        x="0"
+        y={FLOOR_TOP}
+        width="2400"
+        height={720 - FLOOR_TOP}
+        fill={mat("sand")}
+      />
       {PEBBLES.map((p) => (
         <circle
           key={`${p.x}-${p.y}`}
@@ -133,6 +153,10 @@ const DinoDigStage = memo(function DinoDigStage() {
       <path
         d="M90 540V320Q90 270 170 270Q250 270 250 320V540Z"
         fill="#a85e2c"
+      />
+      <path
+        d="M90 540V320Q90 270 170 270Q250 270 250 320V540Z"
+        fill={mat("wood")}
       />
       <path
         d="M110 540V330Q110 290 170 290Q230 290 230 330V540Z"

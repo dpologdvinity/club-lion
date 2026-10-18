@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo, type CSSProperties } from "react";
 import { AnimalFace, LionTrophy, SideKart, type Animal } from "./kartArt.tsx";
 
@@ -704,12 +705,14 @@ const LionSpeedwayStage = memo(function LionSpeedwayStage() {
 
       {/* Low tire wall in front of the track */}
       <rect y="520" width={STAGE_WIDTH} height="20" fill="#9fd88a" />
+      <rect y="520" width={STAGE_WIDTH} height="20" fill={mat("grass")} />
       {[180, 420, 690, 940, 1460, 1720, 2280].map((x, i) => (
         <TireStack key={x} x={x} y={538} n={2 + (i % 2)} />
       ))}
 
       {/* Paddock where the player walks */}
       <rect y="540" width={STAGE_WIDTH} height="180" fill="url(#ls-paddock)" />
+      <rect y="540" width={STAGE_WIDTH} height="180" fill={mat("grass")} />
       <rect y="540" width={STAGE_WIDTH} height="10" fill="url(#ls-checker)" />
       {Array.from({ length: 10 }, (_, i) => (
         <path

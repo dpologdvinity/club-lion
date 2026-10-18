@@ -5279,6 +5279,12 @@ svg {
 .camera-viewport-stage .speech-bubble {
   font-size: 22px;
 }
+.material-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
 .room-scenery {
   position: absolute;
   inset: 0;

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { MaterialDefs } from "./components/MaterialDefs";
 import { speak } from "./utils/speech";
 import {
   ArrowUpRight,
@@ -311,6 +312,7 @@ export default function App() {
   };
   return (
     <>
+      <MaterialDefs />
       <a className="skip-link" href="#main-content">
         Skip to your lion world
       </a>

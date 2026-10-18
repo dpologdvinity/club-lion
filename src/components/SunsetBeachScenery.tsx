@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo, type CSSProperties } from "react";
 
 const STAGE_WIDTH = 2400;
@@ -353,6 +354,12 @@ const SunsetBeachStage = memo(function SunsetBeachStage() {
         height={720 - HORIZON}
         fill="url(#sb-ocean)"
       />
+      <rect
+        y={HORIZON}
+        width={STAGE_WIDTH}
+        height={720 - HORIZON}
+        fill={mat("water")}
+      />
       {Array.from({ length: 9 }, (_, i) => {
         const mid = 240 - i * 18;
         const w = mid + Math.sin(i) * 24;
@@ -441,6 +448,10 @@ const SunsetBeachStage = memo(function SunsetBeachStage() {
           fill="#c9965f"
         />
         <path
+          d={`M0 ${foamY + 6}Q600 ${foamY - 18} 1200 ${foamY + 4}T2400 ${foamY - 4}V720H0Z`}
+          fill={mat("sand")}
+        />
+        <path
           d={`M0 ${foamY}Q600 ${foamY - 24} 1200 ${foamY - 2}T2400 ${foamY - 10}`}
           fill="none"
           stroke="#fff6e4"
@@ -458,6 +469,7 @@ const SunsetBeachStage = memo(function SunsetBeachStage() {
         />
       </g>
       <path d="M0 540Q520 512 1100 536T2400 528V720H0Z" fill="url(#sb-sand)" />
+      <path d="M0 540Q520 512 1100 536T2400 528V720H0Z" fill={mat("sand")} />
       <path
         d="M0 650Q420 610 900 640T1700 652T2400 628V720H0Z"
         fill="#e5b273"
@@ -519,6 +531,10 @@ const SunsetBeachStage = memo(function SunsetBeachStage() {
           strokeWidth="5"
         />
         <path
+          d="M-260-200Q-130-300 0-330Q130-300 260-200Z"
+          fill={mat("bamboo")}
+        />
+        <path
           d={`M-268-200${Array.from(
             { length: 27 },
             (_, i) =>
@@ -549,6 +565,14 @@ const SunsetBeachStage = memo(function SunsetBeachStage() {
             fill="#7a4f2a"
             stroke="#4f3219"
             strokeWidth="4"
+          />
+          <rect
+            x="-130"
+            y="-24"
+            width="260"
+            height="46"
+            rx="10"
+            fill={mat("wood")}
           />
           <text
             y="10"
@@ -582,6 +606,7 @@ const SunsetBeachStage = memo(function SunsetBeachStage() {
         ))}
         {/* Bamboo bar counter */}
         <path d="M-210-78H210V-62H-210Z" fill="#8a5a2e" />
+        <path d="M-210-78H210V-62H-210Z" fill={mat("bamboo")} />
         <rect x="-200" y="-62" width="400" height="62" fill="#d7ac62" />
         {Array.from({ length: 13 }, (_, i) => (
           <g key={i}>
@@ -867,6 +892,7 @@ const SunsetBeachStage = memo(function SunsetBeachStage() {
       {/* Boardwalk entrance to the Coastal Pier */}
       <g transform="translate(2250 540)">
         <path d="M0 0H150V70H-30Z" fill="#b38e6a" />
+        <path d="M0 0H150V70H-30Z" fill={mat("planks")} />
         {[0, 1, 2, 3].map((i) => (
           <path
             key={i}

@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import type { JSX } from "react";
 import { memo } from "react";
 
@@ -70,10 +71,18 @@ const MtMistBackdrop = memo(function MtMistBackdrop(): JSX.Element {
         d="M0 470L240 240L420 380L700 110L980 400L1200 230L1480 420L1740 150L2020 390L2260 210L2400 330V580H0Z"
         fill="#a9c4d1"
       />
+      <path
+        d="M0 470L240 240L420 380L700 110L980 400L1200 230L1480 420L1740 150L2020 390L2260 210L2400 330V580H0Z"
+        fill={mat("rock")}
+      />
       {/* Near range with lit and shaded faces */}
       <path
         d="M0 500L310 160L560 420L900 60L1260 420L1540 120L1840 400L2140 80L2400 450V580H0Z"
         fill="#7499aa"
+      />
+      <path
+        d="M0 500L310 160L560 420L900 60L1260 420L1540 120L1840 400L2140 80L2400 450V580H0Z"
+        fill={mat("rock")}
       />
       <path
         d="M900 60L1040 300L900 260L840 330ZM2140 80L2270 290L2140 250L2060 330Z"
@@ -88,6 +97,10 @@ const MtMistBackdrop = memo(function MtMistBackdrop(): JSX.Element {
       <path
         d="M0 505Q280 360 560 492Q860 335 1150 489Q1590 352 1900 485Q2220 392 2400 495V720H0Z"
         fill="#dbe9ef"
+      />
+      <path
+        d="M0 505Q280 360 560 492Q860 335 1150 489Q1590 352 1900 485Q2220 392 2400 495V720H0Z"
+        fill={mat("snow")}
       />
       <path d="M0 560Q500 525 1100 565T2400 545V720H0Z" fill="#f1f6f4" />
 

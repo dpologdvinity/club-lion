@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo } from "react";
 import type { JSX } from "react";
 
@@ -183,6 +184,7 @@ const PetWall = memo(function PetWall(): JSX.Element {
       </defs>
       {/* Lavender and mint walls with a wainscot */}
       <rect width={STAGE_WIDTH} height="540" fill="url(#pp-wall)" />
+      <rect width={STAGE_WIDTH} height="540" fill={mat("plaster")} />
       {WINDOWS.map((x) => (
         <ArchedWindow key={x} x={x} />
       ))}

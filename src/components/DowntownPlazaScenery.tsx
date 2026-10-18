@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo, type CSSProperties } from "react";
 
 const MARQUEE_BULBS = Array.from({ length: 15 }, (_, i) => {
@@ -239,8 +240,16 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
         fill="url(#dt-mountain-far)"
       />
       <path
+        d="M0 430 Q280 320 620 400 Q980 290 1420 395 Q1840 310 2160 380 Q2310 350 2400 375 V540 H0 Z"
+        fill={mat("rock")}
+      />
+      <path
         d="M0 475 Q380 405 820 460 Q1240 380 1660 455 Q2050 410 2400 465 V540 H0 Z"
         fill="url(#dt-mountain-mid)"
+      />
+      <path
+        d="M0 475 Q380 405 820 460 Q1240 380 1660 455 Q2050 410 2400 465 V540 H0 Z"
+        fill={mat("rock")}
       />
 
       {/* Midground Acacia Tree Silhouettes on the Ridge */}
@@ -353,6 +362,14 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
           stroke="#8c6f52"
           strokeWidth="6"
         />
+        <rect
+          x="-140"
+          y="-380"
+          width="280"
+          height="380"
+          rx="8"
+          fill={mat("stone")}
+        />
 
         {/* Mansard Slate Roof with Ornate Cresting */}
         <path
@@ -360,6 +377,10 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
           fill="url(#leshop-roof)"
           stroke="#222b27"
           strokeWidth="5"
+        />
+        <path
+          d="M-155 -380 L-130 -445 L130 -445 L155 -380 Z"
+          fill={mat("metal")}
         />
         <path d="M-130 -445 H130" stroke="#d4af37" strokeWidth="4" />
         {/* Roof Finial Accents */}
@@ -701,6 +722,14 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
           stroke="#997a22"
           strokeWidth="4"
         />
+        <rect
+          x="-42"
+          y="-360"
+          width="84"
+          height="360"
+          rx="6"
+          fill={mat("metal")}
+        />
         {/* Vertical Brass Fluting */}
         {[-32, -16, 0, 16, 32].map((bx) => (
           <line
@@ -745,6 +774,14 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
           stroke="#d4af37"
           strokeWidth="3"
           opacity="0.6"
+        />
+        <rect
+          x="-28"
+          y="-280"
+          width="56"
+          height="160"
+          rx="8"
+          fill={mat("glass")}
         />
         <path
           d="M-20 -270 L20 -130 M-20 -230 L20 -170"
@@ -796,6 +833,14 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
           fill="url(#club-obsidian)"
           stroke="#4a3b63"
           strokeWidth="5"
+        />
+        <rect
+          x="-125"
+          y="-320"
+          width="250"
+          height="320"
+          rx="14"
+          fill={mat("glass")}
         />
 
         {/* Upper Stage Beams / Wash Lights */}
@@ -994,6 +1039,7 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
 
         {/* Shimmering Turquoise Water Basin Pool */}
         <ellipse cy="16" rx="190" ry="38" fill="url(#fountain-pool-water)" />
+        <ellipse cy="16" rx="190" ry="38" fill={mat("water")} />
 
         {/* Animated Expanding Concentric Water Ripples */}
         {[2.5, 2].map((strokeWidth, i) => (
@@ -1060,6 +1106,7 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
           stroke="#75624b"
           strokeWidth="6"
         />
+        <ellipse cy="-95" rx="100" ry="24" fill={mat("stone")} />
         <ellipse cy="-98" rx="90" ry="20" fill="url(#fountain-pool-water)" />
 
         {/* Overflowing Translucent Waterfall Cascades from Upper Bowl */}
@@ -1544,6 +1591,14 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
           stroke="#8c6849"
           strokeWidth="6"
         />
+        <rect
+          x="-150"
+          y="-360"
+          width="300"
+          height="360"
+          rx="10"
+          fill={mat("plaster")}
+        />
 
         {/* Terracotta Tile Pitch Roof */}
         <polygon
@@ -1552,6 +1607,7 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
           stroke="#7c2d12"
           strokeWidth="5"
         />
+        <polygon points="-170,-360 0,-445 170,-360" fill={mat("tile")} />
         {/* Tile Ridges */}
         {[-120, -80, -40, 0, 40, 80, 120].map((rx) => (
           <line
@@ -1722,6 +1778,14 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
             fill="#451a03"
             stroke="#d97706"
             strokeWidth="4"
+          />
+          <rect
+            x="-110"
+            y="-24"
+            width="220"
+            height="48"
+            rx="8"
+            fill={mat("wood")}
           />
           <text
             y="6"

@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import type { JSX } from "react";
 import { memo } from "react";
 
@@ -171,8 +172,16 @@ const CoastalPierBackdrop = memo(function CoastalPierBackdrop(): JSX.Element {
         fill="#c98f8e"
       />
       <path
+        d={`M0 ${HORIZON}Q180 260 420 ${HORIZON}Q560 300 760 ${HORIZON}V360H0Z`}
+        fill={mat("sand")}
+      />
+      <path
         d={`M1700 ${HORIZON}Q1900 286 2140 ${HORIZON}Q2290 300 2400 ${HORIZON - 10}V360H1700Z`}
         fill="#c07f85"
+      />
+      <path
+        d={`M1700 ${HORIZON}Q1900 286 2140 ${HORIZON}Q2290 300 2400 ${HORIZON - 10}V360H1700Z`}
+        fill={mat("sand")}
       />
 
       <rect
@@ -180,6 +189,12 @@ const CoastalPierBackdrop = memo(function CoastalPierBackdrop(): JSX.Element {
         width={STAGE_WIDTH}
         height={DECK_TOP - HORIZON}
         fill="url(#cp-water)"
+      />
+      <rect
+        y={HORIZON}
+        width={STAGE_WIDTH}
+        height={DECK_TOP - HORIZON}
+        fill={mat("water")}
       />
       {SUN_GLINTS.map((g, i) => (
         <path
@@ -350,6 +365,14 @@ const CoastalPierFront = memo(function CoastalPierFront(): JSX.Element {
           stroke="#795e43"
           strokeWidth="4"
         />
+        <rect
+          x="-125"
+          y="-100"
+          width="250"
+          height="38"
+          rx="7"
+          fill={mat("wood")}
+        />
         <path
           d="M-140-48H140M-105-48V0M105-48V0"
           stroke="#795e43"
@@ -398,6 +421,7 @@ const CoastalPierFront = memo(function CoastalPierFront(): JSX.Element {
           stroke="#795e43"
           strokeWidth="4"
         />
+        <rect x="-70" y="-44" width="70" height="44" fill={mat("wood")} />
         <path d="M-70-22H0M-35-44V0" stroke="#795e43" strokeWidth="3" />
       </g>
 

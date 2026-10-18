@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo, type CSSProperties } from "react";
 
 const STAGE_WIDTH = 2400;
@@ -621,6 +622,10 @@ const LionAquariumStage = memo(function LionAquariumStage() {
         fill="url(#la-glass)"
       />
       <path
+        d={`M0 ${TUNNEL.base}A${TUNNEL.rx} ${TUNNEL.ry} 0 0 1 ${STAGE_WIDTH} ${TUNNEL.base}Z`}
+        fill={mat("glass")}
+      />
+      <path
         d={`M0 ${TUNNEL.base}A${TUNNEL.rx} ${TUNNEL.ry} 0 0 1 ${STAGE_WIDTH} ${TUNNEL.base}`}
         fill="none"
         stroke="#0a3550"
@@ -705,6 +710,10 @@ const LionAquariumStage = memo(function LionAquariumStage() {
         fill="url(#la-sand)"
       />
       <path
+        d={`M0 ${FLOOR_Y}Q600 ${FLOOR_Y - 14} 1200 ${FLOOR_Y}T2400 ${FLOOR_Y}V720H0Z`}
+        fill={mat("sand")}
+      />
+      <path
         d={`M0 ${FLOOR_Y}Q600 ${FLOOR_Y - 14} 1200 ${FLOOR_Y}T2400 ${FLOOR_Y}`}
         fill="none"
         stroke="#fff2d6"
@@ -751,6 +760,7 @@ const LionAquariumStage = memo(function LionAquariumStage() {
 
       {/* Touch pool: a rock rim around shallow water */}
       <ellipse cx="1560" cy="610" rx="200" ry="42" fill="#6b5a4a" />
+      <ellipse cx="1560" cy="610" rx="200" ry="42" fill={mat("rock")} />
       <ellipse
         cx="1560"
         cy="606"

@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { createContext, memo, useContext, type CSSProperties } from "react";
 
 // Rotate or scale about the local origin, like an SVG transform, instead of the fill-box.
@@ -320,6 +321,10 @@ const ClubPulseStage = memo(function ClubPulseStage() {
       <g className="vip-mezzanine-balcony">
         {/* Mezzanine Upper Deck Floor */}
         <polygon points="120,190 1800,190 1820,215 100,215" fill="#1b172a" />
+        <polygon
+          points="120,190 1800,190 1820,215 100,215"
+          fill={mat("metal")}
+        />
         <line
           x1="100"
           y1="215"
@@ -384,6 +389,7 @@ const ClubPulseStage = memo(function ClubPulseStage() {
           height="45"
           fill="url(#cp-vip-glass)"
         />
+        <rect x="100" y="165" width="1720" height="45" fill={mat("glass")} />
         <rect
           x="100"
           y="162"
@@ -590,6 +596,7 @@ const ClubPulseStage = memo(function ClubPulseStage() {
         height="305"
         fill="url(#cp-floor-grad)"
       />
+      <rect x="0" y="415" width="1920" height="305" fill={mat("tile")} />
 
       {/* Recessed Glowing Neon Frame for Dance Floor (320 to 1600, 420 to 660) */}
       <rect
@@ -844,6 +851,7 @@ const ClubPulseStage = memo(function ClubPulseStage() {
           stroke="#3730a3"
           strokeWidth="3"
         />
+        <polygon points="-450,35 450,35 420,-10 -420,-10" fill={mat("metal")} />
         <line
           x1="-450"
           y1="35"

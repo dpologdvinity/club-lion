@@ -1,4 +1,5 @@
 import { memo, type CSSProperties } from "react";
+import { mat } from "./MaterialDefs";
 
 const FLOOR_TOP = 540;
 
@@ -11,16 +12,23 @@ const FLAGS = Array.from({ length: 40 }, (_, i) => {
   return { x, y: 40 + swag, color: FLAG_COLORS[i % FLAG_COLORS.length] };
 });
 
-const TILES = Array.from({ length: 4 * 30 }, (_, i) => ({
-  x: (i % 30) * 80,
-  y: FLOOR_TOP + Math.floor(i / 30) * 45,
-  dark: (i + Math.floor(i / 30)) % 2 === 0,
-}));
+// Square tiles on the shared 80 px tile grid; the top row is cut by the wall.
+const TILES = Array.from({ length: 4 * 30 }, (_, i) => {
+  const row = Math.floor(i / 30);
+  const top = Math.max(FLOOR_TOP, 480 + row * 80);
+  return {
+    x: (i % 30) * 80,
+    y: top,
+    h: 480 + (row + 1) * 80 - top,
+    dark: (i + row) % 2 === 0,
+  };
+});
 
 function CapizWindow({ x, y }: { x: number; y: number }) {
   return (
     <g transform={`translate(${x} ${y})`}>
       <rect width="220" height="190" rx="8" fill="#8a5a30" />
+      <rect width="220" height="190" rx="8" fill={mat("wood")} />
       {Array.from({ length: 5 * 4 }, (_, i) => (
         <rect
           key={i}
@@ -33,6 +41,7 @@ function CapizWindow({ x, y }: { x: number; y: number }) {
           strokeWidth="2"
         />
       ))}
+      <rect x="12" y="12" width="196" height="166" fill={mat("glass")} />
       <rect x="106" y="0" width="8" height="190" fill="#6e4628" />
     </g>
   );
@@ -62,7 +71,9 @@ function Table({ x, y }: { x: number; y: number }) {
   return (
     <g transform={`translate(${x} ${y})`}>
       <rect x="-8" y="0" width="16" height="44" fill="#6e4628" />
+      <rect x="-8" y="0" width="16" height="44" fill={mat("wood")} />
       <ellipse cx="0" cy="0" rx="90" ry="22" fill="#ff8fab" />
+      <ellipse cx="0" cy="0" rx="90" ry="22" fill={mat("fabric")} />
       <path
         d="M-90 0Q-80 30 -60 20Q-40 34 -20 22Q0 36 20 22Q40 34 60 20Q80 30 90 0Z"
         fill="#ff6f96"
@@ -86,6 +97,7 @@ const KainanStage = memo(function KainanStage() {
     <g>
       {/* Warm painted wall and bamboo wainscot */}
       <rect x="0" y="0" width="2400" height={FLOOR_TOP} fill="#f6d58a" />
+      <rect x="0" y="0" width="2400" height={FLOOR_TOP} fill={mat("plaster")} />
       <rect x="0" y="0" width="2400" height="24" fill="#c98a4a" />
       {Array.from({ length: 60 }, (_, i) => (
         <rect
@@ -98,6 +110,13 @@ const KainanStage = memo(function KainanStage() {
           fill={i % 2 === 0 ? "#d9b46a" : "#cfa65a"}
         />
       ))}
+      <rect
+        x="0"
+        y="430"
+        width="2400"
+        height={FLOOR_TOP - 430}
+        fill={mat("bamboo")}
+      />
       <rect x="0" y="424" width="2400" height="10" fill="#8a5a30" />
 
       {/* Doorway back to the plaza */}
@@ -106,8 +125,16 @@ const KainanStage = memo(function KainanStage() {
         fill="#7a4a24"
       />
       <path
+        d="M90 540V300Q90 250 170 250Q250 250 250 300V540Z"
+        fill={mat("wood")}
+      />
+      <path
         d="M110 540V310Q110 270 170 270Q230 270 230 310V540Z"
         fill="#bfe6ff"
+      />
+      <path
+        d="M110 540V310Q110 270 170 270Q230 270 230 310V540Z"
+        fill={mat("glass")}
       />
 
       <CapizWindow x={300} y={110} />
@@ -137,7 +164,9 @@ const KainanStage = memo(function KainanStage() {
 
       {/* Turo-turo counter: point at the food you want */}
       <rect x="640" y="510" width="960" height="24" rx="8" fill="#8a5a30" />
+      <rect x="640" y="510" width="960" height="24" rx="8" fill={mat("wood")} />
       <rect x="650" y="534" width="940" height="76" fill="#b07a46" />
+      <rect x="650" y="534" width="940" height="76" fill={mat("planks")} />
       <rect
         x="670"
         y="546"
@@ -146,6 +175,14 @@ const KainanStage = memo(function KainanStage() {
         rx="8"
         fill="#e8f7ff"
         fillOpacity="0.7"
+      />
+      <rect
+        x="670"
+        y="546"
+        width="900"
+        height="50"
+        rx="8"
+        fill={mat("glass")}
       />
       {[720, 860, 1000, 1140, 1280, 1420].map((x, i) => (
         <text key={x} x={x + 40} y="584" fontSize="30" textAnchor="middle">
@@ -184,10 +221,17 @@ const KainanStage = memo(function KainanStage() {
           x={t.x}
           y={t.y}
           width="80"
-          height="45"
+          height={t.h}
           fill={t.dark ? "#c96f4a" : "#e8a27a"}
         />
       ))}
+      <rect
+        x="0"
+        y={FLOOR_TOP}
+        width="2400"
+        height={720 - FLOOR_TOP}
+        fill={mat("tile")}
+      />
 
       <Table x={880} y={660} />
       <Table x={1640} y={670} />

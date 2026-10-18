@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import { memo, type CSSProperties, type ReactNode } from "react";
 import { RideQueueGate } from "./RideQueueGate";
 
@@ -773,6 +774,14 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
           stroke="#78350f"
           strokeWidth="6"
         />
+        <rect
+          x="-140"
+          y="-160"
+          width="280"
+          height="160"
+          rx="14"
+          fill={mat("wood")}
+        />
 
         {/* Candy-Striped Awning */}
         <g transform="translate(0 -160)">
@@ -808,6 +817,14 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
             fill="#78350f"
             stroke="#451a03"
             strokeWidth="2"
+          />
+          <rect
+            x="-120"
+            y="-20"
+            width="240"
+            height="34"
+            rx="4"
+            fill={mat("wood")}
           />
           {/* Hanging Plush Lions & Tropical Fruit Prizes */}
           {[-85, -35, 15, 65].map((px, i) => (
@@ -861,6 +878,14 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
           fill="#92400e"
           stroke="#451a03"
           strokeWidth="4"
+        />
+        <rect
+          x="-135"
+          y="-35"
+          width="270"
+          height="40"
+          rx="8"
+          fill={mat("wood")}
         />
         {/* Ball Toss Baskets */}
         {[-80, 0, 80].map((bx) => (
@@ -938,6 +963,14 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
           opacity="0.35"
           stroke="#94a3b8"
           strokeWidth="2"
+        />
+        <rect
+          x="-40"
+          y="-120"
+          width="80"
+          height="50"
+          rx="8"
+          fill={mat("glass")}
         />
         {Array.from({ length: 12 }, (_, i) => (
           <circle

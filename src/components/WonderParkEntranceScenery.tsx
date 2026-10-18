@@ -1,3 +1,4 @@
+import { mat } from "./MaterialDefs";
 import React from "react";
 import { RideQueueGate } from "./RideQueueGate";
 import {
@@ -103,6 +104,11 @@ const WonderParkBelowTrain = React.memo(function WonderParkBelowTrain() {
       <path
         d="M0 380 Q350 260 700 350 Q1150 240 1600 360 Q2100 250 2500 340 Q2650 310 2800 370 V540 H0 Z"
         fill="#7c4d68"
+        opacity="0.6"
+      />
+      <path
+        d="M0 380 Q350 260 700 350 Q1150 240 1600 360 Q2100 250 2500 340 Q2650 310 2800 370 V540 H0 Z"
+        fill={mat("rock")}
         opacity="0.6"
       />
       <path
@@ -468,6 +474,14 @@ const WonderParkAboveTrain = React.memo(function WonderParkAboveTrain() {
           stroke="#290d02"
           strokeWidth="3"
         />
+        <rect
+          x="-190"
+          y="-12"
+          width="380"
+          height="24"
+          rx="6"
+          fill={mat("wood")}
+        />
 
         {/* Victorian Station Facade */}
         <rect
@@ -529,6 +543,7 @@ const WonderParkAboveTrain = React.memo(function WonderParkAboveTrain() {
           stroke="#7f1d1d"
           strokeWidth="5"
         />
+        <polygon points="-210,-190 0,-280 210,-190" fill={mat("tile")} />
         <polygon points="-180,-190 0,-270 180,-190" fill="#dc2626" />
         <polygon points="-140,-190 0,-255 140,-190" fill="#f59e0b" />
         {/* Brass Roof Cresting & Weather Vane */}

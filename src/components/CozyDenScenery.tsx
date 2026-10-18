@@ -1,16 +1,21 @@
+import { mat } from "./MaterialDefs";
 import { memo } from "react";
 
 export const CozyDenScenery = memo(function CozyDenScenery() {
   return (
     <>
       <path fill="#e7c8ac" d="M0 0H1920V720H0Z" />
+      <path fill={mat("plaster")} d="M0 0H1920V720H0Z" />
       <path d="M0 0H1920V75H0Z" fill="#a87455" />
+      <path d="M0 0H1920V75H0Z" fill={mat("wood")} />
       <path d="M0 72H1920V90H0Z" fill="#f6dfb9" />
       <path d="M0 520H1920V720H0Z" fill="#b88760" />
+      <path d="M0 520H1920V720H0Z" fill={mat("planks")} />
       {[555, 600, 650, 710].map((y) => (
         <path key={y} d={`M0 ${y}H1920`} stroke="#996d4f" strokeWidth="3" />
       ))}
       <path d="M0 512H1920V540H0Z" fill="#f3d6ae" />
+      <path d="M0 512H1920V540H0Z" fill={mat("wood")} />
       <g transform="translate(1080 135)">
         <path
           d="M0 0h340v240H0Z"
@@ -57,6 +62,7 @@ export const CozyDenScenery = memo(function CozyDenScenery() {
         strokeWidth="8"
       />
       <path d="M1080 502h240v60h-240Z" fill="#9b6c49" />
+      <path d="M1080 502h240v60h-240Z" fill={mat("wood")} />
       <ellipse cx="1200" cy="496" rx="145" ry="30" fill="#c89965" />
       <g transform="translate(1630 170)">
         <path
