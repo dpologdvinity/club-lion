@@ -1,16 +1,13 @@
 import type { RoomManifest } from "../types.ts";
 
-/**
- * The starting room. Stage units match public/assets/savanna.webp drawn at
- * 1536 wide with its top 160 px of sky cropped (see SavannaSquareScenery).
- */
+/** The starting room: a 1536 × 864 flat-vector square (SavannaSquareScenery). */
 export const savannaSquareManifest: RoomManifest = {
   id: "square",
   name: "Savanna Square",
   district: "savanna",
   stageWidth: 1536,
   stageHeight: 864,
-  backgroundAsset: "savanna.webp",
+  backgroundAsset: "",
   walkablePolygon: [
     [184, 424],
     [1352, 424],

@@ -550,9 +550,7 @@ svg {
   background-color: #a9bb73;
 }
 .scene-square {
-  background-image: url("/assets/savanna.webp");
-  background-size: cover;
-  background-position: center 49%;
+  background: linear-gradient(#8fdc5a, #6cc248);
 }
 .world-stage {
   flex: 1 1 0%;
