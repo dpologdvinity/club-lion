@@ -11762,6 +11762,10 @@ body {
     box-shadow: 0 3px 0 #0f3a78;
     font-size: 26px;
   }
+  /* Keep the centring when pressed; the global :active nudge would drop it. */
+  .map-island .map-destination:not(:disabled):active {
+    transform: translate(-50%, calc(-50% + 1px));
+  }
   .map-island .map-destination:hover .map-icon,
   .map-island .map-destination.selected .map-icon {
     background: radial-gradient(circle at 35% 30%, #fffbe0, #ffd95a);
