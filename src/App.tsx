@@ -326,7 +326,12 @@ export default function App() {
             </span>
           </button>
           <div className="header-actions header-player">
-            <span className="gold-counter" data-gold={goldOf(player)}>
+            <span
+              className="gold-counter"
+              data-gold={goldOf(player)}
+              // A new key replays the bounce whenever the balance changes.
+              key={goldOf(player)}
+            >
               <span aria-hidden="true">🪙</span> {goldOf(player)}
               <span className="sr-only"> gold</span>
             </span>

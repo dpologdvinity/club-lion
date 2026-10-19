@@ -12019,3 +12019,16 @@ body {
   font-weight: 900;
   white-space: nowrap;
 }
+.gold-counter {
+  animation: gold-bounce 0.5s ease-out;
+}
+@keyframes gold-bounce {
+  40% {
+    transform: scale(1.25);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gold-counter {
+    animation: none;
+  }
+}
