@@ -11819,3 +11819,6 @@ body {
 .header-avatar svg {
   display: block;
 }
+.edge-arrow:not(:disabled):active {
+  transform: translate(-50%, calc(-50% + 1px));
+}
