@@ -11828,3 +11828,48 @@ body {
   font-size: 0.75em;
   line-height: 1;
 }
+
+/* Fantage-style windows: navy frame, sky body, blue title bar. */
+.dialog {
+  border: 4px solid #0f3a78;
+  background: #f3faff;
+  box-shadow:
+    0 0 0 4px #ffffff,
+    0 24px 80px #0f3a7840;
+}
+.dialog-header {
+  align-items: center;
+  padding: 12px 14px 12px 18px;
+  border-radius: 16px;
+  border: 2px solid #0f3a78;
+  background: linear-gradient(#4f9be8 0%, #2366c2 55%, #1c5cb4 100%);
+  box-shadow: inset 0 2px 0 #9fd0ff;
+}
+.dialog-header h2 {
+  color: #ffffff;
+  -webkit-text-stroke: 1px #0f3a78;
+  paint-order: stroke fill;
+  text-shadow: 0 2px 0 #0f3a78;
+  letter-spacing: 0;
+}
+.dialog-header p {
+  color: #ffffff;
+  font-weight: 700;
+}
+.dialog-header .icon-button {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #0f3a78;
+  background: radial-gradient(circle at 35% 30%, #ffffff, #d6e9fb);
+  color: #0f3a78;
+}
+.catalog-tabs button {
+  border: 2px solid #9cc6ee;
+  color: #0f3a78;
+  font-weight: 800;
+}
+.catalog-tabs button.selected {
+  background: linear-gradient(#4f9be8, #1c5cb4);
+  border-color: #0f3a78;
+  color: #ffffff;
+}
