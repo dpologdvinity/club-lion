@@ -11916,3 +11916,13 @@ body {
 .news-doll {
   border-radius: 16px;
 }
+.button-primary {
+  background: linear-gradient(#ffe36a, #ffb52e);
+  color: #4a2e00;
+  border: 2px solid #b8860b;
+  box-shadow: 0 3px 0 #b8860b;
+  font-weight: 900;
+}
+.button-primary:hover {
+  background: linear-gradient(#fff0a0, #ffc83a);
+}
