@@ -17,6 +17,7 @@ import {
   Users,
   Home,
   Scissors,
+  Newspaper,
 } from "lucide-react";
 
 /** The App panels the HUD opens. */
@@ -32,7 +33,8 @@ export type HudPanel =
   | "closet"
   | "friends"
   | "servers"
-  | "account";
+  | "account"
+  | "news";
 
 type HudButton = {
   label: string;
@@ -89,6 +91,7 @@ export function GameHud({
     open("stamps", "Stamp Book", <Stamp />),
     open("catalog", "Le Shop", <ShoppingBag />),
     open("jukebox", "Jukebox", <Music />),
+    open("news", "News", <Newspaper />),
   ];
   const corner: HudButton[] = [
     {

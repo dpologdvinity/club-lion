@@ -11873,3 +11873,46 @@ body {
   border-color: #0f3a78;
   color: #ffffff;
 }
+
+/* The Daily Roar newspaper */
+.news-paper {
+  display: grid;
+  gap: 12px;
+}
+.news-masthead {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 30px;
+  color: #0f3a78;
+  border-bottom: 3px double #0f3a78;
+}
+.news-story {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 2px solid #9cc6ee;
+}
+.news-story h3 {
+  margin: 0 0 4px;
+  color: #0f3a78;
+}
+.news-story p {
+  margin: 0 0 8px;
+}
+.news-art {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff, #d6e9fb);
+  font-size: 52px;
+}
+.news-doll {
+  border-radius: 16px;
+}

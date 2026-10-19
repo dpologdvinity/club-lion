@@ -79,6 +79,12 @@ import { AudioControls } from "./components/AudioControls";
 import { RoomMusic } from "./components/RoomMusic";
 import { LightingControls } from "./components/LightingControls";
 import { GameHud } from "./components/GameHud";
+import { NewsPanel } from "./components/NewsPanel";
+import {
+  resolveBottomId,
+  resolveShoeId,
+  resolveTopId,
+} from "./types/avatarOptions.ts";
 import { LOCAL_PLAYER_ID, useCustomServers } from "./useCustomServers";
 import { PET_PROFILES } from "./utils/petSpecies";
 import { PARK_RIDES, type ParkRideId } from "./utils/parkRides";
@@ -176,6 +182,7 @@ type Panel =
   | "leaderboard"
   | "rooftop"
   | "ride"
+  | "news"
   | null;
 
 export default function App() {
@@ -650,6 +657,31 @@ export default function App() {
         />
       )}
       {panel === "jukebox" && <JukeboxModal onClose={closePanel} />}
+      {panel === "news" && (
+        <Dialog
+          title="The Daily Roar"
+          subtitle="Today's news from around town"
+          onClose={closePanel}
+        >
+          <NewsPanel
+            look={player.look}
+            onPlay={(game) => openGames(game)}
+            onWear={(dressId) => {
+              setPlayer((p) =>
+                dressAvatar(p, {
+                  topId: resolveTopId(p.look),
+                  bottomId: resolveBottomId(p.look),
+                  shoesId: resolveShoeId(p.look),
+                  shoeKitId: p.look.shoeKitId,
+                  dressId,
+                }),
+              );
+              closePanel();
+              notify("Outfit of the Day on! Looking great!");
+            }}
+          />
+        </Dialog>
+      )}
       {panel === "condo" && (
         <Dialog
           title="Luxury Penthouse Condo"
@@ -802,7 +834,8 @@ export default function App() {
         panel !== "pet-picker" &&
         panel !== "leaderboard" &&
         panel !== "rooftop" &&
-        panel !== "ride" && (
+        panel !== "ride" &&
+        panel !== "news" && (
           <Dialog
             title={titles[panel][0]}
             subtitle={titles[panel][1]}
