@@ -1,3 +1,4 @@
+import { NM_BOTTOMS, NM_TOPS } from "./pixelItemsNM.ts";
 /**
  * Pixel doll item looks, shared by the sprite generator
  * (scripts/pixel/doll.mts) and the game. Each wearable id maps to the cut,
@@ -43,14 +44,51 @@ export const HAIR_LOOKS: Record<string, HairShape> = {
   mermaid_waves: "long",
 };
 
+/** Little pictures printed on the chest of graphic tees. */
+export type Motif =
+  | "ghost"
+  | "pumpkin"
+  | "star"
+  | "leaf"
+  | "bunny"
+  | "face"
+  | "tie"
+  | "heart"
+  | "skull"
+  | "berry"
+  | "clover"
+  | "peace"
+  | "crown"
+  | "planet"
+  | "burger"
+  | "hotdog"
+  | "target"
+  | "bow"
+  | "turkey"
+  | "one"
+  | "balloon"
+  | "snow"
+  | "flag"
+  | "arrow"
+  | "spade"
+  | "diamond"
+  | "club"
+  | "flower"
+  | "bolt"
+  | "melon"
+  | "fire";
+
 export type TopLook = {
   cut: "tee" | "tank" | "halter" | "tube" | "jacket" | "hoodie";
   color: string;
   accent: string;
   pattern?: "stripes" | "star" | "heart" | "dots" | "trim";
+  motif?: Motif;
+  /** Sleeve colour when it differs from the body (raglan). */
+  sleeves?: string;
 };
 
-export const TOP_LOOKS: Record<string, TopLook> = {
+const BASE_TOP_LOOKS: Record<string, TopLook> = {
   crop_tank_pink: { cut: "tank", color: "#ff8fc0", accent: "#ffffff" },
   white_baby_tee: { cut: "tee", color: "#fbfbff", accent: "#ff8fc0" },
   star_baby_tee: {
@@ -141,9 +179,11 @@ export const TOP_LOOKS: Record<string, TopLook> = {
 export type BottomLook = {
   cut: "pants" | "flares" | "shorts" | "mini" | "skirt";
   color: string;
+  accent?: string;
+  pattern?: "stripes" | "dots" | "trim" | "pleats";
 };
 
-export const BOTTOM_LOOKS: Record<string, BottomLook> = {
+const BASE_BOTTOM_LOOKS: Record<string, BottomLook> = {
   flares_indigo: { cut: "flares", color: "#3f5fa8" },
   flares_light: { cut: "flares", color: "#8ab4e8" },
   white_flares: { cut: "flares", color: "#f4f4f8" },
@@ -177,4 +217,14 @@ export const SHOE_LOOKS: Record<string, ShoeLook> = {
   knee_boots: { cut: "boots", color: "#ffffff" },
   cowgirl_boots: { cut: "boots", color: "#a8662f" },
   glitter_heels: { cut: "heels", color: "#d9b8ff", sole: "#7a5ab8" },
+};
+
+export const TOP_LOOKS: Record<string, TopLook> = {
+  ...BASE_TOP_LOOKS,
+  ...Object.fromEntries(NM_TOPS.map((top) => [top.id, top.look])),
+};
+
+export const BOTTOM_LOOKS: Record<string, BottomLook> = {
+  ...BASE_BOTTOM_LOOKS,
+  ...Object.fromEntries(NM_BOTTOMS.map((bottom) => [bottom.id, bottom.look])),
 };

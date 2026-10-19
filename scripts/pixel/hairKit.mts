@@ -11,6 +11,11 @@
  */
 import { renderAll, shade } from "./sprites.mts";
 import { HAIR_KIT } from "../../src/components/avatar/pixelHairKit.ts";
+import {
+  NM_HAIRS,
+  type HairEdge,
+  type HairLength,
+} from "../../src/components/avatar/pixelHairKitNM.ts";
 
 type Pal = { o: string; d: string; m: string; b: string; l: string; s: string };
 type Hair = { back: string; front: string };
@@ -1360,6 +1365,396 @@ const BASES = [
   "#ff6fa8",
   "#f0c838",
 ];
+
+/* ------------------------------------------------ data-driven rows */
+
+const ROW_LENGTHS: Record<HairLength, Length> = {
+  pixie: "pixie",
+  bob: "bob",
+  shoulder: "shoulder",
+  long: "long",
+  waist: "waist",
+  curly: { y: 62, spread: 7, n: 7, amp: 3.6, tipsN: 6, depth: 3 },
+  curlyshort: { y: 50, spread: 6, n: 4, amp: 3, tipsN: 5, depth: 3 },
+  wavy: { y: 66, spread: 5, n: 5, amp: 2.4, tipsN: 6, depth: 3 },
+  wild: { y: 64, spread: 8, n: 4, amp: 3, tipsN: 7, depth: 7, pointy: true },
+  flip: { y: 50, spread: 6, n: 1, amp: 0, tipsN: 2, depth: -4 },
+  updo: "pixie",
+};
+
+const ROW_EDGES: Record<HairEdge, string> = {
+  sweep: EDGE.sweep,
+  centre: EDGE.centre,
+  blunt: EDGE.blunt,
+  peak: EDGE.peak,
+  spiky: `L53 40Q51 28 49 21${tips(49, 21, 15, 21, 7, 6, true)}Q14 30 11 40`,
+  wispy: `L53 44Q51 30 49 22${tips(49, 22, 15, 22, 6, 6, true)}Q14 30 11 44`,
+};
+
+/** One add-on token from a hair row, as back or front layer markup. */
+function addOn(token: string, p: Pal): { back?: string; front?: string } {
+  const [kind, ...a] = token.trim().split(/\s+/);
+  const n = (i: number, d = 0) => (a[i] === undefined ? d : Number(a[i]));
+  switch (kind) {
+    case "bow":
+      return { front: bow(n(0), n(1), n(2, 2.4), a[3]) };
+    case "flower":
+      return { front: flower(n(0), n(1), n(2, 2.2), a[3], a[4]) };
+    case "heart":
+      return { front: heart(n(0), n(1), a[2]) };
+    case "ribbon":
+      return { front: ribbonTail(n(0), n(1), a[2]) };
+    case "clip":
+      return {
+        front: `<rect x="${n(0) - 2.5}" y="${n(1) - 1}" width="5" height="2" fill="${a[2]}"/><rect x="${n(0) - 1.5}" y="${n(1) - 1}" width="1.4" height="0.8" fill="#ffffff"/>`,
+      };
+    case "feather":
+      return {
+        front: fill(
+          `M${n(0)} ${n(1)}Q${n(0) + 12} ${n(1) - 12} ${n(0) + 18} ${n(1) - 6}Q${n(0) + 10} ${n(1) - 4} ${n(0) + 2} ${n(1) + 4}Z`,
+          a[2],
+        ),
+      };
+    case "headband":
+      return { front: headband(a[0], n(1, 14)) };
+    case "hat":
+      return { front: hat(a[0], a[1], n(2, 12), n(3, 10), n(4, 24)) };
+    case "crown":
+      return {
+        front:
+          fill("M20 12L22 2L27 8L32 0L37 8L42 2L44 12Z", a[0]) +
+          `<circle cx="32" cy="7" r="1.4" fill="#e8303a"/>`,
+      };
+    case "tiara":
+      return {
+        front:
+          fill("M20 13Q32 6 44 13L42 15Q32 9 22 15Z", a[0]) +
+          fill("M29 10L32 4L35 10Z", a[0]) +
+          `<circle cx="32" cy="9" r="1.2" fill="#8af0ff"/>`,
+      };
+    case "ears":
+      return {
+        front:
+          fill("M14 12L13 1L22 6Z", a[0] ?? p.b) +
+          fill("M50 12L51 1L42 6Z", a[0] ?? p.b) +
+          fill("M15 8L14 2L19 6Z", "#ffb0c8") +
+          fill("M49 8L50 2L45 6Z", "#ffb0c8"),
+      };
+    case "flowercrown":
+      return {
+        front: [14, 22, 32, 42, 50]
+          .map((x, i) =>
+            flower(x, i % 2 ? 6 : 9, 1.8, i % 2 ? "#ffffff" : a[0]),
+          )
+          .join(""),
+      };
+    // Buns high on the head sit in front of the hair cap so they show.
+    case "topbun":
+      return { front: topBun(Math.max(7, n(0, 3) + 4), n(1, 7.4))(p) };
+    case "buns": {
+      const art = buns(n(0, 8), n(1, 7), n(2, 18))(p);
+      return n(0, 8) < 20 ? { front: art } : { back: art };
+    }
+    case "pony": {
+      const side = n(0, 1) < 0 ? -1 : 1;
+      return { back: pony(side, n(1, 60))(p) };
+    }
+    case "pigtails":
+      return { back: pigtails(n(0, 60), n(1) === 1, n(2, 6))(p) };
+    case "braid": {
+      const d = n(0, 1) < 0 ? -1 : 1;
+      return {
+        back: beads(
+          32 + d * 18,
+          30,
+          32 + d * 22,
+          50,
+          32 + d * 16,
+          70,
+          8,
+          2.6,
+          p.b,
+          p.m,
+        ),
+      };
+    }
+    case "streaks": {
+      // Coloured locks through the fringe, and down the back on long hair.
+      const colors = a[0].split(",");
+      const front = colors
+        .map((c, i) => line(`M${20 + i * 9} 4Q${18 + i * 9} 14 ${15 + i * 9} 24`, c, 2.2))
+        .join("");
+      return { back: streaks(colors, n(1, 66))(p), front };
+    }
+    case "shades":
+      return {
+        front: `<rect x="20" y="9" width="10" height="5" rx="2" fill="${a[0]}"/><rect x="34" y="9" width="10" height="5" rx="2" fill="${a[0]}"/><path d="M30 11H34" stroke="${a[0]}" stroke-width="1.2"/>`,
+      };
+    case "visor":
+      return {
+        front: fill("M12 18Q32 6 52 18L54 22Q32 12 10 22Z", a[0]),
+      };
+    case "cap":
+      return {
+        front:
+          fill("M12 20Q12 2 32 2Q52 2 52 20Z", a[0]) +
+          fill("M10 20H40L42 24H8Z", shade(a[0], -0.2)) +
+          heart(36, 10, "#ffe14a"),
+      };
+    case "beanie":
+      return {
+        front:
+          fill("M11 22Q10 0 32 0Q54 0 53 22Z", a[0]) +
+          `<rect x="10" y="18" width="44" height="6" rx="2" fill="${shade(a[0], -0.15)}"/>` +
+          line("M18 4V18M26 1V18M38 1V18M46 4V18", shade(a[0], -0.2)) +
+          `<circle cx="32" cy="2" r="3" fill="${a[0]}"/>`,
+      };
+    case "cathat":
+      return {
+        front:
+          fill("M10 28Q8 2 32 2Q56 2 54 28L52 30Q32 18 12 30Z", a[0]) +
+          fill("M13 10L12 0L24 4Z", a[0]) +
+          fill("M51 10L52 0L40 4Z", a[0]) +
+          `<rect x="24" y="12" width="3" height="3" fill="#26262e"/><rect x="37" y="12" width="3" height="3" fill="#26262e"/>` +
+          fill("M31 17H33L32 19Z", "#ff8ab8") +
+          line("M18 18H26M38 18H46", shade(a[0], -0.4)),
+      };
+    case "jester":
+      return {
+        front:
+          fill("M12 22Q12 6 32 6Q52 6 52 22Z", a[0]) +
+          fill("M14 12Q4 6 6 1Q16 4 24 8Z", a[1]) +
+          fill("M50 12Q60 6 58 1Q48 4 40 8Z", a[0]) +
+          fill("M28 8Q32 0 40 1Q36 4 36 8Z", a[1]) +
+          `<circle cx="6" cy="2" r="2" fill="#ffd84d"/><circle cx="58" cy="2" r="2" fill="#ffd84d"/><circle cx="40" cy="2" r="2" fill="#ffd84d"/>`,
+      };
+    case "bag":
+      return {
+        front:
+          `<rect x="10" y="1" width="44" height="42" fill="${a[0]}"/>` +
+          `<rect x="10" y="1" width="44" height="3" fill="${shade(a[0], -0.25)}"/>` +
+          `<circle cx="24" cy="22" r="4" fill="#ffffff"/><circle cx="40" cy="22" r="4" fill="#ffffff"/>` +
+          line("M26 32Q32 34 38 32", "#6a3a1a", 1.6),
+      };
+    case "bucket":
+      return {
+        front:
+          fill("M12 18Q12 2 32 2Q52 2 52 18Z", a[0]) +
+          `<ellipse cx="32" cy="19" rx="24" ry="4" fill="${a[0]}"/>` +
+          `<g fill="${a[1]}"><circle cx="22" cy="9" r="1.6"/><circle cx="34" cy="6" r="1.6"/><circle cx="44" cy="11" r="1.6"/><circle cx="28" cy="14" r="1.4"/><circle cx="18" cy="17" r="1.2"/><circle cx="46" cy="18" r="1.2"/></g>`,
+      };
+    case "beret":
+      return {
+        front:
+          `<ellipse cx="34" cy="10" rx="20" ry="8" fill="${a[0]}"/>` +
+          `<rect x="14" y="13" width="36" height="3" rx="1.5" fill="${shade(a[0], -0.25)}"/>` +
+          `<rect x="33" y="1" width="2" height="2" fill="${a[0]}"/>`,
+      };
+    case "tophat":
+      return {
+        front:
+          `<rect x="${n(2, 44) - 5}" y="${n(3, 6) - 8}" width="10" height="8" fill="${a[0]}"/>` +
+          `<rect x="${n(2, 44) - 8}" y="${n(3, 6)}" width="16" height="2" fill="${a[0]}"/>` +
+          `<rect x="${n(2, 44) - 5}" y="${n(3, 6) - 3}" width="10" height="2" fill="${a[1]}"/>`,
+      };
+    case "halo":
+      return {
+        front: `<ellipse cx="32" cy="3" rx="12" ry="2.6" fill="none" stroke="${a[0]}" stroke-width="2"/>`,
+      };
+    case "cowboy":
+      return {
+        front:
+          `<ellipse cx="32" cy="16" rx="27" ry="4.4" fill="${a[0]}"/>` +
+          fill("M18 16Q18 2 26 4Q32 7 38 4Q46 2 46 16Z", a[0]) +
+          `<rect x="18" y="12" width="28" height="2.4" fill="${a[1]}"/>` +
+          fill("M32 6L33.2 8.4L36 8.6L34 10.4L34.6 13L32 11.6L29.4 13L30 10.4L28 8.6L30.8 8.4Z", a[1]),
+      };
+    case "helmet":
+      return {
+        front:
+          fill("M9 28Q8 2 32 2Q56 2 55 28L50 26Q48 12 32 11Q16 12 14 26Z", a[0]) +
+          line("M14 8Q32 0 50 8", shade(a[0], 0.4), 1.6) +
+          `<rect x="9" y="24" width="6" height="8" rx="2" fill="${shade(a[0], -0.2)}"/><rect x="49" y="24" width="6" height="8" rx="2" fill="${shade(a[0], -0.2)}"/>`,
+      };
+    case "goggles":
+      return {
+        front: `<rect x="17" y="6" width="12" height="7" rx="3" fill="${a[0]}" stroke="#26262e" stroke-width="1"/><rect x="35" y="6" width="12" height="7" rx="3" fill="${a[0]}" stroke="#26262e" stroke-width="1"/>`,
+      };
+    case "hood": {
+      const c = a[0];
+      const ears =
+        a[1] === "bunny"
+          ? fill("M20 6Q16 -2 20 0Q26 2 26 8Z", c) + fill("M44 6Q48 -2 44 0Q38 2 38 8Z", c)
+          : a[1] === "chick"
+            ? fill("M30 4Q32 -2 34 4Z", "#f2902a") + `<path d="M29 18L32 22L35 18Z" fill="#f2902a"/><rect x="24" y="12" width="3" height="3" fill="#26262e"/><rect x="37" y="12" width="3" height="3" fill="#26262e"/>`
+            : `<circle cx="15" cy="7" r="5" fill="${c}"/><circle cx="49" cy="7" r="5" fill="${c}"/><circle cx="15" cy="7" r="2.4" fill="#ffb0c8"/><circle cx="49" cy="7" r="2.4" fill="#ffb0c8"/>`;
+      return {
+        front:
+          fill("M9 30Q7 3 32 3Q57 3 55 30L51 28Q50 13 32 12Q14 13 13 28Z", c) +
+          ears,
+      };
+    }
+    case "horn":
+      return {
+        front:
+          fill("M29 10L32 -0.5L35 10Z", a[0]) +
+          line("M30 7L34 6M30.6 3.6L33.4 3", "#ffffff"),
+      };
+    case "furhat":
+      return {
+        front:
+          fill("M10 22Q8 2 32 2Q56 2 54 22Z", a[0]) +
+          line("M14 8L16 4M22 6L23 2M30 5L30 1M38 5L39 1M46 7L48 3", shade(a[0], -0.3)) +
+          `<rect x="48" y="16" width="6" height="22" rx="3" fill="${a[0]}"/>` +
+          line("M48 22H54M48 28H54M48 34H54", "#3a2a1a", 1.4),
+      };
+    case "mask":
+      return {
+        front:
+          `<rect x="14" y="10" width="36" height="9" rx="4" fill="${a[0]}" stroke="#26262e" stroke-width="1"/>` +
+          `<rect x="17" y="12" width="30" height="5" rx="2.4" fill="#bff0ff"/>` +
+          `<rect x="50" y="2" width="3" height="20" rx="1.5" fill="#ffd84d"/><circle cx="51.5" cy="1.5" r="1.5" fill="#bff0ff"/>`,
+      };
+    case "santa":
+      return {
+        front:
+          fill("M11 20Q10 2 32 3Q48 3 56 14L60 26L54 16Q48 8 52 20Z", a[0]) +
+          `<rect x="9" y="17" width="44" height="5" rx="2.5" fill="#ffffff"/>` +
+          `<circle cx="59" cy="26" r="3" fill="#ffffff"/>`,
+      };
+    case "witch":
+      return {
+        front:
+          `<ellipse cx="32" cy="15" rx="28" ry="4.6" fill="${a[0]}"/>` +
+          fill("M18 15L34 0L50 6L46 8L46 15Z", a[0]) +
+          `<rect x="18" y="11" width="28" height="3" fill="${a[1]}"/>`,
+      };
+    case "fan":
+      return {
+        back: a[0]
+          .split(",")
+          .map((c, i, all) => {
+            const t = (i + 0.5) / all.length;
+            const ang = Math.PI * (1 + t);
+            const x = 32 + Math.cos(ang) * 30;
+            const y = 30 + Math.sin(ang) * 30;
+            return (
+              line(`M32 30L${r(x)} ${r(y)}`, "#3a8a2a", 1.4) +
+              `<ellipse cx="${r(x)}" cy="${r(Math.max(4, y))}" rx="5" ry="6" fill="${c}"/>` +
+              `<circle cx="${r(x)}" cy="${r(Math.max(4, y))}" r="2" fill="#2a5ad8"/>`
+            );
+          })
+          .join(""),
+      };
+    case "earmuffs":
+      return {
+        front:
+          line("M10 30Q10 4 32 4Q54 4 54 30", "#9a9aa6", 2) +
+          `<circle cx="10" cy="32" r="5.4" fill="${a[0]}"/><circle cx="54" cy="32" r="5.4" fill="${a[0]}"/>`,
+      };
+    case "bunnyears":
+      return {
+        front:
+          fill("M20 10Q14 0 18 0Q24 0 26 8Z", a[0]) +
+          fill("M44 10Q50 0 46 0Q40 0 38 8Z", a[0]) +
+          fill("M20 8Q17 2 19 2Q22 2 24 7Z", "#ffb0c8") +
+          fill("M44 8Q47 2 45 2Q42 2 40 7Z", "#ffb0c8"),
+      };
+    case "monster":
+      return {
+        front:
+          fill("M9 26Q6 1 32 1Q58 1 55 26L50 24Q48 12 32 11Q16 12 14 24Z", a[0]) +
+          line("M12 6L10 1M20 3L19 0M44 3L45 0M52 6L54 1", a[0], 2) +
+          `<circle cx="22" cy="7" r="3.4" fill="#ffffff"/><circle cx="42" cy="7" r="3.4" fill="#ffffff"/><circle cx="22" cy="7" r="1.6" fill="#26262e"/><circle cx="42" cy="7" r="1.6" fill="#26262e"/>`,
+      };
+    case "pumpkinhead":
+      return {
+        front:
+          `<ellipse cx="32" cy="24" rx="23" ry="21" fill="#f2902a"/>` +
+          line("M24 6Q22 24 24 44M40 6Q42 24 40 44M32 4V45", "#c8681a") +
+          `<rect x="30.5" y="0" width="3" height="5" fill="#3a8a2a"/>` +
+          fill("M20 20L26 20L23 15Z", "#3a2a1a") +
+          fill("M38 20L44 20L41 15Z", "#3a2a1a") +
+          fill("M21 30H43L40 36L36 33L32 37L28 33L24 36Z", "#3a2a1a"),
+      };
+    case "skullhead":
+      return {
+        front:
+          `<ellipse cx="32" cy="22" rx="22" ry="20" fill="#f4f4f0"/>` +
+          `<rect x="24" y="36" width="16" height="8" rx="2" fill="#f4f4f0"/>` +
+          `<ellipse cx="24" cy="24" rx="5" ry="6" fill="#26262e"/><ellipse cx="40" cy="24" rx="5" ry="6" fill="#26262e"/>` +
+          fill("M32 30L30 34H34Z", "#26262e") +
+          line("M28 38V44M32 38V44M36 38V44", "#9a9aa6"),
+      };
+    case "jar":
+      return {
+        front:
+          `<rect x="12" y="2" width="40" height="30" rx="8" fill="#bfe8f8" opacity="1"/>` +
+          `<rect x="12" y="2" width="40" height="6" rx="3" fill="#e8303a"/>` +
+          `<path d="M18 22Q24 12 32 18Q40 12 46 22Q40 28 32 24Q24 28 18 22Z" fill="#ff8ab8"/>` +
+          line("M22 20Q26 16 30 20M34 20Q38 16 42 20", "#d84a7a") +
+          `<rect x="16" y="10" width="3" height="16" fill="#ffffff"/>`,
+      };
+    case "pineapple":
+      return {
+        front:
+          `<ellipse cx="32" cy="22" rx="22" ry="18" fill="#f2c840"/>` +
+          line("M14 14L50 34M14 30L50 10M22 6L46 38M42 6L18 38", "#c89a20") +
+          fill("M24 6L20 -0.5L28 4L32 0L36 4L44 -0.5L40 6Z", "#3ac83a"),
+      };
+    case "globe":
+      return {
+        front:
+          `<circle cx="32" cy="24" r="22" fill="#2a6ad8"/>` +
+          fill("M18 12Q26 8 30 14Q28 22 20 22Q14 18 18 12Z", "#3ac83a") +
+          fill("M36 26Q46 22 48 32Q42 40 36 36Z", "#3ac83a") +
+          `<circle cx="32" cy="24" r="22" fill="none" stroke="#f2c040" stroke-width="2"/>`,
+      };
+    case "glasses":
+      return {
+        front: `<circle cx="25.6" cy="31" r="6" fill="none" stroke="${a[0]}" stroke-width="1.4"/><circle cx="38.4" cy="31" r="6" fill="none" stroke="${a[0]}" stroke-width="1.4"/><path d="M31.6 31H32.4" stroke="${a[0]}" stroke-width="1.4"/>`,
+      };
+    case "turkeyhat":
+      return {
+        front:
+          [0, 1, 2, 3, 4]
+            .map((i) => `<ellipse cx="${20 + i * 6}" cy="${6 - Math.abs(i - 2)}" rx="3.4" ry="6" fill="${["#e8303a", "#f2902a", "#ffd84d", "#f2902a", "#e8303a"][i]}"/>`)
+            .join("") +
+          `<ellipse cx="32" cy="14" rx="18" ry="8" fill="#a8642a"/>` +
+          `<circle cx="20" cy="10" r="3.4" fill="#a8642a"/><rect x="18" y="9" width="1.6" height="1.6" fill="#26262e"/>` +
+          fill("M15 11L12 12L15 13Z", "#f2c040"),
+      };
+    case "icecream":
+      return {
+        front:
+          fill("M10 26Q8 4 32 4Q56 4 54 26Q50 22 46 28Q42 22 38 28Q34 22 30 28Q26 22 22 28Q18 22 14 28Z", "#ffb0c8") +
+          fill("M27 7L32 0L37 7Z", "#e8a85a") +
+          line("M29 4L35 3", "#b8783a"),
+      };
+    default:
+      throw new Error(`hair add-on "${kind}" is unknown`);
+  }
+}
+
+for (const row of NM_HAIRS) {
+  const parts = (row.add ?? []).map((token) => (p: Pal) => addOn(token, p));
+  HAIRS.push(
+    make({
+      length: ROW_LENGTHS[row.len],
+      edge: ROW_EDGES[row.edge],
+      strands:
+        row.edge === "centre"
+          ? "centre"
+          : row.edge === "spiky" || row.edge === "wispy"
+            ? "none"
+            : "sweep",
+      mirror: row.mirror,
+      back: (p) => parts.map((part) => part(p).back ?? "").join(""),
+      front: (p) => parts.map((part) => part(p).front ?? "").join(""),
+    }),
+  );
+  BASES.push(row.color);
+}
 
 if (HAIRS.length !== HAIR_KIT.length || BASES.length !== HAIR_KIT.length)
   throw new Error("hair kit: one drawing and one colour per kit entry");

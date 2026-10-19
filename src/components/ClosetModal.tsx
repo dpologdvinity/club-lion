@@ -200,7 +200,47 @@ export function ClosetModal({
             />
           )}
 
-          {current && (
+          {current && current.id !== "shoesId" && (
+            <PicturePicker
+              legend={current.label}
+              options={current.options.filter(
+                // Secret pieces stay hidden until discovered or worn
+                (option) =>
+                  !CATALOG_ITEMS.some(
+                    (item) => item.id === option.id && item.isSecret,
+                  ) ||
+                  player.owned.includes(option.id) ||
+                  worn[current.id] === option.id,
+              )}
+              selected={outfit.dressId ? undefined : outfit[current.id]}
+              locked={(id) => {
+                const option = current.options.find((o) => o.id === id);
+                return (
+                  !!option &&
+                  !canWearClothing(player, option) &&
+                  worn[current.id] !== id
+                );
+              }}
+              // A top or bottoms takes the one-piece off
+              pick={(id) =>
+                setOutfit((o) => ({
+                  ...o,
+                  [current.id]: id,
+                  dressId: undefined,
+                }))
+              }
+              preview={(id) => ({
+                ...player.look,
+                ...outfit,
+                dressId: undefined,
+                costumeId: undefined,
+                [current.id]: id,
+              })}
+              framing="outfit"
+            />
+          )}
+
+          {current?.id === "shoesId" && (
             <fieldset>
               <legend>{current.label}</legend>
               <div className="salon-options">

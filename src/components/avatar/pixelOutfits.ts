@@ -1,3 +1,5 @@
+import { NM_OUTFIT_ROWS } from "./pixelOutfitsNM.ts";
+
 /**
  * Full outfits for the pixel doll (Fantage-style dresses and sets). Each is a
  * recipe the sprite generator draws: a bodice cut, a lower part, colours,
@@ -66,7 +68,7 @@ export type OutfitRecipe = {
 };
 
 /** Clothes kit 1 (inspo/fantage/clothes), redrawn in reading order. */
-export const OUTFITS: Record<string, OutfitRecipe> = {
+const BASE_OUTFITS: Record<string, OutfitRecipe> = {
   spring_sprite: {
     label: "Spring Sprite Dress",
     bodice: "puff",
@@ -1510,3 +1512,23 @@ export const OUTFITS: Record<string, OutfitRecipe> = {
     flower: "#ffd84d",
   },
 };
+
+/** A stable id from a label: "nm_" plus the label in snake case. */
+function nmId(label: string, taken: Set<string>): string {
+  const base = `nm_${label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "")}`;
+  let id = base;
+  for (let n = 2; taken.has(id); n++) id = `${base}_${n}`;
+  taken.add(id);
+  return id;
+}
+
+/** Every outfit: the original kits first, then the newer sheets, in order. */
+export const OUTFITS: Record<string, OutfitRecipe> = (() => {
+  const all: Record<string, OutfitRecipe> = { ...BASE_OUTFITS };
+  const taken = new Set(Object.keys(all));
+  for (const row of NM_OUTFIT_ROWS) all[nmId(row.label, taken)] = row;
+  return all;
+})();

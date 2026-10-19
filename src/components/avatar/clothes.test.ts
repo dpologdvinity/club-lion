@@ -7,10 +7,10 @@ import {
 } from "./clothes.ts";
 import { generateAvatarSvgString } from "../avatarSvg.ts";
 import {
-  BOTTOMS,
+  BASE_BOTTOMS,
   OUTFIT_PRESETS,
   SHOES,
-  TOPS,
+  BASE_TOPS,
 } from "../../types/avatarOptions.ts";
 import {
   CATALOG_ITEMS,
@@ -37,8 +37,8 @@ function assertValidMarkup(markup: string, context: string) {
 const dashed = (id: string) => id.replace(/_/g, "-");
 
 test("every top × bottom combination renders valid, classed markup", () => {
-  for (const top of TOPS) {
-    for (const bottom of BOTTOMS) {
+  for (const top of BASE_TOPS) {
+    for (const bottom of BASE_BOTTOMS) {
       for (const action of ["idle", "wave"]) {
         const look: AvatarLook = {
           ...DEFAULT_AVATAR_LOOK,
@@ -78,13 +78,13 @@ test("each top, bottom, and shoe has distinct artwork", () => {
       "",
     );
   const tops = new Set(
-    TOPS.map((t) => art({ topId: t.id, bottomId: "flares_indigo" })),
+    BASE_TOPS.map((t) => art({ topId: t.id, bottomId: "flares_indigo" })),
   );
-  assert.equal(tops.size, TOPS.length);
+  assert.equal(tops.size, BASE_TOPS.length);
   const bottoms = new Set(
-    BOTTOMS.map((b) => art({ topId: "white_baby_tee", bottomId: b.id })),
+    BASE_BOTTOMS.map((b) => art({ topId: "white_baby_tee", bottomId: b.id })),
   );
-  assert.equal(bottoms.size, BOTTOMS.length);
+  assert.equal(bottoms.size, BASE_BOTTOMS.length);
   const shoes = new Set(
     SHOES.map((s) =>
       renderLayer4Footwear({ ...DEFAULT_AVATAR_LOOK, shoesId: s.id }).replace(
@@ -140,7 +140,7 @@ test("raw outfit IDs never reach the markup", () => {
 });
 
 test("waving raises the matching sleeve for sleeved tops only", () => {
-  for (const top of TOPS) {
+  for (const top of BASE_TOPS) {
     const look: AvatarLook = { ...DEFAULT_AVATAR_LOOK, topId: top.id };
     const spec = sleeveSpecFor(look);
     const svg = generateAvatarSvgString(look, "wave");
@@ -162,11 +162,11 @@ test("waving raises the matching sleeve for sleeved tops only", () => {
 
 test("every top, bottom, and shoe is drawn with the doll ink outline", () => {
   const ink = 'stroke="#2a1610"';
-  for (const { id } of TOPS) {
+  for (const { id } of BASE_TOPS) {
     const look = { ...DEFAULT_AVATAR_LOOK, topId: id };
     assert.ok(renderLayer5Outfit(look).includes(ink), id);
   }
-  for (const { id } of BOTTOMS) {
+  for (const { id } of BASE_BOTTOMS) {
     const look = { ...DEFAULT_AVATAR_LOOK, bottomId: id };
     assert.ok(renderLayer5Outfit(look).includes(ink), id);
   }
@@ -206,8 +206,8 @@ test("moon-boot fluff merges into the shaft outline instead of stitching", () =>
 test("pink faux-fur jacket is a shop piece with merged fluffy edges", () => {
   const item = CATALOG_ITEMS.find((i) => i.id === "pink_fur_jacket");
   assert.equal(item?.slot, "top_outer");
-  assert.ok(!TOPS.find((t) => t.id === "pink_fur_jacket" && "free" in t));
-  assert.ok(TOPS.some((t) => t.id === "holo_halter" && "free" in t));
+  assert.ok(!BASE_TOPS.find((t) => t.id === "pink_fur_jacket" && "free" in t));
+  assert.ok(BASE_TOPS.some((t) => t.id === "holo_halter" && "free" in t));
   const outfit = renderLayer5Outfit({
     ...DEFAULT_AVATAR_LOOK,
     topId: "pink_fur_jacket",

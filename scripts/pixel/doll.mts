@@ -5,12 +5,14 @@
  */
 import { G, renderAll, shade } from "./sprites.mts";
 import {
+  type Motif,
   BOTTOM_LOOKS,
   HAIR_LOOKS,
   SHOE_LOOKS,
   TOP_LOOKS,
   type BottomLook,
   type HairShape,
+  type Motif,
   type ShoeLook,
   type TopLook,
 } from "../../src/components/avatar/pixelItems.ts";
@@ -126,19 +128,85 @@ function hairFront(shape: HairShape): string {
 
 const ink = (fill: string) => shade(fill, -0.45);
 
+/** Chest prints for graphic tees, centred on (32, 55), about 7 px wide. */
+const MOTIFS: Record<Motif, (c: string) => string> = {
+  ghost: (c) =>
+    `<path d="M28.6 59V54.4Q28.6 51 32 51Q35.4 51 35.4 54.4V59L34.2 58L33 59L32 58L31 59L29.8 58Z" fill="${c}"/><rect x="30.4" y="53.6" width="1" height="1.2" fill="#26262e"/><rect x="32.6" y="53.6" width="1" height="1.2" fill="#26262e"/>`,
+  pumpkin: (c) =>
+    `<ellipse cx="32" cy="55.6" rx="3.6" ry="3" fill="${c}"/><rect x="31.6" y="51.6" width="0.8" height="1.4" fill="#3a8a2a"/><path d="M30.4 55h1v1h-1zM32.6 55h1v1h-1zM30.6 57h2.8v0.8h-2.8z" fill="#26262e"/>`,
+  star: (c) =>
+    `<path d="M32 51.6l1.2 2.6 2.8.2-2.2 1.8.8 2.8L32 57.6l-2.6 1.4.8-2.8-2.2-1.8 2.8-.2Z" fill="${c}"/>`,
+  leaf: (c) =>
+    `<path d="M29 58Q29 52 35 51.6Q35.4 57.6 29 58Z" fill="${c}"/><path d="M29.4 57.6L34 53" stroke="#26262e" stroke-width="0.6"/>`,
+  bunny: (c) =>
+    `<circle cx="32" cy="56.4" r="2.6" fill="${c}"/><rect x="30.4" y="51.4" width="1.2" height="3.4" rx="0.6" fill="${c}"/><rect x="32.4" y="51.4" width="1.2" height="3.4" rx="0.6" fill="${c}"/><rect x="31" y="56" width="0.8" height="0.8" fill="#26262e"/><rect x="32.4" y="56" width="0.8" height="0.8" fill="#26262e"/>`,
+  face: (c) =>
+    `<circle cx="32" cy="55.4" r="3.4" fill="${c}"/><rect x="30.4" y="54.2" width="1" height="1.2" fill="#ffffff"/><rect x="32.6" y="54.2" width="1" height="1.2" fill="#ffffff"/><path d="M30.6 56.8Q32 57.8 33.4 56.8" fill="none" stroke="#ffffff" stroke-width="0.6"/>`,
+  tie: (c) =>
+    `<path d="M31.2 50.6H32.8L33.4 52L32.8 58.6L32 59.6L31.2 58.6L30.6 52Z" fill="${c}"/>`,
+  heart: (c) =>
+    `<path d="M32 59q-4-2.6-4-5q0-2 2-2q1.4 0 2 1.4q.6-1.4 2-1.4q2 0 2 2q0 2.4-4 5Z" fill="${c}"/>`,
+  skull: (c) =>
+    `<path d="M28.8 55Q28.8 51.4 32 51.4Q35.2 51.4 35.2 55V57H34V58.6H30V57H28.8Z" fill="${c}"/><rect x="30" y="54" width="1.4" height="1.4" fill="#26262e"/><rect x="32.6" y="54" width="1.4" height="1.4" fill="#26262e"/>`,
+  berry: (c) =>
+    `<path d="M29 53.6H35Q35 58 32 59.4Q29 58 29 53.6Z" fill="${c}"/><path d="M29.4 53.6L31 52.2L32 53.2L33 52.2L34.6 53.6Z" fill="#3a8a2a"/><g fill="#ffe14a"><rect x="30.6" y="55" width="0.6" height="0.6"/><rect x="32.8" y="56" width="0.6" height="0.6"/><rect x="31.6" y="57.4" width="0.6" height="0.6"/></g>`,
+  clover: (c) =>
+    `<g fill="${c}"><circle cx="32" cy="53" r="1.6"/><circle cx="30.4" cy="55" r="1.6"/><circle cx="33.6" cy="55" r="1.6"/></g><path d="M32 55.4L33 58.6" stroke="${c}" stroke-width="0.8"/>`,
+  peace: (c) =>
+    `<circle cx="32" cy="55.4" r="3" fill="none" stroke="${c}" stroke-width="0.9"/><path d="M32 52.4V58.4M32 55.6L29.9 57.5M32 55.6L34.1 57.5" stroke="${c}" stroke-width="0.8"/>`,
+  crown: (c) =>
+    `<path d="M28.6 58.4V53L30.4 55L32 52.4L33.6 55L35.4 53V58.4Z" fill="${c}"/>`,
+  planet: (c) =>
+    `<circle cx="32" cy="55.4" r="2.6" fill="${c}"/><ellipse cx="32" cy="55.4" rx="4.2" ry="1.2" fill="none" stroke="#ffd84d" stroke-width="0.7"/>`,
+  burger: (c) =>
+    `<path d="M28.8 54.4Q28.8 51.8 32 51.8Q35.2 51.8 35.2 54.4Z" fill="${c}"/><rect x="28.6" y="54.6" width="6.8" height="1" fill="#3ac83a"/><rect x="28.8" y="55.6" width="6.4" height="1.2" fill="#6a3a1a"/><path d="M28.8 57H35.2Q35.2 58.6 32 58.6Q28.8 58.6 28.8 57Z" fill="${c}"/>`,
+  hotdog: (c) =>
+    `<rect x="28.4" y="54" width="7.2" height="3" rx="1.5" fill="${c}"/><rect x="28" y="54.8" width="8" height="1.4" rx="0.7" fill="#c8402a"/>`,
+  target: (c) =>
+    `<circle cx="32" cy="55.4" r="3.4" fill="${c}"/><circle cx="32" cy="55.4" r="2.2" fill="#ffffff"/><circle cx="32" cy="55.4" r="1" fill="${c}"/>`,
+  bow: (c) =>
+    `<path d="M32 55L28.8 53V57ZM32 55L35.2 53V57Z" fill="${c}"/><rect x="31.4" y="54.4" width="1.2" height="1.2" fill="${c}"/>`,
+  turkey: (c) =>
+    `<g fill="#ffd84d"><circle cx="30" cy="53" r="1.2"/><circle cx="34" cy="53" r="1.2"/></g><g fill="#e8603a"><circle cx="32" cy="52.2" r="1.2"/></g><circle cx="32" cy="56" r="2.4" fill="${c}"/><rect x="31.6" y="55.4" width="0.8" height="0.8" fill="#26262e"/>`,
+  one: (c) =>
+    `<path d="M31 52.6L32.6 51.4H33.4V58H32.2V53.2L31.4 53.8Z" fill="${c}"/>`,
+  balloon: (c) =>
+    `<ellipse cx="32" cy="54" rx="2.6" ry="3" fill="${c}"/><path d="M32 57V59.6" stroke="#26262e" stroke-width="0.5"/>`,
+  snow: (c) =>
+    `<circle cx="32" cy="57" r="2.2" fill="${c}"/><circle cx="32" cy="53.6" r="1.6" fill="${c}"/><rect x="31.8" y="53.6" width="0.6" height="0.4" fill="#f2902a"/>`,
+  flag: (c) =>
+    `<g fill="${c}"><rect x="29" y="52" width="1.4" height="1.4"/><rect x="31.8" y="52" width="1.4" height="1.4"/><rect x="30.4" y="53.4" width="1.4" height="1.4"/><rect x="33.2" y="53.4" width="1.4" height="1.4"/><rect x="29" y="54.8" width="1.4" height="1.4"/><rect x="31.8" y="54.8" width="1.4" height="1.4"/></g><path d="M29 52V59" stroke="${c}" stroke-width="0.6"/>`,
+  arrow: (c) =>
+    `<path d="M32 51.4L35.4 55H33.2V58.8H30.8V55H28.6Z" fill="${c}"/>`,
+  spade: (c) =>
+    `<path d="M32 51.6Q35.6 55 35 56.6Q34 58 32.6 56.8L33.4 59H30.6L31.4 56.8Q30 58 29 56.6Q28.4 55 32 51.6Z" fill="${c}"/>`,
+  diamond: (c) => `<path d="M32 51.4L35 55.4L32 59.4L29 55.4Z" fill="${c}"/>`,
+  club: (c) =>
+    `<g fill="${c}"><circle cx="32" cy="53.4" r="1.5"/><circle cx="30.4" cy="55.8" r="1.5"/><circle cx="33.6" cy="55.8" r="1.5"/></g><path d="M31.4 56H32.6L33.2 59H30.8Z" fill="${c}"/>`,
+  flower: (c) =>
+    `<g fill="${c}"><circle cx="32" cy="53.2" r="1.4"/><circle cx="34" cy="55" r="1.4"/><circle cx="33.2" cy="57.2" r="1.4"/><circle cx="30.8" cy="57.2" r="1.4"/><circle cx="30" cy="55" r="1.4"/></g><circle cx="32" cy="55.4" r="1" fill="#ffe14a"/>`,
+  bolt: (c) =>
+    `<path d="M33 51.2L29.6 55.8H32L30.8 59.6L34.4 54.6H32Z" fill="${c}"/>`,
+  melon: (c) =>
+    `<path d="M28.6 54H35.4Q35.4 58.6 32 58.6Q28.6 58.6 28.6 54Z" fill="${c}"/><path d="M29.4 54H34.6Q34.6 57.6 32 57.6Q29.4 57.6 29.4 54Z" fill="#ff5a6a"/><g fill="#26262e"><rect x="31" y="55" width="0.6" height="0.8"/><rect x="32.8" y="55.4" width="0.6" height="0.8"/></g>`,
+  fire: (c) =>
+    `<path d="M32 51.4Q35 54.4 34.6 56.8Q34.2 58.6 32 58.6Q29.8 58.6 29.4 56.8Q29 54.6 31 53.4Q31 55 32 55.4Q31.6 53.4 32 51.4Z" fill="${c}"/><path d="M32 55.6Q33.4 57 32.8 57.8H31.2Q30.8 57 32 55.6Z" fill="#ffd84d"/>`,
+};
+
 function top(look: TopLook): string {
   const f = look.color;
+  const arm = look.sleeves ?? f;
   const s = shade(f, -0.2);
   const parts: string[] = [];
   if (look.cut === "jacket" || look.cut === "hoodie")
     parts.push(
-      `<path d="M25 49L22.2 52.2L21.4 62.6L24.6 62.9L25.4 55Z" fill="${f}"/>`,
-      `<path d="M39 49L41.8 52.2L42.6 62.6L39.4 62.9L38.6 55Z" fill="${f}"/>`,
+      `<path d="M25 49L22.2 52.2L21.4 62.6L24.6 62.9L25.4 55Z" fill="${arm}"/>`,
+      `<path d="M39 49L41.8 52.2L42.6 62.6L39.4 62.9L38.6 55Z" fill="${arm}"/>`,
     );
   if (look.cut === "tee")
     parts.push(
-      `<path d="M25 49L22 51.4L21.4 56.6L24.6 57L25.2 53Z" fill="${f}"/>`,
-      `<path d="M39 49L42 51.4L42.6 56.6L39.4 57L38.8 53Z" fill="${f}"/>`,
+      `<path d="M25 49L22 51.4L21.4 56.6L24.6 57L25.2 53Z" fill="${arm}"/>`,
+      `<path d="M39 49L42 51.4L42.6 56.6L39.4 57L38.8 53Z" fill="${arm}"/>`,
     );
   if (look.cut === "tank" || look.cut === "halter" || look.cut === "tube")
     parts.push(
@@ -179,6 +247,7 @@ function top(look: TopLook): string {
     parts.push(
       `<g fill="${look.accent}"><rect x="27" y="52" width="1.6" height="1.6"/><rect x="34" y="54" width="1.6" height="1.6"/><rect x="29" y="58" width="1.6" height="1.6"/><rect x="36" y="59" width="1.6" height="1.6"/></g>`,
     );
+  if (look.motif) parts.push(MOTIFS[look.motif](look.accent));
   if (look.pattern === "trim")
     parts.push(
       `<path d="M24.5 50Q32 47 39.5 50" fill="none" stroke="${look.accent}" stroke-width="2"/>`,
@@ -187,6 +256,36 @@ function top(look: TopLook): string {
 }
 
 function bottom(look: BottomLook): string {
+  return bottomShape(look) + bottomPattern(look);
+}
+
+/** Hem height of each cut, for trims. */
+const BOTTOM_HEM: Record<BottomLook["cut"], number> = {
+  pants: 82.6,
+  flares: 83.6,
+  shorts: 68.8,
+  mini: 69.8,
+  skirt: 76.4,
+};
+
+function bottomPattern(look: BottomLook): string {
+  const c = look.accent ?? shade(look.color, -0.3);
+  const hem = BOTTOM_HEM[look.cut];
+  switch (look.pattern) {
+    case "trim":
+      return `<path d="M22 ${hem}H42" stroke="${c}" stroke-width="1.6"/>`;
+    case "stripes":
+      return `<path d="M23 64.6H41M23 67.4H41" stroke="${c}" stroke-width="1.2"/>`;
+    case "dots":
+      return `<g fill="${c}"><rect x="26" y="64" width="1.4" height="1.4"/><rect x="35" y="65.6" width="1.4" height="1.4"/><rect x="29" y="67.6" width="1.4" height="1.4"/><rect x="33" y="62.6" width="1.4" height="1.4"/></g>`;
+    case "pleats":
+      return `<path d="M27 63L26 ${hem}M30 63V${hem}M34 63V${hem}M37 63L38 ${hem}" stroke="${c}" stroke-width="0.8"/>`;
+    default:
+      return "";
+  }
+}
+
+function bottomShape(look: BottomLook): string {
   const f = look.color;
   const s = shade(f, -0.2);
   switch (look.cut) {

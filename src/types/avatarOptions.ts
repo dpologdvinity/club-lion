@@ -1,3 +1,4 @@
+import { NM_BOTTOMS, NM_TOPS } from "../components/avatar/pixelItemsNM.ts";
 /**
  * Avatar customization registry: every makeup, hair, and clothing option.
  *
@@ -391,7 +392,8 @@ export const HAIR_STREAKS = [
  * ------------------------------------------------------------- */
 export type ClothingOption = StyleOption & { free?: boolean };
 
-export const TOPS = [
+/** The original tops, also drawn by the old vector doll. */
+export const BASE_TOPS = [
   { id: "crop_tank_pink", label: "Pink Crop Tank", free: true },
   { id: "white_baby_tee", label: "White Baby Tee", free: true },
   { id: "star_baby_tee", label: "Star Baby Tee", free: true },
@@ -414,9 +416,16 @@ export const TOPS = [
   { id: "pink_fur_jacket", label: "Pink Faux-Fur Jacket" },
 ] as const satisfies readonly ClothingOption[];
 
-export type TopId = (typeof TOPS)[number]["id"];
+/** Every top: the originals, then the redrawn sheets (all free). */
+export const TOPS: readonly ClothingOption[] = [
+  ...BASE_TOPS,
+  ...NM_TOPS.map(({ id, label }) => ({ id, label, free: true })),
+];
 
-export const BOTTOMS = [
+export type TopId = (typeof BASE_TOPS)[number]["id"] | (string & {});
+
+/** The original bottoms, also drawn by the old vector doll. */
+export const BASE_BOTTOMS = [
   { id: "flares_indigo", label: "Indigo Flares", free: true },
   { id: "flares_light", label: "Light-Wash Flares", free: true },
   { id: "white_flares", label: "White Flares", free: true },
@@ -433,7 +442,13 @@ export const BOTTOMS = [
   { id: "glitter_flares", label: "Glitter Flares" },
 ] as const satisfies readonly ClothingOption[];
 
-export type BottomId = (typeof BOTTOMS)[number]["id"];
+/** Every bottom: the originals, then the redrawn sheets (all free). */
+export const BOTTOMS: readonly ClothingOption[] = [
+  ...BASE_BOTTOMS,
+  ...NM_BOTTOMS.map(({ id, label }) => ({ id, label, free: true })),
+];
+
+export type BottomId = (typeof BASE_BOTTOMS)[number]["id"] | (string & {});
 
 export const SHOES = [
   { id: "canvas_sneakers", label: "Platform Sneakers", free: true },

@@ -1,3 +1,4 @@
+import { NM_HAIRS } from "./pixelHairKitNM.ts";
 /**
  * Pixel hair kit: full-colour hairstyles redrawn after the Fantage hair
  * sheets (inspo/fantage/hair, local only). Sprites are drawn in
@@ -85,7 +86,10 @@ const LABELS = [
   "Golden Shag",
 ];
 
-export const HAIR_KIT: HairKitEntry[] = LABELS.map((label, i) => ({
+export const HAIR_KIT: HairKitEntry[] = [
+  ...LABELS,
+  ...NM_HAIRS.map((row) => row.label),
+].map((label, i) => ({
   id: `kit_${String(i + 1).padStart(2, "0")}`,
   label,
 }));
