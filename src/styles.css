@@ -11822,3 +11822,9 @@ body {
 .edge-arrow:not(:disabled):active {
   transform: translate(-50%, calc(-50% + 1px));
 }
+.player-title {
+  display: block;
+  color: #e8253a;
+  font-size: 0.75em;
+  line-height: 1;
+}

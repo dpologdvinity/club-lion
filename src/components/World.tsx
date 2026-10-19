@@ -1,3 +1,4 @@
+import { titleFor } from "../utils/titles.ts";
 import {
   CHATTER_EVERY_MS,
   CHATTER_SHOW_MS,
@@ -1193,6 +1194,9 @@ export function World({
             />
           </div>
           <span className="character-name your-name">
+            <span className="player-title">
+              {titleFor(player.stamps?.length ?? 0)}
+            </span>
             {player.name}
             <span className="you-tag"> you</span>
           </span>

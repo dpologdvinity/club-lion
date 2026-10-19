@@ -15,3 +15,7 @@ dist
 # Third-party reference art (e.g. Fantage screenshots): local only, never commit.
 inspo/
 gallery/fantage/
+
+# Local scratch files
+.tmp-*
+tests/tmp-*
