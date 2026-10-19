@@ -11,14 +11,20 @@ test("gold buys a costume in the closet; too little gold locks it", async ({
   page,
 }) => {
   await page.goto("/");
-  await expect(page.getByRole("status", { name: "200 gold" })).toBeVisible();
+  await expect(page.locator(".gold-counter")).toHaveAttribute(
+    "data-gold",
+    "200",
+  );
   await page.getByRole("button", { name: "Closet", exact: true }).click();
   const closet = page.getByRole("dialog", { name: "My Closet" });
   await closet.getByRole("button", { name: "Costumes", exact: true }).click();
   await closet
     .getByRole("button", { name: "Buy Teddy Bear Suit for 120 gold" })
     .click();
-  await expect(page.getByRole("status", { name: "80 gold" })).toBeVisible();
+  await expect(page.locator(".gold-counter")).toHaveAttribute(
+    "data-gold",
+    "80",
+  );
   // 80 gold left is not enough for another 120-gold costume.
   await expect(
     closet.getByRole("button", { name: "Big Heart Suit, costs 120 gold" }),

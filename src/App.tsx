@@ -326,12 +326,9 @@ export default function App() {
             </span>
           </button>
           <div className="header-actions header-player">
-            <span
-              className="gold-counter"
-              role="status"
-              aria-label={`${goldOf(player)} gold`}
-            >
+            <span className="gold-counter" data-gold={goldOf(player)}>
               <span aria-hidden="true">🪙</span> {goldOf(player)}
+              <span className="sr-only"> gold</span>
             </span>
             <div className="player-menu">
               <button
