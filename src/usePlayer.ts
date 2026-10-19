@@ -1,3 +1,4 @@
+import { payGold } from "./utils/gold.ts";
 import { useCallback, useEffect, useState, type SetStateAction } from "react";
 import {
   migratePlayerSave,
@@ -30,7 +31,10 @@ export function usePlayer() {
   });
   const setPlayer = useCallback((action: SetStateAction<PlayerV2>) => {
     updatePlayer((current) =>
-      collectStamps(typeof action === "function" ? action(current) : action),
+      payGold(
+        current,
+        collectStamps(typeof action === "function" ? action(current) : action),
+      ),
     );
   }, []);
   const [saveError, setSaveError] = useState(false);

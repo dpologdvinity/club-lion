@@ -1,3 +1,4 @@
+import { goldOf, ownsPixel, pixelPrice } from "../utils/gold.ts";
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { PicturePicker } from "./PicturePicker";
@@ -34,12 +35,15 @@ type Swatch = StyleOption & { hex?: string; iris?: readonly string[] };
 
 export function SalonModal({
   player,
+  onBuy,
   onClose,
   onSave,
 }: {
   player: PlayerBase & { look: AvatarLook };
   onClose: () => void;
   onSave: (look: AvatarLook) => void;
+  /** Spends gold on a hairstyle. */
+  onBuy?: (id: string) => void;
 }) {
   const [tab, setTab] = useState<Tab>("hair");
   const [draft, setDraft] = useState<AvatarLook>({
@@ -159,6 +163,13 @@ export function SalonModal({
                 options={HAIR_KIT}
                 selected={draft.hairKitId}
                 pick={(hairKitId) => update({ hairKitId })}
+                gold={goldOf(player)}
+                priceOf={(id) =>
+                  id === player.look.hairKitId || ownsPixel(player, "hair", id)
+                    ? 0
+                    : Math.max(0, pixelPrice("hair", id))
+                }
+                onBuy={(id) => onBuy?.(id)}
                 preview={(hairKitId) => ({ ...draft, hairKitId })}
                 framing="portrait"
               />

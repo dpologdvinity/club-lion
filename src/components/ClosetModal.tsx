@@ -1,3 +1,9 @@
+import {
+  goldOf,
+  ownsPixel,
+  pixelPrice,
+  type PixelKind,
+} from "../utils/gold.ts";
 import { useState } from "react";
 import { Check, Lock } from "lucide-react";
 import { Dialog } from "./Dialog";
@@ -60,12 +66,21 @@ export function ClosetModal({
   onClose,
   onSave,
   onShop,
+  onBuy,
 }: {
   player: PlayerBase & { look: AvatarLook };
   onClose: () => void;
   onSave: (outfit: ClosetOutfit) => void;
   onShop: () => void;
+  /** Spends gold on a pixel piece. */
+  onBuy?: (kind: PixelKind, id: string) => void;
 }) {
+  const gold = goldOf(player);
+  const priceFor =
+    (kind: PixelKind, worn: string | undefined) => (id: string) =>
+      id === worn || ownsPixel(player, kind, id)
+        ? 0
+        : Math.max(0, pixelPrice(kind, id));
   const [tab, setTab] = useState<Tab>("dressId");
   const [outfit, setOutfit] = useState<ClosetOutfit>({
     topId: resolveTopId(player.look),
@@ -124,6 +139,13 @@ export function ClosetModal({
           {tab === "costumeId" && (
             <PicturePicker
               legend="Costumes"
+              gold={gold}
+              priceOf={(id) =>
+                id === "none"
+                  ? 0
+                  : priceFor("costume", player.look.costumeId)(id)
+              }
+              onBuy={(id) => onBuy?.("costume", id)}
               options={COSTUME_OPTIONS}
               selected={outfit.costumeId ?? NO_COSTUME}
               pick={(id) =>
@@ -143,6 +165,11 @@ export function ClosetModal({
           {tab === "dressId" && (
             <PicturePicker
               legend="Outfits"
+              gold={gold}
+              priceOf={(id) =>
+                id === "none" ? 0 : priceFor("dress", player.look.dressId)(id)
+              }
+              onBuy={(id) => onBuy?.("dress", id)}
               options={DRESSES}
               selected={outfit.dressId}
               pick={(dressId) => setOutfit((o) => ({ ...o, dressId }))}
@@ -154,6 +181,11 @@ export function ClosetModal({
           {current?.id === "shoesId" && (
             <PicturePicker
               legend="Shoe rack"
+              gold={gold}
+              priceOf={(id) =>
+                id === "none" ? 0 : priceFor("shoe", player.look.shoeKitId)(id)
+              }
+              onBuy={(id) => onBuy?.("shoe", id)}
               options={SHOE_KIT}
               selected={outfit.shoeKitId}
               pick={(shoeKitId) => setOutfit((o) => ({ ...o, shoeKitId }))}

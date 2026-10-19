@@ -80,6 +80,7 @@ import { RoomMusic } from "./components/RoomMusic";
 import { LightingControls } from "./components/LightingControls";
 import { GameHud } from "./components/GameHud";
 import { NewsPanel } from "./components/NewsPanel";
+import { buyPixel, giftPixel, goldOf } from "./utils/gold.ts";
 import {
   resolveBottomId,
   resolveShoeId,
@@ -325,6 +326,13 @@ export default function App() {
             </span>
           </button>
           <div className="header-actions header-player">
+            <span
+              className="gold-counter"
+              role="status"
+              aria-label={`${goldOf(player)} gold`}
+            >
+              <span aria-hidden="true">🪙</span> {goldOf(player)}
+            </span>
             <div className="player-menu">
               <button
                 className="avatar-button"
@@ -631,6 +639,10 @@ export default function App() {
       {panel === "salon" && (
         <SalonModal
           player={player}
+          onBuy={(id) => {
+            setPlayer((p) => buyPixel(p, "hair", id));
+            notify("Bought! A fresh new hairstyle.");
+          }}
           onClose={closePanel}
           onSave={(look) => {
             setPlayer((p) => {
@@ -647,6 +659,10 @@ export default function App() {
       {panel === "closet" && (
         <ClosetModal
           player={player}
+          onBuy={(kind, id) => {
+            setPlayer((p) => buyPixel(p, kind, id));
+            notify("Bought! It's in your closet now.");
+          }}
           onClose={closePanel}
           onShop={() => setPanel("catalog")}
           onSave={(outfit) => {
@@ -668,7 +684,7 @@ export default function App() {
             onPlay={(game) => openGames(game)}
             onWear={(dressId) => {
               setPlayer((p) =>
-                dressAvatar(p, {
+                dressAvatar(giftPixel(p, "dress", dressId), {
                   topId: resolveTopId(p.look),
                   bottomId: resolveBottomId(p.look),
                   shoesId: resolveShoeId(p.look),

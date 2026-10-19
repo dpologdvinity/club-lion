@@ -1088,8 +1088,17 @@ test("dressAvatar wears pixel outfits and old saves load without them", async ()
     "shoe_001",
   );
   assert.equal(dressAvatar(player, { ...outfit, shoeKitId: "nope" }), player);
+  // Costumes cost gold: not worn until bought.
   assert.equal(
-    dressAvatar(player, { ...outfit, costumeId: "teddy_bear" }).look.costumeId,
+    dressAvatar(player, { ...outfit, costumeId: "teddy_bear" }),
+    player,
+  );
+  const buyer = {
+    ...player,
+    owned: [...player.owned, "px:costume:teddy_bear"],
+  };
+  assert.equal(
+    dressAvatar(buyer, { ...outfit, costumeId: "teddy_bear" }).look.costumeId,
     "teddy_bear",
   );
   assert.equal(dressAvatar(player, { ...outfit, costumeId: "nope" }), player);
@@ -1868,5 +1877,24 @@ test("collecting today's pin keeps it once; five pins earn the Pin Collector sta
       JSON.stringify({ ...player, pins: ["fake", today.id, today.id, 3] }),
     ).pins,
     [today.id],
+  );
+});
+
+test("gold and bought pixel pieces survive a reload; old saves start with gold", async () => {
+  const { restorePlayer } = await import("./game.ts");
+  const { goldOf, STARTING_GOLD } = await import("./utils/gold.ts");
+  const old = restorePlayer(JSON.stringify(newPlayer()));
+  assert.equal(goldOf(old), STARTING_GOLD);
+  const save = {
+    ...newPlayer(),
+    gold: 75,
+    owned: ["scarf", "px:costume:ufo", "px:costume:bogus"],
+  };
+  const restored = restorePlayer(JSON.stringify(save));
+  assert.equal(restored.gold, 75);
+  assert.deepEqual(restored.owned, ["scarf", "px:costume:ufo"]);
+  assert.equal(
+    restorePlayer(JSON.stringify({ ...save, gold: -5 })).gold,
+    undefined,
   );
 });

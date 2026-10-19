@@ -63,7 +63,7 @@ export function NewsPanel({
         </span>
         <div>
           <h3>Outfit of the Day: {OUTFITS[news.dressId]?.label}</h3>
-          <p>Everyone is wearing it today!</p>
+          <p>Everyone is wearing it today, and it's free for you!</p>
           <button
             type="button"
             className="button button-primary"

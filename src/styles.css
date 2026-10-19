@@ -11981,3 +11981,41 @@ body {
   font-size: 11px;
   font-weight: 900;
 }
+
+/* Gold */
+.gold-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 2px solid #b8860b;
+  background: linear-gradient(#fff4b0, #ffd23f);
+  color: #4a2e00;
+  font-weight: 900;
+  font-size: 16px;
+  pointer-events: auto;
+}
+.picture-options button.is-priced {
+  padding-bottom: 20px;
+}
+.picture-options button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.picture-price {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #ffe36a;
+  color: #4a2e00;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}

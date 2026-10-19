@@ -94,6 +94,12 @@ import { OUTFITS } from "./components/avatar/pixelOutfits.ts";
 import { SHOE_KIT } from "./components/avatar/pixelShoeKit.ts";
 import { COSTUMES } from "./components/avatar/pixelCostumes.ts";
 import {
+  isPixelOwnedId,
+  ownsPixel,
+  restoreGold,
+  type PixelKind,
+} from "./utils/gold.ts";
+import {
   FANTAGE_GAMES,
   fantageGame,
   type FantageGameId,
@@ -168,6 +174,8 @@ export type PlayerBase = {
   /** Fastest hard Hide & Seek Safari round in milliseconds. */
   seekBestMs?: number;
   stamps?: string[];
+  /** Gold from games and stamps; missing means the starting amount. */
+  gold?: number;
   fishCaughtCount?: number;
   largestFishWeight?: number;
   fashionBestScore?: number;
@@ -841,7 +849,8 @@ export function restorePlayer(raw: string | null): Player {
         p.owned.filter(
           (id: unknown) =>
             SHOP_ITEMS.some((item) => item.id === id) ||
-            CATALOG_ITEMS.some((item) => item.id === id),
+            CATALOG_ITEMS.some((item) => item.id === id) ||
+            isPixelOwnedId(id),
         ),
       ),
     ];
@@ -992,6 +1001,9 @@ export function restorePlayer(raw: string | null): Player {
       p.peekabooBest <= PEEKABOO_ROUNDS
         ? { peekabooBest: p.peekabooBest }
         : {}),
+      ...(restoreGold(p.gold) === undefined
+        ? {}
+        : { gold: restoreGold(p.gold) }),
       ...(p.fantageBest === undefined
         ? {}
         : { fantageBest: restoreFantageBest(p.fantageBest) }),
@@ -1350,6 +1362,13 @@ export function applySalonLook<T extends PlayerBase>(
   look: AvatarLook,
 ): T {
   if (!validateAvatarLook(look)) return player;
+  const worn = (player as { look?: AvatarLook }).look;
+  if (
+    look.hairKitId &&
+    look.hairKitId !== worn?.hairKitId &&
+    !ownsPixel(player, "hair", look.hairKitId)
+  )
+    return player;
   return { ...player, look } as T;
 }
 
@@ -1401,6 +1420,18 @@ export function dressAvatar<T extends PlayerBase & { look?: AvatarLook }>(
     !allowed(TOPS, outfit.topId, resolveTopId(look)) ||
     !allowed(BOTTOMS, outfit.bottomId, resolveBottomId(look)) ||
     !allowed(SHOES, outfit.shoesId, resolveShoeId(look))
+  )
+    return player;
+  // Pixel pieces must be free, bought, or already worn.
+  const allowedPixel = (
+    kind: PixelKind,
+    id: string | undefined,
+    worn: string | undefined,
+  ) => id === undefined || id === worn || ownsPixel(player, kind, id);
+  if (
+    !allowedPixel("dress", outfit.dressId, look.dressId) ||
+    !allowedPixel("shoe", outfit.shoeKitId, look.shoeKitId) ||
+    !allowedPixel("costume", outfit.costumeId, look.costumeId)
   )
     return player;
   return {
