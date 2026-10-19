@@ -11926,3 +11926,58 @@ body {
 .button-primary:hover {
   background: linear-gradient(#fff0a0, #ffc83a);
 }
+
+/* Games menu: a picture grid, like Fantage's game list. */
+.arcade-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+.arcade-picker .arcade-game {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  gap: 6px;
+  min-height: 0;
+  padding: 10px 8px;
+  border-radius: 16px;
+  border: 2px solid #9cc6ee;
+  background: #ffffff;
+  box-shadow: 0 3px 0 #9cc6ee;
+  text-align: center;
+}
+.arcade-picker .arcade-game:hover {
+  border-color: #2366c2;
+  box-shadow: 0 3px 0 #2366c2;
+}
+.arcade-picker .arcade-art {
+  width: 100%;
+  min-height: 64px;
+  border-radius: 12px;
+  font-size: 22px;
+}
+.arcade-picker .arcade-copy {
+  display: grid;
+  gap: 2px;
+}
+.arcade-picker .arcade-copy strong {
+  color: #0f3a78;
+  font-size: 15px;
+}
+.arcade-picker .arcade-copy small,
+.arcade-picker .arcade-reward {
+  display: none;
+}
+.arcade-picker .arcade-game > svg {
+  display: none;
+}
+.arcade-picker .game-card-best {
+  justify-self: center;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #ffe36a;
+  color: #4a2e00;
+  font-size: 11px;
+  font-weight: 900;
+}
