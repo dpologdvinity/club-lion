@@ -4,8 +4,6 @@
 
 This document defines the official multi-agent operating architecture for Club Lion. All agents (Antigravity, Codex, Claude Code, and future models) must strictly follow this protocol.
 
-For CLI execution guides and context conservation rules, see [`docs/workflows/ORCHESTRATION.md`](workflows/ORCHESTRATION.md).
-
 ---
 
 ## 1. Role Taxonomy & Separation of Concerns
