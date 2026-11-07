@@ -48,7 +48,10 @@ jobs:
       - name: Playwright shard ${{ matrix.shard }}
         env:
           E2E_SPECS: ${{ inputs.specs }}
-        run: npx playwright test $E2E_SPECS --shard=${{ matrix.shard }}
+        run: |
+          # Split the space-separated spec list into an array (avoids unquoted expansion).
+          read -ra specs <<< "$E2E_SPECS"
+          npx playwright test "${specs[@]}" --shard=${{ matrix.shard }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: ${{ !cancelled() }}
         with:
