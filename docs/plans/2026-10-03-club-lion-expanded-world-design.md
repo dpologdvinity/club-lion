@@ -174,7 +174,7 @@ The world map is organized into 9 major thematic districts comprising 30+ explor
 ### 4.1 Interactive Rides
 1. **The Thunder Mountain Roller Coaster:** Interactive track coaster. Avatars and pets board with goggles, climb the lift hill, scream down drops, and receive a souvenir photo card.
 2. **The Giant Panoramic Ferris Wheel:** Slowly lifts passenger cabins high into the air, revealing day/sunset/night views of the whole map with relaxing music.
-3. **Safari Bumper Cars Arena:** Driveable electric bumper cars with arrow keys/WASD and bump collision physics.
+3. **Safari Bumper Cars Arena:** Drivable electric bumper cars with arrow keys/WASD and bump collision physics.
 4. **The Haunted Minecart Dark Ride:** Spooky underground track with interactive flashlight targets and hidden secrets.
 5. **Dizzy Spinning Mango Teacups:** Rapid tapping spins cups into a blur with confetti and dizzy swirl animations.
 6. **Baobab Sky-Drop Tower:** Thrilling 100-foot vertical ascent and sudden freefall with wind rush sound design.

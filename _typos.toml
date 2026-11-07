@@ -1,0 +1,15 @@
+# typos config: https://github.com/crate-ci/typos
+[files]
+extend-exclude = [
+  "*.{gif,png,jpg,jpeg,webp,ico,svg,pdf,woff,woff2,ttf}",
+]
+
+[default.extend-words]
+# "café" as a JS unicode escape or HTML entity (&Eacute;); typos reads "caf".
+"caf" = "caf"
+# SVG gradient ids ("seek-sav-sky") abbreviate savanna.
+"sav" = "sav"
+
+[default.extend-identifiers]
+# Plural of PNG is split into "PN" + "Gs" by the tokenizer.
+"PNGs" = "PNGs"
