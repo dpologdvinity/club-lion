@@ -19,6 +19,10 @@ pre-commit:
         - "README.md"
         - "ARCHITECTURE.md"
       run: npx prettier --check --ignore-unknown {staged_files}
+    typos:
+      # typos would scan binary assets when handed explicit paths.
+      exclude: "*.{gif,png,jpg,jpeg,webp,ico,svg,pdf,woff,woff2,ttf}"
+      run: typos --force-exclude {staged_files}
 
 pre-push:
   commands:
