@@ -4,7 +4,6 @@
  */
 
 export const BUZZER_SHOTS = 10;
-export const BUZZER_MAX_SCORE = 20;
 
 /** Meter level 0–100 at `ms`, bouncing up and down. */
 export function meterLevel(ms: number, periodMs = 1800): number {

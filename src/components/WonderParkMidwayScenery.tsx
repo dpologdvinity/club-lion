@@ -1217,5 +1217,3 @@ const WonderParkMidwayStage = memo(function WonderParkMidwayStage() {
     </g>
   );
 });
-
-export default WonderParkMidwayScenery;

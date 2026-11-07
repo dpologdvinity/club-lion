@@ -1479,5 +1479,3 @@ const ClubPulseStage = memo(function ClubPulseStage() {
     </g>
   );
 });
-
-export default ClubPulseScenery;

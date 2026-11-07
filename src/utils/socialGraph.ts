@@ -24,7 +24,7 @@ export type SocialEmote =
   "high_five" | "tandem_groove" | "paw_bump" | "wave" | "heart";
 
 export const MAX_FRIENDS = 100;
-export const MAX_RECENT_VISITORS = 15;
+const MAX_RECENT_VISITORS = 15;
 export const SOCIAL_EMOTE_COOLDOWN_MS = 2000;
 
 function socialIds(

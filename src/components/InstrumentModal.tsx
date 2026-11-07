@@ -1,17 +1,10 @@
 import { useEffect, useState } from "react";
-import { Dialog } from "./Dialog";
 import {
   DRUM_LABELS,
   NOTE_NAMES,
   playInstrumentNote,
   type InstrumentType,
 } from "../utils/instrumentSynths.ts";
-
-export type InstrumentModalProps = {
-  instrument: InstrumentType;
-  instrumentName: string;
-  onClose: () => void;
-};
 
 const KEY_TO_NOTE: Record<string, number> = {
   "1": 0,
@@ -71,17 +64,5 @@ export function InstrumentContent({
         ))}
       </div>
     </div>
-  );
-}
-
-export function InstrumentModal({
-  instrument,
-  instrumentName,
-  onClose,
-}: InstrumentModalProps) {
-  return (
-    <Dialog title={instrumentName} onClose={onClose}>
-      <InstrumentContent instrument={instrument} onClose={onClose} />
-    </Dialog>
   );
 }

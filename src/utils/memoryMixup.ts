@@ -3,7 +3,7 @@
  * cards face down; flip two at a time; stars come from how few turns it took.
  */
 
-export const MIXUP_SNACKS = ["🍓", "🍩", "🧁", "🍪", "🍉", "🍕", "🍦", "🍌"];
+const MIXUP_SNACKS = ["🍓", "🍩", "🧁", "🍪", "🍉", "🍕", "🍦", "🍌"];
 export const MIXUP_PAIRS = MIXUP_SNACKS.length;
 
 export type MixupCard = { id: number; snack: string };

@@ -263,8 +263,6 @@ export const PIERCINGS = [
   { id: "double_nostril", label: "Double Nose Studs" },
 ] as const satisfies readonly StyleOption[];
 
-export type PiercingStyle = (typeof PIERCINGS)[number]["id"];
-
 export const JEWELRY = [
   { id: "none", label: "None" },
   { id: "oversized_gold_hoops", label: "Oversized Gold Hoops" },
@@ -277,8 +275,6 @@ export const JEWELRY = [
   { id: "silver_hoops", label: "Big Silver Hoops" },
   { id: "gold_jhumkas", label: "Gold Jhumka Earrings" },
 ] as const satisfies readonly StyleOption[];
-
-export type JewelryStyle = (typeof JEWELRY)[number]["id"];
 
 /** Necklaces layer with earrings; saves made before necklaces have none. */
 export const NECKLACES = [
@@ -321,8 +317,6 @@ export const BANGS_OPTIONS = [
   { id: "baby_edges", label: "Swirled Baby Edges" },
   { id: "side_sweep", label: "Side-Swept Fringe" },
 ] as const satisfies readonly StyleOption[];
-
-export type BangsStyle = (typeof BANGS_OPTIONS)[number]["id"];
 
 /* -------------------------------------------------------------
  * Hair
@@ -501,25 +495,6 @@ export type SalonCategory =
   | "bag"
   | "skin"
   | "bangs";
-
-export const SALON_CATEGORY_OPTIONS: Readonly<
-  Record<SalonCategory, readonly StyleOption[]>
-> = {
-  eye: EYE_LOOKS,
-  shadow: EYESHADOWS,
-  lip: LIP_COLORS,
-  iris: EYE_COLORS,
-  face: FACE_DETAILS,
-  hair: HAIR_STYLE_OPTIONS,
-  piercing: PIERCINGS,
-  jewelry: JEWELRY,
-  necklace: NECKLACES,
-  clips: HAIR_CLIPS,
-  bracelet: BRACELETS,
-  bag: BAGS,
-  skin: SKIN_TONE_OPTIONS,
-  bangs: BANGS_OPTIONS,
-};
 
 /* -------------------------------------------------------------
  * Clothing resolution (shared by the renderer and the closet)

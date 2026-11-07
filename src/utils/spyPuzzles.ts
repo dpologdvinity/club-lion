@@ -39,7 +39,7 @@ export function getLaserBeamStatus(
 
 // --- Laser grid state ---
 
-export type GridPoint = { x: number; y: number };
+type GridPoint = { x: number; y: number };
 export type Direction = "up" | "down" | "left" | "right";
 
 export type GridState = {

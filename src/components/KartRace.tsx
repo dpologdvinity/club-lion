@@ -39,7 +39,7 @@ import {
 } from "../utils/kartRace.ts";
 import { playKartSound, startEngineHum } from "../utils/kartAudio.ts";
 
-export const KART_COLORS: readonly {
+const KART_COLORS: readonly {
   id: KartColorId;
   label: string;
   color: string;

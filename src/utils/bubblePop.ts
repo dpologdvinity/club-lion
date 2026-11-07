@@ -10,9 +10,9 @@ export const BUBBLE_COLORS = [
   { id: "sun", label: "Yellow" },
   { id: "lilac", label: "Purple" },
 ] as const;
-export type BubbleColor = (typeof BUBBLE_COLORS)[number]["id"];
+type BubbleColor = (typeof BUBBLE_COLORS)[number]["id"];
 
-export const BUBBLE_SURPRISES = [
+const BUBBLE_SURPRISES = [
   { id: "cub", emoji: "🦁", label: "a lion cub" },
   { id: "mango", emoji: "🥭", label: "a mango" },
   { id: "star", emoji: "⭐", label: "a star" },
@@ -41,9 +41,9 @@ export const CHALLENGE_MS = 60_000;
 export const CHALLENGE_SPAWN_MS = 550;
 export const RELAX_SPAWN_MS = 1_100;
 export const START_BUBBLES = 5;
-export const BASE_POINTS = 10;
-export const GOLDEN_POINTS = 50;
-export const MAX_MULTIPLIER = 5;
+const BASE_POINTS = 10;
+const GOLDEN_POINTS = 50;
+const MAX_MULTIPLIER = 5;
 /** No challenge can spawn more bubbles than this, so no real score exceeds the cap. */
 export const CHALLENGE_MAX_BUBBLES =
   START_BUBBLES + Math.ceil(CHALLENGE_MS / CHALLENGE_SPAWN_MS);

@@ -6,7 +6,7 @@
 export const BULLSEYE_THROWS = 10;
 export const BULLSEYE_MAX_SCORE = 100;
 /** Ring edges as a share of the target's half-width, with their points. */
-export const BULLSEYE_RINGS = [
+const BULLSEYE_RINGS = [
   { edge: 0.2, points: 10 },
   { edge: 0.45, points: 5 },
   { edge: 0.7, points: 3 },

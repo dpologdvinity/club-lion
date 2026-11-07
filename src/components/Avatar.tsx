@@ -82,5 +82,3 @@ export const Avatar = React.memo(function Avatar({
     />
   );
 });
-
-export default Avatar;

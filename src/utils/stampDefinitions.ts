@@ -7,7 +7,7 @@ import {
 
 import { STAMP_DEFINITIONS } from "../stamps/catalog.ts";
 export { STAMP_DEFINITIONS } from "../stamps/catalog.ts";
-export type { StampCategory, StampDefinition } from "../stamps/catalog.ts";
+export type { StampCategory } from "../stamps/catalog.ts";
 
 export function isStampUnlocked(
   player: Player | PlayerV2,

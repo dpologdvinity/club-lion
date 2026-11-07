@@ -11,7 +11,7 @@ export const PROP_NEAR_MARGIN = 60;
 /** Minimum gap between walk-near reactions of the same prop. */
 export const PROP_COOLDOWN_MS = 2500;
 /** Avatar counts as sitting when this close to a bench seat. */
-export const SEAT_REACH = 30;
+const SEAT_REACH = 30;
 
 export function obstacleCenter(obstacle: RoomObstacle): Point {
   if (obstacle.shape === "ellipse") return obstacle.center;

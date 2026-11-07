@@ -25,14 +25,14 @@ export const JUDGMENT_LABEL: Record<Judgment, string> = {
   miss: "MISS",
 };
 
-export const JUDGMENT_BASE_POINTS: Record<Judgment, number> = {
+const JUDGMENT_BASE_POINTS: Record<Judgment, number> = {
   perfect: 100,
   great: 70,
   good: 40,
   miss: 0,
 };
 
-export const MAX_COMBO_MULTIPLIER = 4;
+const MAX_COMBO_MULTIPLIER = 4;
 
 /** One multiplier tier per 10 unbroken hits, capped at 4x. */
 export function comboMultiplier(combo: number): number {

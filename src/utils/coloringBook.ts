@@ -27,7 +27,7 @@ export const SPECIAL_FILLS = [
   { id: "sparkle", label: "Sparkle" },
 ] as const;
 
-export type PaletteId = (typeof PALETTE)[number]["id"];
+type PaletteId = (typeof PALETTE)[number]["id"];
 export type Fill = PaletteId | (typeof SPECIAL_FILLS)[number]["id"];
 export type PageFills = Record<string, Fill>;
 export type ColoringBookSave = {
@@ -42,7 +42,7 @@ const FILLS: readonly Fill[] = [
   ...SPECIAL_FILLS.map((fill) => fill.id),
 ];
 
-export function isFill(value: unknown): value is Fill {
+function isFill(value: unknown): value is Fill {
   return FILLS.some((fill) => fill === value);
 }
 
@@ -93,7 +93,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 /** Keeps only known regions with valid fills. */
-export function cleanPageFills(page: ColoringPage, value: unknown): PageFills {
+function cleanPageFills(page: ColoringPage, value: unknown): PageFills {
   const fills: PageFills = {};
   if (!isRecord(value)) return fills;
   for (const region of page.regions) {

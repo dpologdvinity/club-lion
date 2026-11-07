@@ -6,7 +6,7 @@
  */
 
 export type KartMode = "easy" | "fast";
-export const KART_COLOR_IDS = [
+const KART_COLOR_IDS = [
   "mango",
   "cherry",
   "sunny",
@@ -35,8 +35,7 @@ export type Kart = {
   finishMs: number | null;
 };
 
-export type RaceEvent =
-  "beep" | "go" | "bump" | "mango" | "boost" | "lap" | "finish";
+type RaceEvent = "beep" | "go" | "bump" | "mango" | "boost" | "lap" | "finish";
 
 export type RaceState = {
   mode: KartMode;
@@ -58,10 +57,10 @@ export const KART_LAPS = 3;
 export const COUNTDOWN_MS = 3000;
 export const TRACK_HALF_WIDTH = 100;
 export const KART_RADIUS = 22;
-export const BOOST_MS = 1400;
+const BOOST_MS = 1400;
 export const BOOST_COOLDOWN_MS = 5000;
-export const MANGO_BOOST_MS = 1600;
-export const MANGO_RESPAWN_MS = 3000;
+const MANGO_BOOST_MS = 1600;
+const MANGO_RESPAWN_MS = 3000;
 const STEP_MS = 1000 / 60;
 const CRAWL_SPEED = 60;
 const WALL = TRACK_HALF_WIDTH - KART_RADIUS;

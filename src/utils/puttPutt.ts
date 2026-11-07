@@ -11,7 +11,7 @@ export const BALL_R = 2.2;
 export const HOLE_R = 3.6;
 const FRICTION = 1.6;
 
-export type Block = { x: number; y: number; w: number; h: number };
+type Block = { x: number; y: number; w: number; h: number };
 export type Hole = {
   par: number;
   tee: [number, number];

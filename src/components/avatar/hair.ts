@@ -1189,7 +1189,7 @@ function renderHairStreak(style: HairStyle, streak?: string): string {
   return `<g class="hair-streak">` + left + `<g ${MIRROR}>${left}</g>` + `</g>`;
 }
 
-export function renderBangs(look: AvatarLook, c: string): string {
+function renderBangs(look: AvatarLook, c: string): string {
   const bangs = look.bangsId ?? "none";
   if (!bangs || bangs === "none") return "";
   let art = "";
@@ -1269,7 +1269,7 @@ function star(x: number, y: number, r: number, fill: string): string {
 }
 
 /** Butterfly, star, or rhinestone clips pinned along the hairline. */
-export function renderHairClips(look: AvatarLook): string {
+function renderHairClips(look: AvatarLook): string {
   const id = findOption(HAIR_CLIPS, look.hairClipId)?.id;
   if (!id || id === "none") return "";
   if (id === "tiara") {

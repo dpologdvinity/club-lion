@@ -34,7 +34,6 @@ import {
 export {
   STAMP_DEFINITIONS,
   evaluateStampUnlocks,
-  isStampUnlocked,
 } from "./utils/stampDefinitions.ts";
 import { BEE_STOP_MAX_SCORE } from "./beeStop.ts";
 import { BUBBLE_POP_MAX_SCORE } from "./utils/bubblePop.ts";
@@ -214,7 +213,7 @@ export type Player = PlayerBase & {
   pet?: PetState;
 };
 
-export const PAW_STEPS_MAX_ROUNDS = 999;
+const PAW_STEPS_MAX_ROUNDS = 999;
 
 export const SHOP_ITEMS = [
   {
@@ -1117,8 +1116,6 @@ export type PlayerV2 = PlayerBase & {
   starRank: number;
   moodQuote: string;
 };
-
-export type PlayerSave = Player | PlayerV2;
 
 const DEFAULT_MOOD_QUOTE = "Vibing in the savanna";
 

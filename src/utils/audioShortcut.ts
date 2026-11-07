@@ -4,7 +4,7 @@
  * guarding, typing exemptions, and the remap/disable setting).
  */
 
-export const SHORTCUT_KEY_STORAGE_KEY = "club-lion:audio-shortcut-key";
+const SHORTCUT_KEY_STORAGE_KEY = "club-lion:audio-shortcut-key";
 export const DEFAULT_SHORTCUT_KEY = "m";
 
 /** Non-text input types that don't accept printable-key text entry. */

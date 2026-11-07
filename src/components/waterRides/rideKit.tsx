@@ -15,8 +15,8 @@ import type { AvatarLook, PetState } from "../../types/world.ts";
  * that covers the screen; HTML layers place themselves in the same units with
  * `cqw` (1 world unit = 1/16 cqw because the world keeps a 16:9 box).
  */
-export const WORLD_W = 1600;
-export const WORLD_H = 900;
+const WORLD_W = 1600;
+const WORLD_H = 900;
 export const u = (units: number) => `${units / 16}cqw`;
 
 export type RideSceneProps = {

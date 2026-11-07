@@ -5,7 +5,6 @@
  */
 
 export const BALLOON_THROWS = 10;
-export const BALLOON_MAX_SCORE = 30;
 export const ANGLES = [
   { id: "low", label: "Low", degrees: 30 },
   { id: "mid", label: "Middle", degrees: 45 },

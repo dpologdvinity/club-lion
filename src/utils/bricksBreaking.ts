@@ -6,7 +6,7 @@
  */
 
 export const BRICK_COLS = 8;
-export const BRICK_ROWS = 5;
+const BRICK_ROWS = 5;
 export const BRICKS_TOTAL = BRICK_COLS * BRICK_ROWS;
 export const BRICKS_ROUND_MS = 90_000;
 export const COURT_W = 100;

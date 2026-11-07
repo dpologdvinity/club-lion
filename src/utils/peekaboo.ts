@@ -19,7 +19,7 @@ export const PEEKABOO_ANIMALS = [
   { id: "parrot", emoji: "🦜", label: "parrot" },
   { id: "turtle", emoji: "🐢", label: "turtle" },
 ] as const;
-export type PeekabooAnimal = (typeof PEEKABOO_ANIMALS)[number]["id"];
+type PeekabooAnimal = (typeof PEEKABOO_ANIMALS)[number]["id"];
 
 export type PeekabooRound = {
   /** Which animal hides in each bush, left to right. */

@@ -9,9 +9,9 @@ import { HAIR_KIT } from "../components/avatar/pixelHairKit.ts";
 import { SHOE_KIT } from "../components/avatar/pixelShoeKit.ts";
 
 export const STARTING_GOLD = 200;
-export const GAME_GOLD = 10;
-export const STAMP_GOLD = 25;
-export const MAX_GOLD = 999_999;
+const GAME_GOLD = 10;
+const STAMP_GOLD = 25;
+const MAX_GOLD = 999_999;
 
 export type PixelKind = "dress" | "costume" | "hair" | "shoe";
 
@@ -42,7 +42,7 @@ type Wallet = {
   stamps?: string[];
 };
 
-export const pixelKey = (kind: PixelKind, id: string) => `px:${kind}:${id}`;
+const pixelKey = (kind: PixelKind, id: string) => `px:${kind}:${id}`;
 
 /** Whether `id` is a saved ownership key for a real pixel item. */
 export function isPixelOwnedId(value: unknown): value is string {

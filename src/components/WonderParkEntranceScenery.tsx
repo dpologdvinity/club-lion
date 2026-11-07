@@ -1417,5 +1417,3 @@ export function WonderParkEntranceScenery({ seconds }: { seconds: number }) {
     </g>
   );
 }
-
-export default WonderParkEntranceScenery;

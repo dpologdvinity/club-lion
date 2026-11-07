@@ -4,9 +4,9 @@ import type { RoomManifest } from "./types.ts";
 
 /** Body radii in the space units used for collision. */
 export const AVATAR_RADIUS = 26;
-export const PET_RADIUS = 14;
+const PET_RADIUS = 14;
 /** Where the pet's body sits relative to the avatar's feet, in space units. */
-export const PET_OFFSET = 88;
+const PET_OFFSET = 88;
 /** Percent-space rooms (no manifest) use percent units, so the sizes are small. */
 const PERCENT_AVATAR_RADIUS = 3;
 const PERCENT_PET_RADIUS = 1.5;

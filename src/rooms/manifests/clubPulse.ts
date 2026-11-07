@@ -3,10 +3,10 @@ import type { RoomManifest } from "../types.ts";
 import type { FloorBounds } from "../../utils/danceFloorRhythm.ts";
 
 /** Game id the DJ Booth hotspot launches, matching the DJ Beat Drop minigame. */
-export const DJ_BEAT_DROP_GAME_ID = "dj-beat-drop";
+const DJ_BEAT_DROP_GAME_ID = "dj-beat-drop";
 
 /** Stable hotspot id so world routing can target the booth without guessing. */
-export const CLUB_PULSE_DJ_BOOTH_ID = "club-pulse-dj-booth";
+const CLUB_PULSE_DJ_BOOTH_ID = "club-pulse-dj-booth";
 
 /**
  * Stage rectangle the LED dance floor covers, in this room's stage units.

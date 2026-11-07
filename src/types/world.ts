@@ -58,34 +58,7 @@ export type SkinTone =
   | "ebony"
   | "midnight";
 
-export const SKIN_TONES: readonly SkinTone[] = [
-  "porcelain",
-  "ivory",
-  "fair",
-  "peach",
-  "golden_fair",
-  "almond",
-  "warm",
-  "olive",
-  "tan",
-  "honey",
-  "bronze",
-  "caramel",
-  "terracotta",
-  "chestnut",
-  "espresso",
-  "deep",
-  "ebony",
-  "midnight",
-] as const;
-
-export type {
-  EyeStyle,
-  HairStyle,
-  BangsStyle,
-  PiercingStyle,
-  JewelryStyle,
-} from "./avatarOptions.ts";
+export type { EyeStyle, HairStyle } from "./avatarOptions.ts";
 
 export const EYE_STYLES: readonly EyeStyle[] = EYE_LOOKS.map((o) => o.id);
 
@@ -94,7 +67,7 @@ export const HAIR_STYLES: readonly HairStyle[] = HAIR_STYLE_OPTIONS.map(
 );
 
 /** Hair IDs saved before the glam redesign, mapped to their closest new cut. */
-export const LEGACY_HAIR_STYLES: Readonly<Record<string, HairStyle>> = {
+const LEGACY_HAIR_STYLES: Readonly<Record<string, HairStyle>> = {
   classic_shag: "blowout",
   long_waves: "butterfly_waves",
   beach_wave_bangs: "butterfly_waves",
@@ -110,14 +83,14 @@ export function resolveHairStyle(hairId?: string): HairStyle {
   return (hairId && LEGACY_HAIR_STYLES[hairId]) || "blowout";
 }
 
-export type OutfitStyle =
+type OutfitStyle =
   | "denim_jacket"
   | "striped_tee"
   | "cargo_pants"
   | "barista_apron"
   | "cropped_puffer";
 
-export type ShoeStyle = ShoeId;
+type ShoeStyle = ShoeId;
 
 export type AvatarLook = {
   skinTone: SkinTone | string;
@@ -223,8 +196,7 @@ export function validateAvatarLook(look: unknown): look is AvatarLook {
   );
 }
 
-export type PetMood =
-  "idle" | "trotting" | "happy" | "sleep" | "sitting" | string;
+type PetMood = "idle" | "trotting" | "happy" | "sleep" | "sitting" | string;
 
 export type PetState = {
   id: string;
@@ -248,7 +220,7 @@ export const DEFAULT_PET_STATE: PetState = {
 export type EntityAction =
   "idle" | "walk" | "wave" | "dance" | "sit" | "jam" | string;
 
-export type SpeechBubble =
+type SpeechBubble =
   | string
   | {
       text: string;
@@ -518,14 +490,14 @@ export const CATALOG_ITEMS: readonly CatalogItem[] = [
   },
 ] as const;
 
-export type RoomPortal = {
+type RoomPortal = {
   targetRoomId: string;
   targetSpawn: { x: number; y: number };
   triggerBounds: { x1: number; y1: number; x2: number; y2: number };
   label: string;
 };
 
-export type RoomInteractive = {
+type RoomInteractive = {
   id: string;
   type:
     | "ride"
@@ -538,7 +510,7 @@ export type RoomInteractive = {
   actionData: Record<string, unknown>;
 };
 
-export type DepthLayer = {
+type DepthLayer = {
   id: string;
   y: number;
   asset: string;

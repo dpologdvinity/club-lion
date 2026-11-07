@@ -7,7 +7,7 @@
 
 export const KING_SIZE = 6;
 export type Side = "red" | "black";
-export type Piece = { side: Side; king: boolean };
+type Piece = { side: Side; king: boolean };
 export type Checkers = (Piece | null)[];
 export type Move = { from: number; to: number; jumped: number | null };
 

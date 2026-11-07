@@ -1,5 +1,5 @@
 /** Fantage-style titles shown above your name, earned by collecting stamps. */
-export const TITLES = [
+const TITLES = [
   { min: 0, title: "Newbie" },
   { min: 5, title: "Explorer" },
   { min: 15, title: "Superstar" },

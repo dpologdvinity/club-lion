@@ -4,8 +4,8 @@
  * Pages share a 400×300 view box.
  */
 
-export type ColoringRegion = { id: string; label: string; d: string };
-export type ColoringDetail = { kind: "ink" | "line" | "shine"; d: string };
+type ColoringRegion = { id: string; label: string; d: string };
+type ColoringDetail = { kind: "ink" | "line" | "shine"; d: string };
 export type ColoringPage = {
   id: string;
   name: string;
@@ -16,16 +16,16 @@ export type ColoringPage = {
 const r1 = (value: number) => Math.round(value * 10) / 10;
 
 /** Clockwise circle; `hole` winds it the other way to cut a ring. */
-export const circle = (cx: number, cy: number, r: number, hole = false) =>
+const circle = (cx: number, cy: number, r: number, hole = false) =>
   `M${r1(cx - r)} ${r1(cy)}a${r} ${r} 0 1 ${hole ? 0 : 1} ${r * 2} 0a${r} ${r} 0 1 ${hole ? 0 : 1} ${-r * 2} 0Z`;
 
-export const ellipse = (cx: number, cy: number, rx: number, ry: number) =>
+const ellipse = (cx: number, cy: number, rx: number, ry: number) =>
   `M${r1(cx - rx)} ${r1(cy)}a${rx} ${ry} 0 1 1 ${rx * 2} 0a${rx} ${ry} 0 1 1 ${-rx * 2} 0Z`;
 
-export const rect = (x: number, y: number, w: number, h: number, r = 0) =>
+const rect = (x: number, y: number, w: number, h: number, r = 0) =>
   `M${x + r} ${y}H${x + w - r}Q${x + w} ${y} ${x + w} ${y + r}V${y + h - r}Q${x + w} ${y + h} ${x + w - r} ${y + h}H${x + r}Q${x} ${y + h} ${x} ${y + h - r}V${y + r}Q${x} ${y} ${x + r} ${y}Z`;
 
-export const poly = (...points: number[]) =>
+const poly = (...points: number[]) =>
   `M${points[0]} ${points[1]}${points
     .slice(2)
     .map((value, index) => (index % 2 ? ` ${value}` : `L${value}`))
@@ -35,7 +35,7 @@ const ring = (cx: number, cy: number, outer: number, inner: number) =>
   circle(cx, cy, outer) + circle(cx, cy, inner, true);
 
 /** A puffy round shape for manes, clouds, flowers and leaves. */
-export function scallop(cx: number, cy: number, r: number, bumps: number) {
+function scallop(cx: number, cy: number, r: number, bumps: number) {
   const point = (index: number) => {
     const angle = (index / bumps) * Math.PI * 2 - Math.PI / 2;
     return [r1(cx + r * Math.cos(angle)), r1(cy + r * Math.sin(angle))];
@@ -50,7 +50,7 @@ export function scallop(cx: number, cy: number, r: number, bumps: number) {
   return `${d}Z`;
 }
 
-export function star(cx: number, cy: number, outer: number, inner: number) {
+function star(cx: number, cy: number, outer: number, inner: number) {
   const points: number[] = [];
   for (let index = 0; index < 10; index++) {
     const angle = (index / 10) * Math.PI * 2 - Math.PI / 2;

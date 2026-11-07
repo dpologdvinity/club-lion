@@ -1,15 +1,4 @@
-export type PetMood = "happy" | "sleepy" | "bouncy";
 export type PetHeading = "left" | "right";
-
-export type PetState = {
-  id: string;
-  name: string;
-  species: "lion";
-  color: "gold" | "sand" | "copper" | "rose";
-  accessory?: string; // "scarf" | "bandana" | "bell_collar" | "flower"
-  position: { x: number; y: number };
-  mood: PetMood;
-};
 
 export type PetTrailingStep = {
   newPos: { x: number; y: number };

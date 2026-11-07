@@ -2,21 +2,21 @@ import type { PropSound } from "../utils/interactiveProps.ts";
 import type { GameId } from "../games/catalog.ts";
 import type { PlaceId } from "../game.ts";
 
-export type RoomPortal = {
+type RoomPortal = {
   targetRoomId: string;
   targetSpawn: { x: number; y: number };
   triggerBounds: { x1: number; y1: number; x2: number; y2: number };
   label: string;
 };
 
-export type DepthLayer = {
+type DepthLayer = {
   id: string;
   y: number;
   asset: string;
 };
 
 /** Small tappable or sit-able scenery that sits on a solid obstacle. */
-export type ObstacleProp = "fountain" | "bench" | "lamp" | "bush";
+type ObstacleProp = "fountain" | "bench" | "lamp" | "bush";
 
 type RoomObstacleBase = {
   id: string;
@@ -39,7 +39,7 @@ export type RoomObstacle = RoomObstacleBase &
   );
 
 /** Illustrated objects share the manifest action path with room navigation. */
-export type RoomObjectKind =
+type RoomObjectKind =
   | "splash"
   | "lily"
   | "chimes"

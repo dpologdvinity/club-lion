@@ -6,7 +6,7 @@
 
 export const BOBO_ROUND_MS = 45_000;
 export const BOBO_MAX_SCORE = 300;
-export const BOBO_START_SIZE = 10;
+const BOBO_START_SIZE = 10;
 
 export type Fish = {
   id: number;

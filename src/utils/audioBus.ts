@@ -6,8 +6,6 @@
  * a single global mute/volume control can reach every audio path.
  */
 
-export type AudioChannel = "music" | "sfx";
-
 export interface AudioBus {
   /** Underlying AudioContext, or null if Web Audio is unavailable. */
   getContext(): AudioContext | null;

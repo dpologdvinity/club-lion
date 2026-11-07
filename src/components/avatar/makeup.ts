@@ -15,7 +15,7 @@ import { DOLL_HEAD_PATH, INK, MIRROR, n, pt, type Point } from "./shared.ts";
  * ------------------------------------------------------------- */
 type EyeState = number | "closed";
 
-export type GlamPreset = {
+type GlamPreset = {
   lidLeft: EyeState;
   lidRight: EyeState;
   /** Default eyeshadow, iris, and lip colors when the look has no override. */
@@ -209,7 +209,7 @@ const GLAM_PRESETS: Record<EyeStyle, GlamPreset> = {
   },
 };
 
-export function resolveGlamPreset(eyeStyle?: string): {
+function resolveGlamPreset(eyeStyle?: string): {
   style: EyeStyle;
   preset: GlamPreset;
 } {
@@ -705,7 +705,7 @@ function renderFaceDetail(detail: string): string {
   return `<g class="face-detail face-${detail.replace(/_/g, "-")}">${art}</g>`;
 }
 
-export function renderPiercings(look: AvatarLook): string {
+function renderPiercings(look: AvatarLook): string {
   const piercing = look.piercingId ?? "none";
   if (!piercing || piercing === "none") return "";
   let art = "";

@@ -4,7 +4,7 @@
  */
 
 export type Snack = "donut" | "cookie";
-export type Cell = Snack | null;
+type Cell = Snack | null;
 export type Board = Cell[];
 
 export const TAC_ROUNDS = 3;

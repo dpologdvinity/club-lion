@@ -18,13 +18,12 @@ export type ToneVoice =
   | "calliope"
   | "pulse";
 
-export type RoomVoice =
-  ToneVoice | "kick" | "hat" | "snare" | "splash" | "seagull";
+type RoomVoice = ToneVoice | "kick" | "hat" | "snare" | "splash" | "seagull";
 
 /** One loop step: a scale degree, a chord (several degrees), or `null` for a rest. */
-export type RoomPatternEntry = number | readonly number[] | null;
+type RoomPatternEntry = number | readonly number[] | null;
 
-export type RoomLayer = {
+type RoomLayer = {
   voice: RoomVoice;
   /** One entry per loop step; length must equal the track's `loopSteps`. */
   pattern: readonly RoomPatternEntry[];

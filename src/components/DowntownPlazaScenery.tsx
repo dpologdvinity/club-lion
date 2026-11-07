@@ -2010,5 +2010,3 @@ const DowntownPlazaArt = memo(function DowntownPlazaArt() {
     </g>
   );
 });
-
-export default DowntownPlazaScenery;

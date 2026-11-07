@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 // Matches the compact header and drawer breakpoint in styles.css.
-export const COMPACT_LAYOUT = "(max-width: 1279px)";
+const COMPACT_LAYOUT = "(max-width: 1279px)";
 
 export function useCompactLayout(): boolean {
   const [compact, setCompact] = useState(

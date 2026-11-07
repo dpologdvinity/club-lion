@@ -466,7 +466,7 @@ function ClassifiedAgentCipher({
   );
 }
 
-export function SpyTerminal({
+function SpyTerminal({
   spyPuzzlesSolved,
   onFinish,
   onClose,

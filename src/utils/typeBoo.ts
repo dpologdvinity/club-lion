@@ -4,7 +4,7 @@
  */
 
 export const BOO_GHOSTS = 12;
-export const BOO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const BOO_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export type BooRound = { letter: string; choices: string[] };
 

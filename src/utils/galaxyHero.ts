@@ -7,7 +7,7 @@
 export const GALAXY_ROUND_MS = 45_000;
 export const GALAXY_MAX_SCORE = 300;
 export const SHOT_EVERY_MS = 350;
-export const SHOT_SPEED = 120;
+const SHOT_SPEED = 120;
 export const SHIP_Y = 90;
 
 export type Meteor = { id: number; x: number; y: number; speed: number };

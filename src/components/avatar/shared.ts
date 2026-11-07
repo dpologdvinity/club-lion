@@ -155,12 +155,12 @@ export function pt([x, y]: Point): string {
   return `${n(x)} ${n(y)}`;
 }
 
-export function armPath(arm: ArmPose): string {
+function armPath(arm: ArmPose): string {
   return `M${pt(arm.shoulder)} Q${pt(arm.elbowControl)} ${pt(arm.elbow)} Q${pt(arm.wristControl)} ${pt(arm.wrist)}`;
 }
 
 /** Upper-arm portion of a pose, split at `t` along the shoulder-to-elbow curve. */
-export function upperArmPath(arm: ArmPose, t: number): string {
+function upperArmPath(arm: ArmPose, t: number): string {
   const [x0, y0] = arm.shoulder;
   const [cx, cy] = arm.elbowControl;
   const [x1, y1] = arm.elbow;

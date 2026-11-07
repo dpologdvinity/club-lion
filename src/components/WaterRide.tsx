@@ -14,7 +14,7 @@ import { BucketRide } from "./waterRides/BucketRide";
 import { playSplash } from "../utils/waterRideAudio.ts";
 import "./waterRides/waterRides.css";
 
-export const WATER_RIDE_TITLES = {
+const WATER_RIDE_TITLES = {
   slides: "Speed Slides",
   river: "Lazy River Float",
   wave: "Tsunami Wave Pool",

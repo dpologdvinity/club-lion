@@ -5,7 +5,7 @@
  */
 
 export const SPLASH_DIVES = 5;
-export const SPLASH_TRICKS = 3;
+const SPLASH_TRICKS = 3;
 export const SPLASH_MAX_SCORE = SPLASH_DIVES * (5 + SPLASH_TRICKS);
 export const AIR_MS = 1600;
 

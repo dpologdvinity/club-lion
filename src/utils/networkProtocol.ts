@@ -1,5 +1,5 @@
 /** World-space limits also bound untrusted local/remote transport inputs. */
-export const MAX_COORDINATE = 100_000;
+const MAX_COORDINATE = 100_000;
 export const MAX_ROOM_ENTITIES = 512;
 const MAX_PACKET_BYTES = 65_536;
 
@@ -11,39 +11,39 @@ export type EntityDelta = {
   action: string;
   timestamp: number;
 };
-export type JoinRoomMessage = {
+type JoinRoomMessage = {
   type: "join";
   roomId: string;
   entity: EntityDelta;
 };
-export type LeaveRoomMessage = { type: "leave" };
-export type EntityUpdateMessage = { type: "update"; entity: EntityDelta };
-export type ChatMessage = { type: "chat"; text: string };
-export type EmoteMessage = { type: "emote"; emote: string };
+type LeaveRoomMessage = { type: "leave" };
+type EntityUpdateMessage = { type: "update"; entity: EntityDelta };
+type ChatMessage = { type: "chat"; text: string };
+type EmoteMessage = { type: "emote"; emote: string };
 export type ClientMessage =
   | JoinRoomMessage
   | LeaveRoomMessage
   | EntityUpdateMessage
   | ChatMessage
   | EmoteMessage;
-export type RoomSnapshotMessage = {
+type RoomSnapshotMessage = {
   type: "snapshot";
   roomId: string;
   entities: EntityDelta[];
 };
-export type EntityDeltaBroadcast = {
+type EntityDeltaBroadcast = {
   type: "delta";
   roomId: string;
   entity: EntityDelta;
 };
-export type EntityLeaveBroadcast = {
+type EntityLeaveBroadcast = {
   type: "entity-leave";
   roomId: string;
   id: string;
 };
-export type ChatBroadcast = ChatMessage & { roomId: string; id: string };
-export type EmoteBroadcast = EmoteMessage & { roomId: string; id: string };
-export type RoomOccupancyMessage = {
+type ChatBroadcast = ChatMessage & { roomId: string; id: string };
+type EmoteBroadcast = EmoteMessage & { roomId: string; id: string };
+type RoomOccupancyMessage = {
   type: "occupancy";
   roomId: string;
   count: number;

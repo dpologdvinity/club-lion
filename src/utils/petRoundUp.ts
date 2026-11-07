@@ -8,7 +8,10 @@ import { PET_SPECIES_ORDER, type PetSpecies } from "./petSpecies.ts";
 export const ROUNDUP_ROUND_MS = 60_000;
 export const ROUNDUP_STEP_MS = 100;
 export const ROUNDUP_PETS = 9;
-/** Every pet penned earns the stamp, however long it took. */
+/**
+ * Every pet penned earns the stamp, however long it took.
+ * @alias Same value as ROUNDUP_PETS on purpose; named for its scoring role.
+ */
 export const ROUNDUP_STAMP_SCORE = ROUNDUP_PETS;
 /** All pets in on the very first second: no real round scores more. */
 export const ROUNDUP_MAX_SCORE = ROUNDUP_PETS + ROUNDUP_ROUND_MS / 1000;

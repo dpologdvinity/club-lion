@@ -37,7 +37,6 @@ export {
   SKIN_TONE_COLORS,
   ANCHORS,
   PORTRAIT_VIEWBOX,
-  resolveSkinTone,
 } from "./avatar/shared.ts";
 
 /* -------------------------------------------------------------
@@ -469,7 +468,7 @@ export interface AvatarSvgOptions {
 /**
  * Generates inner SVG layer elements for the Avatar, in strict Layer 0 to Layer 8 order.
  */
-export function generateAvatarLayersString(
+function generateAvatarLayersString(
   look: AvatarLook = DEFAULT_AVATAR_LOOK,
   action: EntityAction | string = "idle",
   idPrefix?: string,

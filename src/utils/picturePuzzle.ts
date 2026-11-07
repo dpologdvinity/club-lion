@@ -8,7 +8,7 @@
 export const PUZZLE_WIDTH = 400;
 export const PUZZLE_HEIGHT = 300;
 
-export const PIECE_COUNTS = [4, 6, 9] as const;
+const PIECE_COUNTS = [4, 6, 9] as const;
 export type PieceCount = (typeof PIECE_COUNTS)[number];
 
 /** One picture per round, each cut into a bigger grid than the last. */
@@ -22,8 +22,6 @@ export const PICTURES = [
   pieces: PieceCount;
 }[];
 export type PictureId = (typeof PICTURES)[number]["id"];
-
-export const PICTURE_PUZZLE_ROUNDS = PICTURES.length;
 
 export function isPieceCount(value: unknown): value is PieceCount {
   return PIECE_COUNTS.some((count) => count === value);

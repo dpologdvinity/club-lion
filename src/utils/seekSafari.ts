@@ -6,8 +6,8 @@ export type SeekCover = "bush" | "rock" | "leaf" | "wave" | "trunk" | "sand";
  * A hiding place in percent of the scene; `cover` is drawn over the animal.
  * Spots sit in six columns, two per column, so 56px touch targets never overlap on phones.
  */
-export type SeekSpot = { x: number; y: number; cover: SeekCover };
-export type SeekCritter = { id: string; emoji: string; name: string };
+type SeekSpot = { x: number; y: number; cover: SeekCover };
+type SeekCritter = { id: string; emoji: string; name: string };
 
 export type SeekScene = {
   id: SeekSceneId;

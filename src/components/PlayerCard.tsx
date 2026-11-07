@@ -135,5 +135,3 @@ export function PlayerCard({
     </Dialog>
   );
 }
-
-export default PlayerCard;

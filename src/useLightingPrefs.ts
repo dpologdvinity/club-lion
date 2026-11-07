@@ -7,8 +7,8 @@ import {
 } from "./utils/environmentalLighting.ts";
 
 // New keys: older saves stored the clock sync as on, and the game now starts bright.
-export const AUTO_TIME_KEY = "clubLion.autoClock";
-export const TIME_OF_DAY_KEY = "clubLion.lighting";
+const AUTO_TIME_KEY = "clubLion.autoClock";
+const TIME_OF_DAY_KEY = "clubLion.lighting";
 
 function readAutoTime(): boolean {
   try {

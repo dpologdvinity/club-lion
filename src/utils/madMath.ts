@@ -4,7 +4,7 @@
  */
 
 export const MATH_QUESTIONS = 10;
-export const MATH_SNACKS = ["🍎", "🍓", "🍪", "🍩", "🧁", "🍌", "🍇", "🥕"];
+const MATH_SNACKS = ["🍎", "🍓", "🍪", "🍩", "🧁", "🍌", "🍇", "🥕"];
 
 export type MathQuestion = { snack: string; count: number; choices: number[] };
 

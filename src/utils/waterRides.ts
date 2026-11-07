@@ -50,7 +50,7 @@ export function slideFrame(t: number): {
 }
 
 /** The river strip scrolls under a rider who stays centred at RIVER_RIDER_X. */
-export const RIVER_SPEED = 120;
+const RIVER_SPEED = 120;
 export const RIVER_RIDER_X = 800;
 export const RIVER_WATERFALL_X = 2700;
 export const RIVER_CRITTERS = [
@@ -74,8 +74,8 @@ export function waterfallSoak(distance: number, halfWidth = 160): number {
 
 /** Big waves roll in every BIG_WAVE_EVERY seconds, the first after a calm start. */
 export const BIG_WAVE_FIRST = 6;
-export const BIG_WAVE_EVERY = 10;
-export const BIG_WAVE_SECONDS = 3.4;
+const BIG_WAVE_EVERY = 10;
+const BIG_WAVE_SECONDS = 3.4;
 
 /** 0 in calm water, rising smoothly to 1 at the top of a big wave. */
 export function bigWaveBoost(t: number): number {
@@ -101,7 +101,7 @@ export function jumpLift(age: number): number {
   return 4 * JUMP_HEIGHT * p * (1 - p);
 }
 
-export const BUCKET_CYCLE_MS = 12000;
+const BUCKET_CYCLE_MS = 12000;
 
 export function bucketFrame(t: number): BucketState {
   return calculateBucketCycle(t * 1000, BUCKET_CYCLE_MS);

@@ -6,7 +6,7 @@ import {
   type CustomServer,
 } from "./utils/customServers";
 
-export const CUSTOM_SERVER_SAVE_KEY = "club-lion-active-server-v1";
+const CUSTOM_SERVER_SAVE_KEY = "club-lion-active-server-v1";
 export const LOCAL_PLAYER_ID = "local-player";
 
 type ServerSession = { servers: CustomServer[]; activeId: string | null };

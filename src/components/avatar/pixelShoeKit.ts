@@ -3,7 +3,7 @@
  * colours follow the Fantage shoe sheets (inspo/fantage/shoes, local only),
  * sampled by scripts/pixel/extractShoes.mts.
  */
-export type ShoeKitCut =
+type ShoeKitCut =
   "flats" | "heels" | "sneakers" | "sandals" | "boots" | "highboots";
 
 export type ShoeKitEntry = {
