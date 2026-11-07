@@ -1,0 +1,26 @@
+# Git hooks managed by lefthook (https://lefthook.dev).
+# Run `lefthook install` once after cloning to activate them.
+pre-commit:
+  parallel: true
+  commands:
+    gitleaks:
+      # Block commits that would add secrets (API keys, tokens, passwords).
+      run: gitleaks git --staged --no-banner --redact
+    prettier:
+      # Mirrors the paths covered by `npm run format:check`.
+      glob:
+        - "src/**"
+        - "tests/**"
+        - "index.html"
+        - "vite.config.ts"
+        - "playwright.config.ts"
+        - "DESIGN.md"
+        - "UX-CONTRACT.md"
+        - "README.md"
+        - "ARCHITECTURE.md"
+      run: npx prettier --check --ignore-unknown {staged_files}
+
+pre-push:
+  commands:
+    typecheck:
+      run: npm run typecheck
