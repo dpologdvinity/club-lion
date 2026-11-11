@@ -183,3 +183,5 @@ Assigner: <model> (<agent>)
 - `gpt-6.1-sol (codex)`
 - `claude-sonnet-5 (claude code)`
 - `gemini-3.8-flash (antigravity)`
+
+CLI invocation and context-conservation details: [`docs/workflows/ORCHESTRATION.md`](workflows/ORCHESTRATION.md).

@@ -1,0 +1,177 @@
+> Superseded by `AGENTS.md` and `HANDOFF.md` (this file records the earlier multi-model CLI orchestration, October 2026).
+
+# Multi-Agent Orchestration & Context Conservation Protocol
+
+This document defines the official procedure for dispatching, running, and integrating tasks across multiple AI coding agents (**Antigravity**, **Claude Code**, and **Codex**) with strict **context preservation** so orchestrator context windows are never flooded with intermediate tool calls or execution transcripts.
+
+---
+
+## 1. Operating Roles & Sequential Lifecycle
+
+Club Lion operates on a strict, sequential 4-role development lifecycle:
+
+```text
+[1. Orchestrator: Antigravity]
+       │  • Creates isolated worktree .worktrees/<task-name>
+       │  • Writes uncommitted PROMPT.md
+       │  • Updates docs/TASK-TRACKER.md on master
+       ▼
+[2. Implementer: Claude Code]
+       │  • Executes non-interactively inside worktree
+       │  • Follows RED-GREEN TDD
+       │  • Deletes PROMPT.md
+       │  • Commits with "Implementer: claude-sonnet-5 (claude code)"
+       ▼
+[3. Reviewer: Codex]
+       │  • Audits diff in worktree against DESIGN.md, UX-CONTRACT.md, audio rules
+       │  • Resolves minor issues directly & commits, or requests fixes
+       │  • Signs off on implementation
+       ▼
+[4. Verifier & Merger: Antigravity]
+       │  • Rebases candidate worktree onto latest master
+       │  • Runs full verification gate (npm run verify && npm run test:e2e)
+       │  • Squashes into ONE Conventional Commit on master with full trailers
+       │  • Deletes worktree and branch
+       │  • Advances to next task in queue
+```
+
+---
+
+## 2. Context Conservation Protocol (Zero-Leak Execution)
+
+When invoking external agents via the CLI (`claude` or `codex`), running them interactively or letting them stream output directly to stdout can dump 30,000–50,000 tokens of raw tool calls, file reads, and logs into the orchestrator's context window.
+
+To eliminate context pollution, all external agent invocations must strictly follow the **Silent Background Runner** pattern:
+
+### A. Redirect All Raw Output to Disk
+Never let stdout or stderr print to the orchestrator terminal. Redirect all streams to a task-specific log file:
+
+```bash
+# Claude implementation invocation
+(cd .worktrees/<task-name> && claude --dangerously-skip-permissions -p "$(cat PROMPT.md)" > /tmp/club-lion-<task-name>-claude.log 2>&1) &
+
+# Codex review invocation
+codex exec --dangerously-bypass-approvals-and-sandbox -C .worktrees/<task-name> "<review prompt>" > /tmp/club-lion-<task-name>-codex.log 2>&1 &
+```
+
+### B. Event-Driven Wakeup
+The orchestrator launches the command as a background job. The conversation context only receives a single lightweight completion event upon termination:
+```text
+Task finished with result: The command exited with code 0.
+```
+
+### C. State-Based Evidence Verification (Compact Tokens)
+Instead of ingesting the agent's verbose log file, the orchestrator verifies the result using lightweight Git inspection:
+1. **Commit Trailer Verification** (~5 lines):
+   ```bash
+   git -C .worktrees/<task-name> log -n 1
+   ```
+2. **Clean Tree Verification** (~3 lines):
+   ```bash
+   git -C .worktrees/<task-name> status --short
+   ```
+3. **Change Scope** (~5 lines):
+   ```bash
+   git -C .worktrees/<task-name> diff master...HEAD --stat
+   ```
+4. **Verification Gate** (~10 lines):
+   ```bash
+   git -C .worktrees/<task-name> npm run verify
+   ```
+
+*Total context cost per milestone:* **~50–100 tokens** instead of **~50,000 tokens**!
+
+### D. Error Isolation
+If and only if an agent exits with a non-zero exit code, inspect only the tail of the log:
+```bash
+tail -n 25 /tmp/club-lion-<task-name>-agent.log
+```
+
+---
+
+## 3. Lean Verification Matrix (Eliminating Redundant Builds & Checks)
+
+Running `npm run verify` (`npm test && npm run typecheck && npm run format:check && npm run build`) repeatedly across all three agents wastes massive time on redundant Vite production builds and Prettier checks. Testing responsibilities are strictly tiered:
+
+| Role | Verification Command | Scope & Rationale | Speed |
+| :--- | :--- | :--- | :--- |
+| **Implementer (Claude Code)** | `npm test` | Unit tests only to confirm RED-GREEN TDD logic passes | **~100 ms** |
+| **Reviewer (Codex)** | `npm test` (or focused probe) | Quick regression probe to verify code logic and review fixes | **~100 ms** |
+| **Verifier & Merger (Antigravity)** | `npm run verify`<br/>`npm run test:e2e` | **Single Official Gatekeeper:** Unit tests, strict typechecking, Prettier check, production build, and browser tests | **Run ONCE at merge gate** |
+
+> [!IMPORTANT]
+> **Implementer and Reviewer must NEVER run `npm run verify` or full E2E suites.** Doing full Vite production builds and format checks 3 separate times per task is prohibited. Fast `npm test` (~100ms) is the only check needed inside the worktree.
+
+---
+
+## 4. Step-by-Step Task Execution Protocol
+
+### Step 1: Worktree & Prompt Preparation (Orchestrator)
+```bash
+git worktree add .worktrees/<task-name> -b feat/<task-name> master
+ln -s ../../node_modules .worktrees/<task-name>/node_modules
+```
+Write `.worktrees/<task-name>/PROMPT.md` specifying acceptance criteria, file targets, and TDD steps.
+
+Update `docs/TASK-TRACKER.md` on `master` to mark the task as in-progress.
+
+### Step 2: Implementation (Claude Code)
+Summon Claude in the worktree with output redirection:
+```bash
+claude --dangerously-skip-permissions -p "Follow PROMPT.md strictly. Run 'npm test' to verify TDD passes. Delete PROMPT.md when complete, and commit with trailer 'Implementer: claude-sonnet-5 (claude code)'" > /tmp/club-lion-<task-name>-claude.log 2>&1
+```
+
+### Step 3: Review & Audit (Codex)
+Summon Codex in the worktree with output redirection:
+```bash
+codex exec --dangerously-bypass-approvals-and-sandbox -C .worktrees/<task-name> "Read AGENTS.md and audit the latest commit in this worktree against DESIGN.md, UX-CONTRACT.md, and procedural audio rules ($0 MP3 assets). Run 'npm test'. If satisfied, sign off; if minor fixes are needed, apply and commit." > /tmp/club-lion-<task-name>-codex.log 2>&1
+```
+
+### Step 4: Verification & Integration (Orchestrator)
+1. Rebase worktree against latest `master`:
+   ```bash
+   git -C .worktrees/<task-name> rebase master
+   ```
+2. Run the **Single Official Verification Gate**:
+   ```bash
+   npm run verify
+   npm run test:e2e
+   ```
+3. Squash merge into `master`:
+   ```bash
+   git checkout master
+   git merge --squash feat/<task-name>
+   git commit -m "<type>(<scope>): <summary>" \
+     -m "<bulleted feature description>" \
+     -m "Implementer: claude-sonnet-5 (claude code)" \
+     -m "Reviewer: gpt-6.1-sol (codex)" \
+     -m "Verifier: gemini-3.8-flash (antigravity)" \
+     -m "Assigner: gemini-3.8-flash (antigravity)"
+   git push origin master
+   ```
+4. Clean up worktree and branch:
+   ```bash
+   git worktree remove --force .worktrees/<task-name>
+   git branch -d feat/<task-name>
+   ```
+5. Update `docs/TASK-TRACKER.md` on `master`.
+
+
+## 5. Recovery rules from Phase 2 integration
+
+- Keep runner transcripts in `/tmp`, outside worktrees. Stage explicit source/test/document paths; never commit a runner transcript. Preserve diagnostic logs until the task is integrated.
+- If a CLI cannot authenticate or its usage limit is reached, record the failure in the execution ledger and dispatch an available authorized model. Attribute actual implementers and reviewers.
+- In this local environment, HTTP requests to an unopened localhost port can hang. Playwright checks server availability before spawning its configured server, so a run can stall before any test or browser starts. Prestart the candidate worktree's Vite server, confirm HTTP 200, then run the installed Playwright CLI with server reuse enabled:
+
+```bash
+# Run in the candidate worktree; keep this server session until the gate ends.
+node ./node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173 --strictPort
+
+# Run in a second session in the same candidate worktree.
+CI= node ./node_modules/@playwright/test/cli.js test --reporter=line > /tmp/club-lion-<task-name>-e2e.log 2>&1
+```
+
+Stop the manually started Vite server after verification. Only one integration server may own port 5173; never reuse a server serving a different worktree. This recovery invokes the same suite and projects as `npm run test:e2e`. Server reuse and the local `!process.env.CI` setting follow the [Playwright 1.63 web-server documentation](https://github.com/microsoft/playwright/blob/v1.63.0/docs/src/test-webserver-js.md).
+
+- A squash integration does not mark the feature branch's ancestry as merged. After confirming the squash commit, clean worktree, and tracker evidence, use `git worktree remove` and `git branch -D` to retire it; `git branch -d` will usually refuse. Do not force-remove a dirty worktree before preserving its changes.
+- An independent integration task may start from a reviewed parent candidate while its gate runs. Record the exact parent source commit. After the parent is squashed, replay only the child task commits with `git rebase --onto master <recorded-parent-source-head>`; do not replay the parent's feature commits a second time. Master integration remains serial.
