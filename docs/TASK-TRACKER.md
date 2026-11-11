@@ -79,7 +79,7 @@ Reviewed and verified by **gpt-6.1-sol (codex)**; merged in order **1 → 4 → 
 
 Codex review fixes and regression tests cover click-target accuracy, idle/reduced-motion sparkle behavior, missed-beat combo resets, peak combos, held keys, dialog focus, note timing, recipe guidance, one-time serving, audio fallback, and reward overflow. DJ best scores and smoothie counts are optional additive save fields; both v1 and v2 migrations preserve their progress. Audio uses procedural Web Audio oscillators and generated noise only, with no external audio assets or runtime audio requests.
 
-Those minigames were first verified in standalone browser fixtures. Task 7 now connects their live world/arcade routing, and the final milestone passed **165/165 unit tests** and **140/140 desktop/mobile browser tests**, strict types, Prettier and production build. Concurrent workflow and tracker documentation changes were preserved. [Completion evidence](PHASE-2-COMPLETION.md) records the review decisions, final gate and local screenshots.
+Those minigames were first verified in standalone browser fixtures. Task 7 now connects their live world/arcade routing, and the final milestone passed **165/165 unit tests** and **140/140 desktop/mobile browser tests**, strict types, Prettier and production build. Concurrent workflow and tracker documentation changes were preserved. [Completion evidence](https://github.com/dpologdvinity/club-lion/blob/36cefb3/docs/PHASE-2-COMPLETION.md) records the review decisions, final gate and local screenshots.
 
 ---
 

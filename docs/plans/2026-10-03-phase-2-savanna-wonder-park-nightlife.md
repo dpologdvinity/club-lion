@@ -1,6 +1,6 @@
 # Phase 2: Savanna Wonder Park & Nightlife Core Implementation Plan
 
-**Delivery status: complete (2026-10-04).** All seven task outcomes are implemented, reviewed and integrated. The final gate passed 165 unit tests and 140 desktop/mobile browser tests, strict types, formatting and production build. See [completion evidence](../PHASE-2-COMPLETION.md) and [attribution tracker](../TASK-TRACKER.md). The steps below preserve the original implementation recipe; final browser integration coverage also lives in `tests/world-phase2.spec.ts`.
+**Delivery status: complete (2026-10-04).** All seven task outcomes are implemented, reviewed and integrated. The final gate passed 165 unit tests and 140 desktop/mobile browser tests, strict types, formatting and production build. See [completion evidence](https://github.com/dpologdvinity/club-lion/blob/36cefb3/docs/PHASE-2-COMPLETION.md) and [attribution tracker](../TASK-TRACKER.md). The steps below preserve the original implementation recipe; final browser integration coverage also lives in `tests/world-phase2.spec.ts`.
 
 > **For Multi-Agent Implementers (Codex, Claude Code, Antigravity):**
 > Any agent can implement any task in this plan using superpowers:subagent-driven-development or superpowers:executing-plans. There are no primary or fixed roles.
