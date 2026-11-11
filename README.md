@@ -318,6 +318,10 @@ All runtime CSS variables are in [`src/styles.css`](src/styles.css). Original co
 
 ## 🏗️ Development Model
 
+Current agent rules, commands and setup live in [`AGENTS.md`](AGENTS.md), the single instruction file for Claude Code, Codex and OpenCode ([`CLAUDE.md`](CLAUDE.md) imports it). Agent config is committed too: `.claude/`, `.codex/`, `.agents/`, `.mcp.json`, `opencode.json`, with design specs and plans in `docs/superpowers/` and `docs/plans/`.
+
+The history below records the earlier three-model workflow.
+
 Club Lion is built by a multi-agent team of three AI models operating as interchangeable peers:
 
 | Model              | Agent Platform |
@@ -326,7 +330,7 @@ Club Lion is built by a multi-agent team of three AI models operating as interch
 | `claude-sonnet-5`  | Claude Code    |
 | `gpt-6.1-sol`      | Codex          |
 
-Development follows a **4-role lifecycle** documented in [`docs/WORKFLOW.md`](docs/WORKFLOW.md):
+Development followed a **4-role lifecycle** documented in [`docs/WORKFLOW.md`](docs/WORKFLOW.md):
 
 1. **Orchestrator** — Assigns tasks, creates isolated worktrees, manages the merge queue
 2. **Implementer** — Develops with RED-GREEN TDD inside worktrees
