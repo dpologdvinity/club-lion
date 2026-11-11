@@ -2,17 +2,18 @@ import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 
-// Load .env
-const envFile = fs.readFileSync(".env", "utf8");
-const match = envFile.match(/POLI?NATIONS_API_KEY=["']?([^"'\s]+)["']?/);
-const apiKey = match ? match[1] : "";
+// Key lives in .env (git-ignored) or the shell environment, never in source.
+try {
+  process.loadEnvFile();
+} catch {
+  /* no .env: fall back to the shell environment */
+}
+const apiKey = process.env.POLLINATIONS_API_KEY;
 
 if (!apiKey) {
-  console.error("No Pollinations API key found in .env");
+  console.error("Set POLLINATIONS_API_KEY in .env");
   process.exit(1);
 }
-
-console.log("Using Pollinations API key:", apiKey.slice(0, 8) + "...");
 
 export async function generateTransparentTrait(prompt, outputPath, width = 256, height = 256) {
   const url = `https://gen.pollinations.ai/image/${encodeURIComponent(

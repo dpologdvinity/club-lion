@@ -2,7 +2,17 @@ import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
 
-const API_KEY = 'sk_iGC9y01USxkT3ZFBtdPSsCFBoIUh6ZCF';
+// Key lives in .env (git-ignored) or the shell environment, never in source.
+try {
+  process.loadEnvFile();
+} catch {
+  /* no .env: fall back to the shell environment */
+}
+const API_KEY = process.env.POLLINATIONS_API_KEY;
+if (!API_KEY) {
+  console.error('Set POLLINATIONS_API_KEY in .env');
+  process.exit(1);
+}
 const MODEL = 'google/gemini-3.1-flash-image';
 const OUT_DIR = 'gallery/traits/transparent/clothes';
 
