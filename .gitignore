@@ -19,3 +19,29 @@ gallery/fantage/
 # Local scratch files
 .tmp-*
 tests/tmp-*
+
+# Secrets and per-machine overrides (settings.local.json, CLAUDE.local.md, ...)
+.env.*
+*.local.*
+
+# Agent tooling: local state and third-party skills/agents installed per machine.
+# Only the repo's own process skills are committed; hooks skip missing tools.
+.claude/agents/impeccable-*
+.claude/skills/*
+!.claude/skills/investigate-first
+!.claude/skills/lean-build
+!.claude/skills/safe-refactor
+!.claude/skills/surgical-patch
+!.claude/skills/verify-and-stop
+.agents/skills/*
+!.agents/skills/investigate-first/
+!.agents/skills/lean-build/
+!.agents/skills/safe-refactor/
+!.agents/skills/surgical-patch/
+!.agents/skills/verify-and-stop/
+.github/agents/
+.github/skills/
+.opencode/
+.impeccable/hook.*.json
+.superpowers/
+.playwright-mcp/
